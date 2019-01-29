@@ -1,0 +1,8 @@
+name: wordpress-composer-base
+recipe: wordpress
+config:
+    webroot: /web/
+services:
+    appserver:
+        run:
+            - "cd $LANDO_MOUNT && composer install"
