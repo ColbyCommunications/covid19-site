@@ -18,38 +18,100 @@ build:
 relationships:
         database: "mysqldb:mysql"
 
-# The configuration of app when it is exposed to the web.
-web:
-    locations:
-        "/":
-            # The public directory of the app, relative to its root.
-            root: "web/wp"
-            # The front-controller script to send non-static requests to.
-            passthru: "/index.php"
-            # Wordpress has multiple roots (wp-admin) so the following is required
-            index: 
-                - "index.php"
-            # The number of seconds whitelisted (static) content should be cached.
-            expires: 600
-            scripts: true
-            allow: true
-
 # The size of the persistent disk of the application (in MB).
 disk: 2048
-dependencies:
-  php:
-    wp-cli/wp-cli: "^1.1"
-    psy/psysh: "^0.8.4"
+
 # The mounts that will be performed when the package is deployed.
 mounts:
     "/web/wp-content/uploads": "shared:files/uploads"
     "/web/wp-content/cache": "shared:files/cache"
+    '/simplesaml/cert': 'shared:files/simplesaml/cert'
+    '/simplesaml/logs': 'shared:files/simplesaml/logs'
+    '/simplesaml/data': 'shared:files/simplesaml/data'
+    '/simplesaml/tmp': 'shared:files/simplesaml/tmp'
+
+# The configuration of app when it is exposed to the web.
+web:
+  locations:
+    "/":
+      # The public directory of the app, relative to its root.
+      root: "web/wp"
+      # The front-controller script to send non-static requests to.
+      passthru: "/index.php"
+      # Wordpress has multiple roots (wp-admin) so the following is required
+      index:
+        - "index.php"
+      # The number of seconds whitelisted (static) content should be cached.
+      expires: 600
+      scripts: true
+      allow: true
+      rules:
+        # Allow access to common static files.
+        '\.(?i:jpe?g|gif|png|svg|bmp|ico|css|js(?:on)?|eot|ttf|woff|woff2|pdf|docx?|xlsx?|pp[st]x?|psd|odt|key|mp[2-5g]|m4[av]|og[gv]|wav|mov|wm[av]|avi|3g[p2])$':
+          allow: true
+        '^/robots\.txt$':
+          allow: true
+        '^/sitemap\.xml$':
+          allow: true
+
+        # Deny direct access to configuration files.
+        #'^/sites/sites\.php$':
+        #  scripts: false
+        #'^/sites/[^/]+/settings.*?\.php$':
+        #  scripts: false
+    "/simplesaml":
+      root: 'vendor/simplesamlphp/simplesamlphp/www'
+      allow: true
+      scripts: true
+      index:
+        - index.php
+
+
+dependencies:
+  php:
+    wp-cli/wp-cli: "^1.1"
+    psy/psysh: "^0.8.4"
+
+
 
 # The hooks that will be performed when the package is deployed.
 hooks:
     build: |
-        set -e
-        cp -R web/wp/wp-content/plugins/* web/wp-content/plugins/
-        cp -R web/wp/wp-content/themes/* web/wp-content/themes/
-        # Uncomment this line when you start adding extra language packs.
-        #cp -R web/wp/wp-content/languages/* web/wp-content/languages/
+      set -e
+      cp -R web/wp/wp-content/plugins/* web/wp-content/plugins/
+      cp -R web/wp/wp-content/themes/* web/wp-content/themes/
+      # Uncomment this line when you start adding extra language packs.
+      #cp -R web/wp/wp-content/languages/* web/wp-content/languages/
+      # In build hook, install platform CLI in case we need it. Will require an ENV
+      # var of PLATFORMSH_CLI_TOKEN to be set. platform variable:create -e master --level environment --name env:PLATFORMSH_CLI_TOKEN --sensitive true --value '
+      curl -sS https://platform.sh/cli/installer | php
+      # The deploy hook runs after your application has been deployed and started.
+    deploy: |
+      ./scripts/digitalservice/createshibcerts.sh
+
+variables:
+  env:
+    SIMPLESAMLPHP_CONFIG_DIR: /app/vendor/mizzou/mizzou-simplesaml/config
+
+# The configuration of scheduled execution.
+crons:
+  #
+  # For cron jobs using platform-cli to work, you need an API key available to the container
+  # platform variable:create -e master --level environment --name env:PLATFORMSH_CLI_TOKEN --sensitive true --value 'your API token'
+  #
+  # Set up a cron to auto renew the cert if there has not been a recent code commit.
+  renewcert:
+    # Force a redeploy at 10 am (UTC) on the 1st and 15th of every month.
+    spec: '0 10 1,15 * *'
+    cmd: |
+      if [ "$PLATFORM_BRANCH" = master ]; then
+          platform redeploy --yes --no-wait
+      fi
+
+  # Take a daily snapshot/backup.
+  snapshot:
+    spec: '0 5 * * *'
+    cmd: |
+      if [ "$PLATFORM_BRANCH" = master ]; then
+          platform snapshot:create --yes --no-wait
+      fi
