@@ -1,44 +1,43 @@
 {
-  "name": "johnpbloch/wordpress",
-  "description": "WordPress is web software you can use to create a beautiful website or blog.",
-  "keywords": [
-    "wordpress",
-    "blog",
-    "cms"
-  ],
-  "type": "package",
-  "homepage": "http://wordpress.org/",
-  "license": "GPL-2.0+",
-  "authors": [
-    {
-      "name": "WordPress Community",
-      "homepage": "http://wordpress.org/about/"
+    "name": "mizzou/site-somesite.missouri.edu",
+    "description": "Configuration project for the site-somesite.missouri.edu site",
+    "type": "project",
+    "require": {
+        "mizzou/mizzou-simplesaml": "dev-master",
+        "simplesamlphp/simplesamlphp": "1.16.*",
+        "johnpbloch/wordpress-core-installer": "^1.0",
+        "johnpbloch/wordpress-core": "4.9.9"
+    },
+    "authors": [
+        {
+            "name": "Truman Tiger",
+            "email": "trumant@missouri.edu"
+        }
+    ],
+    "repositories": [
+        {
+            "type": "composer",
+            "url": "https://packages.missouri.edu/php/"
+        },
+        {
+            "type": "composer",
+            "url": "https://wpackagist.org/"
+        }
+    ],    
+    "extra" : {
+      "wordpress-install-dir": "web/wp",
+      "installer-paths": {
+          "web/wp-content/plugins/{$name}": [
+            "type:wordpress-plugin"
+          ],
+      
+          "web/wp-content/themes/{$name}": [
+            "type:wordpress-theme"
+          ],
+      
+          "web/wp-content/mu-plugins/{$name}": [
+            "type:wordpress-muplugin"
+          ]
+      }
     }
-  ],
-  "support": {
-    "issues": "http://core.trac.wordpress.org/",
-    "forum": "http://wordpress.org/support/",
-    "wiki": "http://codex.wordpress.org/",
-    "irc": "irc://irc.freenode.net/wordpress",
-    "source": "http://core.trac.wordpress.org/browser"
-  },
-  "require": {
-    "php": ">=5.3.2",
-    "johnpbloch/wordpress-core-installer": "^1.0",
-    "johnpbloch/wordpress-core": "4.9.9"
-  },
-  "extra": {
-    "wordpress-install-dir": "web/wp",
-    "installer-paths": {
-      "web/wp-content/plugins/{$name}": [
-        "type:wordpress-plugin"
-      ],
-      "web/wp-content/themes/{$name}": [
-        "type:wordpress-theme"
-      ],
-      "web/wp-content/mu-plugins/{$name}": [
-        "type:wordpress-muplugin"
-      ]
-    }
-  }
 }
