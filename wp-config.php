@@ -80,7 +80,7 @@ if (getenv('PLATFORM_RELATIONSHIPS')) {
 define('WP_HOME', $site_scheme . '://' . $site_host . '/wp/');
 define('WP_SITEURL', WP_HOME . '/');
 
-define( 'WP_CONTENT_DIR', dirname( __FILE__ ) . '/wp-content' );
+define( 'WP_CONTENT_DIR', dirname( __FILE__ ) . '/web/wp-content' );
 define( 'WP_CONTENT_URL', WP_HOME . '/wp-content' );
 
 /**
