@@ -110,5 +110,9 @@ ini_set('pcre.recursion_limit', 200000);
 if ( !defined('ABSPATH') )
     define('ABSPATH', dirname(__FILE__) . '/');
 
-/** Sets up WordPress vars and included files. */
-require_once(ABSPATH . 'wp-settings.php');
+/**
+ * Sets up WordPress vars and included files.
+ * Moved to ./web/wp-config.php
+ * @see https://github.com/wp-cli/wp-cli/issues/1218
+ */
+//require_once(ABSPATH . 'wp-settings.php');
