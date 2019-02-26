@@ -6,7 +6,9 @@
         "mizzou/mizzou-simplesaml": "dev-master",
         "simplesamlphp/simplesamlphp": "1.16.*",
         "johnpbloch/wordpress-core-installer": "^1.0",
-        "johnpbloch/wordpress-core": "4.9.9"
+        "johnpbloch/wordpress-core": "4.9.9",
+        "wpackagist-plugin/wp-saml-auth": "^0.5.1",
+        "mizzou/simplesaml-wp": "^0.2.1"
     },
     "authors": [
         {
