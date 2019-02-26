@@ -77,8 +77,8 @@ if (getenv('PLATFORM_RELATIONSHIPS')) {
 }
 
 // Define wp-content directory outside of WordPress core directory
-define('WP_HOME', $site_scheme . '://' . $site_host . '/wp/');
-define('WP_SITEURL', WP_HOME . '/');
+define('WP_HOME', $site_scheme . '://' . $site_host);
+define('WP_SITEURL', WP_HOME . '/wp');
 
 define( 'WP_CONTENT_DIR', dirname( __FILE__ ) . '/web/wp-content' );
 define( 'WP_CONTENT_URL', WP_HOME . '/wp-content' );
@@ -88,14 +88,13 @@ define( 'WP_CONTENT_URL', WP_HOME . '/wp-content' );
 $table_prefix  = 'wp_';
 
 /**
-* some plugins require constants be added to the wp-config.php file. Since the wp-config.php
-* file. Since this file is not changeable on a site-by-site basis, will include a secondary
-* file that is site-editable, allowing for additional constants or overriding of any variables
- * that have already been set (e.g. $table_prefix)
+* some plugins require constants be added to the wp-config.php file. Since this file is not changeable on a site-by-site
+* basis, will include a secondary file that is site-editable, allowing for additional constants or overriding of any
+* variables that have already been set (e.g. $table_prefix)
 */
 
-if ( file_exists( dirname( __FILE__ ) . '/wp-config-extras.php' ) ) {
-	include( dirname( __FILE__ ) . '/wp-config-extras.php' );
+if (file_exists(dirname(__FILE__) . '/wp-config-extras.php')) {
+    include(dirname(__FILE__) . '/wp-config-extras.php');
 }
 
 // Default PHP settings.
