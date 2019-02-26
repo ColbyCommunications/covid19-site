@@ -6,6 +6,12 @@
 "https://{default}/":
     type: upstream
     upstream: "app:http"
+    cache:
+        enabled: true
+
+        # Base the cache on the session cookie and custom Drupal cookies. Ignore all other cookies.
+        cookies: ['/^SS?ESS/', '/^SimpleSAML/', '/^wordpress_/', '/^wp-settings/']
+
 
 "https://www.{default}/":
     type: redirect
