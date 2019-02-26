@@ -7,21 +7,6 @@
     "content-hash": "ef2cade9629adf8acabe9d735348fc20",
     "packages": [
         {
-            "name": "advanced-custom-fields/advanced-custom-fields-pro",
-            "version": "5.7.11",
-            "source": {
-                "type": "git",
-                "url": "git@vcs.missouri.edu:mizzou-digital/wordpress/advanced-custom-fields-pro.git",
-                "reference": "9247a813a138d8ee8425cb7ece5a7adbfda8b1ae"
-            },
-            "require": {
-                "composer/installers": "^1.4"
-            },
-            "type": "wordpress-plugin",
-            "description": "Internal clone of advanced custom fields pro plugin for use on sites within the *.missouri.edu domain.",
-            "time": "2019-02-12T22:29:42+00:00"
-        },
-        {
             "name": "composer/installers",
             "version": "v1.6.0",
             "source": {
@@ -460,24 +445,6 @@
             ],
             "description": "Mizzou-specific simplesaml configurations",
             "time": "2018-12-20T22:23:10+00:00"
-        },
-        {
-            "name": "mizzou/mizzou-wp-base",
-            "version": "0.4.0",
-            "source": {
-                "type": "git",
-                "url": "git@vcs.missouri.edu:mizzou-digital/wordpress/mizzou-wp-base.git",
-                "reference": "964f1d039488f033b1605eddfc6693c6f2a377b4"
-            },
-            "type": "wordpress-theme",
-            "authors": [
-                {
-                    "name": "Paul Gilzow",
-                    "email": "gilzowp@missouri.edu"
-                }
-            ],
-            "description": "Generic Mizzou Parent Theme based on the MizzouMVC framework",
-            "time": "2018-08-30T20:45:39+00:00"
         },
         {
             "name": "mizzou/simplesaml-wp",
@@ -941,66 +908,6 @@
                 "apr1"
             ],
             "time": "2015-02-11T11:06:42+00:00"
-        },
-        {
-            "name": "wpackagist-plugin/classic-editor",
-            "version": "1.4",
-            "source": {
-                "type": "svn",
-                "url": "https://plugins.svn.wordpress.org/classic-editor/",
-                "reference": "tags/1.4"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://downloads.wordpress.org/plugin/classic-editor.1.4.zip",
-                "reference": null,
-                "shasum": null
-            },
-            "require": {
-                "composer/installers": "~1.0"
-            },
-            "type": "wordpress-plugin",
-            "homepage": "https://wordpress.org/plugins/classic-editor/"
-        },
-        {
-            "name": "wpackagist-plugin/external-media",
-            "version": "1.0.18",
-            "source": {
-                "type": "svn",
-                "url": "https://plugins.svn.wordpress.org/external-media/",
-                "reference": "tags/1.0.18"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://downloads.wordpress.org/plugin/external-media.1.0.18.zip",
-                "reference": null,
-                "shasum": null
-            },
-            "require": {
-                "composer/installers": "~1.0"
-            },
-            "type": "wordpress-plugin",
-            "homepage": "https://wordpress.org/plugins/external-media/"
-        },
-        {
-            "name": "wpackagist-plugin/tinymce-advanced",
-            "version": "5.0.1",
-            "source": {
-                "type": "svn",
-                "url": "https://plugins.svn.wordpress.org/tinymce-advanced/",
-                "reference": "tags/5.0.1"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://downloads.wordpress.org/plugin/tinymce-advanced.5.0.1.zip",
-                "reference": null,
-                "shasum": null
-            },
-            "require": {
-                "composer/installers": "~1.0"
-            },
-            "type": "wordpress-plugin",
-            "homepage": "https://wordpress.org/plugins/tinymce-advanced/"
         },
         {
             "name": "wpackagist-plugin/wp-saml-auth",
