@@ -16,7 +16,7 @@ build:
 # to the application in the PLATFORM_RELATIONSHIPS variable. The right-hand
 # side is in the form `<service name>:<endpoint name>`.
 relationships:
-        database: "mysqldb:mysql"
+  database: "mysqldb:mysql"
 
 # The size of the persistent disk of the application (in MB).
 disk: 2048
@@ -35,7 +35,7 @@ web:
   locations:
     "/":
       # The public directory of the app, relative to its root.
-      root: "web/wp"
+      root: "web"
       # The front-controller script to send non-static requests to.
       passthru: "/index.php"
       # Wordpress has multiple roots (wp-admin) so the following is required
@@ -78,13 +78,14 @@ dependencies:
 hooks:
     build: |
       set -e
-      cp -R web/wp/wp-content/plugins/* web/wp-content/plugins/
-      cp -R web/wp/wp-content/themes/* web/wp-content/themes/
+      #cp -R web/wp/wp-content/plugins/* web/wp-content/plugins/
+      #cp -R web/wp/wp-content/themes/* web/wp-content/themes/
       # Uncomment this line when you start adding extra language packs.
       #cp -R web/wp/wp-content/languages/* web/wp-content/languages/
       # In build hook, install platform CLI in case we need it. Will require an ENV
       # var of PLATFORMSH_CLI_TOKEN to be set. platform variable:create -e master --level environment --name env:PLATFORMSH_CLI_TOKEN --sensitive true --value '
       curl -sS https://platform.sh/cli/installer | php
+      ./scripts/digitalservice/symlink.sh /app/web/wp-content/mu-plugins/simplesaml-wp/shib-auth-settings.php /app/web/wp-content/mu-plugins/shib-auth-settings.php
       # The deploy hook runs after your application has been deployed and started.
     deploy: |
       ./scripts/digitalservice/createshibcerts.sh

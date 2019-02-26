@@ -77,25 +77,25 @@ if (getenv('PLATFORM_RELATIONSHIPS')) {
 }
 
 // Define wp-content directory outside of WordPress core directory
-define('WP_HOME', $site_scheme . '://' . $site_host . '/wp/');
-define('WP_SITEURL', WP_HOME . '/');
+define('WP_HOME', $site_scheme . '://' . $site_host);
+define('WP_SITEURL', WP_HOME . '/wp');
 
 define( 'WP_CONTENT_DIR', dirname( __FILE__ ) . '/web/wp-content' );
 define( 'WP_CONTENT_URL', WP_HOME . '/wp-content' );
 
-/**
-* some plugins require constants be added to the wp-config.php file. Since the wp-config.php
-* file. Since this file is not changeable on a site-by-site basis, will include a secondary
-* file that is site-editable.
-*/
-
-if ( file_exists( dirname( __FILE__ ) . '/wp-config-extras.php' ) ) {
-	include( dirname( __FILE__ ) . '/wp-config-extras.php' );
-}
-
 // Since you can have multiple installations in one database, you need a unique
 // prefix.
 $table_prefix  = 'wp_';
+
+/**
+* some plugins require constants be added to the wp-config.php file. Since this file is not changeable on a site-by-site
+* basis, will include a secondary file that is site-editable, allowing for additional constants or overriding of any
+* variables that have already been set (e.g. $table_prefix)
+*/
+
+if (file_exists(dirname(__FILE__) . '/wp-config-extras.php')) {
+    include(dirname(__FILE__) . '/wp-config-extras.php');
+}
 
 // Default PHP settings.
 ini_set('session.gc_probability', 1);
@@ -109,5 +109,9 @@ ini_set('pcre.recursion_limit', 200000);
 if ( !defined('ABSPATH') )
     define('ABSPATH', dirname(__FILE__) . '/');
 
-/** Sets up WordPress vars and included files. */
-require_once(ABSPATH . 'wp-settings.php');
+/**
+ * Sets up WordPress vars and included files.
+ * Moved to ./web/wp-config.php
+ * @see https://github.com/wp-cli/wp-cli/issues/1218
+ */
+//require_once(ABSPATH . 'wp-settings.php');
