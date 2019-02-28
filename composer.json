@@ -26,21 +26,22 @@
             "type": "composer",
             "url": "https://wpackagist.org/"
         }
-    ],    
+    ],
     "extra" : {
-      "wordpress-install-dir": "web/wp",
-      "installer-paths": {
-          "web/wp-content/plugins/{$name}": [
-            "type:wordpress-plugin"
-          ],
-      
-          "web/wp-content/themes/{$name}": [
-            "type:wordpress-theme"
-          ],
-      
-          "web/wp-content/mu-plugins/{$name}": [
-            "type:wordpress-muplugin"
-          ]
-      }
+        "wordpress-install-dir": "web/wp",
+        "installer-paths": {
+            "web/wp-content/mu-plugins/{$name}": [
+                "type:wordpress-muplugin",
+                "wpackagist-plugin/wp-saml-auth"
+            ],
+
+            "web/wp-content/plugins/{$name}": [
+                "type:wordpress-plugin"
+            ],
+
+            "web/wp-content/themes/{$name}": [
+                "type:wordpress-theme"
+            ]
+        }
     }
 }
