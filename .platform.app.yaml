@@ -85,7 +85,10 @@ hooks:
       # In build hook, install platform CLI in case we need it. Will require an ENV
       # var of PLATFORMSH_CLI_TOKEN to be set. platform variable:create -e master --level environment --name env:PLATFORMSH_CLI_TOKEN --sensitive true --value '
       curl -sS https://platform.sh/cli/installer | php
+      # create a symlink to our actual file in the root of mu-plugins
       ./scripts/digitalservice/symlink.sh /app/web/wp-content/mu-plugins/simplesaml-wp/shib-auth-settings.php /app/web/wp-content/mu-plugins/shib-auth-settings.php
+      # create a symlink to our actual file in the root of mu-plugins
+      ./scripts/digitalservice/symlink.sh /app/web/wp-content/mu-plugins/wp-saml-auth/wp-saml-auth.php /app/web/wp-content/mu-plugins/wp-saml-auth.php
       # The deploy hook runs after your application has been deployed and started.
     deploy: |
       ./scripts/digitalservice/createshibcerts.sh
