@@ -25,6 +25,7 @@
 
 # Ignore sql files
 *.sql
+*.sql.gz
 
 # Ignore simplesaml dir locally
 /simplesaml
