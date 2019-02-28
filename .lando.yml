@@ -2,7 +2,7 @@ name: some-site
 recipe: wordpress
 config:
     webroot: /web/
-env_files:
+env_file:
     - lando.env
 
 events:
@@ -15,3 +15,8 @@ events:
         - "curl -fsSL -o /var/www/.platformsh/bin/platform https://github.com/platformsh/platformsh-cli/releases/download/v3.37.1/platform.phar"
         - "chmod ug+x /var/www/.platformsh/bin/platform"
         - "cd /app && composer install"
+tooling:
+  platform-db-pull:
+    service: appserver
+    description: DESTRUCTIVE Pull the current Platform environment's DB into the current Lando project.
+    cmd: "/app/scripts/digitalservice/lando-platform-db-pull.sh"
