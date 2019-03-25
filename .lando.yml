@@ -2,6 +2,7 @@ name: some-site
 recipe: wordpress
 config:
     webroot: /web/
+    via: nginx
 env_file:
     - lando.env
 
@@ -14,9 +15,16 @@ events:
         - "mkdir -p /var/www/.platformsh && mkdir -p /var/www/.platformsh/bin"
         - "curl -fsSL -o /var/www/.platformsh/bin/platform https://github.com/platformsh/platformsh-cli/releases/download/v3.37.1/platform.phar"
         - "chmod ug+x /var/www/.platformsh/bin/platform"
+        - "wp package install wp-cli/find-command"
         - "cd /app && composer install"
+    post-start:
+        - "ln -s -f /var/www/.platformsh/bin/platform /app/vendor/bin/platform"
 tooling:
   platform-db-pull:
     service: appserver
     description: DESTRUCTIVE Pull the current Platform environment's DB into the current Lando project.
     cmd: "/app/scripts/digitalservice/lando-platform-db-pull.sh"
+  platform-db-ms-update:
+    service: appserver
+    description:
+    cmd: "php /app/scripts/digitalservice/update-multisite-db.php"

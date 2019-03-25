@@ -1,7 +1,7 @@
 <?php
 
 // Set host values
-$site_scheme = 'https';
+$site_scheme = 'http';
 $site_host = 'localhost';
 
 if (isset($_SERVER['HTTP_HOST'])) {
@@ -9,16 +9,41 @@ if (isset($_SERVER['HTTP_HOST'])) {
     $site_scheme = !empty($_SERVER['https']) ? 'https' : 'http';
 }
 
-if (getenv('PLATFORM_RELATIONSHIPS')) {
-    // This is where we get the relationships of our application dynamically
-    //from Platform.sh
+//do we have a multisite?
+if (false !== getenv('MULTISITE') && filter_var(getenv('MULTISITE'), FILTER_VALIDATE_BOOLEAN)) {
+    /**
+     * Set up all the constants that we need for multisite
+     */
+    define('MULTISITE', true);
+    define('WP_ALLOW_MULTISITE', true);
+    define('PATH_CURRENT_SITE', '/');
+    define('SITE_ID_CURRENT_SITE', 1);
+    define('BLOG_ID_CURRENT_SITE', 1);
+    //DOMAIN_CURRENT_SITE intentionally not defined yet
+    /**
+     * Do we have a multi/sub-domain set up or subdirectory?
+     */
+    $boolMultiDomain = false; //assume default of subdirectory
+    if (false !== getenv('MULTISITE_MULTIDOMAIN') && filter_var(getenv('MULTISITE_MULTIDOMAIN'), FILTER_VALIDATE_BOOLEAN)) {
+        $boolMultiDomain = true;
+    }
+
+    define('SUBDOMAIN_INSTALL', $boolMultiDomain);
+} else {
+    define('MULTISITE', false);
+    define('SUBDOMAIN_INSTALL', false);
+}
+//are we on platform?
+if (false !== $strRelationships = getenv('PLATFORM_RELATIONSHIPS')) {
+    $site_scheme = 'https';//assume all sites on platform should be https
+    // This is where we get the relationships of our application dynamically from Platform.sh
 
     // set session path to /tmp in cas we are using wp-cli to avoid notices
     if (php_sapi_name() === 'cli') {
         session_save_path("/tmp");
     }
 
-    $relationships = json_decode(base64_decode(getenv('PLATFORM_RELATIONSHIPS')), TRUE);
+    $relationships = json_decode(base64_decode(getenv('PLATFORM_RELATIONSHIPS')), true);
 
     // We are using the first relationship called "database" found in your
     // relationships. Note that you can call this relationship as you wish
@@ -30,18 +55,53 @@ if (getenv('PLATFORM_RELATIONSHIPS')) {
     define('DB_CHARSET', 'utf8');
     define('DB_COLLATE', '');
 
-    // Check whether a route is defined for this application in the Platform.sh routes.
-    // Use it as the site hostname if so (it is not ideal to trust HTTP_HOST).
-    if (getenv('PLATFORM_ROUTES')) {
-        $routes = json_decode(base64_decode(getenv('PLATFORM_ROUTES')), TRUE);
-        foreach ($routes as $url => $route) {
-            if ($route['type'] === 'upstream' && $route['upstream'] === getenv('PLATFORM_APPLICATION_NAME')) {
+    //we need routes for both multi and standard
+    $aryRoutes = array();//assume we dont have it
+    if (false !== $strRoutes = getenv('PLATFORM_ROUTES')) {
+        $aryRoutes = json_decode(base64_decode($strRoutes), true);
+    }
+
+    if (MULTISITE && SUBDOMAIN_INSTALL) {
+        if (false === $strPrimaryDomain = getenv('MULTISITE_PRIMARY_DOMAIN')) {
+            //@todo we need a way to fail here
+            echo "This is a multidomain multisite but the primary domain ENV is missing.\n";
+        }
+
+        if ('master' == getenv('PLATFORM_BRANCH')) {
+            //use MULTISITE_PRIMARY_DOMAIN
+            //use the default site_schema of https
+            $site_host = $strPrimaryDomain;
+        } else {
+            //we have to find the correct URL to use
+            //first escape any periods
+            $strLookForDomain = str_replace('.', '\.', $strPrimaryDomain);
+            $strPattern = sprintf('/^https:\/\/(%s[^\/]+)/', $strLookForDomain);
+            $aryMatched = preg_grep($strPattern, array_keys($aryRoutes));
+            if (1 === count($aryMatched)) {
+                //now we have the _WHOLE_ match, but we need just the domain
+                preg_match($strPattern, reset($aryMatched), $aryMatches);
+                //@todo this assumes 1 exists without checking first
+                $site_host = $aryMatches[1];
+            } else {
+                //@todo throw an error?
+                //echo '<p>I found too many matches for our primary domain:</p><pre>',var_export($aryMatched,true),'</pre>';exit();
+            }
+        }
+    } else {
+        /**
+         * we'll re-use platform's original code, with some minor modifications. Check whether a route is defined for
+         * this application in the Platform.sh routes. Use it as the site hostname if so (it is never ideal to trust
+         * HTTP_HOST).
+         */
+        $strPlatformAppName = getenv('PLATFORM_APPLICATION_NAME');
+        foreach ($aryRoutes as $strURL => $aryRoute) {
+            if ('upstream' === $aryRoute['type'] && $aryRoute['upstream'] === $strPlatformAppName) {
                 // Pick the first hostname, or the first HTTPS hostname if one exists.
-                $host = parse_url($url, PHP_URL_HOST);
-                $scheme = parse_url($url, PHP_URL_SCHEME);
-                if ($host !== false && (!isset($site_host) || ($site_scheme === 'http' && $scheme === 'https'))) {
-                    $site_host = $host;
-                    $site_scheme = $scheme ?: 'http';
+                $strHost = parse_url($strURL, PHP_URL_HOST);
+                $strScheme = parse_url($strURL, PHP_URL_SCHEME);
+
+                if (false !== $strHost && $strScheme == $site_scheme) { //i.e. is https
+                    $site_host = $strHost;
                 }
             }
         }
@@ -83,15 +143,19 @@ define('WP_SITEURL', WP_HOME . '/wp');
 define( 'WP_CONTENT_DIR', dirname( __FILE__ ) . '/web/wp-content' );
 define( 'WP_CONTENT_URL', WP_HOME . '/wp-content' );
 
+if (MULTISITE) {
+    define('DOMAIN_CURRENT_SITE', $site_host);
+}
+
 // Since you can have multiple installations in one database, you need a unique
 // prefix.
 $table_prefix  = 'wp_';
 
 /**
-* some plugins require constants be added to the wp-config.php file. Since this file is not changeable on a site-by-site
-* basis, will include a secondary file that is site-editable, allowing for additional constants or overriding of any
-* variables that have already been set (e.g. $table_prefix)
-*/
+ * some plugins require constants be added to the wp-config.php file. Since this file is not changeable on a site-by-site
+ * basis, will include a secondary file that is site-editable, allowing for additional constants or overriding of any
+ * variables that have already been set (e.g. $table_prefix)
+ */
 
 if (file_exists(dirname(__FILE__) . '/wp-config-extras.php')) {
     include(dirname(__FILE__) . '/wp-config-extras.php');
