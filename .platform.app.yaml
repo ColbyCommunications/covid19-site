@@ -53,26 +53,38 @@ web:
           allow: true
         '^/sitemap\.xml$':
           allow: true
+        '^\/wp-login.php$':
+          allow: true
+          scripts: true
+          passthru: '/wp/wp-login.php'
 
-        # Deny direct access to configuration files.
-        #'^/sites/sites\.php$':
-        #  scripts: false
-        #'^/sites/[^/]+/settings.*?\.php$':
-        #  scripts: false
     "/simplesaml":
       root: 'vendor/simplesamlphp/simplesamlphp/www'
       allow: true
       scripts: true
       index:
         - index.php
-
+    "/wp-admin":
+      root: 'web/wp/wp-admin'
+      allow: true
+      scripts: true
+      index:
+        - 'index.php'
+    "/wp-includes":
+      root: 'web/wp/wp-includes'
+      allow: true
+      scripts: true
 
 dependencies:
   php:
-    wp-cli/wp-cli: "^1.1"
+    wp-cli/wp-cli: "^2.1"
+    wp-cli/wp-cli-bundle: "^2.1"
+    wp-cli/find-command: "dev-master"
     psy/psysh: "^0.8.4"
 
-
+runtime:
+  extensions:
+    - readline
 
 # The hooks that will be performed when the package is deployed.
 hooks:
@@ -92,7 +104,10 @@ hooks:
       # The deploy hook runs after your application has been deployed and started.
     deploy: |
       ./scripts/digitalservice/createshibcerts.sh
-
+      # If we're on a MULTISITE and not on the master branch
+      if [ "$PLATFORM_BRANCH" != master ] && [ ! -z ${MULTISITE+x} ]; then
+        php scripts/digitalservice/update-multisite-db.php
+      fi
 variables:
   env:
     SIMPLESAMLPHP_CONFIG_DIR: /app/vendor/mizzou/mizzou-simplesaml/config
