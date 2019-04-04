@@ -62,7 +62,7 @@ if (false !== $strRelationships = getenv('PLATFORM_RELATIONSHIPS')) {
     }
 
     if (MULTISITE && SUBDOMAIN_INSTALL) {
-        if (false === $strPrimaryDomain = getenv('MULTISITE_PRIMARY_DOMAIN')) {
+        if (false === $strPrimaryDomain = getenv('PRIMARY_DOMAIN')) {
             //@todo we need a way to fail here
             echo "This is a multidomain multisite but the primary domain ENV is missing.\n";
         }
