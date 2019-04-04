@@ -1,7 +1,7 @@
 name: some-site
 recipe: wordpress
 config:
-    webroot: /web/
+    webroot: web
     via: nginx
 env_file:
     - lando.env
@@ -19,6 +19,8 @@ events:
         - "cd /app && composer install"
     post-start:
         - "ln -s -f /var/www/.platformsh/bin/platform /app/vendor/bin/platform"
+        # update the CLI
+        - "platform self-update -y"
 tooling:
   platform-db-pull:
     service: appserver
