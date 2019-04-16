@@ -1,0 +1,48 @@
+###
+# Controls how the application container responds to incoming requests. See https://docs.platform.sh/configuration/app/web.html#locations
+###
+
+################################
+###          CORE           ###
+###############################
+
+# Root location
+    "/":
+      # The public directory of the app, relative to its root.
+      root: "web"
+      # The front-controller script to send non-static requests to.
+      passthru: "/index.php"
+      # Wordpress has multiple roots (wp-admin) so the following is required
+      index:
+        - "index.php"
+      # The number of seconds whitelisted (static) content should be cached.
+      expires: 600
+      scripts: true
+      allow: true
+      rules: !include web.locations.root.rules.yaml
+
+    "/simplesaml":
+      root: 'vendor/simplesamlphp/simplesamlphp/www'
+      allow: true
+      scripts: true
+      index:
+        - index.php
+
+################################
+###        WORDPRESS        ###
+###############################
+    "/wp-admin":
+      root: 'web/wp/wp-admin'
+      allow: true
+      scripts: true
+      index:
+        - 'index.php'
+    "/wp-includes":
+      root: 'web/wp/wp-includes'
+      allow: true
+      scripts: true
+
+################################
+###     Project Specific    ###
+###############################
+# Add any additional project specific php dependencies you need in the environment after this line
