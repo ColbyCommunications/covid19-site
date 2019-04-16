@@ -19,7 +19,7 @@ relationships:
   database: "mysqldb:mysql"
 
 # The size of the persistent disk of the application (in MB).
-disk: 2048
+disk: !include .platform/digitalservice/disk.yaml
 
 # The mounts that will be performed when the package is deployed.
 mounts:
@@ -76,61 +76,22 @@ web:
       scripts: true
 
 dependencies:
-  php:
-    wp-cli/wp-cli: "^2.1"
-    wp-cli/wp-cli-bundle: "^2.1"
-    wp-cli/find-command: "dev-master"
-    psy/psysh: "^0.8.4"
+  php: !include .platform/digitalservice/dependencies.php.yaml
 
 runtime:
-  extensions:
-    - readline
+  extensions: !include .platform/digitalservice/runtime.extensions.yaml
 
 # The hooks that will be performed when the package is deployed.
 hooks:
-    build: |
-      set -e
-      #cp -R web/wp/wp-content/plugins/* web/wp-content/plugins/
-      #cp -R web/wp/wp-content/themes/* web/wp-content/themes/
-      # Uncomment this line when you start adding extra language packs.
-      #cp -R web/wp/wp-content/languages/* web/wp-content/languages/
-      # In build hook, install platform CLI in case we need it. Will require an ENV
-      # var of PLATFORMSH_CLI_TOKEN to be set. platform variable:create -e master --level environment --name env:PLATFORMSH_CLI_TOKEN --sensitive true --value '
-      curl -sS https://platform.sh/cli/installer | php
-      # create a symlink to our actual file in the root of mu-plugins
-      ./scripts/digitalservice/symlink.sh /app/web/wp-content/mu-plugins/simplesaml-wp/shib-auth-settings.php /app/web/wp-content/mu-plugins/shib-auth-settings.php
-      # create a symlink to our actual file in the root of mu-plugins
-      ./scripts/digitalservice/symlink.sh /app/web/wp-content/mu-plugins/wp-saml-auth/wp-saml-auth.php /app/web/wp-content/mu-plugins/wp-saml-auth.php
-      # The deploy hook runs after your application has been deployed and started.
-    deploy: |
-      ./scripts/digitalservice/createshibcerts.sh
-      # If we're on a MULTISITE and not on the master branch
-      if [ "$PLATFORM_BRANCH" != master ] && [ ! -z ${MULTISITE+x} ]; then
-        php scripts/digitalservice/update-multisite-db.php
-      fi
+    build: !include
+      type: string
+      path: .platform/digitalservice/hooks.build.yaml
+    deploy: !include
+      type: string
+      path: .platform/digitalservice/hooks.deploy.yaml
+
 variables:
-  env:
-    SIMPLESAMLPHP_CONFIG_DIR: /app/vendor/mizzou/mizzou-simplesaml/config
+  env: !include .platform/digitalservice/variables.env.yaml
 
 # The configuration of scheduled execution.
-crons:
-  #
-  # For cron jobs using platform-cli to work, you need an API key available to the container
-  # platform variable:create -e master --level environment --name env:PLATFORMSH_CLI_TOKEN --sensitive true --value 'your API token'
-  #
-  # Set up a cron to auto renew the cert if there has not been a recent code commit.
-  renewcert:
-    # Force a redeploy at 10 am (UTC) on the 1st and 15th of every month.
-    spec: '0 10 1,15 * *'
-    cmd: |
-      if [ "$PLATFORM_BRANCH" = master ]; then
-          platform redeploy --yes --no-wait
-      fi
-
-  # Take a daily snapshot/backup.
-  snapshot:
-    spec: '0 5 * * *'
-    cmd: |
-      if [ "$PLATFORM_BRANCH" = master ]; then
-          platform snapshot:create --yes --no-wait
-      fi
+crons: !include .platform/digitalservice/crons.yaml
