@@ -1,0 +1,30 @@
+###
+# Override rules for the root (/) web location. See https://docs.platform.sh/configuration/app/web.html#rules
+###
+
+################################
+###          CORE           ###
+###############################
+        # Allow access to common static files.
+        '\.(?i:jpe?g|gif|png|svg|bmp|ico|css|js(?:on)?|eot|ttf|woff|woff2|pdf|docx?|xlsx?|pp[st]x?|psd|odt|key|mp[2-5g]|m4[av]|og[gv]|wav|mov|wm[av]|avi|3g[p2])$':
+          allow: true
+        '^/robots\.txt$':
+          allow: true
+        '^/sitemap\.xml$':
+          allow: true
+#reserved
+
+
+################################
+###        WORDPRESS        ###
+###############################
+        # We need to allow requests to wp-login.php to pass through
+        '^\/wp-login.php$':
+          allow: true
+          scripts: true
+          passthru: '/wp/wp-login.php'
+
+################################
+###     Project Specific    ###
+###############################
+# Add any additional project specific root override rules after this line
