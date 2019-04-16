@@ -1,0 +1,27 @@
+###
+# Contains hooks that are fired when an environment is deployed. See https://docs.platform.sh/configuration/app/build.html#deploy-hook
+###
+# Ensures that if an error occurs in one of our hooks it will fail the build
+set -e
+################################
+###          CORE           ###
+###############################
+set -e
+# Sets up the iniitial ssl certificate
+./scripts/digitalservice/createshibcerts.sh
+
+################################
+###        WORDPRESS        ###
+###############################
+# If we're on a MULTISITE and not on the master branch
+if [ "$PLATFORM_BRANCH" != master ] && [ ! -z ${MULTISITE+x} ]; then
+  php scripts/digitalservice/update-multisite-db.php
+fi
+# If the site is using the mizzoumvc framework, we'll need to reset the cache
+./scripts/digitalservice/mizzoumvc-clear-cache.sh
+
+
+################################
+###     Project Specific    ###
+###############################
+# Add any additional project specific deploy hooks you need in the environment after this line
