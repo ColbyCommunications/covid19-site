@@ -19,7 +19,7 @@
       expires: 600
       scripts: true
       allow: true
-      rules: !include .platform/digitalservice/web.locations.root.rules.yaml
+      rules: !include web.locations.root.rules.yaml
 
     "/simplesaml":
       root: 'vendor/simplesamlphp/simplesamlphp/www'
