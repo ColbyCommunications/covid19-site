@@ -108,6 +108,7 @@ hooks:
       if [ "$PLATFORM_BRANCH" != master ] && [ ! -z ${MULTISITE+x} ]; then
         php scripts/digitalservice/update-multisite-db.php
       fi
+      ./scripts/digitalservice/mizzoumvc-clear-cache.sh
 variables:
   env:
     SIMPLESAMLPHP_CONFIG_DIR: /app/vendor/mizzou/mizzou-simplesaml/config
