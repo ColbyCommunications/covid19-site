@@ -16,9 +16,13 @@ curl -sS https://platform.sh/cli/installer | php
 ./scripts/digitalservice/symlink.sh /app/web/wp-content/mu-plugins/simplesaml-wp/shib-auth-settings.php /app/web/wp-content/mu-plugins/shib-auth-settings.php
 # create a symlink to our actual file in the root of mu-plugins
 ./scripts/digitalservice/symlink.sh /app/web/wp-content/mu-plugins/wp-saml-auth/wp-saml-auth.php /app/web/wp-content/mu-plugins/wp-saml-auth.php
-
+# prevent account enumerations
+./scripts/digitalservice/symlink.sh /app/web/wp-content/mu-plugins/super-simple-account-enumeration-blocker/ss-account-enumeration-blocker.php /app/web/wp-content/mu-plugins/ss-account-enumeration-blocker.php
 
 ################################
 ###     Project Specific    ###
 ###############################
 # Add any additional project specific build hooks you need in the environment after this line
+# If you are setting up a WordPress multidomain multisite, make sure you require the "mizzou/multisite-cookie-mapper"
+# dependency in composer.json, and then uncomment the following line
+#./scripts/digitalservice/symlink.sh /app/web/wp-content/mu-plugins/multisite-cookie-mapper/multisite-cookie-mapper.php /app/web/wp-content/mu-plugins/multisite-cookie-mapper.php
