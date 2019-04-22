@@ -7,7 +7,7 @@
         "simplesamlphp/simplesamlphp": "1.16.*",
         "johnpbloch/wordpress-core-installer": "^1.0",
         "johnpbloch/wordpress-core": "^5.1.1",
-        "wpackagist-plugin/wp-saml-auth": "^0.5.1",
+        "wpackagist-plugin/wp-saml-auth": ">=0.5.1 <1.0.0",
         "mizzou/simplesaml-wp": "^0.2.1",
         "wpackagist-theme/twentyseventeen": "^2.1",
         "wpackagist-plugin/classic-editor": "^1.4",
