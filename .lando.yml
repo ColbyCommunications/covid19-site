@@ -28,5 +28,9 @@ tooling:
     cmd: "/app/scripts/digitalservice/lando-platform-db-pull.sh"
   platform-db-ms-update:
     service: appserver
-    description:
+    description: Updates the domains in a multisite to the ones created by lando
     cmd: "php /app/scripts/digitalservice/update-multisite-db.php"
+  platform:
+    service: appserver
+    description: Platform CLI passthru
+    cmd: "platform"
