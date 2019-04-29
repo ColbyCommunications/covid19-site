@@ -124,12 +124,12 @@ if (filter_var($boolMultisite, FILTER_VALIDATE_BOOLEAN) && 'master' !== getenv('
             }
 
 
-            echo "Our list of current domains from wp: \n",var_export($aryCurrentDomains, true), "\n";
+            //echo "Our list of current domains from wp: \n",var_export($aryCurrentDomains, true), "\n";
             //exit();
 
             $aryDomainsToProcess = array_diff($aryNewDomains, $aryCurrentDomains);
 
-            echo "Our domains to process from the diff:\n",var_export($aryDomainsToProcess, true), "\n";
+            //echo "Our domains to process from the diff:\n",var_export($aryDomainsToProcess, true), "\n";
             //exit();
             /**
              * Have all the domains already been converted (database was previously synced)?
@@ -145,7 +145,7 @@ if (filter_var($boolMultisite, FILTER_VALIDATE_BOOLEAN) && 'master' !== getenv('
 
                         //now find all of the domains in our list that match
                         $aryMatchedDomains = preg_grep($strPattern, $aryDomainsToProcess);
-                        echo 'For the domain ', $strDomain, " here are the matching local domains:\n", var_export($aryMatchedDomains, true),"\n";
+                        //echo 'For the domain ', $strDomain, " here are the matching local domains:\n", var_export($aryMatchedDomains, true),"\n";
                         if (count($aryMatchedDomains) > 0) {
                             preg_match($strPattern, reset($aryMatchedDomains), $aryMatchedDomain);
                             //echo 'Updating database for domain ', $strDomain, ' to the new local domain ', $aryMatchedDomain[1], "\n";
@@ -155,13 +155,13 @@ if (filter_var($boolMultisite, FILTER_VALIDATE_BOOLEAN) && 'master' !== getenv('
                             $strSiteTable = $strTablePrefix . 'site';
                             $strBlogTable = $strTablePrefix . 'blogs';
 
-                            echo "Replacing $strDomain with $aryMatchedDomain[1] in site and blogs using the pattern $strDomainPattern\n";
+                            //echo "Replacing $strDomain with $aryMatchedDomain[1] in site and blogs using the pattern $strDomainPattern\n";
                             //echo "command I would execute: 'wp search-replace '$strDomainPattern' $aryMatchedDomain[1] $strSiteTable $strBlogTable --regex --include-columns=$strIncludeColumnsSiteBlogs --path=$strPathtoWP --url=$strDomain --verbose' \n";
                             `wp search-replace '$strDomainPattern' $aryMatchedDomain[1] $strSiteTable $strBlogTable --regex --include-columns=$strIncludeColumnsSiteBlogs --path=$strPathtoWP --url=$strDomain --verbose`;
                             $strDomainPattern = '(https?):\/\/'.$strDomainPattern;
                             $strOptionsTable = $strTablePrefix.((1 === $intBlogID) ? '' : $intBlogID . '_').'options';
                             $strPostsTable = $strTablePrefix.((1 === $intBlogID) ? '' : $intBlogID . '_').'posts';
-                            echo "Replacing $strDomain with $aryMatchedDomain[1] in options and posts using the pattern $strDomainPattern\n";
+                            //echo "Replacing $strDomain with $aryMatchedDomain[1] in options and posts using the pattern $strDomainPattern\n";
                             //echo "Command I would exectute: wp search-replace '$strDomainPattern' '\$1://$aryMatchedDomain[1]' '$strOptionsTable' '$strPostsTable' --regex --include-columns=$strIncludeColumnsPostOptions --path=$strPathtoWP --url=$aryMatchedDomain[1] --verbose \n";
                             `wp search-replace '$strDomainPattern' '\$1://$aryMatchedDomain[1]' '$strOptionsTable' '$strPostsTable' --regex --include-columns=$strIncludeColumnsPostOptions --path=$strPathtoWP --url=$aryMatchedDomain[1] --verbose`;
                         } else {
