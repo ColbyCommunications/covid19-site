@@ -6,8 +6,9 @@ config:
 env_file:
     - lando.env
 
-events:
-    pre-start:
+services:
+  appserver:
+    build:
         - "echo 'creating simplesaml directories...'"
         - "/app/scripts/digitalservice/lando-create-simplesaml.sh"
         # Intall the platform.sh CLI and make sure it is up to date.
@@ -15,12 +16,15 @@ events:
         - "mkdir -p /var/www/.platformsh && mkdir -p /var/www/.platformsh/bin"
         - "curl -fsSL -o /var/www/.platformsh/bin/platform https://github.com/platformsh/platformsh-cli/releases/download/v3.37.1/platform.phar"
         - "chmod ug+x /var/www/.platformsh/bin/platform"
+        #- "ln -s -f /var/www/.platformsh/bin/platform /app/vendor/bin/platform"
+        #- export PATH="/var/www/.platformsh/bin/platform:${PATH}"
+        - "platform self-update -y"
         - "wp package install wp-cli/find-command"
         - "cd /app && composer install"
-    post-start:
-        - "ln -s -f /var/www/.platformsh/bin/platform /app/vendor/bin/platform"
-        # update the CLI
-        - "platform self-update -y"
+    run:
+        - "./scripts/digitalservice/lando-project-set.sh"
+        - "./scripts/digitalservice/lando-platform-sync.sh"
+
 tooling:
   platform-db-pull:
     service: appserver
@@ -30,6 +34,18 @@ tooling:
     service: appserver
     description: Updates the domains in a multisite to the ones created by lando
     cmd: "php /app/scripts/digitalservice/update-multisite-db.php"
+  platform-sync-all:
+    service: appserver
+    description: Syncs both the database and the media files (uploads) from the associated platform project.
+    cmd: "/app/scripts/digitalservice/lando-platform-sync.sh y y"
+  platform-media-sync:
+    service: appserver
+    description: Syncs the media files (uploads) from the associated platform project.
+    cmd: "/app/scripts/digitalservice/lando-platform-media-sync.sh"
+  platform-set-project:
+    service: appserver
+    description: Associates this lando project with a platform project so you don't have to select it every time.
+    cmd: "/app/scripts/digitalservice/lando-project-set.sh y"
   platform:
     service: appserver
     description: Platform CLI passthru
