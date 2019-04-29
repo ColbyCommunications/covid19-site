@@ -39,6 +39,23 @@ $boolMultisite = getenv('MULTISITE');
  * development environment.
  */
 if (filter_var($boolMultisite, FILTER_VALIDATE_BOOLEAN) && 'master' !== getenv('PLATFORM_BRANCH')) {
+    /**
+     * Only search columns we know we need to change.
+     * `option_name` is not included. Do we need to include it?
+     */
+    $strIncludeColumnsPostOptions = implode(array(
+        'option_value',
+        'post_content',
+        'post_excerpt',
+        'post_content_filtered'
+    ),',');
+
+    /**
+     * Should only need the one column: domain
+     *
+     */
+    $strIncludeColumnsSiteBlogs = 'domain';
+
     echo "Beginning multisite database update check...\n";
     //ok, where are we?
     if (false !== $strRoutes = getenv('PLATFORM_ROUTES')) {
@@ -78,8 +95,8 @@ if (filter_var($boolMultisite, FILTER_VALIDATE_BOOLEAN) && 'master' !== getenv('
         if (is_array($aryProductionDomains) && count($aryProductionDomains) > 0) {
             //FINALLY we can work
             /**
-             * @todo wp find on platform not working. If we can get it working, switch back to finding the the wp directory
-             * instead of assuming where it is.
+             * @todo wp find on platform not working. If we can get it working, switch back to finding the the wp
+             * directory instead of assuming where it is.
              *
              * strFindPathtoWP = exec("wp find \$$strAppPathENV --fields=wp_path --format=json --quiet");
              * $objPath = json_decode($strFindPathtoWP);
@@ -90,18 +107,30 @@ if (filter_var($boolMultisite, FILTER_VALIDATE_BOOLEAN) && 'master' !== getenv('
             //we also need the primary domain of the site
             // @todo what do we do if PRIMARY_DOMAIN has not been set?
             $strPrimaryDomain = getenv('PRIMARY_DOMAIN');
+            //and the table prefix
+            $strTablePrefix = rtrim(`wp config get table_prefix --path=$strPathtoWP --url=$strPrimaryDomain`);
+            echo "table prefix: ", $strTablePrefix,"\n";
             echo "Our list of potential new domains:\n",var_export($aryNewDomains, true),"\n";
 
 //now we need to get the list of domains from the database to see if we actually need to update them
-            $strCurrentDomains = `wp site list --field=url --format=csv --no-header --path=$strPathtoWP --url=$strPrimaryDomain`;
-            $aryCurrentDomains = str_getcsv($strCurrentDomains, "\n");
+            $strCurrentDomains = `wp site list --fields=blog_id,url --format=csv --no-header --path=$strPathtoWP --url=$strPrimaryDomain`;
+            $aryCurrentDomainsRows = str_getcsv($strCurrentDomains, "\n");
+            //why doesnt str_getcsv() parse the _rows_ from a csv string?!?!?
+            $aryCurrentDomains = array();
+            foreach ($aryCurrentDomainsRows as $strRow) {
+                $aryRow = str_getcsv($strRow);
+                var_export($aryRow);
+                $aryCurrentDomains[$aryRow[0]] = parse_url($aryRow[1], PHP_URL_HOST);
+            }
+
 
             echo "Our list of current domains from wp: \n",var_export($aryCurrentDomains, true), "\n";
+            //exit();
 
             $aryDomainsToProcess = array_diff($aryNewDomains, $aryCurrentDomains);
 
             echo "Our domains to process from the diff:\n",var_export($aryDomainsToProcess, true), "\n";
-
+            //exit();
             /**
              * Have all the domains already been converted (database was previously synced)?
              * If new domains is empty, then the diff will be empty
@@ -109,24 +138,39 @@ if (filter_var($boolMultisite, FILTER_VALIDATE_BOOLEAN) && 'master' !== getenv('
             if (count($aryDomainsToProcess) > 0) {
                 echo "There are domains that need to be updated in the database. Beginning conversion...\n";
                 foreach ($aryProductionDomains as $strDomain) {
-                    $strPattern = sprintf('/^https:\/\/(%s([^\/]+))/', $strDomain);
-                    //now find all of the domains in our list that match
-                    $aryMatchedDomains = preg_grep($strPattern, $aryDomainsToProcess);
-                    echo 'For the domain ', $strDomain, " here are the matching local domains:\n", var_export($aryMatchedDomains, true),"\n";
-                    if (count($aryMatchedDomains) > 0) {
-                        preg_match($strPattern, reset($aryMatchedDomains), $aryMatchedDomain);
-                        //echo 'Updating database for domain ', $strDomain, ' to the new local domain ', $aryMatchedDomain[1], "\n";
-                        //prep our original domain
-                        $strDomainPattern = sprintf('(%s[^\/]*)', str_replace('.', '\.', $strDomain));
-                        //now update the database
-                        echo "Replacing $strDomain with $aryMatchedDomain[1] in site and blogs using the pattern $strDomainPattern\n";
-                        `wp search-replace '$strDomainPattern' $aryMatchedDomain[1] *_site *_blogs --regex --path=$strPathtoWP --url=$strDomain --verbose`;
-                        $strDomainPattern = '(https?):\/\/'.$strDomainPattern;
-                        echo "Replacing $strDomain with $aryMatchedDomain[1] in options and posts using the pattern $strDomainPattern\n";
-                        `wp search-replace '$strDomainPattern' '\$1://$aryMatchedDomain[1]' '*_options' '*_posts' --skip-columns=guid --regex --path=$strPathtoWP --url=$aryMatchedDomain[1] --verbose`;
+                    //is this domain even in our list of domains in the site for us to change?
+                    $intBlogID = array_search($strDomain, $aryCurrentDomains);
+                    if (false !== $intBlogID) {
+                        $strPattern = sprintf('/^https:\/\/(%s([^\/]+))/', $strDomain);
+
+                        //now find all of the domains in our list that match
+                        $aryMatchedDomains = preg_grep($strPattern, $aryDomainsToProcess);
+                        echo 'For the domain ', $strDomain, " here are the matching local domains:\n", var_export($aryMatchedDomains, true),"\n";
+                        if (count($aryMatchedDomains) > 0) {
+                            preg_match($strPattern, reset($aryMatchedDomains), $aryMatchedDomain);
+                            //echo 'Updating database for domain ', $strDomain, ' to the new local domain ', $aryMatchedDomain[1], "\n";
+                            //prep our original domain
+                            $strDomainPattern = sprintf('(%s[^\/]*)', str_replace('.', '\.', $strDomain));
+                            //now update the database
+                            $strSiteTable = $strTablePrefix . 'site';
+                            $strBlogTable = $strTablePrefix . 'blogs';
+
+                            echo "Replacing $strDomain with $aryMatchedDomain[1] in site and blogs using the pattern $strDomainPattern\n";
+                            //echo "command I would execute: 'wp search-replace '$strDomainPattern' $aryMatchedDomain[1] $strSiteTable $strBlogTable --regex --include-columns=$strIncludeColumnsSiteBlogs --path=$strPathtoWP --url=$strDomain --verbose' \n";
+                            `wp search-replace '$strDomainPattern' $aryMatchedDomain[1] $strSiteTable $strBlogTable --regex --include-columns=$strIncludeColumnsSiteBlogs --path=$strPathtoWP --url=$strDomain --verbose`;
+                            $strDomainPattern = '(https?):\/\/'.$strDomainPattern;
+                            $strOptionsTable = $strTablePrefix.((1 === $intBlogID) ? '' : $intBlogID . '_').'options';
+                            $strPostsTable = $strTablePrefix.((1 === $intBlogID) ? '' : $intBlogID . '_').'posts';
+                            echo "Replacing $strDomain with $aryMatchedDomain[1] in options and posts using the pattern $strDomainPattern\n";
+                            //echo "Command I would exectute: wp search-replace '$strDomainPattern' '\$1://$aryMatchedDomain[1]' '$strOptionsTable' '$strPostsTable' --regex --include-columns=$strIncludeColumnsPostOptions --path=$strPathtoWP --url=$aryMatchedDomain[1] --verbose \n";
+                            `wp search-replace '$strDomainPattern' '\$1://$aryMatchedDomain[1]' '$strOptionsTable' '$strPostsTable' --regex --include-columns=$strIncludeColumnsPostOptions --path=$strPathtoWP --url=$aryMatchedDomain[1] --verbose`;
+                        } else {
+                            echo "$strDomain is already updated. Skipping.\n";
+                        }
                     } else {
-                        echo "$strDomain is already updated. Skipping.\n";
+                        echo "$strDomain is not an active site in this multisite. Skipping.\n";
                     }
+
                 }
                 echo "Conversion of domains completed.\n";
             }
@@ -141,6 +185,4 @@ if (filter_var($boolMultisite, FILTER_VALIDATE_BOOLEAN) && 'master' !== getenv('
         echo "The file ", MULTISITE_DOMAINS_FILE, " is missing or not located in the APP root (", $strPathToApp,"). I can't remap your ";
         echo "domains without this file. Please create this file, add your domains and then try again.\n";
     }
-
-
 }
