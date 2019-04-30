@@ -31,6 +31,13 @@
 ################################
 ###        WORDPRESS        ###
 ###############################
+    # For both /wp-admin/ and /wp-includes/ : 
+    # Multi domain multisites do not respect the WP_SITEURL constant in Wp-config. Since the vast majority of
+    # migrated multisites were not set up using this constant, their siteurl location is hard-coded into the db
+    # Because of this, WordPress and plugins are unaware that core files are located in /wp/. This allows those
+    # sites to continue to function properly, and single sites are unaffected as they respect the WP_SITEURL
+    # constant. New multisites set up with the new paradigm will have their siteurl setting set correctly and will
+    # also not be affected by this setting.
     "/wp-admin":
       root: 'web/wp/wp-admin'
       allow: true
