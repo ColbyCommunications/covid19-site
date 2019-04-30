@@ -20,12 +20,11 @@ services:
         - "mkdir -p /var/www/.platformsh && mkdir -p /var/www/.platformsh/bin"
         - "curl -fsSL -o /var/www/.platformsh/bin/platform https://github.com/platformsh/platformsh-cli/releases/download/v3.37.1/platform.phar"
         - "chmod ug+x /var/www/.platformsh/bin/platform"
-        #- "ln -s -f /var/www/.platformsh/bin/platform /app/vendor/bin/platform"
-        #- export PATH="/var/www/.platformsh/bin/platform:${PATH}"
-        - "platform self-update -y"
         - "wp package install wp-cli/find-command"
         - "cd /app && composer install"
     run:
+        - "export PATH=/var/www/.platformsh/bin/:$PATH"
+        - "platform self-update -y"
         - "./scripts/digitalservice/lando-project-set.sh"
         - "./scripts/digitalservice/lando-platform-sync.sh"
 
