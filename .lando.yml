@@ -1,3 +1,5 @@
+# Change the name property to the name of your project. Suggestions is to use the name of your project in Platform,
+# which is also the name/slug of your repository on gitlab
 name: some-site
 recipe: wordpress
 config:
@@ -52,3 +54,13 @@ tooling:
     service: appserver
     description: Platform CLI passthru
     cmd: "platform"
+
+# If you are setting up a WordPress multisite, you will need to uncomment the next few lines.  For each domain in your
+# multisite, you will need them in the list. Please append '.lndo.info' to the end of your production domain names
+# (e.g. digitalservice.missouri.edu.lndo.info) so the database update script knows how to match your production domain
+# names to those in lando.
+#proxy:
+#    appserver_nginx:
+#        - site1.missouri.edu.lndo.site
+#        - site2.missouri.edu.lndo.site
+#        - site3.missouri.edu.lndo.site
