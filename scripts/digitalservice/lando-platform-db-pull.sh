@@ -9,7 +9,7 @@ if [[ -z ${CENTRY+x} ]]; then
 fi
 
 printf "${CINFO}Retrieving sql file from platform...${CRESET}\n"
-/var/www/.platformsh/bin/platform db:dump -e master -f /app/platform.sql
+platform db:dump -e master -f /app/platform.sql
 printf "${CINFO}Retrieved sql file from platform. Beginning import...${CRESET}\n"
 wp db import /app/platform.sql
 printf "${CINFO}Removing SQL file..."
