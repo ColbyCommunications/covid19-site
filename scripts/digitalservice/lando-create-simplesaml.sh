@@ -8,6 +8,7 @@
 
 LANDO_SAML_DIRS=(/app/simplesaml /app/simplesaml/logs /app/simplesaml/cert /app/simplesaml/data /app/simplesaml/tmp)
 
+printf "Creating simplesaml directories... \n"
 for i in "${LANDO_SAML_DIRS[@]}"
 do
   if [ -d $i ]; then
