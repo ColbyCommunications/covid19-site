@@ -3,6 +3,7 @@
 // Set host values
 $site_scheme = 'http';
 $site_host = 'localhost';
+$strDomainRequest = "SERVER_NAME";
 
 if (isset($_SERVER['HTTP_HOST'])) {
     $site_host = $_SERVER['HTTP_HOST'];
@@ -141,11 +142,26 @@ define('WP_HOME', $site_scheme . '://' . $site_host);
 define('WP_SITEURL', WP_HOME . '/wp');
 
 define( 'WP_CONTENT_DIR', dirname( __FILE__ ) . '/web/wp-content' );
-define( 'WP_CONTENT_URL', WP_HOME . '/wp-content' );
 
+$strContentURL =  WP_HOME . '/wp-content';
 if (MULTISITE) {
     define('DOMAIN_CURRENT_SITE', $site_host);
+    /**
+     * We need to define the cookie domain constant if we're on a multi domain multisite
+     */
+    if (SUBDOMAIN_INSTALL) {
+        $strContentURL = '/wp-content';
+        //we'll set the cookie_domain constant to the correct requested domain
+        if (isset($_SERVER[$strDomainRequest])) {
+            $strDomainPattern = '/^(?:www.)?((?:[A-Za-z0-9_\-]+\.){1,6}[A-Za-z0-9_\-]{2,})$/';
+            if (1 === preg_match($strDomainPattern, $_SERVER[$strDomainRequest], $aryMatches)) {
+                define('COOKIE_DOMAIN', $aryMatches[1]);
+            }
+        }
+    }
 }
+
+define( 'WP_CONTENT_URL', $strContentURL);
 
 // Since you can have multiple installations in one database, you need a unique
 // prefix.
