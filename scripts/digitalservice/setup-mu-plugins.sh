@@ -1,11 +1,12 @@
 #!/usr/bin/env bash
 #die if there is an error
 set -e
+#we need to know where we're working from
+DIR="${BASH_SOURCE%/*}"
+if [[ ! -d "$DIR" ]]; then DIR="$PWD"; fi
+
 # go get our color definitions
 if [[ -z ${CENTRY+x} ]]; then
-    DIR="${BASH_SOURCE%/*}"
-    if [[ ! -d "$DIR" ]]; then DIR="$PWD"; fi
-
     #pull in our global vars
     . "${DIR}/globvars.sh"
 fi
@@ -14,7 +15,7 @@ function createsymlink {
     local FROM=$1
     local TO=$2
 
-    . "${DIR}/symlink.sh ${1} ${2}"
+    . "${DIR}/symlink.sh" "${1}" "${2}"
 }
 
 
