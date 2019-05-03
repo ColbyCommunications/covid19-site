@@ -141,9 +141,11 @@ if (filter_var($boolMultisite, FILTER_VALIDATE_BOOLEAN) && 'master' !== getenv('
             }
 
             $aryCurrentDomains = array();
-            foreach ($aryCurrentDomainsRows as $strRow) {
-                $aryRow = str_getcsv($strRow);
-                $aryCurrentDomains[$aryRow[0]] = parse_url($aryRow[1], PHP_URL_HOST);
+            if (count($aryCurrentDomainsRows) > 0) {
+                foreach ($aryCurrentDomainsRows as $strRow) {
+                    $aryRow = str_getcsv($strRow);
+                    $aryCurrentDomains[$aryRow[0]] = parse_url($aryRow[1], PHP_URL_HOST);
+                }
             }
 
             $aryDomainsToProcess = array_diff($aryNewDomains, $aryCurrentDomains);
