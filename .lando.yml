@@ -22,6 +22,7 @@ services:
         - "./scripts/digitalservice/lando-project-set.sh"
         - "./scripts/digitalservice/lando-platform-sync.sh"
         - "cd /app && composer install"
+        - "./scripts/digitalservice/setup-mu-plugins.sh"
 
 tooling:
   platform-db-pull:
