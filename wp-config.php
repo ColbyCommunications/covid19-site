@@ -150,6 +150,13 @@ if (MULTISITE) {
      */
     if (SUBDOMAIN_INSTALL) {
         $strContentURL = '/wp-content';
+        //we'll set the cookie_domain constant to the correct requested domain
+        if (isset($_SERVER[$strDomainRequest])) {
+            $strDomainPattern = '/^(?:www.)?((?:[A-Za-z0-9_\-]+\.){1,6}[A-Za-z0-9_\-]{2,})$/';
+            if (1 === preg_match($strDomainPattern, $_SERVER[$strDomainRequest], $aryMatches)) {
+                define('COOKIE_DOMAIN', $aryMatches[1]);
+            }
+        }
     }
 }
 

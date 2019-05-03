@@ -16,6 +16,8 @@ if ('ON' === getenv('LANDO')) {
     define('WP_DEBUG_SCREEN', false);
 
     if (MULTISITE && SUBDOMAIN_INSTALL) {
+        //we need to know which domain has been requested later when COOKIE_DOMAIN is set.
+        $strDomainRequest = 'HTTP_HOST';
         if (false !== $strPrimaryDomain = getenv('PRIMARY_DOMAIN')) {
             $aryRoutes = $objLandoInfo->appserver_nginx->urls;
             $strLookForDomain = str_replace('.', '\.', $strPrimaryDomain);
