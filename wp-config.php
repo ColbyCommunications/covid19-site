@@ -155,10 +155,6 @@ if (MULTISITE) {
 
 define( 'WP_CONTENT_URL', $strContentURL);
 
-if (MULTISITE) {
-    define('DOMAIN_CURRENT_SITE', $site_host);
-}
-
 // Since you can have multiple installations in one database, you need a unique
 // prefix.
 $table_prefix  = 'wp_';
