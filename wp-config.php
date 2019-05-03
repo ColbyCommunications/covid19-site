@@ -3,6 +3,7 @@
 // Set host values
 $site_scheme = 'http';
 $site_host = 'localhost';
+$strDomainRequest = "SERVER_NAME";
 
 if (isset($_SERVER['HTTP_HOST'])) {
     $site_host = $_SERVER['HTTP_HOST'];
