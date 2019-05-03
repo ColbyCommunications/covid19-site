@@ -141,7 +141,19 @@ define('WP_HOME', $site_scheme . '://' . $site_host);
 define('WP_SITEURL', WP_HOME . '/wp');
 
 define( 'WP_CONTENT_DIR', dirname( __FILE__ ) . '/web/wp-content' );
-define( 'WP_CONTENT_URL', WP_HOME . '/wp-content' );
+
+$strContentURL =  WP_HOME . '/wp-content';
+if (MULTISITE) {
+    define('DOMAIN_CURRENT_SITE', $site_host);
+    /**
+     * We need to define the cookie domain constant if we're on a multi domain multisite
+     */
+    if (SUBDOMAIN_INSTALL) {
+        $strContentURL = '/wp-content';
+    }
+}
+
+define( 'WP_CONTENT_URL', $strContentURL);
 
 if (MULTISITE) {
     define('DOMAIN_CURRENT_SITE', $site_host);
