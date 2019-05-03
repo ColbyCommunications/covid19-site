@@ -1,6 +1,4 @@
 #!/usr/bin/env bash
-#die if there is an error
-set -e
 #we need to know where we're working from
 DIR="${BASH_SOURCE%/*}"
 if [[ ! -d "$DIR" ]]; then DIR="$PWD"; fi
