@@ -3,6 +3,7 @@
 #ignore core wordpress files installed by composer
 /web/wp/
 #ignore Everything in wp-content (plugins,themes,etc.) installed by composer
+/web/wp-content/*
 /web/wp-content/themes/*
 !/web/wp-content/themes/README.md
 !/web/wp-content/plugins/index.php
