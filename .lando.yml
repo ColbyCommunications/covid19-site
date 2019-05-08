@@ -1,6 +1,6 @@
 # Change the name property to the name of your project. Suggestions is to use the name of your project in Platform,
 # which is also the name/slug of your repository on gitlab
-name: some-site
+name: mu-provost
 recipe: wordpress
 config:
     webroot: web
