@@ -72,7 +72,7 @@ if [ -d "${MUPLUGINLOC}" ]; then
         printf "${CWARN}Broken symlink!${CRESET}"
         printf "${CINFO} The symlink ${RESOURCE} is broken. Removing...${CRESET} "
         rm "${RESOURCE}"
-        printf "${CENTRY}Removed.\n"
+        printf "${CBOLD}Removed.${CRESET}\n"
       fi
     done
 fi
