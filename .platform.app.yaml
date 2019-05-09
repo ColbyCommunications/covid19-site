@@ -19,7 +19,7 @@ relationships:
   database: "mysqldb:mysql"
 
 # The size of the persistent disk of the application (in MB).
-disk: !include ./project/platform/disk.yaml
+disk: !include project/platform/disk.yaml
 
 # The mounts that will be performed when the package is deployed.
 mounts:
@@ -32,25 +32,25 @@ mounts:
 
 # The configuration of app when it is exposed to the web.
 web:
-  locations: !include ./project/platform/web.locations.yaml
+  locations: !include project/platform/web.locations.yaml
 
 dependencies:
-  php: !include ./project/platform/dependencies.php.yaml
+  php: !include project/platform/dependencies.php.yaml
 
 runtime:
-  extensions: !include ./project/platform/runtime.extensions.yaml
+  extensions: !include project/platform/runtime.extensions.yaml
 
 # The hooks that will be performed when the package is deployed.
 hooks:
     build: !include
       type: string
-      path: ./project/platform/hooks.build.yaml
+      path: project/platform/hooks.build.yaml
     deploy: !include
       type: string
-      path: ./project/platform/hooks.deploy.yaml
+      path: project/platform/hooks.deploy.yaml
 
 variables:
-  env: !include ./project/platform/variables.env.yaml
+  env: !include project/platform/variables.env.yaml
 
 # The configuration of scheduled execution.
-crons: !include ./project/platform/crons.yaml
+crons: !include project/platform/crons.yaml
