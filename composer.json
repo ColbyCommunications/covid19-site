@@ -8,16 +8,10 @@
         "johnpbloch/wordpress-core-installer": "^1.0",
         "johnpbloch/wordpress-core": "^5.1.1",
         "wpackagist-plugin/wp-saml-auth": ">=0.5.1 <1.0.0",
-        "mizzou/simplesaml-wp": ">=0.2.1 <1.0.0",
+        "mizzou/simplesaml-wp": "^0.2.1",
         "wpackagist-theme/twentyseventeen": "^2.1",
         "wpackagist-plugin/classic-editor": "^1.4",
-        "wpackagist-plugin/super-simple-account-enumeration-blocker":"^1.0.0",
-        "advanced-custom-fields/advanced-custom-fields-pro": "^5.7",
-        "wpackagist-plugin/advanced-custom-fields-nav-menu-field":"2.0.0",
-        "wpackagist-plugin/timber-library":"1.9.4",
-        "wpackagist-plugin/wpdirauth":"1.10.5",
-        "wpackagist-plugin/advanced-custom-fields":"5.7.12",
-        "mizzou/mu-provost-theme":"^1.0.0"
+        "wpackagist-plugin/super-simple-account-enumeration-blocker":"^1.0.0"
     },
     "authors": [
         {
@@ -33,12 +27,7 @@
         {
             "type": "composer",
             "url": "https://wpackagist.org/"
-        },
-        {
-            "type": "vcs",
-            "url": "git@vcs.missouri.edu:mizzou-digital/wordpress/provost-theme.git"
         }
-
     ],
     "extra" : {
         "wordpress-install-dir": "web/wp",
