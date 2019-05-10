@@ -4,8 +4,23 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "d852820cf894ee3e19b99cb3518adff8",
+    "content-hash": "80d5ff79693efa4d29e9afa58a178509",
     "packages": [
+        {
+            "name": "advanced-custom-fields/advanced-custom-fields-pro",
+            "version": "5.7.13",
+            "source": {
+                "type": "git",
+                "url": "git@vcs.missouri.edu:mizzou-digital/wordpress/advanced-custom-fields-pro.git",
+                "reference": "27ce749859502353dfeb747de7161287ff2fcd02"
+            },
+            "require": {
+                "composer/installers": "^1.4"
+            },
+            "type": "wordpress-plugin",
+            "description": "Internal clone of advanced custom fields pro plugin for use on sites within the *.missouri.edu domain.",
+            "time": "2019-03-27T20:42:05+00:00"
+        },
         {
             "name": "composer/installers",
             "version": "v1.6.0",
@@ -445,6 +460,24 @@
             ],
             "description": "Mizzou-specific simplesaml configurations",
             "time": "2018-12-20T22:23:10+00:00"
+        },
+        {
+            "name": "mizzou/mu-provost-theme",
+            "version": "1.0.2",
+            "source": {
+                "type": "git",
+                "url": "git@vcs.missouri.edu:mizzou-digital/wordpress/provost-theme.git",
+                "reference": "0587d2e8868500e9948ac07f4e556352404327f1"
+            },
+            "type": "wordpress-theme",
+            "authors": [
+                {
+                    "name": "Travis Cook",
+                    "email": "cookt@missouri.edu"
+                }
+            ],
+            "description": "WordPress theme for the Mizzou Provost website based on the base theme",
+            "time": "2019-05-10T17:19:53+00:00"
         },
         {
             "name": "mizzou/simplesaml-wp",
@@ -910,6 +943,42 @@
             "time": "2015-02-11T11:06:42+00:00"
         },
         {
+            "name": "wpackagist-plugin/advanced-custom-fields",
+            "version": "5.7.12",
+            "source": {
+                "type": "svn",
+                "url": "https://plugins.svn.wordpress.org/advanced-custom-fields/",
+                "reference": "tags/5.7.12"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://downloads.wordpress.org/plugin/advanced-custom-fields.5.7.12.zip"
+            },
+            "require": {
+                "composer/installers": "~1.0"
+            },
+            "type": "wordpress-plugin",
+            "homepage": "https://wordpress.org/plugins/advanced-custom-fields/"
+        },
+        {
+            "name": "wpackagist-plugin/advanced-custom-fields-nav-menu-field",
+            "version": "2.0.0",
+            "source": {
+                "type": "svn",
+                "url": "https://plugins.svn.wordpress.org/advanced-custom-fields-nav-menu-field/",
+                "reference": "tags/2.0.0"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://downloads.wordpress.org/plugin/advanced-custom-fields-nav-menu-field.2.0.0.zip"
+            },
+            "require": {
+                "composer/installers": "~1.0"
+            },
+            "type": "wordpress-plugin",
+            "homepage": "https://wordpress.org/plugins/advanced-custom-fields-nav-menu-field/"
+        },
+        {
             "name": "wpackagist-plugin/classic-editor",
             "version": "1.5",
             "source": {
@@ -946,6 +1015,24 @@
             "homepage": "https://wordpress.org/plugins/super-simple-account-enumeration-blocker/"
         },
         {
+            "name": "wpackagist-plugin/timber-library",
+            "version": "1.9.4",
+            "source": {
+                "type": "svn",
+                "url": "https://plugins.svn.wordpress.org/timber-library/",
+                "reference": "tags/1.9.4"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://downloads.wordpress.org/plugin/timber-library.1.9.4.zip"
+            },
+            "require": {
+                "composer/installers": "~1.0"
+            },
+            "type": "wordpress-plugin",
+            "homepage": "https://wordpress.org/plugins/timber-library/"
+        },
+        {
             "name": "wpackagist-plugin/wp-saml-auth",
             "version": "0.5.2",
             "source": {
@@ -962,6 +1049,24 @@
             },
             "type": "wordpress-plugin",
             "homepage": "https://wordpress.org/plugins/wp-saml-auth/"
+        },
+        {
+            "name": "wpackagist-plugin/wpdirauth",
+            "version": "1.10.5",
+            "source": {
+                "type": "svn",
+                "url": "https://plugins.svn.wordpress.org/wpdirauth/",
+                "reference": "tags/1.10.5"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://downloads.wordpress.org/plugin/wpdirauth.1.10.5.zip"
+            },
+            "require": {
+                "composer/installers": "~1.0"
+            },
+            "type": "wordpress-plugin",
+            "homepage": "https://wordpress.org/plugins/wpdirauth/"
         },
         {
             "name": "wpackagist-theme/twentyseventeen",

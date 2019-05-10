@@ -17,7 +17,7 @@
         "wpackagist-plugin/timber-library":"1.9.4",
         "wpackagist-plugin/wpdirauth":"1.10.5",
         "wpackagist-plugin/advanced-custom-fields":"5.7.12",
-        "mizzou/mu-provost-theme":"1.0.0"
+        "mizzou/mu-provost-theme":"^1.0.0"
     },
     "authors": [
         {
