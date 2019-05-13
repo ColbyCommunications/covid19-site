@@ -6,7 +6,7 @@ config:
     webroot: web
     via: nginx
     config:
-      vhosts: ./.lando/wordpress.conf
+      vhosts: ./project/lando/wordpress.conf
 env_file:
     - lando.env
 
