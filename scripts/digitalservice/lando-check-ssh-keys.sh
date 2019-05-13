@@ -8,8 +8,12 @@ if [[ -z ${CENTRY+x} ]]; then
     . "${DIR}/globvars.sh"
 fi
 
-printf "${CENTRY}Would you like me to your ssh keys on platform? If you have never done this, you should select 'y' [y\\N]: ${CRESET}"
-read CHECKSSH
+if [[ ! -z $1 && "y" == "${1}" ]]; then
+    CHECKSSH="${1}"
+else
+    printf "${CENTRY}Would you like me to your ssh keys on platform? If you have never done this, you should select 'y' [y\\N]: ${CRESET}"
+    read CHECKSSH
+fi
 
 #we dont want to have to worry about casing
 shopt -s nocasematch
@@ -23,7 +27,7 @@ if [[ "y" == ${CHECKSSH} ]]; then
     # 5. Remove the colons (:) : 6b36e84a4a69a282dcc893fab02dc92d
     # The final resulting hash will match the format platform is using to store hashes
     # 6. Last, convert the multiline collection of hashes into a space separated string
-    LOCALSSHKEYFINGERPRINTS=$(find ~/.ssh -type f -name '*.pub' -exec ssh-keygen -E md5 -lf {} \; | awk '{print $2}' | sed -E 's/MD5:(([a-z0-9:]+):)/\1/g' | sed 's/\://g' | paste -s -d' '  -)
+    LOCALSSHKEYFINGERPRINTS=$(find /user/.ssh -type f -name '*.pub' -exec ssh-keygen -E md5 -lf {} \; | awk '{print $2}' | sed -E 's/MD5:(([a-z0-9:]+):)/\1/g' | sed 's/\://g' | paste -s -d' '  -)
 
     # go get our remote keys
     # 1. Return the ssh fingerprints from platform, but only the Fingerprint columm, returning in csv format
@@ -42,7 +46,7 @@ if [[ "y" == ${CHECKSSH} ]]; then
 
     if [[ -z "${MATCHINGHASH}" ]]; then
         printf "${CWORKING}It appears you do not have an ssh key associated with your platform account.${CRESET}\n"
-        . "${DIR}/lando-create-ssh-keys.sh"
+        . "${DIR}/lando-create-ssh-key.sh"
     else
         printf "\n${CWORKING}It appears you already have an ssh key associated with your platform account. ${CBOLD}Skipping key set up.${CRESET}\n\n"
     fi
