@@ -23,7 +23,7 @@ function createsshkeys {
 function skipmessage {
     printf "\n${CWORKING}Skipping ssh key set up. Be aware that without an associated ssh key file on platform, you will"
     printf " be unable to sync database and media files from platform. If you need to set up keys later, run "
-    printf "${CBOLD}lando platform-setup-ssh-keys${CRESET}.\n\n"
+    printf "${CBOLD}lando platform-setup-ssh-key${CRESET}.\n\n"
 }
 
 if [[ ! -z $1 && "y" == "${1}" ]]; then
