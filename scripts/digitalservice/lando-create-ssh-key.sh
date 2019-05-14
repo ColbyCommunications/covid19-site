@@ -12,19 +12,6 @@ if [[ ! -z $1 && "y" == "${1}" ]]; then
     SKIPCHECK="${1}"
 fi
 
-function createsshkeys {
-    printf "\n${CWORKING}Beginning ssh key generation...${CRESET}\n"
-    platform ssh-key:add
-    if [[ -f ~/.ssh/id_rsa.pub ]]; then
-        mv ~/.ssh/id_rsa.pub /user/.ssh/platform.pub
-        mv ~/.ssh/id_rsa /user/.ssh/platform
-        echo "    IdentityFile /user/.ssh/platform" >> /etc/.ssh/ssh_config
-    else
-        printf "\n${CWARN}Key Files Missing!${CRESET}\n${CWORKING}The ssh key files I was expecting platform to create are"
-        printf " not there. Try running this command again. If that doesn't fix it, contact digitalservice@missouri.edu.${CRESET}\n"
-    fi
-}
-
 function skipmessage {
     printf "\n${CWORKING}Skipping ssh key set up. Be aware that without an associated ssh key file on platform, you will"
     printf " be unable to sync database and media files from platform. If you need to set up keys later, run "
@@ -60,7 +47,7 @@ if [[ "y" == "${SETUPSSH}" ]]; then
     fi
 
 
-    KEYCOUNT=$(ls -lR "${HOME}"/.ssh/*.pub | wc -l)
+    KEYCOUNT=$(find "${HOME}"/.ssh/*.pub 2> /dev/null | wc -l)
 
     if (( $KEYCOUNT > 0 )) && [[ -z ${SKIPCHECK+x} ]]; then
         printf "${CWARN}Existing Keys Detected${CRESET}\n"
@@ -82,8 +69,33 @@ if [[ "y" == "${SETUPSSH}" ]]; then
 
     printf "\n${CWORKING}Beginning ssh key generation...${CRESET}\n"
     platform ssh-key:add
-
     resethome "${OLDHOME}"
 
+    printf "${CINFO}If you set up a new ssh key on your account, you will be unable to sync the database or media files "
+    printf "from the platform environment to this lando project until the master environment has been redeployed. "
+    printf "Redploying the master environment will cause a momentary unresponsiveness from your ${CBOLD}production "
+    printf "${CRESET}${CINFO} website. Do you want to redeploy the master environment? [y/N]:${CRESET}"
+    read REDEPLOY
+
+    if [[ "y" == "${REDEPLOY}" ]]; then
+        #we need the project ID before we can try to redeploy
+        PROJECTID=$(platform p:info id 2> /dev/null)
+        PROJECTSUCCESS=$?
+        if (( 0 == $PROJECTSUCCESS )); then
+            printf "${CWORKING}Beginning redeploy process...${CRESET}\n"
+            platform redeploy -p "${PROJECTID}" -e master
+
+        else
+            printf "${CWARN}Platform Project Associated${CRESET}\n"
+            printf "${CINFO}You do not have a Platform project associated with this lando project. Once lando has finished "
+            printf "starting, please run\n${CBOLD}lando platform-set-project${CRESET}\nto associate a Platform project"
+            printf " with this lando project.${CRESET}\n"
+        fi
+    else
+        printf "${CWORKING}"
+    fi
+else
+    skipmessage
 fi
+
 shopt -u nocasematch
