@@ -14,6 +14,7 @@ function createsshkeys {
     if [[ -f ~/.ssh/id_rsa.pub ]]; then
         mv ~/.ssh/id_rsa.pub /user/.ssh/platform.pub
         mv ~/.ssh/id_rsa /user/.ssh/platform
+        echo "    IdentityFile /user/.ssh/platform" >> /etc/.ssh/ssh_config
     else
         printf "\n${CWARN}Key Files Missing!${CRESET}\n${CWORKING}The ssh key files I was expecting platform to create are"
         printf " not there. Try running this command again. If that doesn't fix it, contact digitalservice@missouri.edu.${CRESET}\n"
@@ -37,6 +38,7 @@ fi
 shopt -s nocasematch
 if [[ "y" == "${SETUPSSH}" ]]; then
     #before we begin, let's make sure they don't already have a platform.pub key
+    #@todo should we just check the /user/.ssh directory for _any_ keys and if so, try to point the 
     if [[ -f /user/.ssh/platform.pub ]]; then
         printf "\n${CWARN}Platform.pub key already exists!${CRESET}\n"
         printf "\n${CINFO}A platform.pub key already exists on your computer. It is possible you already have an ssh key"
