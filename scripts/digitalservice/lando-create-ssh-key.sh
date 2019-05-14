@@ -8,6 +8,10 @@ if [[ -z ${CENTRY+x} ]]; then
     . "${DIR}/globvars.sh"
 fi
 
+if [[ ! -z $1 && "y" == "${1}" ]]; then
+    SKIPCHECK="${1}"
+fi
+
 function createsshkeys {
     printf "\n${CWORKING}Beginning ssh key generation...${CRESET}\n"
     platform ssh-key:add
@@ -27,6 +31,16 @@ function skipmessage {
     printf "${CBOLD}lando platform-setup-ssh-key${CRESET}.\n\n"
 }
 
+function resethome {
+    if [[ ! -z $1 ]]; then
+        PREVHOME="$1"
+    else
+        PREVHOME="/var/www"
+    fi
+
+    export HOME="${PREVHOME}"
+}
+
 if [[ ! -z $1 && "y" == "${1}" ]]; then
     SETUPSSH="${1}"
 else
@@ -37,36 +51,39 @@ fi
 #we dont want to have to worry about casing
 shopt -s nocasematch
 if [[ "y" == "${SETUPSSH}" ]]; then
-    #before we begin, let's make sure they don't already have a platform.pub key
-    #@todo should we just check the /user/.ssh directory for _any_ keys and if so, try to point the 
-    if [[ -f /user/.ssh/platform.pub ]]; then
-        printf "\n${CWARN}Platform.pub key already exists!${CRESET}\n"
-        printf "\n${CINFO}A platform.pub key already exists on your computer. It is possible you already have an ssh key"
-        printf " associated with your platform account. Would you like me to see if you alread have a local key associated"
-        printf " with your platform account? [y/N]:${CRESET}"
-        read CHECKKEYS
-
-        if [[ "y" == "${CHECKKEYS}" ]]; then
-            . "${DIR}/lando-check-ssh-keys.sh" "y"
-        else
-            # @todo we could ask if they want to reuse the platform.pub key or create a new one
-            printf "${CINFO}Would you like to continue generating a new ssh key? Please note that if you continue, your "
-            printf "platform.pub key ${CBOLD}will be overwritten${CRESET}${CINFO}. If you would like to continue, you "
-            printf "must type in 'continue': ${CRESET}"
-            read CONTINUE
-
-            if [[ "continue" == "${CONTINUE}" ]]; then
-                createsshkeys
-            else
-                skipmessage
-            fi
-        fi
-    else
-        createsshkeys
+    #see if HOME is already set to the "Correct" location for keys
+    if [[ "/user" != "${HOME}" ]]; then
+        printf "\n${CWORKING}HOME is not set correctly. Fixing... ${CRESET}"
+        OLDHOME="${HOME}"
+        export HOME="/user"
+        printf "${CBOLD}Fixed.${CRESET}\n"
     fi
-else
-    skipmessage
-fi
 
-#reset casing
+
+    KEYCOUNT=$(ls -lR "${HOME}"/.ssh/*.pub | wc -l)
+
+    if (( $KEYCOUNT > 0 )) && [[ -z ${SKIPCHECK+x} ]]; then
+        printf "${CWARN}Existing Keys Detected${CRESET}\n"
+        printf "${CWORKING}It appears you have existing ssh keys. Would you like for me to check to see if you have already "
+        printf "associated one of these keys with your platform account? [y/N]:${CRESET}"
+        read CHECKACCOUNT
+        if [[ "y" == "${CHECKACCOUNT}" ]]; then
+            resethome "${OLDHOME}"
+            . "${DIR}/lando-check-ssh-keys.sh" "y"
+            # I don't like exiting but not sure how to restructure
+            exit 0
+        else
+            printf "${CINFO}If you have existing keys ${CBOLD}other than id_rsa.pub${CRESET} that you want to associate "
+            printf "then you will need to answer 'no' to the remaining questions, and then run the command ${CRESET}\n"
+            printf "${CBOLD}lando platform ssh-key:add /user/<keyname>.pub${CRESET}\n"
+            printf "replacing <keyname> with the name of the key you want to use.\n"
+        fi
+    fi
+
+    printf "\n${CWORKING}Beginning ssh key generation...${CRESET}\n"
+    platform ssh-key:add
+
+    resethome "${OLDHOME}"
+
+fi
 shopt -u nocasematch
