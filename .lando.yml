@@ -49,11 +49,11 @@ tooling:
   platform-setup-ssh-key:
     service: appserver
     description: Sets up a local ssh key and associates with your platform account.
-    cmd: "/app/scripts/digitalservice/lando-create-ssh-key.sh"
+    cmd: "/app/scripts/digitalservice/lando-create-ssh-key.sh y"
   platform-check-keys:
     service: appserver
     description: Checks your local ssh keys and sees if any are associated with your platform account.
-    cmd: "/app/scripts/digitalservice/lando-check-ssh-keys.sh"
+    cmd: "/app/scripts/digitalservice/lando-check-ssh-keys.sh y"
   platform:
     service: appserver
     description: Platform CLI passthru
