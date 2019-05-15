@@ -13,9 +13,9 @@ if [[ ! -z $1 && "y" == "${1}" ]]; then
 fi
 
 function skipmessage {
-    printf "\n${CWORKING}Skipping ssh key set up. Be aware that without an associated ssh key file on platform, you will"
-    printf " be unable to sync database and media files from platform. If you need to set up keys later, run "
-    printf "${CBOLD}lando platform-setup-ssh-key${CRESET}.\n\n"
+    printf "\n${CWORKING}Skipping ssh key set up. Be aware that without an associated ssh key file\n"
+    printf "on platform, you will be unable to sync database and media files from platform. If you \n"
+    printf "need to set up keys later, run ${CBOLD}lando platform-setup-ssh-key${CRESET}.\n\n"
 }
 
 function resethome {
@@ -31,7 +31,8 @@ function resethome {
 if [[ ! -z $1 && "y" == "${1}" ]]; then
     SETUPSSH="${1}"
 else
-    printf "${CENTRY}Would you like me to set up an ssh key to and associate it with your platform account? If you have never done this, you should select 'y' [y\\N]: ${CRESET}"
+    printf "${CENTRY}Would you like me to set up an ssh key to and associate it with your \n"
+    printf "platform account? If you have never done this, you should select 'y' [y\\N]: ${CRESET}"
     read SETUPSSH
 fi
 
@@ -51,8 +52,8 @@ if [[ "y" == "${SETUPSSH}" ]]; then
 
     if (( $KEYCOUNT > 0 )) && [[ -z ${SKIPCHECK+x} ]]; then
         printf "${CWARN}Existing Keys Detected${CRESET}\n"
-        printf "${CWORKING}It appears you have existing ssh keys. Would you like for me to check to see if you have already "
-        printf "associated one of these keys with your platform account? [y/N]:${CRESET}"
+        printf "${CWORKING}It appears you have existing ssh keys on this machine. Would you like for me to check \n"
+        printf "to see if you have already associated one of these keys with your platform account? [y/N]:${CRESET}"
         read CHECKACCOUNT
         if [[ "y" == "${CHECKACCOUNT}" ]]; then
             resethome "${OLDHOME}"
@@ -60,7 +61,7 @@ if [[ "y" == "${SETUPSSH}" ]]; then
             # I don't like exiting but not sure how to restructure
             exit 0
         else
-            printf "${CINFO}If you have existing keys ${CBOLD}other than id_rsa.pub${CRESET} that you want to associate "
+            printf "${CINFO}If you have existing keys ${CBOLD}other than id_rsa.pub${CRESET} that you want to associate \n"
             printf "then you will need to answer 'no' to the remaining questions, and then run the command ${CRESET}\n"
             printf "${CBOLD}lando platform ssh-key:add /user/<keyname>.pub${CRESET}\n"
             printf "replacing <keyname> with the name of the key you want to use.\n"
@@ -71,10 +72,11 @@ if [[ "y" == "${SETUPSSH}" ]]; then
     platform ssh-key:add
     resethome "${OLDHOME}"
 
-    printf "${CINFO}If you set up a new ssh key on your account, you will be unable to sync the database or media files "
-    printf "from the platform environment to this lando project until the master environment has been redeployed. "
-    printf "Redploying the master environment will cause a momentary unresponsiveness from your ${CBOLD}production "
-    printf "${CRESET}${CINFO} website. Do you want to redeploy the master environment? [y/N]:${CRESET}"
+    printf "${CINFO}If you set up a new ssh key on your account, you will be unable to sync the \n"
+    printf "database or media files from the platform environment to this lando project until the \n"
+    printf "master environment has been redeployed. Redploying the master environment will cause \n"
+    printf "a momentary unresponsiveness from your ${CBOLD}production ${CRESET}${CINFO} website. Do\n"
+    printf "you want to redeploy the master environment? [y/N]:${CRESET}"
     read REDEPLOY
 
     if [[ "y" == "${REDEPLOY}" ]]; then

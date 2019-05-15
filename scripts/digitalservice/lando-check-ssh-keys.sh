@@ -11,7 +11,8 @@ fi
 if [[ ! -z $1 && "y" == "${1}" ]]; then
     CHECKSSH="${1}"
 else
-    printf "${CENTRY}Would you like me to your ssh keys on platform? If you have never done this, you should select 'y' [y\\N]: ${CRESET}"
+    printf "${CENTRY}Would you like me to your ssh keys on platform? If you have never done \n"
+    printf "this, you should select 'y' [y\\N]: ${CRESET}"
     read CHECKSSH
 fi
 
@@ -33,7 +34,7 @@ if [[ "y" == ${CHECKSSH} ]]; then
     # 1. Return the ssh fingerprints from platform, but only the Fingerprint columm, returning in csv format
     # 2. Platform returns the column title, so use tail +2 to remove that header
     # 3. Last, convert the multiline collection of hashes into a space separated string
-    REMOTESSHKEYFINGERPRINTS=$(platform ssh-keys --columns Fingerprint --format=csv | tail -n +2 | paste -s -d' '  -)
+    REMOTESSHKEYFINGERPRINTS=$(platform ssh-keys --columns Fingerprint --format=csv --no-header 2>&1 | paste -s -d' '  -)
 
     MATCHINGHASH=""
     for HASH in ${LOCALSSHKEYFINGERPRINTS[@]}; do
@@ -45,10 +46,10 @@ if [[ "y" == ${CHECKSSH} ]]; then
     done
 
     if [[ -z "${MATCHINGHASH}" ]]; then
-        printf "${CWORKING}It appears you do not have an ssh key on this machine associated with your platform account.${CRESET}\n"
+        printf "${CWORKING}It appears you do not have an ssh key on this machine associated with\n your platform account.${CRESET}\n"
         . "${DIR}/lando-create-ssh-key.sh"
     else
-        printf "\n${CWORKING}It appears you already have an ssh key associated with your platform account. ${CBOLD}Skipping key set up.${CRESET}\n\n"
+        printf "\n${CWORKING}It appears you already have a local ssh key associated with your \nplatform account. ${CBOLD}Skipping key set up.${CRESET}\n\n"
     fi
 else
     printf "\n${CINFO}Skipping. If you need to check your keys at a later time, run ${CBOLD}lando platform-check-keys.${CRESET}\n\n"
