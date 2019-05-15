@@ -69,14 +69,14 @@ if [[ "y" == "${SETUPSSH}" ]]; then
         fi
     fi
 
-    printf "\n${CWORKING}Beginning ssh key generation...${CRESET}\n"
+    printf "${CWORKING}Beginning ssh key generation...${CRESET}\n"
     platform ssh-key:add
     resethome "${OLDHOME}"
 
-    printf "${CINFO}If you set up a new ssh key on your account, you will be unable to sync the \n"
+    printf "\n${CINFO}If you set up a new ssh key on your account, you will be unable to sync the \n"
     printf "database or media files from the platform environment to this lando project \n"
     printf "until the master environment has been redeployed. Redploying the master \n"
-    printf "environment will cause a momentary unresponsiveness from your ${CBOLD}production "
+    printf "environment will cause a momentary unresponsiveness from your ${CBOLD}production\n"
     printf "website${CRESET}${CINFO}. Do you want to redeploy the \n"
     printf "master environment? [y/N]:${CRESET}"
     read REDEPLOY

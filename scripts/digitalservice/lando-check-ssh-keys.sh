@@ -46,7 +46,7 @@ if [[ "y" == ${CHECKSSH} ]]; then
     done
 
     if [[ -z "${MATCHINGHASH}" ]]; then
-        printf "${CWORKING}It appears you do not currently have an ssh key on this machine associated \nwithyour platform account.${CRESET}\n"
+        printf "${CWORKING}It appears you do not currently have an ssh key on this machine associated \nwith your platform account.${CRESET}\n"
         . "${DIR}/lando-create-ssh-key.sh" y
     else
         printf "\n${CWORKING}It appears you already have a local ssh key associated with your \nplatform account. ${CBOLD}Skipping key set up.${CRESET}\n\n"
