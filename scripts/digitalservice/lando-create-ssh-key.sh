@@ -77,7 +77,7 @@ if [[ "y" == "${SETUPSSH}" ]]; then
     printf "database or media files from the platform environment to this lando project \n"
     printf "until the master environment has been redeployed. Redploying the master \n"
     printf "environment will cause a momentary unresponsiveness from your ${CBOLD}production\n"
-    printf "website${CRESET}${CINFO}. Do you want to redeploy the \n"
+    printf "website${CRESET}${CINFO}. Do you want to redeploy the "
     printf "master environment? [y/N]:${CRESET}"
     read REDEPLOY
 
