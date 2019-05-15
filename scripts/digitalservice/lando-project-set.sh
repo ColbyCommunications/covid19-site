@@ -9,10 +9,20 @@ if [[ -z ${CENTRY+x} ]]; then
 fi
 
 if [[ ! -z "$1" && "y" == "${1}" ]]; then
-    SETPROJECT=$1
+  SETPROJECT=$1
 else
+  #Is the project already set?
+  printf "${CWORKING}Checking to see if this project is associated with a Platform project... ${CRESET}"
+  PROJECTID=$(platform p:info id 2> /dev/null)
+  PROJECTSUCCESS=$?
+  if (( 0 != $PROJECTSUCCESS )); then
+    printf "${CWARN}Project not associated.${CRESET}\n"
     printf "${CENTRY}Would you like me to attach this lando project to a platform project? [y\\N]: ${CRESET}"
     read SETPROJECT
+  else
+    printf "${CBOLD}Check!${CRESET}\n"
+    SETPROJECT="n"
+  fi
 fi
 
 # We could potentially check `git remote -v` for the instance of a platform remote and only run if it isnt there
