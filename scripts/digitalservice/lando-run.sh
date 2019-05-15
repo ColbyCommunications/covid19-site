@@ -28,12 +28,28 @@ fi
 shopt -s nocasematch
 
 if [[ "y" == "${RUNSETUP}" ]]; then
+    #location where the user ssh directory REALLY is
+    NEWHOME="/user"
+    #if HOME isn't set to the new location, store the old location,
+    if [[ "${NEWHOME}" != "${HOME}" ]]; then
+        OLDHOME="${HOME}"
+        export HOME="/user"
+    else
+        OLDHOME="${HOME}"
+    fi
+    
     printf "${CINFO}Beginning platform setup steps...${CRESET}\n"
     . "${DIR}/lando-project-set.sh"
     . "${DIR}/lando-check-ssh-keys.sh"
+    #set the HOME directory back
+    export HOME="${OLDHOME}"
     printf "${CINFO}Beginning composer install...${CRESET}\n"
     cd /app && composer install
+    #now set it back AGAIN
+    export HOME="${NEWHOME}"
     . "${DIR}/lando-platform-sync.sh"
+    #and finally, set it back one more time
+    export HOME="${OLDHOME}"
     printf "${CINFO}Platform should now be connected to this lando project.${CRESET}\n"
 else
     printf "${CINFO}If you decide later you want to run these steps, use the command "
