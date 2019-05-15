@@ -19,13 +19,14 @@ services:
         - "./scripts/digitalservice/lando-platform-install.sh"
     run:
         - "platform self-update -y"
-        - "./scripts/digitalservice/lando-check-ssh-keys.sh"
-        - "./scripts/digitalservice/lando-project-set.sh"
-        - "./scripts/digitalservice/lando-platform-sync.sh"
-        - "cd /app && composer install"
+        - "./scripts/digitalservice/lando-run.sh"
         - "./scripts/digitalservice/setup-mu-plugins.sh"
 
 tooling:
+  platform-setup:
+    service: appserver
+    description: Runs the platform setup scripts to associate your lando project with a platform project, then syncs the database and media files from platform to lando
+    cmd: "/app/scripts/digitalservice/lando-run.sh y"
   platform-db-pull:
     service: appserver
     description: DESTRUCTIVE Pull the current Platform environment's DB into the current Lando project.
