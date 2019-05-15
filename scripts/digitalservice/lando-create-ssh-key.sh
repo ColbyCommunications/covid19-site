@@ -31,8 +31,8 @@ function resethome {
 if [[ ! -z $1 && "y" == "${1}" ]]; then
     SETUPSSH="${1}"
 else
-    printf "${CENTRY}Would you like me to set up an ssh key to and associate it with your \n"
-    printf "platform account? If you have never done this, you should select 'y' [y\\N]: ${CRESET}"
+    printf "${CENTRY}Would you like me to create and associate an ssh key with your platform\n"
+    printf "account? If you have never done this, you should select 'y' [y\\N]: ${CRESET}"
     read SETUPSSH
 fi
 
