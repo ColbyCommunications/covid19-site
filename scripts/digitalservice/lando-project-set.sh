@@ -13,7 +13,7 @@ if [[ ! -z "$1" && "y" == "${1}" ]]; then
 else
   #Is the project already set?
   printf "${CWORKING}Checking to see if this project is associated with a Platform project... ${CRESET}"
-  PROJECTID=$(platform p:info id 2> /dev/null)
+  PROJECTID=$(platform p:info id -y 2> /dev/null)
   PROJECTSUCCESS=$?
   if (( 0 != $PROJECTSUCCESS )); then
     printf "${CWARN}Project not associated.${CRESET}\n"
