@@ -41,10 +41,10 @@ shopt -s nocasematch
 if [[ "y" == "${SETUPSSH}" ]]; then
     #see if HOME is already set to the "Correct" location for keys
     if [[ "/user" != "${HOME}" ]]; then
-        printf "\n${CWORKING}HOME is not set correctly. Fixing... ${CRESET}"
+        #printf "\n${CWORKING}HOME is not set correctly. Fixing... ${CRESET}"
         OLDHOME="${HOME}"
         export HOME="/user"
-        printf "${CBOLD}Fixed.${CRESET}\n"
+        #printf "${CBOLD}Fixed.${CRESET}\n"
     fi
 
 
@@ -52,8 +52,9 @@ if [[ "y" == "${SETUPSSH}" ]]; then
 
     if (( $KEYCOUNT > 0 )) && [[ -z ${SKIPCHECK+x} ]]; then
         printf "${CWARN}Existing Keys Detected${CRESET}\n"
-        printf "${CWORKING}It appears you have existing ssh keys on this machine. Would you like for me to check \n"
-        printf "to see if you have already associated one of these keys with your platform account? [y/N]:${CRESET}"
+        printf "${CWORKING}It appears you have existing ssh keys on this machine. Would you like \n"
+        printf "for me to check to see if you have already associated one of these keys with your \n"
+        printf "platform account? [y/N]:${CRESET}"
         read CHECKACCOUNT
         if [[ "y" == "${CHECKACCOUNT}" ]]; then
             resethome "${OLDHOME}"
@@ -73,10 +74,11 @@ if [[ "y" == "${SETUPSSH}" ]]; then
     resethome "${OLDHOME}"
 
     printf "${CINFO}If you set up a new ssh key on your account, you will be unable to sync the \n"
-    printf "database or media files from the platform environment to this lando project until the \n"
-    printf "master environment has been redeployed. Redploying the master environment will cause \n"
-    printf "a momentary unresponsiveness from your ${CBOLD}production ${CRESET}${CINFO} website. Do\n"
-    printf "you want to redeploy the master environment? [y/N]:${CRESET}"
+    printf "database or media files from the platform environment to this lando project \n"
+    printf "until the master environment has been redeployed. Redploying the master \n"
+    printf "environment will cause a momentary unresponsiveness from your \n"
+    printf "${CBOLD}production website${CRESET}${CINFO}. Do you want to redeploy the \n"
+    printf "master environment? [y/N]:${CRESET}"
     read REDEPLOY
 
     if [[ "y" == "${REDEPLOY}" ]]; then

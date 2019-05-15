@@ -12,7 +12,7 @@ if [[ ! -z $1 && "y" == "${1}" ]]; then
     CHECKSSH="${1}"
 else
     printf "${CENTRY}Would you like me to your ssh keys on platform? If you have never done \n"
-    printf "this, you should select 'y' [y\\N]: ${CRESET}"
+    printf "this before, you should select 'y' [y\\N]: ${CRESET}"
     read CHECKSSH
 fi
 
@@ -46,7 +46,7 @@ if [[ "y" == ${CHECKSSH} ]]; then
     done
 
     if [[ -z "${MATCHINGHASH}" ]]; then
-        printf "${CWORKING}It appears you do not have an ssh key on this machine associated with\n your platform account.${CRESET}\n"
+        printf "${CWORKING}It appears you do not have an ssh key on this machine associated with\nyour platform account.${CRESET}\n"
         . "${DIR}/lando-create-ssh-key.sh"
     else
         printf "\n${CWORKING}It appears you already have a local ssh key associated with your \nplatform account. ${CBOLD}Skipping key set up.${CRESET}\n\n"
