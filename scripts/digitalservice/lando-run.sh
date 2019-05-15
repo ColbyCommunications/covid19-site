@@ -29,8 +29,8 @@ shopt -s nocasematch
 
 if [[ "y" == "${RUNSETUP}" ]]; then
     printf "${CINFO}Beginning platform setup steps...${CRESET}\n"
-    . "${DIR}/lando-check-ssh-keys.sh"
     . "${DIR}/lando-project-set.sh"
+    . "${DIR}/lando-check-ssh-keys.sh"
     printf "${CINFO}Beginning composer install...${CRESET}\n"
     cd /app && composer install
     . "${DIR}/lando-platform-sync.sh"
