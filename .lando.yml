@@ -19,6 +19,7 @@ services:
         - "./scripts/digitalservice/lando-platform-install.sh"
     run:
         - "platform self-update -y"
+        - "./scripts/digitalservice/lando-check-ssh-keys.sh"
         - "./scripts/digitalservice/lando-project-set.sh"
         - "./scripts/digitalservice/lando-platform-sync.sh"
         - "cd /app && composer install"
@@ -45,6 +46,14 @@ tooling:
     service: appserver
     description: Associates this lando project with a platform project so you don't have to select it every time.
     cmd: "/app/scripts/digitalservice/lando-project-set.sh y"
+  platform-setup-ssh-key:
+    service: appserver
+    description: Sets up a local ssh key and associates with your platform account.
+    cmd: "/app/scripts/digitalservice/lando-create-ssh-key.sh y"
+  platform-check-keys:
+    service: appserver
+    description: Checks your local ssh keys and sees if any are associated with your platform account.
+    cmd: "/app/scripts/digitalservice/lando-check-ssh-keys.sh y"
   platform:
     service: appserver
     description: Platform CLI passthru
