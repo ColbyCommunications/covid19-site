@@ -1,7 +1,11 @@
 #!/usr/bin/env bash
-#Figure out where we are
-DIR="${BASH_SOURCE%/*}"
-if [[ ! -d "$DIR" ]]; then DIR="$PWD"; fi
+#Has DIR already been set up?
+if [[ -z ${DIR+x} ]]; then
+    # No? ok, figure out where we are
+    DIR="${BASH_SOURCE%/*}"
+    if [[ ! -d "$DIR" ]]; then DIR="$PWD"; fi
+fi
+
 #Has our colors file already been pulled in
 if [[ -z ${CENTRY+x} ]]; then
     #pull in our global vars
@@ -22,7 +26,7 @@ function resethome {
     if [[ ! -z $1 ]]; then
         PREVHOME="$1"
     else
-        PREVHOME="/var/www"
+        PREVHOME="${DEFAULTHOME}"
     fi
 
     export HOME="${PREVHOME}"
@@ -39,10 +43,12 @@ fi
 #we dont want to have to worry about casing
 shopt -s nocasematch
 if [[ "y" == "${SETUPSSH}" ]]; then
+    DORESETHOME="n"
     #see if HOME is already set to the "Correct" location for keys
-    if [[ "/user" != "${HOME}" ]]; then
+    if [[ "${NEWHOME}" != "${HOME}" ]]; then
         #printf "\n${CWORKING}HOME is not set correctly. Fixing... ${CRESET}"
         OLDHOME="${HOME}"
+        DORESETHOME="y"
         export HOME="/user"
         #printf "${CBOLD}Fixed.${CRESET}\n"
     fi
@@ -57,7 +63,7 @@ if [[ "y" == "${SETUPSSH}" ]]; then
         printf "platform account? [y/N]:${CRESET}"
         read CHECKACCOUNT
         if [[ "y" == "${CHECKACCOUNT}" ]]; then
-            resethome "${OLDHOME}"
+            if [[ "y" == "${DORESETHOME}" ]]; then resethome "${OLDHOME}"; fi
             . "${DIR}/lando-check-ssh-keys.sh" "y"
             # I don't like exiting but not sure how to restructure
             exit 0
@@ -71,7 +77,7 @@ if [[ "y" == "${SETUPSSH}" ]]; then
 
     printf "${CWORKING}Beginning ssh key generation...${CRESET}\n"
     platform ssh-key:add
-    resethome "${OLDHOME}"
+    if [[ "y" == "${DORESETHOME}" ]]; then resethome "${OLDHOME}"; fi
 
     printf "\n${CINFO}If you set up a new ssh key on your account, you will be unable to sync the \n"
     printf "database or media files from the platform environment to this lando project \n"

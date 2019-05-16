@@ -28,8 +28,6 @@ fi
 shopt -s nocasematch
 
 if [[ "y" == "${RUNSETUP}" ]]; then
-    #location where the user ssh directory REALLY is
-    NEWHOME="/user"
     #if HOME isn't set to the new location, store the old location,
     if [[ "${NEWHOME}" != "${HOME}" ]]; then
         OLDHOME="${HOME}"
