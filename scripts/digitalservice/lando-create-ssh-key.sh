@@ -88,20 +88,23 @@ if [[ "y" == "${SETUPSSH}" ]]; then
         #they said no adding a key. warn them
         skipmessage
         if [[ "y" == "${DORESETHOME}" ]]; then resethome "${OLDHOME}"; fi
-        exit 0;
+        return 0;
     else
         #did they successfully add a key?
-        if [[ ${KEYADDRESULT} =~ "([^ ]+)\.pub has been successfully added to your Platform\.sh account" ]]; then
+        KEYADDEDPATTERN="([^ ]+)\.pub has been successfully added to your Platform\.sh account"
+        KEYEXISTSPATTERN="SSH key already exists in your"
+
+        if [[ ${KEYADDRESULT} =~ ${KEYADDEDPATTERN} ]]; then
             #ok, they DID add a key! YAY! now we need to get the key
             KEYNAME="${BASH_REMATCH[1]}"
             # now, we want to create a config file in /var/www/.ssh to point it to the pub key in /user/.ssh
-            echo "Host *\n    IdentityFile ${NEWHOME}/.ssh/${KEYNAME}" > "${DEFAULTHOME}/.ssh/config"
+            printf "Host *\n    IdentityFile ${NEWHOME}/.ssh/${KEYNAME}" > "${DEFAULTHOME}/.ssh/config"
 
-        elif [[ ! ${KEYADDRESULT} =~ "SSH key already exists in your" ]]; then
+        elif [[ ! ${KEYADDRESULT} =~ ${KEYEXISTSPATTERN} ]]; then
             #ok, they didnt add a key, and it wasnt because they already had a key. Warn them?
             skipmessage
             if [[ "y" == "${DORESETHOME}" ]]; then resethome "${OLDHOME}"; fi
-            exit 0;
+            return 0;
         fi
     fi
 
