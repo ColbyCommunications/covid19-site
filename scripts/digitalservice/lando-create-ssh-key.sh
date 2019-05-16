@@ -76,7 +76,36 @@ if [[ "y" == "${SETUPSSH}" ]]; then
     fi
 
     printf "${CWORKING}Beginning ssh key generation...${CRESET}\n"
-    platform ssh-key:add
+    # the platform cli uses stderr for messaging during interactive operations. But we need to capture that interaction
+    # since there isn't another way to see if the user created a key, or started to and canceled. We also can't find out
+    # *which* key they might have created. So we're going to essentially route stderr to stdout and then stdout back to
+    # stderr so we can capture the stderr but still display it.
+    # not going to lie, I found this version on stack overflow: https://stackoverflow.com/a/45798436
+    KEYADDRESULT=$(platform ssh-key:add 2> >(tee >(cat 1>&2)));
+    KEYADDCMDSUCCESS=$?
+
+    if (( 0 != $KEYADDCMDSUCCESS )); then
+        #they said no adding a key. warn them
+        skipmessage
+        if [[ "y" == "${DORESETHOME}" ]]; then resethome "${OLDHOME}"; fi
+        exit 0;
+    else
+        #did they successfully add a key?
+        if [[ ${KEYADDRESULT} =~ "([^ ]+)\.pub has been successfully added to your Platform\.sh account" ]]; then
+            #ok, they DID add a key! YAY! now we need to get the key
+            KEYNAME="${BASH_REMATCH[1]}"
+            # now, we want to create a config file in /var/www/.ssh to point it to the pub key in /user/.ssh
+            echo "Host *\n    IdentityFile ${NEWHOME}/.ssh/${KEYNAME}" > "${DEFAULTHOME}/.ssh/config"
+
+        elif [[ ! ${KEYADDRESULT} =~ "SSH key already exists in your" ]]; then
+            #ok, they didnt add a key, and it wasnt because they already had a key. Warn them?
+            skipmessage
+            if [[ "y" == "${DORESETHOME}" ]]; then resethome "${OLDHOME}"; fi
+            exit 0;
+        fi
+    fi
+
+    #ok, we should now be done with the ssh stuff. reset HOME if we need to
     if [[ "y" == "${DORESETHOME}" ]]; then resethome "${OLDHOME}"; fi
 
     printf "\n${CINFO}If you set up a new ssh key on your account, you will be unable to sync the \n"
