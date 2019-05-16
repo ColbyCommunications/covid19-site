@@ -99,6 +99,8 @@ if [[ "y" == "${SETUPSSH}" ]]; then
             KEYNAME="${BASH_REMATCH[1]}"
             # now, we want to create a config file in /var/www/.ssh to point it to the pub key in /user/.ssh
             printf "Host *\n    IdentityFile ${NEWHOME}/.ssh/${KEYNAME}" > "${DEFAULTHOME}/.ssh/config"
+            eval $(ssh-agent)
+            ssh-add "${NEWHOME}/.ssh/${KEYNAME}"
 
         elif [[ ! ${KEYADDRESULT} =~ ${KEYEXISTSPATTERN} ]]; then
             #ok, they didnt add a key, and it wasnt because they already had a key. Warn them?
