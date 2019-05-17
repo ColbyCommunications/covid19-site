@@ -97,10 +97,13 @@ if [[ "y" == "${SETUPSSH}" ]]; then
         if [[ ${KEYADDRESULT} =~ ${KEYADDEDPATTERN} ]]; then
             #ok, they DID add a key! YAY! now we need to get the key
             KEYNAME="${BASH_REMATCH[1]}"
+            NEWSSHKEY="${NEWHOME}/.ssh/${KEYNAME}"
+            # we might need this later when we check vcs.missouri.edu
+            export PLATFORMSSHKEY="${NEWSSHKEY}"
             # now, we want to create a config file in /var/www/.ssh to point it to the pub key in /user/.ssh
-            printf "Host *\n    IdentityFile ${NEWHOME}/.ssh/${KEYNAME}" > "${DEFAULTHOME}/.ssh/config"
+            printf "Host *\n    IdentityFile ${NEWSSHKEY}" > "${DEFAULTHOME}/.ssh/config"
             eval $(ssh-agent)
-            ssh-add "${NEWHOME}/.ssh/${KEYNAME}"
+            ssh-add "${NEWSSHKEY}"
 
         elif [[ ! ${KEYADDRESULT} =~ ${KEYEXISTSPATTERN} ]]; then
             #ok, they didnt add a key, and it wasnt because they already had a key. Warn them?
@@ -128,12 +131,46 @@ if [[ "y" == "${SETUPSSH}" ]]; then
         if (( 0 == $PROJECTSUCCESS )); then
             printf "${CWORKING}Beginning redeploy process...${CRESET}\n"
             platform redeploy -p "${PROJECTID}" -e master
+            printf "${CINFO}Checking to see if platform now recognizes your new key. This may take a minute...\n"
+            #we need to grab the platform ssh address
+            PLATFORMSSHADDRESS=$(platform ssh -p "${PROJECTID}" -e master --pipe)
+            #@todo we should check to make sure we received an address
+            MAXSSHWAITCOUNT=24
+            SSHWAITCOUNTER=0
+            SSHCONNECTIONTEST=0
+            # After adding a key and redeploying the environment, it can _still_ take a little bit for the changes to
+            # propagate everywhere. This can cause later steps to fail as they rely on being able to connect to platform
+            # via ssh.
+            while (( ${MAXSSHWAITCOUNT} > ${SSHWAITCOUNTER} )) && (( 0 != ${SSHCONNECTIONTEST} )); do
+                sleep 5
+                printf "* "
+                ssh -q -o BatchMode=yes -o ConnectTimeout=10 "${PLATFORMSSHADDRESS}" exit
+                SSHCONNECTIONTEST=$?
+                SSHWAITCOUNTER=$((SSHWAITCOUNTER+1))
+            done
+
+            #now we need to see if we suceeded, or timed out
+            if (( 0 == ${SSHCONNECTIONTEST})); then
+                printf " ${CBOLD}Connected!${CRESET}\n"
+            else
+                printf "\n${CWARN}SSH Connection Test Timed Out!!!${CRESET}\n"
+                printf "${CINFO}The connection test to platform timed out. You will be unable to complete the remaining steps.\n"
+                printf "Please contact ${DIGITALSERVICECONTACT} with the following information:\n"
+                printf "${CBOLD}Failure${CRESET}${CINFO}: SSH Key connection test.${CRESET}\n"
+                printf "${CBOLD}Project ID${CRESET}${CINFO}: ${PROJECTID}${CRESET}\n"
+                printf "${CBOLD}SSH Address${CRESET}${CINFO}: ${PLATFORMSSHADDRESS}${CRESET}\n"
+                printf "\n${CWARN}Exiting...${CRESET}\n"
+                exit 1
+            fi
+
 
         else
             printf "${CWARN}Platform Project Associated${CRESET}\n"
-            printf "${CINFO}You do not have a Platform project associated with this lando project. Once lando has finished "
+            printf "${CINFO}You do not have a Platform project associated with this lando project. Other steps that "
+            printf "depend on the project being associated will fail (db sync and media sync). Once lando has finished "
             printf "starting, please run\n${CBOLD}lando platform-set-project${CRESET}\nto associate a Platform project"
-            printf " with this lando project.${CRESET}\n"
+            printf " with this lando project. You can then run ${CBOLD}lando platform-media-sync${CRESET}${CINFO} to "
+            printf "sync the database and media files.${CRESET}\n"
         fi
     else
         printf "${CWORKING}"
