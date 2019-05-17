@@ -137,7 +137,7 @@ if [[ "y" == "${SETUPSSH}" ]]; then
             #@todo we should check to make sure we received an address
             MAXSSHWAITCOUNT=24
             SSHWAITCOUNTER=0
-            SSHCONNECTIONTEST=0
+            SSHCONNECTIONTEST=1
             # After adding a key and redeploying the environment, it can _still_ take a little bit for the changes to
             # propagate everywhere. This can cause later steps to fail as they rely on being able to connect to platform
             # via ssh.
