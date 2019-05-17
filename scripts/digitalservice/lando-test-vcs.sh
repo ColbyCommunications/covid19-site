@@ -14,7 +14,7 @@ if [[ -z ${CENTRY+x} ]]; then
 fi
 
 printf "\n${CINFO}Checking connection to vcs.missouri.edu... ${CRESET}"
-ssh -q -o BatchMode=yes -o ConnectTimeout=10 "${VCSSSHDOMAIN}" exit
+ssh -q -o BatchMode=yes -o ConnectTimeout=10 "git@${VCSSSHDOMAIN}" exit
 VCSSUCCESS=$?
 if (( 0 != $VCSSUCCESS )); then
     printf "${CWARN}Failure!${CRESET}\n"
@@ -25,20 +25,19 @@ if (( 0 != $VCSSUCCESS )); then
     printf "that is from this machine. "
     
     if [[ ! -z ${PLATFORMSSHKEY+x} ]]; then
-        pbcopy "${PLATFORMSSHKEY}.pub"
         printf "\nBelow are the contents of the ssh key we created in a previous step. If you don't have an ssh "
         printf "key on ${VCSSSHDOMAIN} you can copy the contents below and paste them into the ${CBOLD}key${CRESET}${CINFO}\n"
         printf " area at https://${VCSSSHDOMAIN}/profile/keys and click ${CBOLD}Add key${CRESET}.\n"
         printf "\n"
         cat "${PLATFORMSSHKEY}.pub"
-        printf "\n\n"
+        printf "\n"
     fi
 
     printf "\n${CINFO}Once you have verified you are on a campus network and have an ssh key associated with your account\n"
     printf " on ${VCSSSHDOMAIN}, press enter and I will test the connection again. : [Enter]"
     read VCSCONTINUE
     unset VCSSUCCESS
-    ssh -q -o BatchMode=yes -o ConnectTimeout=10 "${VCSSSHDOMAIN}" exit
+    ssh -q -o BatchMode=yes -o ConnectTimeout=10 "git@${VCSSSHDOMAIN}" exit
     VCSSUCCESS=$?
 
     if (( 0 != $VCSSUCCESS )); then
@@ -51,7 +50,7 @@ if (( 0 != $VCSSUCCESS )); then
         printf "steps. Please contact ${DIGITALSERVICECONTACT} with the following information:\n"
         printf "${CBOLD}Failure${CRESET}${CINFO}: Connection test to ${VCSSSHDOMAIN}.\n"
         printf "${CBOLD}Project ID${CRESET}${CINFO}: ${PLATFORMPROJECTID}${CRESET}\n"
-        printf "\n\n${CINFO}Please press enter to exit. Lando will now post a bunch of failures. Be ready${CRESET}\n."
+        printf "\n\n${CINFO}Please press enter to exit. Lando will now post a bunch of failures. Be ready${CRESET}.\n"
         read NOWEXIT
         printf "\n${CWARN}Exiting...${CRESET}\n"
         exit 1
