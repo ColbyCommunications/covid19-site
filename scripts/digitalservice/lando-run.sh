@@ -37,14 +37,20 @@ if [[ "y" == "${RUNSETUP}" ]]; then
     fi
     
     printf "${CINFO}Beginning platform setup steps...${CRESET}\n"
+    # Make sure platform project is connected to this project
     . "${DIR}/lando-project-set.sh"
+    # Make sure the user has ssh keys associated with their platform account
     . "${DIR}/lando-check-ssh-keys.sh"
+    # Make sure the user can connect to vcs
+    . "${DIR}/lando-test-vcs.sh"
     #set the HOME directory back
     export HOME="${OLDHOME}"
+    # Install the user's dependencies
     printf "${CINFO}Beginning composer install...${CRESET}\n"
     cd /app && composer install
     #now set it back AGAIN
     export HOME="${NEWHOME}"
+    # Now import the database and media files from platform
     . "${DIR}/lando-platform-sync.sh"
     #and finally, set it back one more time
     export HOME="${OLDHOME}"

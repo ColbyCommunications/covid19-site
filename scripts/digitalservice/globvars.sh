@@ -20,3 +20,4 @@ NEWHOME="/user"
 #default location for home in lando
 DEFAULTHOME="/var/www"
 DIGITALSERVICECONTACT="digitalservice@missouri.edu"
+VCSSSHDOMAIN="vcs.missouri.edu"
