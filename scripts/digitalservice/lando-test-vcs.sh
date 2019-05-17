@@ -17,17 +17,21 @@ printf "\n${CINFO}Checking connection to vcs.missouri.edu... ${CRESET}"
 ssh -q -o BatchMode=yes -o ConnectTimeout=10 "${VCSSSHDOMAIN}" exit
 VCSSUCCESS=$?
 if (( 0 != $VCSSUCCESS )); then
-    printf "${BOLD}Failure!${CRESET}\n"
-    printf "${CINFO}I was unable to connect successfully to ${VCSSSHDOMAIN}. The composer build step if I am unable \n"
-    printf "to connect. Please make sure you are on a campus network (wired, wireless, or on the VPN) and that you \n"
-    printf "an ssh pub key from this machine to your account on ${VCSSSHDOMAIN}. If you are unsure, go to \n"
-    printf "https://${VCSSSHDOMAIN}/profile/keys and check if you have a key listed that is from this machine. \n"
+    printf "${CWARN}Failure!${CRESET}\n"
+    printf "${CINFO}I was unable to connect successfully to ${VCSSSHDOMAIN}. The composer build step will fail if \n"
+    printf "I am unable to connect. Please make sure you are on a campus network (wired, wireless, or on the VPN) \n"
+    printf "and that you have an ssh pub key from this machine saved to your account on ${VCSSSHDOMAIN}.\n"
+    printf "If you are unsure, go to https://${VCSSSHDOMAIN}/profile/keys and check if you have a key listed \n"
+    printf "that is from this machine. "
     
     if [[ ! -z ${PLATFORMSSHKEY+x} ]]; then
         pbcopy "${PLATFORMSSHKEY}.pub"
-        printf "\nI have copied the contents of the ssh pub key we created in a previous step. If you don't have an ssh "
-        printf "key on ${VCSSSHDOMAIN} you can paste the contents into the ${CBOLD}key${CRESET}${CINFO} area at \n"
-        printf "https://${VCSSSHDOMAIN}/profile/keys and click ${CBOLD}Add key${CRESET}.\n"
+        printf "\nBelow are the contents of the ssh key we created in a previous step. If you don't have an ssh "
+        printf "key on ${VCSSSHDOMAIN} you can copy the contents below and paste them into the ${CBOLD}key${CRESET}${CINFO}\n"
+        printf " area at https://${VCSSSHDOMAIN}/profile/keys and click ${CBOLD}Add key${CRESET}.\n"
+        printf "\n"
+        cat "${PLATFORMSSHKEY}.pub"
+        printf "\n\n"
     fi
 
     printf "\n${CINFO}Once you have verified you are on a campus network and have an ssh key associated with your account\n"
@@ -45,8 +49,10 @@ if (( 0 != $VCSSUCCESS )); then
         printf "\n${CWARN}Connection to ${VCSSSHDOMAIN} failed!!!${CRESET}\n"
         printf "${CINFO}The connection test to ${VCSSSHDOMAIN} timed out. You will be unable to complete the remaining \n"
         printf "steps. Please contact ${DIGITALSERVICECONTACT} with the following information:\n"
-        printf "${CBOLD}Failure${CRESET}${CINFO}: Connection test to ${VCSSSHDOMAIN}.${CRESET}\n"
+        printf "${CBOLD}Failure${CRESET}${CINFO}: Connection test to ${VCSSSHDOMAIN}.\n"
         printf "${CBOLD}Project ID${CRESET}${CINFO}: ${PLATFORMPROJECTID}${CRESET}\n"
+        printf "\n\n${CINFO}Please press enter to exit. Lando will now post a bunch of failures. Be ready${CRESET}\n."
+        read NOWEXIT
         printf "\n${CWARN}Exiting...${CRESET}\n"
         exit 1
     else
