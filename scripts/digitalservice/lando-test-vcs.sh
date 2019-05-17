@@ -14,7 +14,7 @@ if [[ -z ${CENTRY+x} ]]; then
 fi
 
 printf "\n${CINFO}Checking connection to vcs.missouri.edu... ${CRESET}"
-ssh -q -o BatchMode=yes -o ConnectTimeout=10 "git@${VCSSSHDOMAIN}" exit
+ssh -q -o BatchMode=yes -o ConnectTimeout=10 "git@${VCSSSHDOMAIN}"
 VCSSUCCESS=$?
 if (( 0 != $VCSSUCCESS )); then
     printf "${CWARN}Failure!${CRESET}\n"
@@ -37,7 +37,7 @@ if (( 0 != $VCSSUCCESS )); then
     printf " on ${VCSSSHDOMAIN}, press enter and I will test the connection again. : [Enter]"
     read VCSCONTINUE
     unset VCSSUCCESS
-    ssh -q -o BatchMode=yes -o ConnectTimeout=10 "git@${VCSSSHDOMAIN}" exit
+    ssh -q -o BatchMode=yes -o ConnectTimeout=10 "git@${VCSSSHDOMAIN}"
     VCSSUCCESS=$?
 
     if (( 0 != $VCSSUCCESS )); then
