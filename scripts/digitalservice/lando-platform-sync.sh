@@ -1,14 +1,18 @@
 #!/usr/bin/env bash
 # $PWD is the Path for the Working Directory,
 # BASH_SOURCE is an array variable whose members are the source filenames
-# go get our color definitions
-if [[ -z ${CENTRY+x} ]]; then
+if [[ -z ${DIR+x} ]]; then
+    # No? ok, figure out where we are
     DIR="${BASH_SOURCE%/*}"
     if [[ ! -d "$DIR" ]]; then DIR="$PWD"; fi
+fi
 
+#Has our colors file already been pulled in
+if [[ -z ${CENTRY+x} ]]; then
     #pull in our global vars
     . "${DIR}/globvars.sh"
 fi
+
 
 if [[ ! -z $1 && "y" == "${1}" ]]; then
     UPDATEDB="${1}"
@@ -17,9 +21,20 @@ else
     read UPDATEDB
 fi
 
+# which CMS are we working with?
+if [[ ! -z  $2 ]] && [[ ( "w" == "$2" ||  "d" == $2 ) ]]; then
+	CMS=$2
+else
+	#@todo what do we do? Let's exit for now
+	printf "\n${CWARN}Missing CMS Argument!${CRESET}\n"
+	printf "${CINFO}I need to know which CMS I'm dealing with. Make sure this script is given\n "
+	print "a 'w' or 'd' when called so I can assign commands correctly. ${CBOLD}Exiting.${CRESET}\n"
+	exit 1
+fi
+
 shopt -s nocasematch
 if [[ "y" == "${UPDATEDB}" ]]; then
-    . "${DIR}/lando-platform-db-pull.sh"
+    . "${DIR}/lando-platform-db-pull.sh $2"
 
     if [[ ! -z ${MULTISITE+x} ]]; then
         printf "\n${CENTRY}It appears this is a multisite. Would you like to update the domains in the database to the local lando domains? [y\\N]: ${CRESET}"

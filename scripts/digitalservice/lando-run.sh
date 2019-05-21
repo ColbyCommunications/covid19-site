@@ -16,13 +16,25 @@ if [[ -z ${CENTRY+x} ]]; then
 fi
 
 #allow later calls to this file to bypass the question
-if [[ ! -z $1 && "y" == "${1}" ]]; then
+if [[ ! -z $1 ]] && [[ "y" == "${1}" ]]; then
     RUNSETUP="${1}"
 else
     printf "${CENTRY}Do you want to run the platform set-up steps? If this is the first\n"
     printf "time you are starting lando for this project, you should answer 'y'. [y/N]: ${CRESET}"
     read RUNSETUP
 fi
+
+# which CMS are we working with?
+if [[ ! -z  $2 ]] && [[ ( "w" == "$2" ||  "d" == $2 ) ]]; then
+	CMS=$2
+else
+	#@todo what do we do? Let's exit for now
+	printf "\n${CWARN}Missing CMS Argument!${CRESET}\n"
+	printf "${CINFO}I need to know which CMS I'm dealing with. Make sure this script is given\n "
+	print "a 'w' or 'd' when called so I can assign commands correctly. ${CBOLD}Exiting.${CRESET}\n"
+	exit 1
+fi
+
 
 #set to case insensitive
 shopt -s nocasematch
@@ -50,8 +62,9 @@ if [[ "y" == "${RUNSETUP}" ]]; then
     cd /app && composer install
     #now set it back AGAIN
     export HOME="${NEWHOME}"
-    # Now import the database and media files from platform
-    . "${DIR}/lando-platform-sync.sh"
+    # Now import the database and media files from platform. 'n' because we want them to be prompted.
+    # $2 to tell them which CMS
+    . "${DIR}/lando-platform-sync.sh n $2"
     #and finally, set it back one more time
     export HOME="${OLDHOME}"
     printf "${CINFO}Platform should now be connected to this lando project.${CRESET}\n"

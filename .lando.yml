@@ -19,7 +19,8 @@ services:
         - "./scripts/digitalservice/lando-platform-install.sh"
     run:
         - "platform self-update -y"
-        - "./scripts/digitalservice/lando-run.sh"
+        # 'w' to let it know we're dealing with WordPress
+        - "./scripts/digitalservice/lando-run.sh w"
         - "./scripts/digitalservice/setup-mu-plugins.sh"
 
 tooling:
