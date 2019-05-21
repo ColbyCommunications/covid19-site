@@ -19,28 +19,27 @@ else
 	#@todo what do we do? Let's exit for now
 	printf "\n${CWARN}Missing CMS Argument!${CRESET}\n"
 	printf "${CINFO}I need to know which CMS I'm dealing with. Make sure this script is given\n "
-	print "a 'w' or 'd' when called so I can assign commands correctly. ${CBOLD}Exiting.${CRESET}\n"
+	printf "a 'w' or 'd' when called so I can assign commands correctly. ${CBOLD}Exiting.${CRESET}\n"
 	exit 1
 fi
 
 # have they specified an environment?
 if [[ ! -z  $2 ]]; then
 	ENV="$2"
-else
-    # default
-    ENV="master"
 fi
+#no default because we want it to prompt the user for the environment
 
-# have they specified a project?
+
+# have they specified a project? Should be rarely used
 if [[ ! -z  $3 ]]; then
-	PROJECTID=" -p $3"
+	PROJECTID="$3"
 else
     PROJECTID=""
 fi
 
 
 printf "${CINFO}Retrieving sql file from platform...\n"
-platform db:dump -f /app/platform.sql -e "$ENV" "${PROJECTID}"
+platform db:dump -f /app/platform.sql ${ENV:+-e "$ENV"} ${PROJECTID:+-p "$PROJECTID"}
 DBDUMPSUCCESS=$?
 if (( 0 != ${DBDUMPSUCCESS} )); then
     printf "${CWARN}Database Sync Failed!\n${CRESET}"
