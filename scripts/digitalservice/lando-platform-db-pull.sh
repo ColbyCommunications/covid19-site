@@ -46,7 +46,7 @@ if (( 0 != ${DBDUMPSUCCESS} )); then
     printf "${CENTRY}The database export failed. See any errors above. ${CBOLD}Exiting.${CRESET}\n"
     exit 1
 else
-    printf " ${CBOLD}Success!${CRESET}\n"
+    printf "\n${CBOLD}Success!${CRESET}\n"
 fi
 
 printf "${CINFO}Beginning database import...${CRESET}\n"
@@ -55,26 +55,32 @@ if [[ "w" == "${CMS}" ]]; then
     wp db import /app/platform.sql
 elif [[ "d" == "${CMS}" ]]; then
     mysql -h database -u drupal8 --password=drupal8 drupal8 < /app/platform.sql
-    drush -y cache-rebuild
-    drush -y updatedb
-else
-    printf ""
 fi
+# else intentionally left out since we should have already exited if CMS isn't w|d
 
 IMPORTSUCCESS=$?
 if (( 0 != ${IMPORTSUCCESS} )); then
-    printf " ${CWARN}Database Import Failed!\n${CRESET}"
+    printf "${CWARN}Database Import Failed!\n${CRESET}"
     printf "${CENTRY}The database import failed. See any errors above. ${CBOLD}Exiting.${CRESET}\n"
     exit 1
 else
     printf " ${CBOLD}Success!${CRESET}\n"
     if [[ "d" == "${CMS}" ]]; then
-        printf "${CINFO}Running drush cache-rebuild and updatedb...${CRESET}\n"
+        printf "${CINFO}Running drush ${CBOLD}cache-rebuild${CRESET}${CINFO} and ${CBOLD}updatedb${CRESET}${CINFO}...${CRESET}\n"
         drush -y cache-rebuild
         drush -y updatedb
     fi
 fi
 
-printf "${CINFO}Removing SQL file..."
+printf "${CINFO}Removing SQL file created from the import... ${CRESET}"
 rm /app/platform.sql
-printf " ${CBOLD}Removed.${CRESET}\n"
+REMOVESUCCESS=$?
+if (( 0 != $REMOVESUCCESS )); then
+    printf "${CBOLD}Removed.${CRESET}\n"
+else
+    printf "\n${CWARN}File Removal FAILED!${CRESET}\n"
+    printf "${CINFO}The removal of the /app/platform.sql file failed. ${CBOLD}You will need to remove this  file\n"
+    printf "manually.${CRESET}${CINFO}Make sure you remove the  file and do ${CBOLD}not${CRESET}${CINFO} commit\n"
+    printf "this file to your repository.${CRESET}\n"
+    exit 1
+fi 
