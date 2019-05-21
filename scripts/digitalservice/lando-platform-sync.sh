@@ -26,13 +26,6 @@ else
     read UPDATEDB
 fi
 
-# Are we prompting them to sync media?
-if [[ ! -z $2 && "y" == "${2}" ]]; then
-    UPDATEMEDIA="${2}"
-else
-    printf "${CENTRY}Would you like to sync the media/upload files from platform into this lando project? [y\\N]: ${CRESET}"
-    read UPDATEMEDIA
-fi
 
 # which CMS are we working with?
 if [[ ! -z  $3 ]] && [[ ( "w" == "$3" ||  "d" == $3 ) ]]; then
@@ -70,6 +63,13 @@ else
     printf "\n${CINFO}You can import the database later by running ${CBOLD}lando platform-db-pull.${CRESET}\n"
 fi
 
+# Are we prompting them to sync media?
+if [[ ! -z $2 && "y" == "${2}" ]]; then
+    UPDATEMEDIA="${2}"
+else
+    printf "${CENTRY}Would you like to sync the media/upload files from platform into this lando project? [y\\N]: ${CRESET}"
+    read UPDATEMEDIA
+fi
 
 if [[ "y" == "${UPDATEMEDIA}" ]]; then
     . "${DIR}/lando-platform-media-sync.sh"

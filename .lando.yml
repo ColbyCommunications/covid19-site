@@ -20,14 +20,14 @@ services:
     run:
         - "platform self-update -y"
         # 'w' to let it know we're dealing with WordPress
-        - "./scripts/digitalservice/lando-run.sh w"
+        - "./scripts/digitalservice/lando-run.sh n w"
         - "./scripts/digitalservice/setup-mu-plugins.sh"
 
 tooling:
   platform-setup:
     service: appserver
     description: Runs the platform setup scripts to associate your lando project with a platform project, then syncs the database and media files from platform to lando
-    cmd: "/app/scripts/digitalservice/lando-run.sh y"
+    cmd: "/app/scripts/digitalservice/lando-run.sh y w"
   platform-db-pull:
     service: appserver
     description: DESTRUCTIVE Pull the current Platform environment's DB into the current Lando project.

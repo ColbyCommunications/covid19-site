@@ -64,7 +64,7 @@ if [[ "y" == "${RUNSETUP}" ]]; then
     export HOME="${NEWHOME}"
     # Now import the database and media files from platform. 'n' because we want them to be prompted for db and media.
     # $2 to tell them which CMS, master is the initial environment to sync from
-    . "${DIR}/lando-platform-sync.sh n n $2 master"
+    . "${DIR}/lando-platform-sync.sh" n n "$2" master
     #and finally, set it back one more time
     export HOME="${OLDHOME}"
     printf "${CINFO}Platform should now be connected to this lando project.${CRESET}\n"

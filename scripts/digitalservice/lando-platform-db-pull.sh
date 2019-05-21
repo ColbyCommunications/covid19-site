@@ -25,9 +25,10 @@ fi
 
 # have they specified an environment?
 if [[ ! -z  $2 ]]; then
-	ENV=" -e $2"
+	ENV="$2"
 else
-    ENV=""
+    # default
+    ENV="master"
 fi
 
 # have they specified a project?
@@ -39,7 +40,7 @@ fi
 
 
 printf "${CINFO}Retrieving sql file from platform...\n"
-platform db:dump -f /app/platform.sql "${ENV}${PROJECTID}"
+platform db:dump -f /app/platform.sql -e "$ENV" "${PROJECTID}"
 DBDUMPSUCCESS=$?
 if (( 0 != ${DBDUMPSUCCESS} )); then
     printf "${CWARN}Database Sync Failed!\n${CRESET}"
@@ -83,4 +84,4 @@ else
     printf "manually.${CRESET}${CINFO}Make sure you remove the  file and do ${CBOLD}not${CRESET}${CINFO} commit\n"
     printf "this file to your repository.${CRESET}\n"
     exit 1
-fi 
+fi
