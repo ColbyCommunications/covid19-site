@@ -22,6 +22,10 @@ services:
         # 'w' to let it know we're dealing with WordPress
         - "./scripts/digitalservice/lando-run.sh n w"
         - "./scripts/digitalservice/setup-mu-plugins.sh"
+events:
+  pre-start:
+    # Install composer dependencies
+    - "cd /app && composer install"
 
 tooling:
   platform-setup:
