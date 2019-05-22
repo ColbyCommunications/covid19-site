@@ -47,7 +47,7 @@ fi
 
 shopt -s nocasematch
 if [[ "y" == "${UPDATEDB}" ]]; then
-    . "${DIR}/lando-platform-db-pull.sh $CMS"
+    . "${DIR}/lando-platform-db-pull.sh" "$CMS"
 
     if [[ ! -z ${MULTISITE+x} ]]; then
         printf "\n${CENTRY}It appears this is a multisite. Would you like to update the domains in the database to the local lando domains? [y\\N]: ${CRESET}"
