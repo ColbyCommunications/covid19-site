@@ -13,3 +13,11 @@ CBOLD=`tput bold -T ${TERM}`
 CINFO=`tput setaf 2 -T ${TERM}`
 #color we use for warnings
 CWARN=`tput setaf 7 -T ${TERM};tput setab 1 -T ${TERM}`
+
+# Location in lando where the host HOME is mapped to inside of the lando container
+# We need it mapped here because this is where the ssh keys are located
+NEWHOME="/user"
+#default location for home in lando
+DEFAULTHOME="/var/www"
+DIGITALSERVICECONTACT="digitalservice@missouri.edu"
+VCSSSHDOMAIN="vcs.missouri.edu"

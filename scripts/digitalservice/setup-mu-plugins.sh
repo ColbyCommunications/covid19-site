@@ -67,6 +67,12 @@ if [ -d "${MUPLUGINLOC}" ]; then
          else
             printf "${CINFO}A symlink with a name of ${CBOLD}${DIRNAME}${CRESET}${CINFO} already exists. ${CBOLD}Skipping.${CRESET}\n"
          fi
+     elif [[ -L "${RESOURCE}" ]] && [[ ! -a "${RESOURCE}" ]]; then
+        #test if the symlink is broken
+        printf "${CWARN}Broken symlink!${CRESET}"
+        printf "${CINFO} The symlink ${RESOURCE} is broken. Removing...${CRESET} "
+        rm "${RESOURCE}"
+        printf "${CBOLD}Removed.${CRESET}\n"
       fi
     done
 fi
