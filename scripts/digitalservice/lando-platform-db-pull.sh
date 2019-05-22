@@ -76,11 +76,11 @@ printf "${CINFO}Removing SQL file created from the import... ${CRESET}"
 rm /app/platform.sql
 REMOVESUCCESS=$?
 if (( 0 != $REMOVESUCCESS )); then
-    printf "${CBOLD}Removed.${CRESET}\n"
-else
     printf "\n${CWARN}File Removal FAILED!${CRESET}\n"
     printf "${CINFO}The removal of the /app/platform.sql file failed. ${CBOLD}You will need to remove this  file\n"
     printf "manually.${CRESET}${CINFO}Make sure you remove the  file and do ${CBOLD}not${CRESET}${CINFO} commit\n"
     printf "this file to your repository.${CRESET}\n"
     exit 1
+else
+    printf "${CBOLD}Removed.${CRESET}\n"
 fi
