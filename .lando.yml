@@ -23,7 +23,7 @@ services:
         - "./scripts/digitalservice/lando-run.sh n w"
         - "./scripts/digitalservice/setup-mu-plugins.sh"
 events:
-  pre-start:
+  post-start:
     # Install composer dependencies
     - "cd /app && composer install"
 
