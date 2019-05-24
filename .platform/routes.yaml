@@ -21,7 +21,11 @@
           to: "/wp/wp-admin/$1"
           regexp: true
 
-
-"https://www.{default}/":
+# *ALL* www.* requests should be redirected back to primary domain
+"https://www.{all}/":
     type: redirect
     to: "https://{default}/"
+# All vanity domain requests should be redirected to primary domain
+"https://{all}/":
+  type: redirect
+  to: "https://{default}/"
