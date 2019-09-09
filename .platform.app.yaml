@@ -25,10 +25,10 @@ disk: !include project/platform/disk.yaml
 mounts:
     "/web/wp-content/uploads": "shared:files/uploads"
     "/web/wp-content/cache": "shared:files/cache"
-    '/simplesaml/cert': 'shared:files/simplesaml/cert'
-    '/simplesaml/logs': 'shared:files/simplesaml/logs'
-    '/simplesaml/data': 'shared:files/simplesaml/data'
-    '/simplesaml/tmp': 'shared:files/simplesaml/tmp'
+#   '/simplesaml/cert': 'shared:files/simplesaml/cert'
+#   '/simplesaml/logs': 'shared:files/simplesaml/logs'
+#   '/simplesaml/data': 'shared:files/simplesaml/data'
+#   '/simplesaml/tmp': 'shared:files/simplesaml/tmp'
 
 # The configuration of app when it is exposed to the web.
 web:

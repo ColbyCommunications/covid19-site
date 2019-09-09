@@ -8,7 +8,7 @@ set -e
 ###############################
 set -e
 # Sets up the iniitial ssl certificate
-./scripts/digitalservice/createshibcerts.sh
+#./scripts/digitalservice/createshibcerts.sh
 
 ################################
 ###        WORDPRESS        ###
@@ -18,7 +18,7 @@ if [ "$PLATFORM_BRANCH" != master ] && [ ! -z ${MULTISITE+x} ]; then
   php scripts/digitalservice/update-multisite-db.php
 fi
 # If the site is using the mizzoumvc framework, we'll need to reset the cache
-./scripts/digitalservice/mizzoumvc-clear-cache.sh
+#./scripts/digitalservice/mizzoumvc-clear-cache.sh
 
 
 ################################
