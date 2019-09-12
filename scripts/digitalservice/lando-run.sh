@@ -54,7 +54,7 @@ if [[ "y" == "${RUNSETUP}" ]]; then
     # Make sure the user has ssh keys associated with their platform account
     . "${DIR}/lando-check-ssh-keys.sh"
     # Make sure the user can connect to vcs
-    . "${DIR}/lando-test-vcs.sh"
+    #. "${DIR}/lando-test-vcs.sh"
     #set the HOME directory back
     export HOME="${OLDHOME}"
     # Install the user's dependencies
