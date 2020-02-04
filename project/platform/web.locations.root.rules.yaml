@@ -5,9 +5,6 @@
 ################################
 ###          CORE           ###
 ###############################
-        # Allow access to common static files.
-        '(?<!lock)\.(?i:jpe?g|gif|png|svg|bmp|ico|css|js(?:on)?|eot|ttf|woff|woff2|pdf|docx?|xlsx?|pp[st]x?|psd|odt|key|mp[2-5g]|m4[av]|og[gv]|wav|mov|wm[av]|avi|3g[p2])$':
-          allow: true
         '^/robots\.txt$':
           allow: true
         '^/sitemap\.xml$':
@@ -19,16 +16,22 @@
 ###        WORDPRESS        ###
 ###############################
         # We need to allow requests to wp-login.php to pass through
-        # Multi domain multisites do not respect the WP_SITEURL constant in Wp-config. Since the vast majority of
+        # Multisites do not respect the WP_SITEURL constant in Wp-config. Since the vast majority of
         # migrated multisites were not set up using this constant, their siteurl location is hard-coded into the db
+        # In addition, directory-based multisites include the virtual directory before the wp-login.php
         # Because of this, WordPress and plugins are unaware that core files are located in /wp/. This allows those
         # sites to continue to function properly, and single sites are unaffected as they respect the WP_SITEURL
         # constant. New multisites set up with the new paradigm will have their siteurl setting set correctly and will
         # also not be affected by this setting.
-        '^\/wp-login.php$':
+        '^/(?!wp/)([_0-9a-zA-Z-]+/)?wp-login.php$':
           allow: true
           scripts: true
           passthru: '/wp/wp-login.php'
+        # Allows directory-based multisites to still access the wp-admin and wp-include locations
+        '^/(?!wp/)([_0-9a-zA-Z-]+/)?(?<adminrewrite>wp-(admin|includes).*)':
+          allow: true
+          scripts: true
+          passthru: '/wp/$adminrewrite'
 
 ################################
 ###     Project Specific    ###

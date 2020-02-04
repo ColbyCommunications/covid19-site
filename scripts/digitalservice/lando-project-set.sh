@@ -54,7 +54,7 @@ if [[ "Y" == "${SETPROJECT}" ]]; then
     # check to make sure they gave you something
     if [[ ! -z "${PLATFORMTITLE}" ]]; then
         #we couild allow them to enter the domain and if so, skip the Id lookup
-        PLATFORMID=$(platform project:list --title="${PLATFORMTITLE}" --columns=ID --format=csv --no-header --pipe)
+        PLATFORMID=$(platform project:list --columns=ID,title --no-header --format=tsv | grep -e "${PLATFORMTITLE}$" | cut -f1)
         if [[ ! -z "${PLATFORMID}" ]]; then
             #should we check to see if it worked?
             $PLATFORM p:set-remote "${PLATFORMID}"

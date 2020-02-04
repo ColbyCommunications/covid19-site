@@ -60,6 +60,11 @@ tooling:
     service: appserver
     description: Checks your local ssh keys and sees if any are associated with your platform account.
     cmd: "/app/scripts/digitalservice/lando-check-ssh-keys.sh y"
+  lando-allow-local-auth:
+    service: appserver
+    description: Updates the wp-saml-auth configuration to allow local authentication when running in lando
+    cmd: "/app/scripts/digitalservice/wp-shib-allow-local-auth.sh y"
+
   platform:
     service: appserver
     description: Platform CLI passthru
@@ -69,8 +74,6 @@ tooling:
 # multisite, you will need them in the list. Please append '.lndo.info' to the end of your production domain names
 # (e.g. digitalservice.missouri.edu.lndo.info) so the database update script knows how to match your production domain
 # names to those in lando.
-#proxy:
+# proxy:
 #    appserver_nginx:
-#        - site1.missouri.edu.lndo.site
-#        - site2.missouri.edu.lndo.site
-#        - site3.missouri.edu.lndo.site
+#        - site.colby.edu

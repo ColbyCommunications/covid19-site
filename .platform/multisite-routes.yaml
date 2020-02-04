@@ -22,3 +22,19 @@
 "https://www.{all}/":
     type: redirect
     to: "https://{all}/"
+
+# During development, especially before you have moved the site to platform, you will need to add a new section similar
+# to the following lines, for each domain that will be pointed to the production site
+#
+# "https://foo.missouri.edu":
+#   type: upstream
+#   upstream: "app:http"
+#
+# The three lines above instruct platform to create a 'foo.missouri.edu' domain variant for the environment domain.
+# For example, if the environment domain is `branch-name-g47gxgq-5w4husorlbktu.us-2.platformsh.site`, platform will also
+# create the domain `foo.missouri.edu.branch-name-g47gxgq-5w4husorlbktu.us-2.platformsh.site`
+#
+# If you are running a multi-domain multisite, you will need a section for each domain in your multisite.
+# If you are running a subdirectory multisite, you will need one section for the site's primary domain.
+#
+# Once your site has moved to platform and the domains have been added to the project, the lines can be removed.
