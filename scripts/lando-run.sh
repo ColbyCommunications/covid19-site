@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 #all of our run steps
-#         - "./scripts/digitalservice/lando-check-ssh-keys.sh"
-#        - "./scripts/digitalservice/lando-project-set.sh"
-#        - "./scripts/digitalservice/lando-platform-sync.sh"
+#         - "./scripts/lando-check-ssh-keys.sh"
+#        - "./scripts/lando-project-set.sh"
+#        - "./scripts/lando-platform-sync.sh"
 #        - "cd /app && composer install"
 
 #found out where we are so we can include the other files

@@ -58,8 +58,8 @@ if [ -d "${MUPLUGINLOC}" ]; then
                     printf " php files or multiple php files in the directory. I am therefore unable to determine which file should\n"
                     printf " be symlinked. Here is the listing of files in this directory.  Select the \"main\" file that \n"
                     printf "should be symlinked and add the following line: \n\n"
-                    printf "./scripts/digitalservice/symlink.sh /app/web/wp-content/mu-plugins/${DIRNAME}/<correctfile>.php /app/web/wp-content/mu-plugins/<correctfile>.php\n\n"
-                    printf "In /.platform/digitalservice/hooks.build.yaml in the Project Specific section and in lando.yaml\n"
+                    printf "./scripts/symlink.sh /app/web/wp-content/mu-plugins/${DIRNAME}/<correctfile>.php /app/web/wp-content/mu-plugins/<correctfile>.php\n\n"
+                    printf "In /.platform/hooks.build.yaml in the Project Specific section and in lando.yaml\n"
                     printf "as a new line in the services.appserver.run section. Be sure to replace <correctfile> with the name\n"
                     printf "of the correct file to use.${CRESET}\n"
                 fi
