@@ -13,7 +13,8 @@
         "colbycommunications/colby-groups": "dev-wp4-test",
         "bwaltz/baseinstall": "dev-master",
         "wpackagist-plugin/capability-manager-enhanced": "1.9",
-        "wpackagist-plugin/tablepress": "1.10"
+        "wpackagist-plugin/tablepress": "1.10",
+        "wpackagist-theme/hello-elementor": "^2.2.2"
     },
     "authors": [
         {
