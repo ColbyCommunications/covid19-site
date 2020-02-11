@@ -10,6 +10,7 @@
         "wpackagist-plugin/super-simple-account-enumeration-blocker": "^1.0.0",
         "wpackagist-plugin/cache-control": "^2.2.3",
         "wpackagist-plugin/elementor": "^2.9.0",
+        "wpackagist-plugin/jetwidgets-for-elementor": "1.0.6",
         "colbycommunications/colby-groups": "dev-wp4-test",
         "wpackagist-plugin/capability-manager-enhanced": "1.9",
         "wpackagist-plugin/tablepress": "1.10",
