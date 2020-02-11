@@ -11,7 +11,6 @@
         "wpackagist-plugin/cache-control": "^2.2.3",
         "wpackagist-plugin/elementor": "^2.9.0",
         "colbycommunications/colby-groups": "dev-wp4-test",
-        "bwaltz/baseinstall": "dev-master",
         "wpackagist-plugin/capability-manager-enhanced": "1.9",
         "wpackagist-plugin/tablepress": "1.10",
         "wpackagist-theme/hello-elementor": "^2.2.2"
@@ -26,10 +25,6 @@
         {
             "type": "git",
             "url": "https://github.com/ColbyCommunications/colby-groups"
-        },
-        {
-            "type": "git",
-            "url": "https://github.com/bwaltz/baseinstall"
         },
         {
             "type": "composer",
