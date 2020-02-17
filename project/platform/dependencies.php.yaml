@@ -11,11 +11,11 @@
 ################################
 ###        WORDPRESS        ###
 ###############################
-    # Install wp cli and its bundles
-    wp-cli/wp-cli: "^2.1"
-    wp-cli/wp-cli-bundle: "^2.1"
-    wp-cli/find-command: "dev-master"
-    psy/psysh: "^0.8.4"
+# Install wp cli and its bundles
+wp-cli/wp-cli: "^2.1"
+wp-cli/wp-cli-bundle: "^2.1"
+wp-cli/find-command: "dev-master"
+psy/psysh: "^0.8.4"
 
 ################################
 ###     Project Specific    ###

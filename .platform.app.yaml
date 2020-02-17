@@ -36,6 +36,8 @@ web:
 
 dependencies:
   php: !include project/platform/dependencies.php.yaml
+  nodejs:
+    gulp-cli: "*"
 
 runtime:
   extensions: !include project/platform/runtime.extensions.yaml

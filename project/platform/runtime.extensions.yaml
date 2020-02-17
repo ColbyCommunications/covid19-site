@@ -12,7 +12,7 @@
 ###        WORDPRESS        ###
 ###############################
 # needed by the cli bundle
-  - readline
+- readline
 
 
 ################################
