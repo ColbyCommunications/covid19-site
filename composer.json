@@ -7,16 +7,18 @@
         "johnpbloch/wordpress-core": "^5.1.1",
         "wpackagist-theme/twentyseventeen": "^2.1",
         "wpackagist-plugin/classic-editor": "^1.4",
-        "wpackagist-plugin/super-simple-account-enumeration-blocker": "^1.0.0",
-        "wpackagist-plugin/cache-control": "^2.2.3",
         "wpackagist-plugin/elementor": "^2.9.0",
-        "wpackagist-plugin/jetwidgets-for-elementor": "1.0.6",
+        "wpackagist-plugin/jetwidgets-for-elementor": "1.0.7",
         "colbycommunications/colby-groups": "dev-wp4-test",
         "wpackagist-plugin/capability-manager-enhanced": "1.9",
-        "wpackagist-plugin/tablepress": "1.10",
+        "wpackagist-plugin/tablepress": "^1.10",
         "wpackagist-theme/hello-elementor": "^2.2.2",
         "wpackagist-plugin/header-footer": "^3.1.3",
-        "wpackagist-plugin/duplicate-post": "^3.2.4"
+        "wpackagist-plugin/duplicate-post": "^3.2.4",
+        "wpackagist-plugin/wordpress-seo": "^13.3",
+        "wpackagist-plugin/cloudflare": "^3.4.1",
+        "devgeniem/wp-redis-object-cache-dropin": "^1.6",
+        "wpackagist-plugin/w3-total-cache": "^0.13.2"
     },
     "authors": [
         {
@@ -38,11 +40,7 @@
         "wordpress-install-dir": "web/wp",
         "installer-paths": {
             "web/wp-content/mu-plugins/{$name}": [
-                "type:wordpress-muplugin",
-                "wpackagist-plugin/wp-saml-auth",
-                "wpackagist-plugin/super-simple-account-enumeration-blocker",
-                "wpackagist-plugin/cache-control",
-                "forumone/wp-cfm"
+                "type:wordpress-muplugin"
             ],
             "web/wp-content/plugins/{$name}": [
                 "type:wordpress-plugin"
