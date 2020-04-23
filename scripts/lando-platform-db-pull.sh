@@ -85,6 +85,6 @@ else
     printf "${CBOLD}Removed.${CRESET}\n"
 fi
 
-if [[ "w" == "$CMS" ]]; then
-  . "${DIR}/wp-shib-allow-local-auth.sh"
-fi
+# if [[ "w" == "$CMS" ]]; then
+#   . "${DIR}/wp-shib-allow-local-auth.sh"
+# fi

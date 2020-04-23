@@ -6,9 +6,7 @@ set -e
 ################################
 ###          CORE           ###
 ###############################
-set -e
-# Sets up the iniitial ssl certificate
-./scripts/createshibcerts.sh
+
 
 ################################
 ###        WORDPRESS        ###
@@ -21,13 +19,6 @@ fi
 #Import the base settings for the cache-control plugin
 php scripts/wp-import-config.php
 
-#If we're not on Master we need to adjust the shib plugin to allow local auth
-if [ "$PLATFORM_BRANCH" != master ]; then
-  ./scripts/wp-shib-allow-local-auth.sh y
-fi
-
-# If the site is using the mizzoumvc framework, we'll need to reset the cache
-#./scripts/mizzoumvc-clear-cache.sh
 
 ################################
 ###     Project Specific    ###

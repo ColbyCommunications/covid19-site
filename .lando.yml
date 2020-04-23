@@ -14,7 +14,6 @@ services:
   appserver:
     type: php:7.2
     build:
-        - "/app/scripts/lando-create-simplesaml.sh"
         # Intall the platform.sh CLI and make sure it is up to date.
         - "./scripts/lando-platform-install.sh"
     run:
@@ -60,10 +59,6 @@ tooling:
     service: appserver
     description: Checks your local ssh keys and sees if any are associated with your platform account.
     cmd: "/app/scripts/lando-check-ssh-keys.sh y"
-  lando-allow-local-auth:
-    service: appserver
-    description: Updates the wp-saml-auth configuration to allow local authentication when running in lando
-    cmd: "/app/scripts/wp-shib-allow-local-auth.sh y"
 
   platform:
     service: appserver

@@ -20,5 +20,3 @@ NEWHOME="/user"
 #default location for home in lando
 DEFAULTHOME="/var/www"
 DIGITALSERVICECONTACT="webmaster@colby.edu"
-VCSSSHDOMAIN="vcs.missouri.edu"
-WPSHIBAUTHONLYKEY="mizzou_shib_auth_only"

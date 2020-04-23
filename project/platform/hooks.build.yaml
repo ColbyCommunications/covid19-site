@@ -38,7 +38,4 @@ nvm use 10.16.3
 ################################
 ###     Project Specific    ###
 ###############################
-# Add any additional project specific build hooks you need in the environment after this line
-# If you are setting up a WordPress multidomain multisite, make sure you require the "mizzou/multisite-cookie-mapper"
-# dependency in composer.json, and then uncomment the following line
-#./scripts/digitalservice/symlink.sh /app/web/wp-content/mu-plugins/multisite-cookie-mapper/multisite-cookie-mapper.php /app/web/wp-content/mu-plugins/multisite-cookie-mapper.php
+# Add any additional project specific build hooks you need in the environment after this line.

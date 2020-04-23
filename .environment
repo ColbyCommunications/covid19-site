@@ -10,6 +10,3 @@ if [ -n "$PLATFORM_APP_DIR" -a -f "$PLATFORM_APP_DIR"/composer.json ] ; then
   export PATH="${PLATFORM_APP_DIR}/${bin:-vendor/bin}:${PATH}"
 fi
 
-# Create .rnd file that open ssl can use while generating shib certs. For use with
-# scripts/digitalservice/createshibcerts.sh
-export RANDFILE=/app/simplesaml/cert/.rnd
