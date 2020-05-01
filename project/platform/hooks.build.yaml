@@ -10,7 +10,7 @@ set -e
 curl -sS https://platform.sh/cli/installer | php
 
 # install redis cache
-bash install-redis.sh 5.1.1
+./scripts/install-redis.sh 5.1.1
 
 ################################
 ###        WORDPRESS        ###
