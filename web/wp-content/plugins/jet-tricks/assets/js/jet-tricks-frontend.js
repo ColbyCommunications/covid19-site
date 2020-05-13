@@ -187,7 +187,7 @@
 				if ( ! $target.hasClass( 'jet-unfold-state' ) ) {
 					$target.addClass( 'jet-unfold-state' );
 
-					$buttonIcon.html( '<i class="' + foldIcon + '"></i>' );
+					$buttonIcon.html( foldIcon );
 					$buttonText.html( foldText );
 
 					anime( {
@@ -199,7 +199,7 @@
 				} else {
 					$target.removeClass( 'jet-unfold-state' );
 
-					$buttonIcon.html( '<i class="' + unfoldIcon + '"></i>' );
+					$buttonIcon.html( unfoldIcon );
 					$buttonText.html( unfoldText );
 
 					anime( {
@@ -254,7 +254,8 @@
 			var $target   = $scope.find( '.jet-hotspots' ),
 				$hotspots = $( '.jet-hotspots__item', $target),
 				settings  = $target.data( 'settings' ),
-				editMode  = Boolean( elementor.isEditMode() );
+				editMode  = Boolean( elementor.isEditMode() ),
+				itemActiveClass = 'jet-hotspots__item--active';
 
 			$target.imagesLoaded().progress( function() {
 				$target.addClass( 'image-loaded' );
@@ -287,6 +288,12 @@
 					flipBehavior: 'clockwise',
 					appendTo: itemSelector,
 					hideOnClick: 'manual' !== settings['tooltipTrigger'],
+					onShow() {
+						$( itemSelector ).addClass( itemActiveClass );
+					},
+					onHidden() {
+						$( itemSelector ).removeClass( itemActiveClass );
+					}
 				} );
 
 				if ( 'manual' === settings['tooltipTrigger'] && itemSelector._tippy ) {

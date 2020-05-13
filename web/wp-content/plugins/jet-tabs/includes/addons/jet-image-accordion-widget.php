@@ -173,7 +173,7 @@ class Jet_Image_Accordion_Widget extends Jet_Tabs_Base {
 			)
 		);
 
-		$this->add_control(
+		$this->add_responsive_control(
 			'instance_orientation',
 			array(
 				'label'   => esc_html__( 'Orientation', 'jet-tabs' ),
@@ -182,6 +182,13 @@ class Jet_Image_Accordion_Widget extends Jet_Tabs_Base {
 				'options' => array(
 					'vertical'   => esc_html__( 'Vertical', 'jet-tabs' ),
 					'horizontal' => esc_html__( 'Horizontal', 'jet-tabs' ),
+				),
+				'selectors_dictionary' => array(
+					'vertical'   => 'flex-direction: row',
+					'horizontal' => 'flex-direction: column',
+				),
+				'selectors' => array(
+					'{{WRAPPER}} ' . $css_scheme['list'] => '{{VALUE}}'
 				),
 			)
 		);
@@ -337,6 +344,7 @@ class Jet_Image_Accordion_Widget extends Jet_Tabs_Base {
 				),
 				'selectors'  => array(
 					'{{WRAPPER}} ' . $css_scheme['item'] => 'margin: calc({{SIZE}}{{UNIT}} / 2);',
+					'{{WRAPPER}} ' . $css_scheme['list'] => 'margin: calc(-{{SIZE}}{{UNIT}} / 2);',
 				),
 			),
 			25

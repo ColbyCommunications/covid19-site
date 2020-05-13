@@ -20,37 +20,23 @@ if ( ! class_exists( 'Jet_Menu_Options_Page' ) ) {
 		private static $instance = null;
 
 		/**
-		 * Instance of the class Cherry_Interface_Builder.
-		 *
-		 * @since 1.0.0
-		 * @var object
-		 */
-		private $builder = null;
-
-		/**
-		 * HTML spinner.
-		 *
-		 * @since 1.0.0
-		 * @var string
-		 * @access private
-		 */
-		private $spinner = '<span class="loader-wrapper"><span class="loader"></span></span>';
-
-		/**
-		 * Dashicons.
-		 *
-		 * @since 1.0.0
-		 * @var string
-		 * @access private
-		 */
-		private $button_icon = '<span class="dashicons dashicons-yes icon"></span>';
-
-		/**
 		 * Fonts loader instance
 		 *
 		 * @var object
 		 */
 		protected $fonts_loader = null;
+
+		/**
+		 * [$customizer description]
+		 * @var null
+		 */
+		protected $customizer = null;
+
+		/**
+		 * [$current_options description]
+		 * @var array
+		 */
+		public $current_options = array();
 
 		/**
 		 * Default options
@@ -99,13 +85,26 @@ if ( ! class_exists( 'Jet_Menu_Options_Page' ) ) {
 		 */
 		public function __construct() {
 
-			$this->fonts_loader = jet_menu()->get_core()->init_module(
-				'cherry-google-fonts-loader',
+			$module_data = jet_menu()->module_loader->get_included_module_data( 'cherry-x-customizer.php' );
+
+			$this->customizer = new CX_Customizer(
 				array(
-					'prefix'  => $this->options_slug,
-					'type'    => 'option',
-					'single'  => true,
-					'options' => array(
+					'prefix'     => 'jet-menu',
+					'options'    => array(),
+					'path'       => $module_data['path'],
+					'just_fonts' => true,
+				)
+			);
+
+			$this->fonts_loader = new CX_Fonts_Manager(
+				array(
+					'prefix'    => $this->options_slug(),
+					'type'      => 'option',
+					'single'    => true,
+					'get_fonts' => function() {
+						return $fonts = $this->customizer->get_fonts();
+					},
+					'options'   => array(
 						'main' => array(
 							'family'  => 'jet-top-menu-font-family',
 							'style'   => 'jet-top-menu-font-style',
@@ -142,53 +141,70 @@ if ( ! class_exists( 'Jet_Menu_Options_Page' ) ) {
 							'weight'  => 'jet-menu-sub-badge-font-weight',
 							'charset' => 'jet-menu-sub-badge-subset',
 						),
+						'mobile-toggle-typo' => array(
+							'family'  => 'jet-menu-mobile-toggle-text-font-family',
+							'style'   => 'jet-menu-mobile-toggle-text-font-style',
+							'weight'  => 'jet-menu-mobile-toggle-text-font-weight',
+							'charset' => 'jet-menu-mobile-toggle-text-subset',
+						),
+						'mobile-back-typo' => array(
+							'family'  => 'jet-menu-mobile-back-text-font-family',
+							'style'   => 'jet-menu-mobile-back-text-font-style',
+							'weight'  => 'jet-menu-mobile-back-text-font-weight',
+							'charset' => 'jet-menu-mobile-back-text-subset',
+						),
+						'mobile-breadcrumbs-typo' => array(
+							'family'  => 'jet-menu-mobile-breadcrumbs-text-font-family',
+							'style'   => 'jet-menu-mobile-breadcrumbs-text-font-style',
+							'weight'  => 'jet-menu-mobile-breadcrumbs-text-font-weight',
+							'charset' => 'jet-menu-mobile-breadcrumbs-text-subset',
+						),
+						'mobile-label-typo' => array(
+							'family'  => 'jet-mobile-items-label-font-family',
+							'style'   => 'jet-mobile-items-label-font-style',
+							'weight'  => 'jet-mobile-items-label-font-weight',
+							'charset' => 'jet-mobile-items-label-subset',
+						),
+						'mobile-items-desc' => array(
+							'family'  => 'jet-mobile-items-desc-font-family',
+							'style'   => 'jet-mobile-items-desc-font-style',
+							'weight'  => 'jet-mobile-items-desc-font-weight',
+							'charset' => 'jet-mobile-items-desc-subset',
+						),
+						'mobile-badge-typo' => array(
+							'family'  => 'jet-mobile-items-badge-font-family',
+							'style'   => 'jet-mobile-items-badge-font-style',
+							'weight'  => 'jet-mobile-items-badge-font-weight',
+							'charset' => 'jet-mobile-items-badge-subset',
+						),
+
 					),
 				)
 			);
 
-			$sys_messages = array(
-				'invalid_base_data' => esc_html__( 'Unable to process the request without nonce or server error', 'jet-menu' ),
-				'no_right'          => esc_html__( 'No right for this action', 'jet-menu' ),
-				'invalid_nonce'     => esc_html__( 'Stop CHEATING!!!', 'jet-menu' ),
-				'access_is_allowed' => '',
-				'wait_processing'   => esc_html__( 'Please wait, processing the previous request', 'jet-menu' ),
-			);
-
-			jet_menu()->get_core()->init_module(
-				'cherry-handler',
-				array(
-					'id'           => 'jet_menu_save_options_ajax',
-					'action'       => 'jet_menu_save_options_ajax',
-					'capability'   => 'manage_options',
-					'callback'     => array( $this , 'jet_menu_save_options_callback' ),
-					'sys_messages' => $sys_messages,
-				)
-			);
-
-			jet_menu()->get_core()->init_module(
-				'cherry-handler',
-				array(
-					'id'           => 'jet_menu_restore_options_ajax',
-					'action'       => 'jet_menu_restore_options_ajax',
-					'capability'   => 'manage_options',
-					'callback'     => array( $this , 'jet_menu_restore_options_callback' ),
-					'sys_messages' => $sys_messages,
-				)
-			);
-
 			if ( is_admin() ) {
-				// Load the admin menu.
-				add_action( 'admin_menu', array( $this, 'add_menu_item' ) );
-				add_action( 'current_screen', array( $this, 'interface_builder_init' ) );
-
 				add_action( 'admin_init', array( $this, 'process_export' ) );
 				add_action( 'admin_init', array( $this, 'process_reset' ) );
-
 			}
 
-			add_action( 'wp_ajax_jet_menu_import_options', array( $this, 'process_import' ) );
-			add_filter( 'jet-data-importer/export/options-to-export', array( $this, 'export_menu_options' ) );
+			// Load the admin menu.
+			add_action( 'admin_menu', array( $this, 'add_menu_item' ), 99 );
 
+			add_action( 'admin_enqueue_scripts', array( $this, 'admin_assets' ), 99 );
+
+			add_action( 'wp_ajax_jet_menu_import_options', array( $this, 'process_import' ) );
+
+			add_filter( 'jet-data-importer/export/options-to-export', array( $this, 'export_menu_options' ) );
+		}
+
+		/**
+		 * Return options db key.
+		 *
+		 * @return string
+		 */
+
+		public function options_slug() {
+			return $this->options_slug;
 		}
 
 		/**
@@ -199,20 +215,8 @@ if ( ! class_exists( 'Jet_Menu_Options_Page' ) ) {
 		 */
 		public function export_menu_options( $options ) {
 			$options[] = $this->options_slug;
+
 			return $options;
-		}
-
-		/**
-		 * Interface Builder Init
-		 *
-		 * @return void
-		 */
-		public function interface_builder_init() {
-			$screen = get_current_screen();
-
-			if ( 'toplevel_page_jet-menu' === $screen->base ) {
-				$this->builder = jet_menu()->get_core()->init_module( 'cherry-interface-builder', array() );
-			}
 		}
 
 		/**
@@ -223,1493 +227,1856 @@ if ( ! class_exists( 'Jet_Menu_Options_Page' ) ) {
 		 * @return void
 		 */
 		public function add_menu_item() {
-			add_menu_page(
-				esc_html__( 'JetMenu', 'jet-menu' ),
-				esc_html__( 'JetMenu', 'jet-menu' ),
+
+			add_submenu_page(
+				'jet-dashboard',
+				esc_html__( 'JetMenu Settings', 'jet-menu' ),
+				esc_html__( 'JetMenu Settings', 'jet-menu' ),
 				'manage_options',
-				jet_menu()->plugin_slug,
-				array( $this, 'render_options_page' ),
-				'',
-				100
+				$this->options_slug . '_page',
+				array( $this, 'render_page' )
 			);
-
 		}
 
 		/**
-		 * Save options
-		 *
-		 * @since 1.0.0
+		 * [render_page description]
+		 * @return [type] [description]
 		 */
-		public function jet_menu_save_options_callback() {
+		public function render_page() {
+			include jet_menu()->get_template( 'admin/options-page.php' );
+		}
 
-			if ( ! empty( $_REQUEST['data'] ) ) {
-				$data = $_REQUEST['data'];
+		/**
+		 * [admin_assets description]
+		 * @return [type] [description]
+		 */
+		public function admin_assets() {
 
-				$this->save_options( $this->options_slug, $data );
+			if ( isset( $_REQUEST['page'] ) && $this->options_slug . '_page' === $_REQUEST['page'] ) {
 
+				$module_data = jet_menu()->module_loader->get_included_module_data( 'cherry-x-vue-ui.php' );
+				$ui          = new CX_Vue_UI( $module_data );
+
+				$ui->enqueue_assets();
+
+				wp_enqueue_style( 'jet-menu-admin' );
+
+				wp_enqueue_script(
+					'jet-menu-options-page-script',
+					jet_menu()->plugin_url( 'assets/admin/js/options-page.js' ),
+					array( 'cx-vue-ui' ),
+					jet_menu()->get_version(),
+					true
+				);
+
+				wp_localize_script(
+					'jet-menu-options-page-script',
+					'JetMenuOptionsPageConfig',
+					apply_filters( 'jet-menu/admin/settings-page-config', $this->get_options_page_config() )
+				);
 			}
 		}
 
 		/**
-		 * Restore options
-		 *
-		 * @since 1.0.0
+		 * [get_options_page_config description]
+		 * @return [type] [description]
 		 */
-		public function jet_menu_restore_options_callback() {
-			$default_options = get_option( $this->options_slug . '_default' );
-			$this->save_options( $this->options_slug, $default_options );
+		public function get_options_page_config() {
+
+			$rest_api_url = apply_filters( 'jet-menu/rest/admin/url', get_rest_url() );
+
+			return array(
+				'optionsApiUrl'    => $rest_api_url . 'jet-menu-api/v1/plugin-settings',
+				'rawOptionsData'   => $this->get_option(),
+				'optionPresetList' => jet_menu_options_presets()->get_presets_select_options(),
+				'importUrl'        => add_query_arg( array( 'jet-action' => 'import-options' ), esc_url( admin_url( 'admin.php' ) ) ),
+				'exportUrl'        => add_query_arg( array( 'jet-action' => 'export-options' ), esc_url( admin_url( 'admin.php' ) ) ),
+				'resetUrl'         => add_query_arg( array( 'jet-action' => 'reset-options' ), esc_url( admin_url( 'admin.php' ) ) ),
+				'optionsPageUrl'   => add_query_arg( array( 'page' => 'jet_menu_options_page' ), esc_url( admin_url( 'admin.php' ) ) ),
+				'optionsData'      => $this->get_options_data(),
+				'arrowsIcons'      => jet_menu_tools()->get_arrows_icons(),
+				'iconsFetchJson'   => jet_menu()->plugin_url( 'assets/public/lib/font-awesome/js/solid.js' ),
+				'templateList'     => jet_menu_tools()->get_elementor_templates_select_options(),
+			);
 		}
 
 		/**
-		 * Render plugin options page.
-		 *
-		 * @since 1.0.0
-		 * @access public
-		 * @return void
+		 * [get_options_data description]
+		 * @return [type] [description]
 		 */
-		public function render_options_page() {
+		public function get_options_data() {
 
-			$default_mobile_breakpoint = $this->get_default_mobile_breakpoint();
-
-			jet_menu_dynmic_css()->init_builder( $this->builder );
-
-			$this->builder->register_section(
-				array(
-					'jet_menu_options_section' => array(
-						'type'        => 'section',
-						'scroll'      => false,
-						'title'       => esc_html__( 'JetMenu', 'jet-menu' ),
-						'description' => esc_html__( 'General JetMenu Settings', 'jet-menu' ),
-					),
-				)
+			$default_dimensions = array(
+				'top'       => '',
+				'right'     => '',
+				'bottom'    => '',
+				'left'      => '',
+				'is_linked' => true,
+				'units'     => 'px',
 			);
 
-			$this->builder->register_form(
-				array(
-					'jet-menu-options-form' => array(
-						'type'    => 'form',
-						'enctype' => 'multipart/form-data',
-						'parent'  => 'jet_menu_options_section',
-					),
-				)
-			);
+			$this->add_option( 'svg-uploads', array(
+				'value' => $this->get_option( 'svg-uploads', 'enabled' ),
+			) );
 
-			$this->builder->register_settings(
-				array(
-					'option_page_content' => array(
-						'type'   => 'settings',
-						'parent' => 'jet-menu-options-form',
+			// General
+			$this->add_option( 'jet-menu-animation', array(
+				'value'   => $this->get_option( 'jet-menu-animation', 'fade' ),
+				'options' => array(
+					array(
+						'label' => esc_html__( 'None', 'jet-menu' ),
+						'value' => 'none',
 					),
-					'option_page_footer' => array(
-						'type'   => 'settings',
-						'parent' => 'jet-menu-options-form',
-						'class'  => 'option-page-footer',
+					array(
+						'label' => esc_html__( 'Fade', 'jet-menu' ),
+						'value' => 'fade',
 					),
-				)
-			);
-
-			$this->builder->register_component(
-				array(
-					'tab_vertical' => array(
-						'type'   => 'component-tab-vertical',
-						'parent' => 'option_page_content',
-						'view'   => jet_menu()->get_template( 'admin/component-tab-vertical.php' ),
+					array(
+						'label' => esc_html__( 'Move Up', 'jet-menu' ),
+						'value' => 'move-up',
 					),
-				)
-			);
-
-			$tabs = apply_filters( 'jet-menu/options-page/tabs', array(
-				'general_tab' => array(
-					'parent'      => 'tab_vertical',
-					'title'       => esc_html__( 'General', 'jet-menu' ),
-				),
-				'styles_tab' => array(
-					'parent'      => 'tab_vertical',
-					'title'       => esc_html__( 'Styles', 'jet-menu' ),
-				),
-				'main_items_styles_tab' => array(
-					'parent'      => 'tab_vertical',
-					'title'       => esc_html__( 'Main Menu Styles', 'jet-menu' ),
-				),
-				'sub_items_styles_tab' => array(
-					'parent'      => 'tab_vertical',
-					'title'       => esc_html__( 'Sub Menu Styles', 'jet-menu' ),
-				),
-				'mobile_menu_tab' => array(
-					'parent'      => 'tab_vertical',
-					'title'       => esc_html__( 'Mobile Menu', 'jet-menu' ),
-				),
-				'advanced_tab' => array(
-					'parent'      => 'tab_vertical',
-					'title'       => esc_html__( 'Advanced', 'jet-menu' ),
+					array(
+						'label' => esc_html__( 'Move Down', 'jet-menu' ),
+						'value' => 'move-down',
+					)
 				),
 			) );
 
-			$this->builder->register_settings( $tabs );
+			$this->add_option( 'jet-menu-roll-up', array(
+				'value' => $this->get_option( 'jet-menu-roll-up', 'true' ),
+			) );
 
-			$import_template = jet_menu()->get_template( 'admin/settings-import-export.php' );
-
-			ob_start();
-			include $import_template;
-			$import_export = ob_get_clean();
-
-			$this->builder->register_html(
-				array(
-					'jet-menu-import-export' => array(
-						'type'   => 'html',
-						'parent' => 'option_page_footer',
-						'class'  => 'jet-menu-import-export',
-						'html'   => $import_export,
-					),
-				)
-			);
-
-			$this->builder->register_control(
-				array(
-					'jet-menu-reset-options' => array(
-						'type'          => 'button',
-						'parent'        => 'option_page_footer',
-						'style'         => 'normal',
-						'view_wrapping' => false,
-						'class'         => 'jet-reset-options',
-						'content'       => esc_html__( 'Reset', 'jet-menu' ),
-					),
-					'jet-menu-save-options' => array(
-						'type'          => 'button',
-						'parent'        => 'option_page_footer',
-						'style'         => 'success',
-						'class'         => 'custom-class',
-						'view_wrapping' => false,
-						'content'       => '<span class="text">' . esc_html__( 'Save', 'jet-menu' ) . '</span>' . $this->spinner . $this->button_icon,
-					),
-				)
-			);
-
-			$this->section_start( 'general_tab' );
-
-			$this->builder->register_control(
-				array(
-					'jet-menu-animation' => array(
-						'type'             => 'select',
-						'parent'           => 'general_tab',
-						'title'            => esc_html__( 'Animation', 'jet-menu' ),
-						'multiple'         => false,
-						'filter'           => true,
-						'value'            => $this->get_option( 'jet-menu-animation' ),
-						'options'          => array(
-							'none'      => esc_html__( 'None', 'jet-menu' ),
-							'fade'      => esc_html__( 'Fade', 'jet-menu' ),
-							'move-up'   => esc_html__( 'Move Up', 'jet-menu' ),
-							'move-down' => esc_html__( 'Move Down', 'jet-menu' ),
-						),
-						'placeholder'      => 'Select',
-						'label'            => '',
-						'class'            => '',
-					),
-
-					'jet-menu-roll-up' => array(
-						'type'        => 'switcher',
-						'parent'      => 'general_tab',
-						'title'       => esc_html__( 'Menu rollUp', 'jet-menu' ),
-						'description' => esc_html__( 'Enable this option in order to reduce the menu size by grouping extra menu items  and hiding them under the suspension dots.', 'jet-menu' ),
-						'value'       => $this->get_option( 'jet-menu-roll-up', 'false' ),
-						'toggle'      => array(
-							'true_toggle'  => 'On',
-							'false_toggle' => 'Off',
-						),
-					),
-
-					'jet-menu-mouseleave-delay' => array(
-						'type'       => 'slider',
-						'parent'     => 'general_tab',
-						'title'      => esc_html__( 'Mouse Leave Delay', 'jet-menu' ),
-						'max_value'  => 10000,
-						'min_value'  => 0,
-						'value'      => $this->get_option( 'jet-menu-mouseleave-delay', 500 ),
-						'step_value' => 100,
-					),
-
-					'jet-mega-menu-width-type' => array(
-						'type'     => 'radio',
-						'parent'   => 'general_tab',
-						'title'    => esc_html__( 'Mega menu base width', 'jet-menu' ),
-						'value'    => $this->get_option( 'jet-mega-menu-width-type', 'container' ),
-						'options'  => array(
-							'container' => array(
-								'label' => esc_html__( 'Width same as main container width', 'jet-menu' ),
-							),
-							'items'     => array(
-								'label' => esc_html__( 'Width same as total items width', 'jet-menu' ),
-							),
-							'selector'  => array(
-								'label' =>  esc_html__( 'Width same as Custom css selector width', 'jet-menu' ),
-								'slave' => 'jet-mega-menu-selector-width-type',
-							)
-						),
-						'label'    => '',
-						'class'    => '',
-					),
-
-					'jet-mega-menu-selector-width-type' => array(
-						'type'     => 'text',
-						'parent'   => 'general_tab',
-						'title'    => esc_html__( 'Mega menu width selector', 'jet-menu' ),
-						'value'    => $this->get_option( 'jet-mega-menu-selector-width-type', '' ),
-						'label'    => '',
-						'class'    => '',
-						'master'   => 'jet-mega-menu-selector-width-type',
-					),
-
-					'jet-menu-open-sub-type' => array(
-						'type'        => 'select',
-						'parent'      => 'general_tab',
-						'title'       => esc_html__( 'Sub menu open event', 'jet-menu' ),
-						'multiple'    => false,
-						'filter'      => true,
-						'value'       => $this->get_option( 'jet-menu-open-sub-type', 'hover' ),
-						'options'     => array(
-							'hover'       => esc_html__( 'Hover', 'jet-menu' ),
-							'click'       => esc_html__( 'Click', 'jet-menu' ),
-						),
-						'placeholder' => 'Select',
-						'label'       => '',
-						'class'       => '',
-					),
-
-					'jet-menu-mobile-breakpoint' => array(
-						'type'        => 'slider',
-						'parent'      => 'general_tab',
-						'title'       => esc_html__( 'Mobile breakpoint (px)', 'jet-menu' ),
-						'description' => esc_html__( 'Sets the breakpoint between desktop menu and mobile menu. Below this breakpoint mobile menu will appear.', 'jet-menu' ),
-						'max_value'   => 1200,
-						'min_value'   => 480,
-						'value'       => $this->get_option( 'jet-menu-mobile-breakpoint', $default_mobile_breakpoint ),
-						'step_value'  => 1,
-					),
-				)
-			);
-
-			$template = get_template();
-
-			if ( file_exists( jet_menu()->plugin_path( "integration/themes/{$template}" ) ) ) {
-
-				$this->builder->register_control(
+			$this->add_option( 'jet-menu-show-for-device', array(
+				'value'   => $this->get_option( 'jet-menu-show-for-device', 'both' ),
+				'options' => array(
 					array(
-						'jet-menu-disable-integration-' . $template => array(
-							'type'        => 'switcher',
-							'parent'      => 'general_tab',
-							'title'       => esc_html__( 'Disable default theme integration file', 'jet-menu' ),
-							'value'       => $this->get_option( 'jet-menu-disable-integration-' . $template, 'false' ),
-							'toggle'      => array(
-								'true_toggle'  => 'On',
-								'false_toggle' => 'Off',
-							),
-						),
-					)
-				);
+						'label' => esc_html__( 'Desktop and mobile view', 'jet-menu' ),
+						'value' => 'both',
+					),
+					array(
+						'label' => esc_html__( 'Desktop view on all devices', 'jet-menu' ),
+						'value' => 'desktop',
+					),
+					array(
+						'label' => esc_html__( 'Mobile view on all devices', 'jet-menu' ),
+						'value' => 'mobile',
+					),
+				),
+			) );
 
+			$this->add_option( 'jet-menu-mega-ajax-loading', array(
+				'value' => $this->get_option( 'jet-menu-mega-ajax-loading', false ),
+			) );
+
+			$this->add_option( 'jet-menu-mouseleave-delay', array(
+				'value' => $this->get_option( 'jet-menu-mouseleave-delay', 500 ),
+			) );
+
+			$this->add_option( 'jet-mega-menu-width-type', array(
+				'value'   => $this->get_option( 'jet-mega-menu-width-type', 'container' ),
+				'options' => array(
+					array(
+						'label' => esc_html__( 'Width same as main container width', 'jet-menu' ),
+						'value' => 'container',
+					),
+					array(
+						'label' => esc_html__( 'Width same as total items width', 'jet-menu' ),
+						'value' => 'items',
+					),
+					array(
+						'label' => esc_html__( 'Width same as Custom css selector width', 'jet-menu' ),
+						'value' => 'selector',
+					)
+				),
+			) );
+
+			$this->add_option( 'jet-mega-menu-selector-width-type', array(
+				'value' => $this->get_option( 'jet-mega-menu-selector-width-type', '' ),
+			) );
+
+			$this->add_option( 'jet-menu-open-sub-type', array(
+				'value' => $this->get_option( 'jet-menu-open-sub-type', 'hover' ),
+				'options' => array(
+					array(
+						'label' => esc_html__( 'Hover', 'jet-menu' ),
+						'value' => 'hover',
+					),
+					array(
+						'label' => esc_html__( 'Click', 'jet-menu' ),
+						'value' => 'click',
+					),
+				),
+			) );
+
+			$this->add_option( 'jet-menu-disable-integration-' . get_template(), array(
+				'value' => $this->get_option( 'jet-menu-disable-integration-' . get_template(), false ),
+			) );
+
+			$this->add_option( 'jet-menu-cache-css', array(
+				'value' => $this->get_option( 'jet-menu-cache-css', false ),
+			) );
+
+			//Menu Container Styles
+			$this->add_option( 'jet-menu-container-alignment', array(
+				'value'   => $this->get_option( 'jet-menu-container-alignment', 'flex-end' ),
+				'options' => $this->get_aligment_select_options(),
+			) );
+
+			$this->add_option( 'jet-menu-min-width', array(
+				'value' => $this->get_option( 'jet-menu-min-width', 0 ),
+			) );
+
+			$this->add_option( 'jet-menu-mega-padding', array(
+				'value' => $this->get_option( 'jet-menu-mega-padding', $default_dimensions ),
+			) );
+
+			$this->add_background_options( 'jet-menu-container' );
+
+			$this->add_border_options( 'jet-menu-container' );
+
+			$this->add_box_shadow_options( 'jet-menu-container' );
+
+			$this->add_option( 'jet-menu-mega-border-radius', array(
+				'value' => $this->get_option( 'jet-menu-mega-border-radius', $default_dimensions ),
+			) );
+
+			$this->add_option( 'jet-menu-inherit-first-radius', array(
+				'value' => $this->get_option( 'jet-menu-inherit-first-radius', false ),
+			) );
+
+			$this->add_option( 'jet-menu-inherit-last-radius', array(
+				'value' => $this->get_option( 'jet-menu-inherit-last-radius', false ),
+			) );
+
+			// Sub Panels Settings
+			$this->add_option( 'jet-menu-sub-panel-width-simple', array(
+				'value' => $this->get_option( 'jet-menu-sub-panel-width-simple', 200 ),
+			) );
+
+			$this->add_background_options( 'jet-menu-sub-panel-simple' );
+
+			$this->add_border_options( 'jet-menu-sub-panel-simple' );
+
+			$this->add_box_shadow_options( 'jet-menu-sub-panel-simple' );
+
+			$this->add_option( 'jet-menu-sub-panel-border-radius-simple', array(
+				'value' => $this->get_option( 'jet-menu-sub-panel-border-radius-simple', $default_dimensions ),
+			) );
+
+			$this->add_option( 'jet-menu-sub-panel-padding-simple', array(
+				'value' => $this->get_option( 'jet-menu-sub-panel-padding-simple', $default_dimensions ),
+			) );
+
+			$this->add_option( 'jet-menu-sub-panel-margin-simple', array(
+				'value' => $this->get_option( 'jet-menu-sub-panel-margin-simple', $default_dimensions ),
+			) );
+
+			$this->add_background_options( 'jet-menu-sub-panel-mega' );
+
+			$this->add_border_options( 'jet-menu-sub-panel-mega' );
+
+			$this->add_box_shadow_options( 'jet-menu-sub-panel-mega' );
+
+			$this->add_option( 'jet-menu-sub-panel-border-radius-mega', array(
+				'value' => $this->get_option( 'jet-menu-sub-panel-border-radius-mega', $default_dimensions ),
+			) );
+
+			$this->add_option( 'jet-menu-sub-panel-padding-mega', array(
+				'value' => $this->get_option( 'jet-menu-sub-panel-padding-mega', $default_dimensions ),
+			) );
+
+			$this->add_option( 'jet-menu-sub-panel-margin-mega', array(
+				'value' => $this->get_option( 'jet-menu-sub-panel-margin-mega', $default_dimensions ),
+			) );
+
+			// Top Level Items
+			$this->add_option( 'jet-menu-item-max-width', array(
+				'value' => $this->get_option( 'jet-menu-item-max-width', '' ),
+			) );
+
+			$this->add_typography_options( 'jet-top-menu' );
+
+			$this->add_option( 'jet-show-top-menu-desc', array(
+				'value' => $this->get_option( 'jet-show-top-menu-desc', false ),
+			) );
+
+			$this->add_typography_options( 'jet-top-menu-desc' );
+
+			$this->add_option( 'jet-menu-item-text-color', array(
+				'value' => $this->get_option( 'jet-menu-item-text-color', '' ),
+			) );
+
+			$this->add_option( 'jet-menu-item-desc-color', array(
+				'value' => $this->get_option( 'jet-menu-item-desc-color', '' ),
+			) );
+
+			$this->add_option( 'jet-menu-top-icon-color', array(
+				'value' => $this->get_option( 'jet-menu-top-icon-color', '' ),
+			) );
+
+			$this->add_option( 'jet-menu-top-arrow-color', array(
+				'value' => $this->get_option( 'jet-menu-top-arrow-color', '' ),
+			) );
+
+			$this->add_background_options( 'jet-menu-item' );
+
+			$this->add_border_options( 'jet-menu-item' );
+
+			$this->add_border_options( 'jet-menu-first-item' );
+
+			$this->add_border_options( 'jet-menu-last-item' );
+
+			$this->add_box_shadow_options( 'jet-menu-item' );
+
+			$this->add_option( 'jet-menu-item-border-radius', array(
+				'value' => $this->get_option( 'jet-menu-item-border-radius', $default_dimensions ),
+			) );
+
+			$this->add_option( 'jet-menu-item-padding', array(
+				'value' => $this->get_option( 'jet-menu-item-padding', $default_dimensions ),
+			) );
+
+			$this->add_option( 'jet-menu-item-margin', array(
+				'value' => $this->get_option( 'jet-menu-item-margin', $default_dimensions ),
+			) );
+
+			$this->add_option( 'jet-menu-item-text-color-hover', array(
+				'value' => $this->get_option( 'jet-menu-item-text-color-hover', '' ),
+			) );
+
+			$this->add_option( 'jet-menu-item-desc-color-hover', array(
+				'value' => $this->get_option( 'jet-menu-item-desc-color-hover', '' ),
+			) );
+
+			$this->add_option( 'jet-menu-top-icon-color-hover', array(
+				'value' => $this->get_option( 'jet-menu-top-icon-color-hover', '' ),
+			) );
+
+			$this->add_option( 'jet-menu-top-arrow-color-hover', array(
+				'value' => $this->get_option( 'jet-menu-top-arrow-color-hover', '' ),
+			) );
+
+			$this->add_background_options( 'jet-menu-item-hover' );
+
+			$this->add_border_options( 'jet-menu-item-hover' );
+
+			$this->add_border_options( 'jet-menu-first-item-hover' );
+
+			$this->add_border_options( 'jet-menu-last-item-hover' );
+
+			$this->add_box_shadow_options( 'jet-menu-item-hover' );
+
+			$this->add_option( 'jet-menu-item-border-radius-hover', array(
+				'value' => $this->get_option( 'jet-menu-item-border-radius-hover', $default_dimensions ),
+			) );
+
+			$this->add_option( 'jet-menu-item-padding-hover', array(
+				'value' => $this->get_option( 'jet-menu-item-padding-hover', $default_dimensions ),
+			) );
+
+			$this->add_option( 'jet-menu-item-margin-hover', array(
+				'value' => $this->get_option( 'jet-menu-item-margin-hover', $default_dimensions ),
+			) );
+
+			$this->add_option( 'jet-menu-item-text-color-active', array(
+				'value' => $this->get_option( 'jet-menu-item-text-color-active', '' ),
+			) );
+
+			$this->add_option( 'jet-menu-item-desc-color-active', array(
+				'value' => $this->get_option( 'jet-menu-item-desc-color-active', '' ),
+			) );
+
+			$this->add_option( 'jet-menu-top-icon-color-active', array(
+				'value' => $this->get_option( 'jet-menu-top-icon-color-active', '' ),
+			) );
+
+			$this->add_option( 'jet-menu-top-arrow-color-active', array(
+				'value' => $this->get_option( 'jet-menu-top-arrow-color-active', '' ),
+			) );
+
+			$this->add_background_options( 'jet-menu-item-active' );
+
+			$this->add_border_options( 'jet-menu-item-active' );
+
+			$this->add_border_options( 'jet-menu-first-item-active' );
+
+			$this->add_border_options( 'jet-menu-last-item-active' );
+
+			$this->add_box_shadow_options( 'jet-menu-item-active' );
+
+			$this->add_option( 'jet-menu-item-border-radius-active', array(
+				'value' => $this->get_option( 'jet-menu-item-border-radius-active', $default_dimensions ),
+			) );
+
+			$this->add_option( 'jet-menu-item-padding-active', array(
+				'value' => $this->get_option( 'jet-menu-item-padding-active', $default_dimensions ),
+			) );
+
+			$this->add_option( 'jet-menu-item-margin-active', array(
+				'value' => $this->get_option( 'jet-menu-item-margin-active', $default_dimensions ),
+			) );
+
+			// Sub Level Items
+			$this->add_typography_options( 'jet-sub-menu' );
+
+			$this->add_option( 'jet-show-sub-menu-desc', array(
+				'value' => $this->get_option( 'jet-show-sub-menu-desc', false ),
+			) );
+
+			$this->add_typography_options( 'jet-sub-menu-desc' );
+
+			$this->add_option( 'jet-menu-sub-text-color', array(
+				'value' => $this->get_option( 'jet-menu-sub-text-color', '' ),
+			) );
+
+			$this->add_option( 'jet-menu-sub-desc-color', array(
+				'value' => $this->get_option( 'jet-menu-sub-desc-color', '' ),
+			) );
+
+			$this->add_option( 'jet-menu-sub-icon-color', array(
+				'value' => $this->get_option( 'jet-menu-sub-icon-color', '' ),
+			) );
+
+			$this->add_option( 'jet-menu-sub-arrow-color', array(
+				'value' => $this->get_option( 'jet-menu-sub-arrow-color', '' ),
+			) );
+
+			$this->add_background_options( 'jet-menu-sub' );
+
+			$this->add_border_options( 'jet-menu-sub' );
+
+			$this->add_border_options( 'jet-menu-sub-first' );
+
+			$this->add_border_options( 'jet-menu-sub-last' );
+
+			$this->add_box_shadow_options( 'jet-menu-sub' );
+
+			$this->add_option( 'jet-menu-sub-border-radius', array(
+				'value' => $this->get_option( 'jet-menu-sub-border-radius', $default_dimensions ),
+			) );
+
+			$this->add_option( 'jet-menu-sub-padding', array(
+				'value' => $this->get_option( 'jet-menu-sub-padding', $default_dimensions ),
+			) );
+
+			$this->add_option( 'jet-menu-sub-margin', array(
+				'value' => $this->get_option( 'jet-menu-sub-margin', $default_dimensions ),
+			) );
+
+			$this->add_option( 'jet-menu-sub-text-color', array(
+				'value' => $this->get_option( 'jet-menu-sub-text-color', '' ),
+			) );
+
+			$this->add_option( 'jet-menu-sub-text-color-hover', array(
+				'value' => $this->get_option( 'jet-menu-sub-text-color-hover', '' ),
+			) );
+
+			$this->add_option( 'jet-menu-sub-desc-color-hover', array(
+				'value' => $this->get_option( 'jet-menu-sub-desc-color-hover', '' ),
+			) );
+
+			$this->add_option( 'jet-menu-sub-icon-color-hover', array(
+				'value' => $this->get_option( 'jet-menu-sub-icon-color-hover', '' ),
+			) );
+
+			$this->add_option( 'jet-menu-sub-arrow-color-hover', array(
+				'value' => $this->get_option( 'jet-menu-sub-arrow-color-hover', '' ),
+			) );
+
+			$this->add_background_options( 'jet-menu-sub-hover' );
+
+			$this->add_border_options( 'jet-menu-sub-hover' );
+
+			$this->add_border_options( 'jet-menu-sub-first-hover' );
+
+			$this->add_border_options( 'jet-menu-sub-last-hover' );
+
+			$this->add_box_shadow_options( 'jet-menu-sub-hover' );
+
+			$this->add_option( 'jet-menu-sub-border-radius-hover', array(
+				'value' => $this->get_option( 'jet-menu-sub-border-radius-hover', $default_dimensions ),
+			) );
+
+			$this->add_option( 'jet-menu-sub-padding-hover', array(
+				'value' => $this->get_option( 'jet-menu-sub-padding-hover', $default_dimensions ),
+			) );
+
+			$this->add_option( 'jet-menu-sub-margin-hover', array(
+				'value' => $this->get_option( 'jet-menu-sub-margin-hover', $default_dimensions ),
+			) );
+
+			$this->add_option( 'jet-menu-sub-text-color-hover', array(
+				'value' => $this->get_option( 'jet-menu-sub-text-color-hover', '' ),
+			) );
+
+			$this->add_option( 'jet-menu-sub-text-color-active', array(
+				'value' => $this->get_option( 'jet-menu-sub-text-color-active', '' ),
+			) );
+
+			$this->add_option( 'jet-menu-sub-desc-color-active', array(
+				'value' => $this->get_option( 'jet-menu-sub-desc-color-active', '' ),
+			) );
+
+			$this->add_option( 'jet-menu-sub-icon-color-active', array(
+				'value' => $this->get_option( 'jet-menu-sub-icon-color-active', '' ),
+			) );
+
+			$this->add_option( 'jet-menu-sub-arrow-color-active', array(
+				'value' => $this->get_option( 'jet-menu-sub-arrow-color-active', '' ),
+			) );
+
+			$this->add_background_options( 'jet-menu-sub-active' );
+
+			$this->add_border_options( 'jet-menu-sub-active' );
+
+			$this->add_border_options( 'jet-menu-sub-first-active' );
+
+			$this->add_border_options( 'jet-menu-sub-last-active' );
+
+			$this->add_box_shadow_options( 'jet-menu-sub-active' );
+
+			$this->add_option( 'jet-menu-sub-border-radius-active', array(
+				'value' => $this->get_option( 'jet-menu-sub-border-radius-active', $default_dimensions ),
+			) );
+
+			$this->add_option( 'jet-menu-sub-padding-active', array(
+				'value' => $this->get_option( 'jet-menu-sub-padding-active', $default_dimensions ),
+			) );
+
+			$this->add_option( 'jet-menu-sub-margin-active', array(
+				'value' => $this->get_option( 'jet-menu-sub-margin-active', $default_dimensions ),
+			) );
+
+			$this->add_option( 'jet-menu-sub-text-color-active', array(
+				'value' => $this->get_option( 'jet-menu-sub-text-color-active', '' ),
+			) );
+
+			//Advanced Styles
+			$this->add_option( 'jet-menu-top-icon-size', array(
+				'value' => $this->get_option( 'jet-menu-top-icon-size', '' ),
+			) );
+
+			$this->add_option( 'jet-menu-top-icon-margin', array(
+				'value' => $this->get_option( 'jet-menu-top-icon-margin', $default_dimensions ),
+			) );
+
+			$this->add_option( 'jet-menu-top-icon-ver-position', array(
+				'value' => $this->get_option( 'jet-menu-top-icon-ver-position', 'center' ),
+				'options' => array(
+					array(
+						'label' => esc_html__( 'Center', 'jet-menu' ),
+						'value' => 'center',
+					),
+					array(
+						'label' => esc_html__( 'Top', 'jet-menu' ),
+						'value' => 'top',
+					),
+					array(
+						'label' => esc_html__( 'Bottom', 'jet-menu' ),
+						'value' => 'bottom',
+					),
+				),
+			) );
+
+			$this->add_option( 'jet-menu-top-icon-hor-position', array(
+				'value' => $this->get_option( 'jet-menu-top-icon-hor-position', '' ),
+				'options' => array(
+					array(
+						'label' => esc_html__( 'Left', 'jet-menu' ),
+						'value' => 'left',
+					),
+					array(
+						'label' => esc_html__( 'Center', 'jet-menu' ),
+						'value' => 'center',
+					),
+					array(
+						'label' => esc_html__( 'Right', 'jet-menu' ),
+						'value' => 'right',
+					),
+				),
+			) );
+
+			$this->add_option( 'jet-menu-top-icon-order', array(
+				'value' => $this->get_option( 'jet-menu-top-icon-order', '' ),
+			) );
+
+			$this->add_option( 'jet-menu-sub-icon-size', array(
+				'value' => $this->get_option( 'jet-menu-sub-icon-size', '' ),
+			) );
+
+			$this->add_option( 'jet-menu-sub-icon-margin', array(
+				'value' => $this->get_option( 'jet-menu-sub-icon-margin', $default_dimensions ),
+			) );
+
+			$this->add_option( 'jet-menu-sub-icon-ver-position', array(
+				'value' => $this->get_option( 'jet-menu-sub-icon-ver-position', '' ),
+				'options' => array(
+					array(
+						'label' => esc_html__( 'Center', 'jet-menu' ),
+						'value' => 'center',
+					),
+					array(
+						'label' => esc_html__( 'Top', 'jet-menu' ),
+						'value' => 'top',
+					),
+					array(
+						'label' => esc_html__( 'Bottom', 'jet-menu' ),
+						'value' => 'bottom',
+					),
+				),
+			) );
+
+			$this->add_option( 'jet-menu-sub-icon-hor-position', array(
+				'value' => $this->get_option( 'jet-menu-sub-icon-hor-position', '' ),
+				'options' => array(
+					array(
+						'label' => esc_html__( 'Left', 'jet-menu' ),
+						'value' => 'left',
+					),
+					array(
+						'label' => esc_html__( 'Center', 'jet-menu' ),
+						'value' => 'center',
+					),
+					array(
+						'label' => esc_html__( 'Right', 'jet-menu' ),
+						'value' => 'right',
+					),
+				),
+			) );
+
+			$this->add_option( 'jet-menu-sub-icon-order', array(
+				'value' => $this->get_option( 'jet-menu-sub-icon-order', '' ),
+			) );
+
+			// Badge Styles
+			$this->add_option( 'jet-menu-top-badge-text-color', array(
+				'value' => $this->get_option( 'jet-menu-top-badge-text-color', '' ),
+			) );
+
+			$this->add_typography_options( 'jet-menu-top-badge' );
+
+			$this->add_background_options( 'jet-menu-top-badge-bg' );
+
+			$this->add_border_options( 'jet-menu-top-badge' );
+
+			$this->add_box_shadow_options( 'jet-menu-top-badge' );
+
+			$this->add_option( 'jet-menu-top-badge-border-radius', array(
+				'value' => $this->get_option( 'jet-menu-top-badge-border-radius', $default_dimensions ),
+			) );
+
+			$this->add_option( 'jet-menu-top-badge-padding', array(
+				'value' => $this->get_option( 'jet-menu-top-badge-padding', $default_dimensions ),
+			) );
+
+			$this->add_option( 'jet-menu-top-badge-margin', array(
+				'value' => $this->get_option( 'jet-menu-top-badge-margin', $default_dimensions ),
+			) );
+
+			$this->add_option( 'jet-menu-top-badge-ver-position', array(
+				'value' => $this->get_option( 'jet-menu-top-badge-ver-position', '' ),
+				'options' => array(
+					array(
+						'label' => esc_html__( 'Center', 'jet-menu' ),
+						'value' => 'center',
+					),
+					array(
+						'label' => esc_html__( 'Top', 'jet-menu' ),
+						'value' => 'top',
+					),
+					array(
+						'label' => esc_html__( 'Bottom', 'jet-menu' ),
+						'value' => 'bottom',
+					),
+				),
+			) );
+
+			$this->add_option( 'jet-menu-top-badge-hor-position', array(
+				'value' => $this->get_option( 'jet-menu-top-badge-hor-position', '' ),
+				'options' => array(
+					array(
+						'label' => esc_html__( 'Left', 'jet-menu' ),
+						'value' => 'left',
+					),
+					array(
+						'label' => esc_html__( 'Center', 'jet-menu' ),
+						'value' => 'center',
+					),
+					array(
+						'label' => esc_html__( 'Right', 'jet-menu' ),
+						'value' => 'right',
+					),
+				),
+			) );
+
+			$this->add_option( 'jet-menu-top-badge-order', array(
+				'value' => $this->get_option( 'jet-menu-top-badge-order', '' ),
+			) );
+
+			$this->add_option( 'jet-menu-top-badge-hide', array(
+				'value' => $this->get_option( 'jet-menu-top-badge-hide', false ),
+			) );
+
+			$this->add_option( 'jet-menu-sub-badge-text-color', array(
+				'value' => $this->get_option( 'jet-menu-sub-badge-text-color', '' ),
+			) );
+
+			$this->add_typography_options( 'jet-menu-sub-badge' );
+
+			$this->add_background_options( 'jet-menu-sub-badge-bg' );
+
+			$this->add_border_options( 'jet-menu-sub-badge' );
+
+			$this->add_box_shadow_options( 'jet-menu-sub-badge' );
+
+			$this->add_option( 'jet-menu-sub-badge-border-radius', array(
+				'value' => $this->get_option( 'jet-menu-sub-badge-border-radius', $default_dimensions ),
+			) );
+
+			$this->add_option( 'jet-menu-sub-badge-padding', array(
+				'value' => $this->get_option( 'jet-menu-sub-badge-padding', $default_dimensions ),
+			) );
+
+			$this->add_option( 'jet-menu-sub-badge-margin', array(
+				'value' => $this->get_option( 'jet-menu-sub-badge-margin', $default_dimensions ),
+			) );
+
+			$this->add_option( 'jet-menu-sub-badge-ver-position', array(
+				'value' => $this->get_option( 'jet-menu-sub-badge-ver-position', '' ),
+				'options' => array(
+					array(
+						'label' => esc_html__( 'Center', 'jet-menu' ),
+						'value' => 'center',
+					),
+					array(
+						'label' => esc_html__( 'Top', 'jet-menu' ),
+						'value' => 'top',
+					),
+					array(
+						'label' => esc_html__( 'Bottom', 'jet-menu' ),
+						'value' => 'bottom',
+					),
+				),
+			) );
+
+			$this->add_option( 'jet-menu-sub-badge-hor-position', array(
+				'value' => $this->get_option( 'jet-menu-sub-badge-hor-position', '' ),
+				'options' => array(
+					array(
+						'label' => esc_html__( 'Left', 'jet-menu' ),
+						'value' => 'left',
+					),
+					array(
+						'label' => esc_html__( 'Center', 'jet-menu' ),
+						'value' => 'center',
+					),
+					array(
+						'label' => esc_html__( 'Right', 'jet-menu' ),
+						'value' => 'right',
+					),
+				),
+			) );
+
+			$this->add_option( 'jet-menu-sub-badge-order', array(
+				'value' => $this->get_option( 'jet-menu-sub-badge-order', '' ),
+			) );
+
+			$this->add_option( 'jet-menu-sub-badge-hide', array(
+				'value' => $this->get_option( 'jet-menu-sub-badge-hide', false ),
+			) );
+
+			// Arrow
+			$this->add_option( 'jet-menu-top-arrow', array(
+				'value' => $this->get_option( 'jet-menu-top-arrow', 'fa-angle-down' ),
+			) );
+
+			$this->add_option( 'jet-menu-top-arrow-size', array(
+				'value' => $this->get_option( 'jet-menu-top-arrow-size', '' ),
+			) );
+
+			$this->add_option( 'jet-menu-top-arrow-margin', array(
+				'value' => $this->get_option( 'jet-menu-top-arrow-margin', $default_dimensions ),
+			) );
+
+			$this->add_option( 'jet-menu-top-arrow-ver-position', array(
+				'value' => $this->get_option( 'jet-menu-top-arrow-ver-position', '' ),
+				'options' => array(
+					array(
+						'label' => esc_html__( 'Center', 'jet-menu' ),
+						'value' => 'center',
+					),
+					array(
+						'label' => esc_html__( 'Top', 'jet-menu' ),
+						'value' => 'top',
+					),
+					array(
+						'label' => esc_html__( 'Bottom', 'jet-menu' ),
+						'value' => 'bottom',
+					),
+				),
+			) );
+
+			$this->add_option( 'jet-menu-top-arrow-hor-position', array(
+				'value' => $this->get_option( 'jet-menu-top-arrow-hor-position', '' ),
+				'options' => array(
+					array(
+						'label' => esc_html__( 'Left', 'jet-menu' ),
+						'value' => 'left',
+					),
+					array(
+						'label' => esc_html__( 'Center', 'jet-menu' ),
+						'value' => 'center',
+					),
+					array(
+						'label' => esc_html__( 'Right', 'jet-menu' ),
+						'value' => 'right',
+					),
+				),
+			) );
+
+			$this->add_option( 'jet-menu-top-arrow-order', array(
+				'value' => $this->get_option( 'jet-menu-top-arrow-order', '' ),
+			) );
+
+			$this->add_option( 'jet-menu-sub-arrow', array(
+				'value' => $this->get_option( 'jet-menu-sub-arrow', 'fa-angle-right' ),
+			) );
+
+			$this->add_option( 'jet-menu-sub-arrow-size', array(
+				'value' => $this->get_option( 'jet-menu-sub-arrow-size', '' ),
+			) );
+
+			$this->add_option( 'jet-menu-sub-arrow-margin', array(
+				'value' => $this->get_option( 'jet-menu-sub-arrow-margin', $default_dimensions ),
+			) );
+
+			$this->add_option( 'jet-menu-sub-arrow-ver-position', array(
+				'value' => $this->get_option( 'jet-menu-sub-arrow-ver-position', '' ),
+				'options' => array(
+					array(
+						'label' => esc_html__( 'Center', 'jet-menu' ),
+						'value' => 'center',
+					),
+					array(
+						'label' => esc_html__( 'Top', 'jet-menu' ),
+						'value' => 'top',
+					),
+					array(
+						'label' => esc_html__( 'Bottom', 'jet-menu' ),
+						'value' => 'bottom',
+					),
+				),
+			) );
+
+			$this->add_option( 'jet-menu-sub-arrow-hor-position', array(
+				'value' => $this->get_option( 'jet-menu-sub-arrow-hor-position', '' ),
+				'options' => array(
+					array(
+						'label' => esc_html__( 'Left', 'jet-menu' ),
+						'value' => 'left',
+					),
+					array(
+						'label' => esc_html__( 'Center', 'jet-menu' ),
+						'value' => 'center',
+					),
+					array(
+						'label' => esc_html__( 'Right', 'jet-menu' ),
+						'value' => 'right',
+					),
+				),
+			) );
+
+			$this->add_option( 'jet-menu-sub-arrow-order', array(
+				'value' => $this->get_option( 'jet-menu-sub-arrow-order', '' ),
+			) );
+
+			// Mobile Styles
+			$this->add_option( 'jet-menu-mobile-layout', array(
+				'value'   => $this->get_option( 'jet-menu-mobile-layout', 'slide-out' ),
+				'options' => array(
+					array(
+						'label' => esc_html__( 'Slide Out', 'jet-menu' ),
+						'value' => 'slide-out',
+					),
+					array(
+						'label' => esc_html__( 'Dropdown', 'jet-menu' ),
+						'value' => 'dropdown',
+					),
+					array(
+						'label' => esc_html__( 'Push', 'jet-menu' ),
+						'value' => 'push',
+					),
+				),
+			) );
+
+			$this->add_option( 'jet-menu-mobile-toggle-position', array(
+				'value'   => $this->get_option( 'jet-menu-mobile-toggle-position', 'default' ),
+				'options' => array(
+					array(
+						'label' => esc_html__( 'Default', 'jet-menu' ),
+						'value' => 'default',
+					),
+					array(
+						'label' => esc_html__( 'Fixed to top-left screen corner', 'jet-menu' ),
+						'value' => 'fixed-left',
+					),
+					array(
+						'label' => esc_html__( 'Fixed to top-right screen corner', 'jet-menu' ),
+						'value' => 'fixed-right',
+					),
+				),
+			) );
+
+			$this->add_option( 'jet-menu-mobile-container-position', array(
+				'value'   => $this->get_option( 'jet-menu-mobile-container-position', 'right' ),
+				'options' => array(
+					array(
+						'label' => esc_html__( 'Right', 'jet-menu' ),
+						'value' => 'right',
+					),
+					array(
+						'label' => esc_html__( 'Left', 'jet-menu' ),
+						'value' => 'left',
+					),
+				),
+			) );
+
+			$this->add_option( 'jet-menu-mobile-sub-trigger', array(
+				'value'   => $this->get_option( 'jet-menu-mobile-sub-trigger', 'item' ),
+				'options' => array(
+					array(
+						'label' => esc_html__( 'Menu Item', 'jet-menu' ),
+						'value' => 'item',
+					),
+					array(
+						'label' => esc_html__( 'Sub Menu Icon', 'jet-menu' ),
+						'value' => 'submarker',
+					),
+				),
+			) );
+
+			$this->add_option( 'jet-menu-mobile-header-template', array(
+				'value'   => $this->get_option( 'jet-menu-mobile-header-template', '' ),
+				'options' => jet_menu_tools()->get_elementor_templates_select_options(),
+			) );
+
+			$this->add_option( 'jet-menu-mobile-before-template', array(
+				'value'   => $this->get_option( 'jet-menu-mobile-before-template', '' ),
+				'options' => jet_menu_tools()->get_elementor_templates_select_options(),
+			) );
+
+			$this->add_option( 'jet-menu-mobile-after-template', array(
+				'value'   => $this->get_option( 'jet-menu-mobile-after-template', '' ),
+				'options' => jet_menu_tools()->get_elementor_templates_select_options(),
+			) );
+
+			$this->add_option( 'jet-menu-mobile-toggle-icon', array(
+				'value' => $this->get_option( 'jet-menu-mobile-toggle-icon', 'fa-bars' ),
+			) );
+
+			$this->add_option( 'jet-menu-mobile-toggle-opened-icon', array(
+				'value' => $this->get_option( 'jet-menu-mobile-toggle-opened-icon', 'fa-times' ),
+			) );
+
+			$this->add_option( 'jet-menu-mobile-toggle-text', array(
+				'value' => $this->get_option( 'jet-menu-mobile-toggle-text', '' ),
+			) );
+
+			$this->add_option( 'jet-menu-mobile-toggle-loader', array(
+				'value' => $this->get_option( 'jet-menu-mobile-toggle-loader', 'true' ),
+			) );
+
+			$this->add_option( 'jet-menu-mobile-back-text', array(
+				'value' => $this->get_option( 'jet-menu-mobile-back-text', '' ),
+			) );
+
+			$this->add_option( 'jet-menu-mobile-use-breadcrumb', array(
+				'value' => $this->get_option( 'jet-menu-mobile-use-breadcrumb', 'true' ),
+			) );
+
+			$this->add_option( 'jet-menu-mobile-breadcrumb-icon', array(
+				'value' => $this->get_option( 'jet-menu-mobile-breadcrumb-icon', 'fa-angle-right' ),
+			) );
+
+			$this->add_option( 'jet-menu-mobile-toggle-color', array(
+				'value' => $this->get_option( 'jet-menu-mobile-toggle-color', '' ),
+			) );
+
+			$this->add_option( 'jet-menu-mobile-toggle-size', array(
+				'value' => $this->get_option( 'jet-menu-mobile-toggle-size', '' ),
+			) );
+
+			$this->add_option( 'jet-menu-mobile-toggle-text-color', array(
+				'value' => $this->get_option( 'jet-menu-mobile-toggle-text-color', '' ),
+			) );
+
+			$this->add_typography_options( 'jet-menu-mobile-toggle-text' );
+
+			$this->add_typography_options( 'jet-menu-mobile-back-text' );
+
+			$this->add_option( 'jet-menu-mobile-toggle-bg', array(
+				'value' => $this->get_option( 'jet-menu-mobile-toggle-bg', '' ),
+			) );
+
+			$this->add_border_options( 'jet-menu-mobile-toggle' );
+
+			$this->add_box_shadow_options( 'jet-menu-mobile-toggle' );
+
+			$this->add_option( 'jet-menu-mobile-toggle-border-radius', array(
+				'value' => $this->get_option( 'jet-menu-mobile-toggle-border-radius', $default_dimensions ),
+			) );
+
+			$this->add_option( 'jet-menu-mobile-toggle-padding', array(
+				'value' => $this->get_option( 'jet-menu-mobile-toggle-padding', $default_dimensions ),
+			) );
+
+			$this->add_option( 'jet-menu-mobile-container-width', array(
+				'value' => $this->get_option( 'jet-menu-mobile-container-width', '' ),
+			) );
+
+			$this->add_option( 'jet-menu-mobile-breadcrumbs-text-color', array(
+				'value' => $this->get_option( 'jet-menu-mobile-breadcrumbs-text-color', '' ),
+			) );
+
+			$this->add_option( 'jet-menu-mobile-breadcrumbs-icon-color', array(
+				'value' => $this->get_option( 'jet-menu-mobile-breadcrumbs-icon-color', '' ),
+			) );
+
+			$this->add_option( 'jet-menu-mobile-breadcrumbs-icon-size', array(
+				'value' => $this->get_option( 'jet-menu-mobile-breadcrumbs-icon-size', '' ),
+			) );
+
+			$this->add_typography_options( 'jet-menu-mobile-breadcrumbs-text' );
+
+			$this->add_option( 'jet-menu-mobile-container-bg', array(
+				'value' => $this->get_option( 'jet-menu-mobile-container-bg', '' ),
+			) );
+
+			$this->add_border_options( 'jet-menu-mobile-container' );
+
+			$this->add_box_shadow_options( 'jet-menu-mobile-container' );
+
+			$this->add_option( 'jet-menu-mobile-container-padding', array(
+				'value' => $this->get_option( 'jet-menu-mobile-container-padding', $default_dimensions ),
+			) );
+
+			$this->add_option( 'jet-menu-mobile-container-border-radius', array(
+				'value' => $this->get_option( 'jet-menu-mobile-container-border-radius', $default_dimensions ),
+			) );
+
+			$this->add_option( 'jet-menu-mobile-cover-bg', array(
+				'value' => $this->get_option( 'jet-menu-mobile-cover-bg', '' ),
+			) );
+
+			$this->add_option( 'jet-menu-mobile-container-close-icon', array(
+				'value' => $this->get_option( 'jet-menu-mobile-container-close-icon', 'fa-times' ),
+			) );
+
+			$this->add_option( 'jet-menu-mobile-container-back-icon', array(
+				'value' => $this->get_option( 'jet-menu-mobile-container-back-icon', 'fa-angle-left' ),
+			) );
+
+			$this->add_option( 'jet-menu-mobile-container-close-color', array(
+				'value' => $this->get_option( 'jet-menu-mobile-container-close-color', '' ),
+			) );
+
+			$this->add_option( 'jet-menu-mobile-container-back-text-color', array(
+				'value' => $this->get_option( 'jet-menu-mobile-container-back-text-color', '' ),
+			) );
+
+			$this->add_option( 'jet-menu-mobile-container-close-size', array(
+				'value' => $this->get_option( 'jet-menu-mobile-container-close-size', '' ),
+			) );
+
+			$this->add_option( 'jet-mobile-items-label-color', array(
+				'value' => $this->get_option( 'jet-mobile-items-label-color', '' ),
+			) );
+
+			$this->add_option( 'jet-mobile-items-label-color-active', array(
+				'value' => $this->get_option( 'jet-mobile-items-label-color-active', '' ),
+			) );
+
+			$this->add_typography_options( 'jet-mobile-items-label' );
+
+			$this->add_option( 'jet-mobile-items-desc-enable', array(
+				'value' => $this->get_option( 'jet-mobile-items-desc-enable', false ),
+			) );
+
+			$this->add_option( 'jet-mobile-items-desc-color', array(
+				'value' => $this->get_option( 'jet-mobile-items-desc-color', '' ),
+			) );
+
+			$this->add_option( 'jet-mobile-items-desc-color-active', array(
+				'value' => $this->get_option( 'jet-mobile-items-desc-color-active', '' ),
+			) );
+
+			$this->add_typography_options( 'jet-mobile-items-desc' );
+
+			$this->add_option( 'jet-mobile-items-divider-enabled', array(
+				'value' => $this->get_option( 'jet-mobile-items-divider-enabled', false ),
+			) );
+
+			$this->add_option( 'jet-mobile-items-divider-color', array(
+				'value' => $this->get_option( 'jet-mobile-items-divider-color', '' ),
+			) );
+
+			$this->add_option( 'jet-mobile-items-divider-width', array(
+				'value' => $this->get_option( 'jet-mobile-items-divider-width', '1' ),
+			) );
+
+			$this->add_option( 'jet-mobile-items-icon-enabled', array(
+				'value' => $this->get_option( 'jet-mobile-items-icon-enabled', 'true' ),
+			) );
+
+			$this->add_option( 'jet-mobile-items-icon-color', array(
+				'value' => $this->get_option( 'jet-mobile-items-icon-color', '' ),
+			) );
+
+			$this->add_option( 'jet-mobile-items-icon-size', array(
+				'value' => $this->get_option( 'jet-mobile-items-icon-size', '' ),
+			) );
+
+			$this->add_option( 'jet-mobile-items-icon-ver-position', array(
+				'value' => $this->get_option( 'jet-mobile-items-icon-ver-position', 'center' ),
+				'options' => array(
+					array(
+						'label' => esc_html__( 'Top', 'jet-menu' ),
+						'value' => 'top',
+					),
+					array(
+						'label' => esc_html__( 'Center', 'jet-menu' ),
+						'value' => 'center',
+					),
+					array(
+						'label' => esc_html__( 'Bottom', 'jet-menu' ),
+						'value' => 'bottom',
+					),
+				),
+			) );
+
+			$this->add_option( 'jet-mobile-items-icon-margin', array(
+				'value' => $this->get_option( 'jet-mobile-items-icon-margin', $default_dimensions ),
+			) );
+
+			$this->add_option( 'jet-mobile-items-badge-enabled', array(
+				'value' => $this->get_option( 'jet-mobile-items-badge-enabled', 'true' ),
+			) );
+
+			$this->add_option( 'jet-mobile-items-badge-color', array(
+				'value' => $this->get_option( 'jet-mobile-items-badge-color', '' ),
+			) );
+
+			$this->add_typography_options( 'jet-mobile-items-badge' );
+
+			$this->add_option( 'jet-mobile-items-badge-bg-color', array(
+				'value' => $this->get_option( 'jet-mobile-items-badge-bg-color', '' ),
+			) );
+
+			$this->add_option( 'jet-mobile-items-badge-ver-position', array(
+				'value' => $this->get_option( 'jet-mobile-items-badge-ver-position', 'top' ),
+				'options' => array(
+					array(
+						'label' => esc_html__( 'Top', 'jet-menu' ),
+						'value' => 'top',
+					),
+					array(
+						'label' => esc_html__( 'Center', 'jet-menu' ),
+						'value' => 'center',
+					),
+					array(
+						'label' => esc_html__( 'Bottom', 'jet-menu' ),
+						'value' => 'bottom',
+					),
+				),
+			) );
+
+			$this->add_option( 'jet-mobile-items-badge-padding', array(
+				'value' => $this->get_option( 'jet-mobile-items-badge-padding', $default_dimensions ),
+			) );
+
+			$this->add_option( 'jet-mobile-items-badge-border-radius', array(
+				'value' => $this->get_option( 'jet-mobile-items-badge-border-radius', $default_dimensions ),
+			) );
+
+			$this->add_option( 'jet-mobile-items-dropdown-icon', array(
+				'value' => $this->get_option( 'jet-mobile-items-dropdown-icon', 'fa-angle-right' ),
+			) );
+
+			$this->add_option( 'jet-mobile-items-dropdown-color', array(
+				'value' => $this->get_option( 'jet-mobile-items-dropdown-color', '' ),
+			) );
+
+			$this->add_option( 'jet-mobile-items-dropdown-size', array(
+				'value' => $this->get_option( 'jet-mobile-items-dropdown-size', '' ),
+			) );
+
+			$this->add_option( 'jet-mobile-loader-color', array(
+				'value' => $this->get_option( 'jet-mobile-loader-color', '#3a3a3a' ),
+			) );
+
+			return $this->current_options;
+		}
+
+		/**
+		 * [add_option description]
+		 * @param boolean $slug [description]
+		 * @param array   $args [description]
+		 */
+		public function add_option( $slug = false, $args = array() ) {
+
+			if ( ! $slug || empty( $args ) ) {
+				return false;
 			}
 
-			$this->builder->register_control(
-				array(
-					'jet-menu-cache-css' => array(
-						'type'        => 'switcher',
-						'parent'      => 'general_tab',
-						'title'       => esc_html__( 'Cache menu CSS', 'jet-menu' ),
-						'value'       => $this->get_option( 'jet-menu-cache-css', 'true' ),
-						'toggle'      => array(
-							'true_toggle'  => 'On',
-							'false_toggle' => 'Off',
-						),
-					),
-				)
-			);
+			$this->current_options[ $slug ] = $args;
+		}
 
-			$this->section_end( 'general_tab' );
+		/**
+		 * [add_option description]
+		 * @param boolean $slug [description]
+		 * @param array   $args [description]
+		 */
+		public function add_icon_option( $slug = false, $default = false, $prefix = 'fa' ) {
 
-			$this->section_start( 'styles_tab' );
-
-			$this->builder->register_control(
-				array(
-					'jet-menu-container-alignment' => array(
-						'type'     => 'select',
-						'parent'   => 'styles_tab',
-						'title'    => esc_html__( 'Menu items alignment', 'jet-menu' ),
-						'multiple' => false,
-						'value'    => $this->get_option( 'jet-menu-container-alignment' ),
-						'options'  => array(
-							'flex-end'   => esc_html__( 'End', 'jet-menu' ),
-							'center'     => esc_html__( 'Center', 'jet-menu' ),
-							'flex-start' => esc_html__( 'Start', 'jet-menu' ),
-							'stretch'    => esc_html__( 'Stretch', 'jet-menu' ),
-						),
-						'label'    => '',
-						'class'    => '',
-					),
-				)
-			);
-
-			jet_menu_dynmic_css()->add_background_options( array(
-				'name'     => 'jet-menu-container',
-				'label'    => esc_html__( 'Menu container', 'jet-menu' ),
-				'parent'   => 'styles_tab',
-				'defaults' => array(
-					'color' => '#ffffff',
-				),
-			) );
-
-			jet_menu_dynmic_css()->add_border_options( array(
-				'name'     => 'jet-menu-container',
-				'label'    => esc_html__( 'Menu container', 'jet-menu' ),
-				'parent'   => 'styles_tab',
-				'defaults' => array(
-					'top'    => '1',
-					'right'  => '1',
-					'bottom' => '1',
-					'left'   => '1',
-				),
-			) );
-
-			jet_menu_dynmic_css()->add_box_shadow_options( array(
-				'name'     => 'jet-menu-container',
-				'label'    => esc_html__( 'Menu container', 'jet-menu' ),
-				'parent'   => 'styles_tab',
-			) );
-
-			$this->builder->register_control(
-				array(
-					'jet-menu-mega-border-radius' => array(
-						'type'        => 'dimensions',
-						'parent'      => 'styles_tab',
-						'title'       => esc_html__( 'Menu container border radius', 'jet-menu' ),
-						'range'       => array(
-							'px' => array(
-								'min'  => 0,
-								'max'  => 100,
-								'step' => 1,
-							),
-							'%' => array(
-								'min'  => 0,
-								'max'  => 100,
-								'step' => 1,
-							),
-						),
-						'value' => $this->get_option( 'jet-menu-mega-border-radius' ),
-					),
-					'jet-menu-inherit-first-radius' => array(
-						'type'   => 'switcher',
-						'title'  => esc_html__( 'Inherit border radius for the first menu item from main container', 'jet-menu' ),
-						'value'  => $this->get_option( 'jet-menu-inherit-first-radius' ),
-						'toggle' => array(
-							'true_toggle'  => 'On',
-							'false_toggle' => 'Off',
-						),
-						'parent' => 'styles_tab',
-					),
-					'jet-menu-inherit-last-radius' => array(
-						'type'   => 'switcher',
-						'title'  => esc_html__( 'Inherit border radius for the last menu item from main container', 'jet-menu' ),
-						'value'  => $this->get_option( 'jet-menu-inherit-last-radius' ),
-						'toggle' => array(
-							'true_toggle'  => 'On',
-							'false_toggle' => 'Off',
-						),
-						'parent' => 'styles_tab',
-					),
-					'jet-menu-mega-padding' => array(
-						'type'        => 'dimensions',
-						'parent'      => 'styles_tab',
-						'title'       => esc_html__( 'Menu container padding', 'jet-menu' ),
-						'range'       => array(
-							'px' => array(
-								'min'  => 0,
-								'max'  => 100,
-								'step' => 1,
-							),
-						),
-						'value' => $this->get_option( 'jet-menu-mega-padding' ),
-					),
-					'jet-menu-min-width' => array(
-						'type'        => 'slider',
-						'parent'      => 'styles_tab',
-						'title'       => esc_html__( 'Menu container min width (px)', 'jet-menu' ),
-						'description' => esc_html__( 'Set 0 to automatic width detection', 'jet-menu' ),
-						'max_value'   => 900,
-						'min_value'   => 0,
-						'value'       => $this->get_option( 'jet-menu-min-width', 0 ),
-						'step_value'  => 1,
-					),
-				)
-			);
-
-			$this->section_end( 'styles_tab' );
-
-			$this->section_start( 'main_items_styles_tab' );
-
-			jet_menu_dynmic_css()->add_typography_options(
-				array(
-					'label'   => esc_html__( 'Top level menu', 'jet-menu' ),
-					'name'    => 'jet-top-menu',
-					'parent'  => 'main_items_styles_tab',
-				)
-			);
-
-			$this->builder->register_control(
-				array(
-					'jet-show-top-menu-desc' => array(
-						'type'   => 'switcher',
-						'parent' => 'main_items_styles_tab',
-						'title'  => esc_html__( 'Show Item Description', 'jet-menu' ),
-						'value'  => $this->get_option( 'jet-show-top-menu-desc', 'true' ),
-						'toggle' => array(
-							'true_toggle'  => 'On',
-							'false_toggle' => 'Off',
-						),
-					),
-				)
-			);
-
-			jet_menu_dynmic_css()->add_typography_options(
-				array(
-					'label'   => esc_html__( 'Top level menu description', 'jet-menu' ),
-					'name'    => 'jet-top-menu-desc',
-					'parent'  => 'main_items_styles_tab',
-				)
-			);
-
-			$this->builder->register_control(
-				array(
-					'jet-menu-item-max-width' => array(
-						'type'        => 'slider',
-						'parent'      => 'main_items_styles_tab',
-						'title'       => esc_html__( 'Top level item max width (%)', 'jet-menu' ),
-						'description' => esc_html__( 'Set 0 to automatic width detection', 'jet-menu' ),
-						'max_value'   => 100,
-						'min_value'   => 0,
-						'value'       => $this->get_option( 'jet-menu-item-max-width', 0 ),
-						'step_value'  => 1,
-					),
-				)
-			);
-
-			$this->builder->register_component(
-				array(
-					'menu_items_tabs' => array(
-						'type'   => 'component-tab-horizontal',
-						'parent' => 'main_items_styles_tab',
-					),
-				)
-			);
-
-			$this->builder->register_settings(
-				array(
-					'item_default_tab' => array(
-						'parent' => 'menu_items_tabs',
-						'title'  => esc_html__( 'Default', 'jet-menu' ),
-					),
-					'item_hover_tab' => array(
-						'parent' => 'menu_items_tabs',
-						'title'  => esc_html__( 'Hover', 'jet-menu' ),
-					),
-					'item_active_tab' => array(
-						'parent' => 'menu_items_tabs',
-						'title'  => esc_html__( 'Active', 'jet-menu' ),
-					),
-				)
-			);
-
-			$tabs = array(
-				'default' => '',
-				'hover'   => '-hover',
-				'active'  => '-active',
-			);
-
-			foreach ( $tabs as $tab => $opt ) {
-
-				$this->section_start( 'item_' . $tab . '_tab' );
-
-				$this->builder->register_control(
-					array(
-						'jet-menu-item-text-color' . $opt => array(
-							'type'        => 'colorpicker',
-							'parent'      => 'item_' . $tab . '_tab',
-							'title'       => esc_html__( 'Item text color', 'jet-menu' ),
-							'value'       => $this->get_option( 'jet-menu-item-text-color' . $opt ),
-							'alpha'       => true,
-						),
-					)
-				);
-
-				$this->builder->register_control(
-					array(
-						'jet-menu-item-desc-color' . $opt => array(
-							'type'        => 'colorpicker',
-							'parent'      => 'item_' . $tab . '_tab',
-							'title'       => esc_html__( 'Item description color', 'jet-menu' ),
-							'value'       => $this->get_option( 'jet-menu-item-desc-color' . $opt ),
-							'alpha'       => true,
-						),
-					)
-				);
-
-				$this->builder->register_control(
-					array(
-						'jet-menu-top-icon-color' . $opt => array(
-							'type'        => 'colorpicker',
-							'parent'      => 'item_' . $tab . '_tab',
-							'title'       => esc_html__( 'Item Icon Color', 'jet-menu' ),
-							'value'       => $this->get_option( 'jet-menu-top-icon-color' . $opt ),
-							'alpha'       => true,
-						),
-					)
-				);
-
-				$this->builder->register_control(
-					array(
-						'jet-menu-top-arrow-color' . $opt => array(
-							'type'        => 'colorpicker',
-							'parent'      => 'item_' . $tab . '_tab',
-							'title'       => esc_html__( 'Item drop-down arrow color', 'jet-menu' ),
-							'value'       => $this->get_option( 'jet-menu-top-arrow-color' . $opt ),
-							'alpha'       => true,
-						),
-					)
-				);
-
-				jet_menu_dynmic_css()->add_background_options( array(
-					'name'     => 'jet-menu-item' . $opt,
-					'label'    => esc_html__( 'Item', 'jet-menu' ),
-					'parent'   => 'item_' . $tab . '_tab',
-				) );
-
-				jet_menu_dynmic_css()->add_border_options( array(
-					'name'     => 'jet-menu-item' . $opt,
-					'label'    => esc_html__( 'Item', 'jet-menu' ),
-					'parent'   => 'item_' . $tab . '_tab',
-					'defaults' => array(
-						'top'    => '1',
-						'right'  => '1',
-						'bottom' => '1',
-						'left'   => '1',
-					),
-				) );
-
-				jet_menu_dynmic_css()->add_border_options( array(
-					'name'     => 'jet-menu-first-item' . $opt,
-					'label'    => esc_html__( 'First item', 'jet-menu' ),
-					'parent'   => 'item_' . $tab . '_tab',
-					'defaults' => array(
-						'top'    => '1',
-						'right'  => '1',
-						'bottom' => '1',
-						'left'   => '1',
-					),
-				) );
-
-				jet_menu_dynmic_css()->add_border_options( array(
-					'name'     => 'jet-menu-last-item' . $opt,
-					'label'    => esc_html__( 'Last item', 'jet-menu' ),
-					'parent'   => 'item_' . $tab . '_tab',
-					'defaults' => array(
-						'top'    => '1',
-						'right'  => '1',
-						'bottom' => '1',
-						'left'   => '1',
-					),
-				) );
-
-				jet_menu_dynmic_css()->add_box_shadow_options( array(
-					'name'     => 'jet-menu-item' . $opt,
-					'label'    => esc_html__( 'Item', 'jet-menu' ),
-					'parent'   => 'item_' . $tab . '_tab',
-				) );
-
-				$this->builder->register_control(
-					array(
-						'jet-menu-item-border-radius' . $opt => array(
-							'type'        => 'dimensions',
-							'parent'      => 'item_' . $tab . '_tab',
-							'title'       => esc_html__( 'Item border radius', 'jet-menu' ),
-							'range'       => array(
-								'px' => array(
-									'min'  => 0,
-									'max'  => 100,
-									'step' => 1,
-								),
-								'%' => array(
-									'min'  => 0,
-									'max'  => 100,
-									'step' => 1,
-								),
-							),
-							'value' => $this->get_option( 'jet-menu-item-border-radius' . $opt ),
-						),
-						'jet-menu-item-padding' . $opt => array(
-							'type'        => 'dimensions',
-							'parent'      => 'item_' . $tab . '_tab',
-							'title'       => esc_html__( 'Item padding', 'jet-menu' ),
-							'range'       => array(
-								'px' => array(
-									'min'  => 0,
-									'max'  => 100,
-									'step' => 1,
-								),
-							),
-							'value' => $this->get_option( 'jet-menu-item-padding' . $opt ),
-						),
-						'jet-menu-item-margin' . $opt => array(
-							'type'        => 'dimensions',
-							'parent'      => 'item_' . $tab . '_tab',
-							'title'       => esc_html__( 'Item margin', 'jet-menu' ),
-							'range'       => array(
-								'px' => array(
-									'min'  => -50,
-									'max'  => 100,
-									'step' => 1,
-								),
-							),
-							'value' => $this->get_option( 'jet-menu-item-margin' . $opt ),
-						),
-					)
-				);
-
-				$this->section_start( 'item_' . $tab . '_tab' );
-
+			if ( ! $slug ) {
+				return false;
 			}
 
-			$this->builder->register_component(
+			$value = $this->get_option( $slug, $default );
+
+			if ( $value ) {
+				$value = $prefix . ' ' . $value;
+			}
+
+			$this->current_options[ $slug ] = array(
+				'value' => $value,
+			);
+		}
+
+		/**
+		 * [render_box_shadow_options description]
+		 * @return [type] [description]
+		 */
+		public function render_background_options( $args ) {
+
+			$args = wp_parse_args( $args, array(
+				'label'    => '',
+				'name'     => '',
+				'defaults' => array(),
+			) );
+
+			include jet_menu()->get_template( 'admin/background-vue-group.php' );
+		}
+
+		/**
+		 * [add_background_options description]
+		 * @param [type] $args [description]
+		 */
+		public function add_background_options( $slug = false ) {
+
+			if ( ! $slug ) {
+				return false;
+			}
+
+			$background_options = array(
+				$slug . '-switch' => array(
+					'value' => $this->get_option( $slug . '-switch', 'false' ),
+				),
+
+				$slug . '-color' => array(
+					'value' => $this->get_option( $slug . '-color', '#ffffff' ),
+				),
+
+				$slug . '-gradient-switch' => array(
+					'value' => $this->get_option( $slug . '-gradient-switch', false ),
+				),
+
+				$slug . '-second-color' => array(
+					'value' => $this->get_option( $slug . '-second-color', '' ),
+				),
+
+				$slug . '-direction' => array(
+					'value'   => $this->get_option( $slug . '-direction', 'right' ),
+					'options' => $this->get_direction_select_options(),
+				),
+
+				$slug . '-image' => array(
+					'value' => $this->get_option( $slug . '-image', '' ),
+				),
+
+				$slug . '-position' => array(
+					'value'   => $this->get_option( $slug . '-position', '' ),
+					'options' => $this->get_position_select_options(),
+				),
+
+				$slug . '-attachment' => array(
+					'value'   => $this->get_option( $slug . '-attachment', '' ),
+					'options' => $this->get_attachment_select_options(),
+				),
+
+				$slug . '-repeat' => array(
+					'value'   => $this->get_option( $slug . '-repeat', '' ),
+					'options' => $this->get_repeat_select_options(),
+				),
+
+				$slug . '-size' => array(
+					'value'   => $this->get_option( $slug . '-size', '' ),
+					'options' => $this->get_size_select_options(),
+				),
+			);
+
+			$this->current_options = array_merge( $this->current_options, $background_options );
+
+		}
+
+		/**
+		 * [render_box_shadow_options description]
+		 * @return [type] [description]
+		 */
+		public function render_border_options( $args ) {
+
+			$args = wp_parse_args( $args, array(
+				'label'    => '',
+				'name'     => '',
+				'defaults' => array(),
+			) );
+
+			include jet_menu()->get_template( 'admin/border-vue-group.php' );
+		}
+
+		/**
+		 * [add_border_options description]
+		 * @param boolean $slug [description]
+		 */
+		public function add_border_options( $slug = false ) {
+
+			if ( ! $slug ) {
+				return false;
+			}
+
+			$default_dimensions = array(
+				'top'       => '',
+				'right'     => '',
+				'bottom'    => '',
+				'left'      => '',
+				'is_linked' => true,
+				'units'     => 'px',
+			);
+
+			$border_options = array(
+				$slug . '-border-switch' => array(
+					'value' => $this->get_option( $slug . '-border-switch', 'false' ),
+				),
+
+				$slug . '-border-style' => array(
+					'value'   => $this->get_option( $slug . '-border-style', '' ),
+					'options' => $this->get_border_style_select_options(),
+				),
+
+				$slug . '-border-width' => array(
+					'value' => $this->get_option( $slug . '-border-width', $default_dimensions ),
+				),
+
+				$slug . '-border-color' => array(
+					'value' => $this->get_option( $slug . '-border-color', '' ),
+				),
+			);
+
+			$this->current_options = array_merge( $this->current_options, $border_options );
+
+		}
+
+		/**
+		 * [render_box_shadow_options description]
+		 * @return [type] [description]
+		 */
+		public function render_box_shadow_options( $args ) {
+
+			$args = wp_parse_args( $args, array(
+				'label'    => '',
+				'name'     => '',
+				'defaults' => array(),
+			) );
+
+			include jet_menu()->get_template( 'admin/box-shadow-vue-group.php' );
+		}
+
+		/**
+		 * [add_box_shadow_options description]
+		 * @param boolean $slug [description]
+		 */
+		public function add_box_shadow_options( $slug = false ) {
+
+			if ( ! $slug ) {
+				return false;
+			}
+
+			$border_options = array(
+				$slug . '-box-shadow-switch' => array(
+					'value' => $this->get_option( $slug . '-box-shadow-switch', false ),
+				),
+
+				$slug . '-box-shadow-inset' => array(
+					'value' => $this->get_option( $slug . '-box-shadow-inset', false ),
+				),
+
+				$slug . '-box-shadow-color' => array(
+					'value' => $this->get_option( $slug . '-box-shadow-color', '' ),
+				),
+
+				$slug . '-box-shadow-h' => array(
+					'value' => $this->get_option( $slug . '-box-shadow-h', '' ),
+				),
+
+				$slug . '-box-shadow-v' => array(
+					'value' => $this->get_option( $slug . '-box-shadow-v', '' ),
+				),
+
+				$slug . '-box-shadow-blur' => array(
+					'value' => $this->get_option( $slug . '-box-shadow-blur', '' ),
+				),
+
+				$slug . '-box-shadow-spread' => array(
+					'value' => $this->get_option( $slug . '-box-shadow-spread', '' ),
+				),
+			);
+
+			$this->current_options = array_merge( $this->current_options, $border_options );
+
+		}
+
+		/**
+		 * [render_typography_options description]
+		 * @param  [type] $args [description]
+		 * @return [type]       [description]
+		 */
+		public function render_typography_options( $args ) {
+
+			$args = wp_parse_args( $args, array(
+				'label'    => '',
+				'name'     => '',
+				'defaults' => array(),
+			) );
+
+			include jet_menu()->get_template( 'admin/typography-vue-group.php' );
+		}
+
+		/**
+		 * [add_typography_options description]
+		 * @param boolean $slug [description]
+		 */
+		public function add_typography_options( $slug = false ) {
+
+			if ( ! $slug ) {
+				return false;
+			}
+
+			$typography_options = array(
+				$slug . '-switch' => array(
+					'value' => $this->get_option( $slug . '-switch', false ),
+				),
+
+				$slug . '-font-family' => array(
+					'value'   => $this->get_option( $slug . '-font-family', '' ),
+					'options' => $this->get_fonts_select_options(),
+				),
+
+				$slug . '-subset' => array(
+					'value'   => $this->get_option( $slug . '-subset', '' ),
+					'options' => $this->get_font_subset_select_options(),
+				),
+
+				$slug . '-font-size' => array(
+					'value'   => $this->get_option( $slug . '-font-size', '' ),
+				),
+
+				$slug . '-line-height' => array(
+					'value'   => $this->get_option( $slug . '-line-height', '' ),
+				),
+
+				$slug . '-font-weight' => array(
+					'value'   => $this->get_option( $slug . '-font-weight', '' ),
+					'options' => $this->get_font_weight_select_options(),
+				),
+
+				$slug . '-text-transform' => array(
+					'value'   => $this->get_option( $slug . '-text-transform', '' ),
+					'options' => $this->get_text_transform_select_options(),
+				),
+
+				$slug . '-font-style' => array(
+					'value'   => $this->get_option( $slug . '-font-style', '' ),
+					'options' => $this->get_font_style_select_options(),
+				),
+
+				$slug . '-letter-spacing' => array(
+					'value' => $this->get_option( $slug . '-letter-spacing', '' ),
+				),
+			);
+
+			$this->current_options = array_merge( $this->current_options, $typography_options );
+
+		}
+
+		/**
+		 * [get_aligment_select_options description]
+		 * @return [type] [description]
+		 */
+		public function get_aligment_select_options() {
+			return array(
 				array(
-					'menu_sub_panel_tabs' => array(
-						'type'   => 'component-tab-horizontal',
-						'parent' => 'sub_items_styles_tab',
-					),
-				)
-			);
-
-			$this->builder->register_settings(
+					'label' => esc_html__( 'Start', 'jet-menu' ),
+					'value' => 'flex-start',
+				),
 				array(
-					'sub_panel_simple_tab' => array(
-						'parent' => 'menu_sub_panel_tabs',
-						'title'  => esc_html__( 'Simple Submenu Panel', 'jet-menu' ),
-					),
-					'sub_panel_mega_tab' => array(
-						'parent' => 'menu_sub_panel_tabs',
-						'title'  => esc_html__( 'Mega Submenu Panel', 'jet-menu' ),
-					),
-				)
+					'label' => esc_html__( 'Center', 'jet-menu' ),
+					'value' => 'center',
+				),
+				array(
+					'label' => esc_html__( 'End', 'jet-menu' ),
+					'value' => 'flex-end',
+				),
+				array(
+					'label' => esc_html__( 'Stretch', 'jet-menu' ),
+					'value' => 'stretch',
+				),
 			);
+		}
 
-			$tabs = array(
-				'simple' => '-simple',
-				'mega'   => '-mega',
+		/**
+		 * [get_direction_select_options description]
+		 * @return [type] [description]
+		 */
+		public function get_direction_select_options() {
+			return array(
+				array(
+					'label' => esc_html__( 'From Left to Right', 'jet-menu' ),
+					'value' => 'right',
+				),
+				array(
+					'label' => esc_html__( 'From Right to Left', 'jet-menu' ),
+					'value' => 'left',
+				),
+				array(
+					'label' => esc_html__( 'From Top to Bottom', 'jet-menu' ),
+					'value' => 'bottom',
+				),
+				array(
+					'label' => esc_html__( 'From Bottom to Top', 'jet-menu' ),
+					'value' => 'top',
+				),
 			);
+		}
 
-			foreach ( $tabs as $tab => $opt ) {
+		/**
+		 * [get_position_select_options description]
+		 * @return [type] [description]
+		 */
+		public function get_position_select_options() {
+			return array(
+				array(
+					'label' => esc_html__( 'Default', 'jet-menu' ),
+					'value' => '',
+				),
+				array(
+					'label' => esc_html__( 'Top Left', 'jet-menu' ),
+					'value' => 'top left',
+				),
+				array(
+					'label' => esc_html__( 'Top Center', 'jet-menu' ),
+					'value' => 'top center',
+				),
+				array(
+					'label' => esc_html__( 'Top Right', 'jet-menu' ),
+					'value' => 'top right',
+				),
+				array(
+					'label' => esc_html__( 'Center Left', 'jet-menu' ),
+					'value' => 'center left',
+				),
+				array(
+					'label' => esc_html__( 'Center Center', 'jet-menu' ),
+					'value' => 'center center',
+				),
+				array(
+					'label' => esc_html__( 'Center Right', 'jet-menu' ),
+					'value' => 'center right',
+				),
+				array(
+					'label' => esc_html__( 'Bottom Left', 'jet-menu' ),
+					'value' => 'bottom left',
+				),
+				array(
+					'label' => esc_html__( 'Bottom Center', 'jet-menu' ),
+					'value' => 'bottom center',
+				),
+				array(
+					'label' => esc_html__( 'Bottom Right', 'jet-menu' ),
+					'value' => 'bottom right',
+				),
+			);
+		}
 
-				$this->section_start( 'sub_panel_' . $tab . '_tab' );
+		/**
+		 * [get_attachment_select_options description]
+		 * @return [type] [description]
+		 */
+		public function get_attachment_select_options() {
+			return array(
+				array(
+					'label' => esc_html__( 'Default', 'jet-menu' ),
+					'value' => '',
+				),
+				array(
+					'label' => esc_html__( 'Scroll', 'jet-menu' ),
+					'value' => 'scroll',
+				),
+				array(
+					'label' => esc_html__( 'Fixed', 'jet-menu' ),
+					'value' => 'fixed',
+				),
+			);
+		}
 
-				if ( 'simple' === $tab ) {
-					$this->builder->register_control(
-						array(
-							'jet-menu-sub-panel-width-simple' => array(
-								'type'       => 'slider',
-								'max_value'  => 400,
-								'min_value'  => 100,
-								'value'      => $this->get_option( 'jet-menu-sub-panel-width-simple', 200 ),
-								'step_value' => 1,
-								'title'      => esc_html__( 'Panel Width', 'jet-menu' ),
-								'parent'     => 'sub_panel_simple_tab',
-							),
-						)
-					);
+		/**
+		 * [get_repeat_select_options description]
+		 * @return [type] [description]
+		 */
+		public function get_repeat_select_options() {
+			return array(
+				array(
+					'label' => esc_html__( 'Default', 'jet-menu' ),
+					'value' => '',
+				),
+				array(
+					'label' => esc_html__( 'No Repeat', 'jet-menu' ),
+					'value' => 'no-repeat',
+				),
+				array(
+					'label' => esc_html__( 'Repeat', 'jet-menu' ),
+					'value' => 'repeat',
+				),
+				array(
+					'label' => esc_html__( 'Repeat X', 'jet-menu' ),
+					'value' => 'repeat-x',
+				),
+				array(
+					'label' => esc_html__( 'Repeat Y', 'jet-menu' ),
+					'value' => 'repeat-y',
+				),
+			);
+		}
+
+		/**
+		 * [get_size_select_options description]
+		 * @return [type] [description]
+		 */
+		public function get_size_select_options() {
+			return array(
+				array(
+					'label' => esc_html__( 'Default', 'jet-menu' ),
+					'value' => '',
+				),
+				array(
+					'label' => esc_html__( 'Auto', 'jet-menu' ),
+					'value' => 'auto',
+				),
+				array(
+					'label' => esc_html__( 'Cover', 'jet-menu' ),
+					'value' => 'cover',
+				),
+				array(
+					'label' => esc_html__( 'Contain', 'jet-menu' ),
+					'value' => 'contain',
+				),
+			);
+		}
+
+		/**
+		 * [get_border_style_select_options description]
+		 * @return [type] [description]
+		 */
+		public function get_border_style_select_options() {
+			return array(
+				array(
+					'label' => esc_html__( 'None', 'jet-menu' ),
+					'value' => 'none',
+				),
+				array(
+					'label' => esc_html__( 'Solid', 'jet-menu' ),
+					'value' => 'solid',
+				),
+				array(
+					'label' => esc_html__( 'Double', 'jet-menu' ),
+					'value' => 'double',
+				),
+				array(
+					'label' => esc_html__( 'Dotted', 'jet-menu' ),
+					'value' => 'dotted',
+				),
+				array(
+					'label' => esc_html__( 'Dashed', 'jet-menu' ),
+					'value' => 'dashed',
+				),
+			);
+		}
+
+		/**
+		 * [get_font_weight_select_options description]
+		 * @return [type] [description]
+		 */
+		public function get_font_weight_select_options() {
+			return array(
+				array(
+					'label' => esc_html__( 'Default', 'jet-menu' ),
+					'value' => '',
+				),
+				array(
+					'label' => esc_html__( '100', 'jet-menu' ),
+					'value' => '100',
+				),
+				array(
+					'label' => esc_html__( '200', 'jet-menu' ),
+					'value' => '200',
+				),
+				array(
+					'label' => esc_html__( '300', 'jet-menu' ),
+					'value' => '300',
+				),
+				array(
+					'label' => esc_html__( '400', 'jet-menu' ),
+					'value' => '400',
+				),
+				array(
+					'label' => esc_html__( '500', 'jet-menu' ),
+					'value' => '500',
+				),
+				array(
+					'label' => esc_html__( '600', 'jet-menu' ),
+					'value' => '600',
+				),
+				array(
+					'label' => esc_html__( '700', 'jet-menu' ),
+					'value' => '700',
+				),
+				array(
+					'label' => esc_html__( '800', 'jet-menu' ),
+					'value' => '800',
+				),
+				array(
+					'label' => esc_html__( '900', 'jet-menu' ),
+					'value' => '900',
+				),
+			);
+		}
+
+		/**
+		 * [get_text_transform_select_options description]
+		 * @return [type] [description]
+		 */
+		public function get_text_transform_select_options() {
+
+			return array(
+				array(
+					'label' => esc_html__( 'Default', 'jet-menu' ),
+					'value' => '',
+				),
+				array(
+					'label' => esc_html__( 'Normal', 'jet-menu' ),
+					'value' => 'none',
+				),
+				array(
+					'label' => esc_html__( 'Uppercase', 'jet-menu' ),
+					'value' => 'uppercase',
+				),
+				array(
+					'label' => esc_html__( 'Lowercase', 'jet-menu' ),
+					'value' => 'lowercase',
+				),
+				array(
+					'label' => esc_html__( 'Capitalize', 'jet-menu' ),
+					'value' => 'capitalize',
+				),
+			);
+		}
+
+		/**
+		 * [get_font_style_select_options description]
+		 * @return [type] [description]
+		 */
+		public function get_font_style_select_options() {
+
+			return array(
+				array(
+					'label' => esc_html__( 'Default', 'jet-menu' ),
+					'value' => '',
+				),
+				array(
+					'label' => esc_html__( 'Normal', 'jet-menu' ),
+					'value' => 'normal',
+				),
+				array(
+					'label' => esc_html__( 'Italic', 'jet-menu' ),
+					'value' => 'italic',
+				),
+				array(
+					'label' => esc_html__( 'Oblique', 'jet-menu' ),
+					'value' => 'oblique',
+				),
+			);
+		}
+
+		/**
+		 * [get_fonts_select_options description]
+		 * @return [type] [description]
+		 */
+		public function get_fonts_select_options() {
+
+			$fonts_list = jet_menu_dynmic_css()->get_fonts_list();
+
+			$fonts_select_options = [];
+
+			if ( ! empty( $fonts_list ) ) {
+
+				foreach ( $fonts_list as $font_name => $font_slug ) {
+
+					if ( 0 !== $font_name ) {
+						$fonts_select_options[] = array(
+							'label' => $font_name,
+							'value' => $font_name,
+						);
+					} else {
+						$fonts_select_options[] = array(
+							'label' => $font_slug,
+							'value' => $font_name,
+						);
+					}
 				}
-
-				jet_menu_dynmic_css()->add_background_options( array(
-					'name'     => 'jet-menu-sub-panel' . $opt,
-					'label'    => esc_html__( 'Panel', 'jet-menu' ),
-					'parent'   => 'sub_panel_' . $tab . '_tab',
-				) );
-
-				jet_menu_dynmic_css()->add_border_options( array(
-					'name'     => 'jet-menu-sub-panel' . $opt,
-					'label'    => esc_html__( 'Panel', 'jet-menu' ),
-					'parent'   => 'sub_panel_' . $tab . '_tab',
-					'defaults' => array(
-						'top'    => '1',
-						'right'  => '1',
-						'bottom' => '1',
-						'left'   => '1',
-					),
-				) );
-
-				jet_menu_dynmic_css()->add_box_shadow_options( array(
-					'name'     => 'jet-menu-sub-panel' . $opt,
-					'label'    => esc_html__( 'Panel', 'jet-menu' ),
-					'parent'   => 'sub_panel_' . $tab . '_tab',
-				) );
-
-				$this->builder->register_control(
-					array(
-						'jet-menu-sub-panel-border-radius' . $opt => array(
-							'type'        => 'dimensions',
-							'parent'      => 'sub_panel_' . $tab . '_tab',
-							'title'       => esc_html__( 'Panel border radius', 'jet-menu' ),
-							'range'       => array(
-								'px' => array(
-									'min'  => 0,
-									'max'  => 100,
-									'step' => 1,
-								),
-								'%' => array(
-									'min'  => 0,
-									'max'  => 100,
-									'step' => 1,
-								),
-							),
-							'value' => $this->get_option( 'jet-menu-sub-panel-border-radius' . $opt ),
-						),
-						'jet-menu-sub-panel-padding' . $opt => array(
-							'type'        => 'dimensions',
-							'parent'      => 'sub_panel_' . $tab . '_tab',
-							'title'       => esc_html__( 'Panel padding', 'jet-menu' ),
-							'range'       => array(
-								'px' => array(
-									'min'  => 0,
-									'max'  => 100,
-									'step' => 1,
-								),
-							),
-							'value' => $this->get_option( 'jet-menu-sub-panel-padding' . $opt ),
-						),
-						'jet-menu-sub-panel-margin' . $opt => array(
-							'type'        => 'dimensions',
-							'parent'      => 'sub_panel_' . $tab . '_tab',
-							'title'       => esc_html__( 'Panel margin', 'jet-menu' ),
-							'range'       => array(
-								'px' => array(
-									'min'  => -50,
-									'max'  => 100,
-									'step' => 1,
-								),
-							),
-							'value' => $this->get_option( 'jet-menu-sub-panel-margin' . $opt ),
-						),
-					)
-				);
-
-				$this->section_end( 'sub_panel_' . $tab . '_tab' );
-
 			}
 
-			$this->section_start( 'sub_items_styles_tab' );
-
-			jet_menu_dynmic_css()->add_typography_options(
-				array(
-					'label'   => esc_html__( 'Submenu', 'jet-menu' ),
-					'name'    => 'jet-sub-menu',
-					'parent'  => 'sub_items_styles_tab',
-				)
-			);
-
-			$this->builder->register_control(
-				array(
-					'jet-show-sub-menu-desc' => array(
-						'type'   => 'switcher',
-						'parent' => 'sub_items_styles_tab',
-						'title'  => esc_html__( 'Show Submenu Item Description', 'jet-menu' ),
-						'value'  => $this->get_option( 'jet-show-sub-menu-desc', 'true' ),
-						'toggle' => array(
-							'true_toggle'  => 'On',
-							'false_toggle' => 'Off',
-						),
-					),
-				)
-			);
-
-			jet_menu_dynmic_css()->add_typography_options(
-				array(
-					'label'   => esc_html__( 'Submenu descriptions', 'jet-menu' ),
-					'name'    => 'jet-sub-menu-desc',
-					'parent'  => 'sub_items_styles_tab',
-				)
-			);
-
-			$this->builder->register_component(
-				array(
-					'menu_sub_tabs' => array(
-						'type'   => 'component-tab-horizontal',
-						'parent' => 'sub_items_styles_tab',
-					),
-				)
-			);
-
-			$this->section_end( 'sub_items_styles_tab' );
-
-			$this->builder->register_settings(
-				array(
-					'sub_default_tab' => array(
-						'parent' => 'menu_sub_tabs',
-						'title'  => esc_html__( 'Default', 'jet-menu' ),
-					),
-					'sub_hover_tab' => array(
-						'parent' => 'menu_sub_tabs',
-						'title'  => esc_html__( 'Hover', 'jet-menu' ),
-					),
-					'sub_active_tab' => array(
-						'parent' => 'menu_sub_tabs',
-						'title'  => esc_html__( 'Active', 'jet-menu' ),
-					),
-				)
-			);
-
-			$tabs = array(
-				'default' => '',
-				'hover'   => '-hover',
-				'active'  => '-active',
-			);
-
-			foreach ( $tabs as $tab => $opt ) {
-
-				$this->section_start( 'sub_' . $tab . '_tab' );
-
-				$this->builder->register_control(
-					array(
-						'jet-menu-sub-text-color' . $opt => array(
-							'type'        => 'colorpicker',
-							'parent'      => 'sub_' . $tab . '_tab',
-							'title'       => esc_html__( 'Item text color', 'jet-menu' ),
-							'value'       => $this->get_option( 'jet-menu-sub-text-color' . $opt ),
-							'alpha'       => true,
-						),
-					)
-				);
-
-				$this->builder->register_control(
-					array(
-						'jet-menu-sub-desc-color' . $opt => array(
-							'type'        => 'colorpicker',
-							'parent'      => 'sub_' . $tab . '_tab',
-							'title'       => esc_html__( 'Item descriptions color', 'jet-menu' ),
-							'value'       => $this->get_option( 'jet-menu-sub-desc-color' . $opt ),
-							'alpha'       => true,
-						),
-					)
-				);
-
-				$this->builder->register_control(
-					array(
-						'jet-menu-sub-icon-color' . $opt => array(
-							'type'        => 'colorpicker',
-							'parent'      => 'sub_' . $tab . '_tab',
-							'title'       => esc_html__( 'Item icon color', 'jet-menu' ),
-							'value'       => $this->get_option( 'jet-menu-sub-icon-color' . $opt ),
-							'alpha'       => true,
-						),
-					)
-				);
-
-				$this->builder->register_control(
-					array(
-						'jet-menu-sub-arrow-color' . $opt => array(
-							'type'        => 'colorpicker',
-							'parent'      => 'sub_' . $tab . '_tab',
-							'title'       => esc_html__( 'Item drop-down arrow color', 'jet-menu' ),
-							'value'       => $this->get_option( 'jet-menu-sub-arrow-color' . $opt ),
-							'alpha'       => true,
-						),
-					)
-				);
-
-				jet_menu_dynmic_css()->add_background_options( array(
-					'name'     => 'jet-menu-sub' . $opt,
-					'label'    => esc_html__( 'Item', 'jet-menu' ),
-					'parent'   => 'sub_' . $tab . '_tab',
-				) );
-
-				jet_menu_dynmic_css()->add_border_options( array(
-					'name'     => 'jet-menu-sub' . $opt,
-					'label'    => esc_html__( 'Item', 'jet-menu' ),
-					'parent'   => 'sub_' . $tab . '_tab',
-					'defaults' => array(
-						'top'    => '1',
-						'right'  => '1',
-						'bottom' => '1',
-						'left'   => '1',
-					),
-				) );
-
-				jet_menu_dynmic_css()->add_border_options( array(
-					'name'     => 'jet-menu-sub-first' . $opt,
-					'label'    => esc_html__( 'First item', 'jet-menu' ),
-					'parent'   => 'sub_' . $tab . '_tab',
-					'defaults' => array(
-						'top'    => '1',
-						'right'  => '1',
-						'bottom' => '1',
-						'left'   => '1',
-					),
-				) );
-
-				jet_menu_dynmic_css()->add_border_options( array(
-					'name'     => 'jet-menu-sub-last' . $opt,
-					'label'    => esc_html__( 'Last item', 'jet-menu' ),
-					'parent'   => 'sub_' . $tab . '_tab',
-					'defaults' => array(
-						'top'    => '1',
-						'right'  => '1',
-						'bottom' => '1',
-						'left'   => '1',
-					),
-				) );
-
-				jet_menu_dynmic_css()->add_box_shadow_options( array(
-					'name'     => 'jet-menu-sub' . $opt,
-					'label'    => esc_html__( 'Item', 'jet-menu' ),
-					'parent'   => 'sub_' . $tab . '_tab',
-				) );
-
-				$this->builder->register_control(
-					array(
-						'jet-menu-sub-border-radius' . $opt => array(
-							'type'        => 'dimensions',
-							'parent'      => 'sub_' . $tab . '_tab',
-							'title'       => esc_html__( 'Item border radius', 'jet-menu' ),
-							'range'       => array(
-								'px' => array(
-									'min'  => 0,
-									'max'  => 100,
-									'step' => 1,
-								),
-								'%' => array(
-									'min'  => 0,
-									'max'  => 100,
-									'step' => 1,
-								),
-							),
-							'value' => $this->get_option( 'jet-menu-sub-border-radius' . $opt ),
-						),
-						'jet-menu-sub-padding' . $opt => array(
-							'type'        => 'dimensions',
-							'parent'      => 'sub_' . $tab . '_tab',
-							'title'       => esc_html__( 'Item padding', 'jet-menu' ),
-							'range'       => array(
-								'px' => array(
-									'min'  => 0,
-									'max'  => 100,
-									'step' => 1,
-								),
-							),
-							'value' => $this->get_option( 'jet-menu-sub-padding' . $opt ),
-						),
-						'jet-menu-sub-margin' . $opt => array(
-							'type'        => 'dimensions',
-							'parent'      => 'sub_' . $tab . '_tab',
-							'title'       => esc_html__( 'Item margin', 'jet-menu' ),
-							'range'       => array(
-								'px' => array(
-									'min'  => -50,
-									'max'  => 100,
-									'step' => 1,
-								),
-							),
-							'value' => $this->get_option( 'jet-menu-sub-margin' . $opt ),
-						),
-					)
-				);
-
-				$this->section_end( 'sub_' . $tab . '_tab' );
-
-			}
-
-			$this->builder->register_component(
-				array(
-					'menu_advanced_tabs' => array(
-						'type'   => 'component-tab-horizontal',
-						'parent' => 'advanced_tab',
-					),
-				)
-			);
-
-			$this->builder->register_settings(
-				array(
-					'advanced_icon' => array(
-						'parent' => 'menu_advanced_tabs',
-						'title'  => esc_html__( 'Icon', 'jet-menu' ),
-					),
-					'advanced_badge' => array(
-						'parent' => 'menu_advanced_tabs',
-						'title'  => esc_html__( 'Badge', 'jet-menu' ),
-					),
-					'advanced_arrow' => array(
-						'parent' => 'menu_advanced_tabs',
-						'title'  => esc_html__( 'Drop-down Arrow', 'jet-menu' ),
-					),
-				)
-			);
-
-			$this->builder->register_component( array(
-				'icons_accordion' => array(
-					'type'        => 'component-accordion',
-					'parent'      => 'advanced_icon',
-				)
-			) );
-
-			$this->builder->register_settings(
-				array(
-					'top_icon' => array(
-						'type'   => 'settings',
-						'parent' => 'icons_accordion',
-						'title'  => esc_html__( 'Top Level Icon', 'jet-menu' ),
-					),
-					'sub_icon' => array(
-						'type'   => 'settings',
-						'parent' => 'icons_accordion',
-						'title'  => esc_html__( 'Sub Level Icon', 'jet-menu' ),
-					),
-				)
-			);
-
-			$icons = array( 'top', 'sub' );
-
-			foreach ( $icons as $level ) {
-
-				$this->section_start( $level . '_icon' );
-
-				$this->builder->register_control(
-					array(
-						'jet-menu-' . $level . '-icon-size' => array(
-							'type'       => 'slider',
-							'max_value'  => 150,
-							'min_value'  => 10,
-							'value'      => $this->get_option( 'jet-menu-' . $level . '-icon-size' ),
-							'step_value' => 1,
-							'title'      => esc_html__( 'Icon size', 'jet-menu' ),
-							'parent'     => $level . '_icon',
-						),
-						'jet-menu-' . $level . '-icon-margin' => array(
-							'type'        => 'dimensions',
-							'parent'      => $level . '_icon',
-							'title'       => esc_html__( 'Icon margin', 'jet-menu' ),
-							'range'       => array(
-								'px' => array(
-									'min'  => -50,
-									'max'  => 100,
-									'step' => 1,
-								),
-							),
-							'value' => $this->get_option( 'jet-menu-' . $level . '-icon-margin' ),
-						),
-						'jet-menu-' . $level . '-icon-ver-position' => array(
-							'type'     => 'select',
-							'parent'   => $level . '_icon',
-							'title'    => esc_html__( 'Icon vertical position', 'jet-menu' ),
-							'multiple' => false,
-							'filter'   => false,
-							'value'    => $this->get_option( 'jet-menu-' . $level . '-icon-ver-position' ),
-							'options'  => array(
-								'center' => esc_html__( 'Center', 'jet-menu' ),
-								'top'    => esc_html__( 'Top', 'jet-menu' ),
-								'bottom' => esc_html__( 'Bottom', 'jet-menu' ),
-							),
-						),
-						'jet-menu-' . $level . '-icon-hor-position' => array(
-							'type'     => 'select',
-							'parent'   => $level . '_icon',
-							'title'    => esc_html__( 'Icon horizontal position', 'jet-menu' ),
-							'multiple' => false,
-							'filter'   => false,
-							'value'    => $this->get_option( 'jet-menu-' . $level . '-icon-hor-position' ),
-							'options'  => array(
-								'left'   => esc_html__( 'Left', 'jet-menu' ),
-								'right'  => esc_html__( 'Right', 'jet-menu' ),
-								'center' => esc_html__( 'Center', 'jet-menu' ),
-							),
-						),
-						'jet-menu-' . $level . '-icon-order' => array(
-							'type'       => 'slider',
-							'max_value'  => 10,
-							'min_value'  => -10,
-							'value'      => $this->get_option( 'jet-menu-' . $level . '-icon-order' ),
-							'step_value' => 1,
-							'title'      => esc_html__( 'Icon order', 'jet-menu' ),
-							'parent'     => $level . '_icon',
-						),
-					)
-				);
-
-				$this->section_end( $level . '_icon' );
-
-			}
-
-			$this->builder->register_component( array(
-				'badges_accordion' => array(
-					'type'        => 'component-accordion',
-					'parent'      => 'advanced_badge',
-				)
-			) );
-
-			$this->builder->register_settings(
-				array(
-					'top_badge' => array(
-						'type'   => 'settings',
-						'parent' => 'badges_accordion',
-						'title'  => esc_html__( 'Top Level Badge', 'jet-menu' ),
-					),
-					'sub_badge' => array(
-						'type'   => 'settings',
-						'parent' => 'badges_accordion',
-						'title'  => esc_html__( 'Sub Level Badge', 'jet-menu' ),
-					),
-				)
-			);
-
-			$badges = array( 'top', 'sub' );
-
-			foreach ( $badges as $level ) {
-
-				$this->section_start( $level . '_badge' );
-
-				jet_menu_dynmic_css()->add_typography_options(
-					array(
-						'label'   => esc_html__( 'Badge', 'jet-menu' ),
-						'name'    => 'jet-menu-' . $level . '-badge',
-						'parent'  => $level . '_badge',
-					)
-				);
-
-				$this->builder->register_control(
-					array(
-						'jet-menu-' . $level . '-badge-text-color' => array(
-							'type'        => 'colorpicker',
-							'parent'      => $level . '_badge',
-							'title'       => esc_html__( 'Badge text color', 'jet-menu' ),
-							'value'       => $this->get_option( 'jet-menu-' . $level . '-badge-text-color' ),
-							'alpha'       => true,
-						),
-					)
-				);
-
-				jet_menu_dynmic_css()->add_background_options( array(
-					'name'     => 'jet-menu-' . $level . '-badge-bg',
-					'label'    => esc_html__( 'Badge', 'jet-menu' ),
-					'parent'   => $level . '_badge',
-				) );
-
-				jet_menu_dynmic_css()->add_border_options( array(
-					'name'     => 'jet-menu-' . $level . '-badge',
-					'label'    => esc_html__( 'Badge', 'jet-menu' ),
-					'parent'   => $level . '_badge',
-					'defaults' => array(
-						'top'    => '1',
-						'right'  => '1',
-						'bottom' => '1',
-						'left'   => '1',
-					),
-				) );
-
-				jet_menu_dynmic_css()->add_box_shadow_options( array(
-					'name'     => 'jet-menu-' . $level . '-badge',
-					'label'    => esc_html__( 'Badge', 'jet-menu' ),
-					'parent'   => $level . '_badge',
-				) );
-
-				$this->builder->register_control(
-					array(
-						'jet-menu-' . $level . '-badge-border-radius' => array(
-							'type'        => 'dimensions',
-							'parent'      => $level . '_badge',
-							'title'       => esc_html__( 'Badge border radius', 'jet-menu' ),
-							'range'       => array(
-								'px' => array(
-									'min'  => 0,
-									'max'  => 100,
-									'step' => 1,
-								),
-								'%' => array(
-									'min'  => 0,
-									'max'  => 100,
-									'step' => 1,
-								),
-							),
-							'value' => $this->get_option( 'jet-menu-' . $level . '-badge-border-radius' ),
-						),
-						'jet-menu-' . $level . '-badge-padding' => array(
-							'type'        => 'dimensions',
-							'parent'      => $level . '_badge',
-							'title'       => esc_html__( 'Badge padding', 'jet-menu' ),
-							'range'       => array(
-								'px' => array(
-									'min'  => 0,
-									'max'  => 100,
-									'step' => 1,
-								),
-							),
-							'value' => $this->get_option( 'jet-menu-' . $level . '-badge-padding' ),
-						),
-						'jet-menu-' . $level . '-badge-margin' => array(
-							'type'        => 'dimensions',
-							'parent'      => $level . '_badge',
-							'title'       => esc_html__( 'Badge margin', 'jet-menu' ),
-							'range'       => array(
-								'px' => array(
-									'min'  => -50,
-									'max'  => 100,
-									'step' => 1,
-								),
-							),
-							'value' => $this->get_option( 'jet-menu-' . $level . '-badge-margin' ),
-						),
-						'jet-menu-' . $level . '-badge-ver-position' => array(
-							'type'     => 'select',
-							'parent'   => $level . '_badge',
-							'title'    => esc_html__( 'Badge vertical position (may be overridden with order)', 'jet-menu' ),
-							'multiple' => false,
-							'filter'   => false,
-							'value'    => $this->get_option( 'jet-menu-' . $level . '-badge-ver-position' ),
-							'options'  => array(
-								'top'    => esc_html__( 'Top', 'jet-menu' ),
-								'center' => esc_html__( 'Center', 'jet-menu' ),
-								'bottom' => esc_html__( 'Bottom', 'jet-menu' ),
-							),
-						),
-						'jet-menu-' . $level . '-badge-hor-position' => array(
-							'type'     => 'select',
-							'parent'   => $level . '_badge',
-							'title'    => esc_html__( 'Badge horizontal position', 'jet-menu' ),
-							'multiple' => false,
-							'filter'   => false,
-							'value'    => $this->get_option( 'jet-menu-' . $level . '-badge-hor-position' ),
-							'options'  => array(
-								'right'  => esc_html__( 'Right', 'jet-menu' ),
-								'center' => esc_html__( 'Center', 'jet-menu' ),
-								'left'   => esc_html__( 'Left', 'jet-menu' ),
-							),
-						),
-						'jet-menu-' . $level . '-badge-order' => array(
-							'type'       => 'slider',
-							'max_value'  => 10,
-							'min_value'  => -10,
-							'value'      => $this->get_option( 'jet-menu-' . $level . '-badge-order' ),
-							'step_value' => 1,
-							'title'      => esc_html__( 'Badge order', 'jet-menu' ),
-							'parent'     => $level . '_badge',
-						),
-						'jet-menu-' . $level . '-badge-hide' => array(
-							'type'        => 'switcher',
-							'parent'     => $level . '_badge',
-							'title'       => esc_html__( 'Hide badge on mobile', 'jet-menu' ),
-							'value'       => $this->get_option( 'jet-menu-' . $level . '-badge-hide', 'false' ),
-							'toggle'      => array(
-								'true_toggle'  => 'Yes',
-								'false_toggle' => 'No',
-							),
-						),
-					)
-				);
-
-				$this->section_end( $level . '_badge' );
-
-			}
-
-			$this->builder->register_component( array(
-				'arrows_accordion' => array(
-					'type'        => 'component-accordion',
-					'parent'      => 'advanced_arrow',
-				)
-			) );
-
-			$this->builder->register_settings(
-				array(
-					'top_arrow' => array(
-						'type'   => 'settings',
-						'parent' => 'arrows_accordion',
-						'title'  => esc_html__( 'Top Level Arrow', 'jet-menu' ),
-					),
-					'sub_arrow' => array(
-						'type'   => 'settings',
-						'parent' => 'arrows_accordion',
-						'title'  => esc_html__( 'Sub Level Arrow', 'jet-menu' ),
-					),
-				)
-			);
-
-			$arrows = array( 'top' => 'fa-angle-down', 'sub' => 'fa-angle-right' );
-
-			foreach ( $arrows as $level => $default ) {
-
-				$this->section_start( $level . '_arrow' );
-
-				$this->builder->register_control(
-					array(
-						'jet-menu-' . $level . '-arrow' => array(
-							'type'        => 'iconpicker',
-							'label'       => esc_html__( 'Arrow icon', 'jet-menu' ),
-							'value'       => $this->get_option( 'jet-menu-' . $level . '-arrow', $default ),
-							'parent'      => $level . '_arrow',
-							'icon_data'   => array(
-								'icon_set'    => 'jetMenuIcons',
-								'icon_css'    => jet_menu()->plugin_url( 'assets/public/css/font-awesome.min.css' ),
-								'icon_base'   => 'fa',
-								'icon_prefix' => '',
-								'icons'       => $this->get_arrows_icons(),
-							),
-						),
-						'jet-menu-' . $level . '-arrow-size' => array(
-							'type'       => 'slider',
-							'max_value'  => 150,
-							'min_value'  => 10,
-							'value'      => $this->get_option( 'jet-menu-' . $level . '-arrow-size' ),
-							'step_value' => 1,
-							'title'      => esc_html__( 'Arrow size', 'jet-menu' ),
-							'parent'     => $level . '_arrow',
-						),
-						'jet-menu-' . $level . '-arrow-margin' => array(
-							'type'        => 'dimensions',
-							'parent'      => $level . '_arrow',
-							'title'       => esc_html__( 'Arrow margin', 'jet-menu' ),
-							'range'       => array(
-								'px' => array(
-									'min'  => -50,
-									'max'  => 100,
-									'step' => 1,
-								),
-							),
-							'value' => $this->get_option( 'jet-menu-' . $level . '-arrow-margin' ),
-						),
-						'jet-menu-' . $level . '-arrow-ver-position' => array(
-							'type'     => 'select',
-							'parent'   => $level . '_arrow',
-							'title'    => esc_html__( 'Arrow vertical position', 'jet-menu' ),
-							'multiple' => false,
-							'filter'   => false,
-							'value'    => $this->get_option( 'jet-menu-' . $level . '-arrow-ver-position' ),
-							'options'  => array(
-								'center' => esc_html__( 'Center', 'jet-menu' ),
-								'top'    => esc_html__( 'Top', 'jet-menu' ),
-								'bottom' => esc_html__( 'Bottom', 'jet-menu' ),
-							),
-						),
-						'jet-menu-' . $level . '-arrow-hor-position' => array(
-							'type'     => 'select',
-							'parent'   => $level . '_arrow',
-							'title'    => esc_html__( 'Arrow horizontal position', 'jet-menu' ),
-							'multiple' => false,
-							'filter'   => false,
-							'value'    => $this->get_option( 'jet-menu-' . $level . '-arrow-hor-position' ),
-							'options'  => array(
-								'right'  => esc_html__( 'Right', 'jet-menu' ),
-								'center' => esc_html__( 'Center', 'jet-menu' ),
-								'left'   => esc_html__( 'Left', 'jet-menu' ),
-							),
-						),
-						'jet-menu-' . $level . '-arrow-order' => array(
-							'type'       => 'slider',
-							'max_value'  => 10,
-							'min_value'  => -10,
-							'value'      => $this->get_option( 'jet-menu-' . $level . '-arrow-order' ),
-							'step_value' => 1,
-							'title'      => esc_html__( 'Arrow order', 'jet-menu' ),
-							'parent'     => $level . '_arrow',
-						),
-					)
-				);
-
-				$this->section_end( $level . '_arrow' );
-
-			}
-
-			$this->section_start( 'mobile_menu_tab' );
-
-			$this->builder->register_control(
-				array(
-					'jet-menu-mobile-toggle-color' => array(
-						'type'        => 'colorpicker',
-						'parent'      => 'mobile_menu_tab',
-						'title'       => esc_html__( 'Toggle text color', 'jet-menu' ),
-						'value'       => $this->get_option( 'jet-menu-mobile-toggle-color' ),
-						'alpha'       => true,
-					),
-					'jet-menu-mobile-toggle-bg' => array(
-						'type'        => 'colorpicker',
-						'parent'      => 'mobile_menu_tab',
-						'title'       => esc_html__( 'Toggle background color', 'jet-menu' ),
-						'value'       => $this->get_option( 'jet-menu-mobile-toggle-bg' ),
-						'alpha'       => true,
-					),
-					'jet-menu-mobile-container-bg' => array(
-						'type'        => 'colorpicker',
-						'parent'      => 'mobile_menu_tab',
-						'title'       => esc_html__( 'Container background color', 'jet-menu' ),
-						'value'       => $this->get_option( 'jet-menu-mobile-container-bg' ),
-						'alpha'       => true,
-					),
-					'jet-menu-mobile-cover-bg' => array(
-						'type'        => 'colorpicker',
-						'parent'      => 'mobile_menu_tab',
-						'title'       => esc_html__( 'Cover background color', 'jet-menu' ),
-						'value'       => $this->get_option( 'jet-menu-mobile-cover-bg' ),
-						'alpha'       => true,
-					),
-				)
-			);
-
-			$this->section_end( 'mobile_menu_tab' );
-
-			/**
-			 * Hook fires before page render
-			 */
-			do_action( 'jet-menu/options-page/before-render', $this->builder, $this );
-
-			$this->builder->render();
+			return $fonts_select_options;
 		}
 
 		/**
-		 * Section start trigger
-		 *
-		 * @param  string $section Section name.
-		 * @return void
+		 * [get_font_subset_select_options description]
+		 * @return [type] [description]
 		 */
-		public function section_start( $section ) {
-			do_action( 'jet-menu/options-page/section-start/' . $section, $this->builder, $this );
-		}
+		public function get_font_subset_select_options() {
 
-		/**
-		 * Section start trigger
-		 *
-		 * @param  string $section Section name.
-		 * @return void
-		 */
-		public function section_end( $section ) {
-			do_action( 'jet-menu/options-page/section-end/' . $section, $this->builder, $this );
-		}
-
-		public function get_arrows_icons() {
-			return apply_filters( 'jet-menu/arrow-icons', array(
-				'fa-angle-down',
-				'fa-angle-double-down',
-				'fa-arrow-circle-down',
-				'fa-arrow-down',
-				'fa-caret-down',
-				'fa-chevron-circle-down',
-				'fa-chevron-down',
-				'fa-long-arrow-down',
-				'fa-angle-right',
-				'fa-angle-double-right',
-				'fa-arrow-circle-right',
-				'fa-arrow-right',
-				'fa-caret-right',
-				'fa-chevron-circle-right',
-				'fa-chevron-right',
-				'fa-long-arrow-right',
-				'fa-angle-left',
-				'fa-angle-double-left',
-				'fa-arrow-circle-left',
-				'fa-arrow-left',
-				'fa-caret-left',
-				'fa-chevron-circle-left',
-				'fa-chevron-left',
-				'fa-long-arrow-left',
-			) );
+			return array(
+				array(
+					'label' => esc_html__( 'Latin', 'jet-menu' ),
+					'value' => 'latin',
+				),
+				array(
+					'label' => esc_html__( 'Greek', 'jet-menu' ),
+					'value' => 'greek',
+				),
+				array(
+					'label' => esc_html__( 'Cyrillic', 'jet-menu' ),
+					'value' => 'cyrillic',
+				),
+			);
 		}
 
 		/**
@@ -1745,7 +2112,7 @@ if ( ! class_exists( 'Jet_Menu_Options_Page' ) ) {
 
 			wp_redirect(
 				add_query_arg(
-					array( 'page' => jet_menu()->plugin_slug ),
+					array( 'page' => 'jet_menu_options_page' ),
 					esc_url( admin_url( 'admin.php' ) )
 				)
 			);
@@ -1820,7 +2187,6 @@ if ( ! class_exists( 'Jet_Menu_Options_Page' ) ) {
 			wp_send_json_success( array(
 				'message' => esc_html__( 'Options successfully imported. Page will be reloaded.', 'jet-menu' ),
 			) );
-
 		}
 
 		/**
@@ -1846,6 +2212,7 @@ if ( ! class_exists( 'Jet_Menu_Options_Page' ) ) {
 			$options = array_merge( $this->default_options, $options );
 
 			update_option( $option_name, $options );
+
 			$this->fonts_loader->reset_fonts_cache();
 
 			do_action( 'jet-menu/options-page/save' );
@@ -1864,7 +2231,6 @@ if ( ! class_exists( 'Jet_Menu_Options_Page' ) ) {
 			} else {
 				$this->options = $options;
 			}
-
 		}
 
 		/**
@@ -1887,13 +2253,22 @@ if ( ! class_exists( 'Jet_Menu_Options_Page' ) ) {
 		}
 
 		/**
-		 * Get default mobile breakpoint value.
-		 *
-		 * @since 1.4.1
-		 * @return int
+		 * [set_option description]
+		 * @param [type]  $option_name [description]
+		 * @param boolean $value       [description]
 		 */
-		public function get_default_mobile_breakpoint() {
-			return get_option( 'elementor_viewport_md' ) ? (int) get_option( 'elementor_viewport_md' ) : 768;
+		public function set_option( $option_name = null, $value = false ) {
+			$current = get_option( jet_menu_option_page()->options_slug(), array() );
+
+			if ( isset( $current[ $option_name ] ) ) {
+				$current[ $option_name ] = $value;
+			} else {
+				$new_option[ $option_name ] = $value;
+
+				$current = array_merge( $current, $new_option );
+			}
+
+			$this->save_options( $this->options_slug(), $current );
 		}
 
 		/**
@@ -1904,6 +2279,7 @@ if ( ! class_exists( 'Jet_Menu_Options_Page' ) ) {
 		 * @return void
 		 */
 		public function create_db_options_field() {
+
 			if ( ! $this->is_db_options_exist( $this->options_slug ) ) {
 				$this->save_options( $this->options_slug, $this->default_options );
 			}
@@ -1911,15 +2287,6 @@ if ( ! class_exists( 'Jet_Menu_Options_Page' ) ) {
 			if ( ! $this->is_db_options_exist( $this->options_slug . '_default' ) ) {
 				$this->save_options( $this->options_slug . '_default', $this->default_options );
 			}
-		}
-
-		/**
-		 * Return options db key.
-		 *
-		 * @return string
-		 */
-		public function options_slug() {
-			return $this->options_slug;
 		}
 
 		/**

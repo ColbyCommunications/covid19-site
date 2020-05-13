@@ -46,6 +46,7 @@ if ( ! class_exists( 'Jet_Tricks_Assets' ) ) {
 			add_action( 'elementor/frontend/after_enqueue_styles', array( $this, 'enqueue_styles' ) );
 			add_action( 'elementor/frontend/before_enqueue_scripts', array( $this, 'enqueue_scripts' ), 10 );
 			add_action( 'elementor/frontend/before_register_scripts', array( $this, 'register_scripts' ) );
+			add_action( 'elementor/editor/before_enqueue_scripts', array( $this, 'editor_scripts' ) );
 		}
 
 		/**
@@ -130,6 +131,21 @@ if ( ! class_exists( 'Jet_Tricks_Assets' ) ) {
 				jet_tricks()->plugin_url( 'assets/css/jet-tricks-icons.css' ),
 				array(),
 				jet_tricks()->get_version()
+			);
+		}
+
+		/**
+		 * Enqueue editor scripts
+		 *
+		 * @return void
+		 */
+		public function editor_scripts() {
+			wp_enqueue_script(
+				'jet-tricks-editor',
+				jet_tricks()->plugin_url( 'assets/js/jet-tricks-editor.js' ),
+				array( 'jquery' ),
+				jet_tricks()->get_version(),
+				true
 			);
 		}
 

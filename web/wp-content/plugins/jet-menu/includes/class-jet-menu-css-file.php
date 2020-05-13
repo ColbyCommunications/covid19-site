@@ -47,8 +47,9 @@ if ( ! class_exists( 'Jet_Menu_CSS_File' ) ) {
 			add_action( 'jet-menu/presets/loaded',     array( $this, 'remove_css_file' ) );
 			add_action( 'jet-menu/presets/deleted',    array( $this, 'remove_css_file' ) );
 			add_action( 'jet-menu/item-settings/save', array( $this, 'remove_css_file' ) );
+			add_action( 'jet-menu/db_updater/update',  array( $this, 'remove_css_file' ) );
 
-			add_filter( 'cherry_dynamic_css_collector_localize_object', array( $this, 'maybe_create_css_file' ) );
+			add_filter( 'cx_dynamic_css/collector/localize_object', array( $this, 'maybe_create_css_file' ) );
 		}
 
 		/**
@@ -71,6 +72,10 @@ if ( ! class_exists( 'Jet_Menu_CSS_File' ) ) {
 
 		}
 
+		/**
+		 * [add_preset_to_save description]
+		 * @param integer $preset [description]
+		 */
 		public function add_preset_to_save( $preset = 0 ) {
 
 			if ( ! $preset ) {

@@ -227,11 +227,11 @@
 							JetTabs.addedAssetsPromises.push( JetTabs.loadStyle( styleHandler, templateStyles[ styleHandler ] ) );
 						}
 
-						Promise.all( JetTabs.addedAssetsPromises ).then( value => {
+						Promise.all( JetTabs.addedAssetsPromises ).then( function( value ) {
 							loader.remove();
 							$contentHolder.append( templateContent );
 							JetTabs.elementorFrontendInit( $contentHolder );
-						}, reason => {
+						}, function( reason ) {
 							console.log( 'Script Loaded Error' );
 						});
 					}
@@ -555,11 +555,11 @@
 							JetTabs.addedAssetsPromises.push( JetTabs.loadStyle( styleHandler, templateStyles[ styleHandler ] ) );
 						}
 
-						Promise.all( JetTabs.addedAssetsPromises ).then( value => {
+						Promise.all( JetTabs.addedAssetsPromises ).then( function( value ) {
 							loader.remove();
 							$contentHolderInner.append( templateContent );
 							JetTabs.elementorFrontendInit( $contentHolderInner );
-						}, reason => {
+						}, function( reason ) {
 							console.log( 'Script Loaded Error' );
 						});
 					}
@@ -616,16 +616,20 @@
 				return script;
 			}
 
+			if ( !uri ) {
+				return;
+			}
+
 			JetTabs.addedScripts[ script ] = uri;
 
-			return new Promise( ( resolve, reject ) => {
+			return new Promise( function( resolve, reject ) {
 				var tag = document.createElement( 'script' );
 
-					tag.src    = uri;
-					tag.async  = true;
-					tag.onload = () => {
-						resolve( script );
-					};
+				tag.src    = uri;
+				tag.async  = true;
+				tag.onload = function() {
+					resolve( script );
+				};
 
 				document.head.appendChild( tag );
 			});
@@ -637,19 +641,23 @@
 				return style;
 			}
 
+			if ( !uri ) {
+				return;
+			}
+
 			JetTabs.addedStyles[ style ] = uri;
 
-			return new Promise( ( resolve, reject ) => {
+			return new Promise( function( resolve, reject ) {
 				var tag = document.createElement( 'link' );
 
-					tag.id      = style;
-					tag.rel     = 'stylesheet';
-					tag.href    = uri;
-					tag.type    = 'text/css';
-					tag.media   = 'all';
-					tag.onload  = () => {
-						resolve( style );
-					};
+				tag.id      = style;
+				tag.rel     = 'stylesheet';
+				tag.href    = uri;
+				tag.type    = 'text/css';
+				tag.media   = 'all';
+				tag.onload  = function() {
+					resolve( style );
+				};
 
 				document.head.appendChild( tag );
 			});

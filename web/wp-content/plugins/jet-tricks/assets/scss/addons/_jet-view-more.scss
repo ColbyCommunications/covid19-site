@@ -21,10 +21,12 @@
 	&__icon {
 		color: white;
 		margin: 0 5px 0 0;
+		order: 1;
 	}
 
 	&__label {
 		color: white;
+		order: 2;
 	}
 }
 

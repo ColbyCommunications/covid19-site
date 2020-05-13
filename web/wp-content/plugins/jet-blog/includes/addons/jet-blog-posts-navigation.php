@@ -150,7 +150,7 @@ class Jet_Blog_Posts_Navigation extends Jet_Blog_Base {
 
 		$this->end_controls_section();
 
-		$this->__start_controls_section(
+		$this->_start_controls_section(
 			'items_style',
 			array(
 				'label'      => esc_html__( 'Items', 'jet-blog' ),
@@ -159,7 +159,7 @@ class Jet_Blog_Posts_Navigation extends Jet_Blog_Base {
 			)
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'items_alignment',
 			array(
 				'label'   => esc_html__( 'Alignment', 'jet-blog' ),
@@ -190,16 +190,16 @@ class Jet_Blog_Posts_Navigation extends Jet_Blog_Base {
 			50
 		);
 
-		$this->__start_controls_tabs( 'tabs_items_style' );
+		$this->_start_controls_tabs( 'tabs_items_style' );
 
-		$this->__start_controls_tab(
+		$this->_start_controls_tab(
 			'items_normal',
 			array(
 				'label' => esc_html__( 'Normal', 'jet-blog' ),
 			)
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'items_bg_color',
 			array(
 				'label'  => esc_html__( 'Background Color', 'jet-blog' ),
@@ -216,7 +216,7 @@ class Jet_Blog_Posts_Navigation extends Jet_Blog_Base {
 			25
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'items_color',
 			array(
 				'label'  => esc_html__( 'Text Color', 'jet-blog' ),
@@ -230,9 +230,9 @@ class Jet_Blog_Posts_Navigation extends Jet_Blog_Base {
 			25
 		);
 
-		$this->__end_controls_tab();
+		$this->_end_controls_tab();
 
-		$this->__start_controls_tab(
+		$this->_start_controls_tab(
 			'items_hover',
 			array(
 				'label' => esc_html__( 'Hover', 'jet-blog' ),
@@ -240,7 +240,7 @@ class Jet_Blog_Posts_Navigation extends Jet_Blog_Base {
 			25
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'items_bg_color_hover',
 			array(
 				'label'  => esc_html__( 'Background Color', 'jet-blog' ),
@@ -253,7 +253,7 @@ class Jet_Blog_Posts_Navigation extends Jet_Blog_Base {
 			25
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'items_color_hover',
 			array(
 				'label'  => esc_html__( 'Text Color', 'jet-blog' ),
@@ -266,7 +266,7 @@ class Jet_Blog_Posts_Navigation extends Jet_Blog_Base {
 			25
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'items_hover_border_color',
 			array(
 				'label' => esc_html__( 'Border Color', 'jet-blog' ),
@@ -282,11 +282,11 @@ class Jet_Blog_Posts_Navigation extends Jet_Blog_Base {
 			75
 		);
 
-		$this->__end_controls_tab();
+		$this->_end_controls_tab();
 
-		$this->__end_controls_tabs();
+		$this->_end_controls_tabs();
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Typography::get_type(),
 			array(
 				'name'           => 'items_typography',
@@ -301,7 +301,7 @@ class Jet_Blog_Posts_Navigation extends Jet_Blog_Base {
 			50
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'items_min_width',
 			array(
 				'label'      => esc_html__( 'Item Min Width', 'jet-blog' ),
@@ -325,7 +325,7 @@ class Jet_Blog_Posts_Navigation extends Jet_Blog_Base {
 			100
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'items_prev_padding',
 			array(
 				'label'      => esc_html__( 'Older Link Padding', 'jet-blog' ),
@@ -345,7 +345,7 @@ class Jet_Blog_Posts_Navigation extends Jet_Blog_Base {
 			75
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'items_next_padding',
 			array(
 				'label'      => esc_html__( 'Newer Link Padding', 'jet-blog' ),
@@ -365,7 +365,7 @@ class Jet_Blog_Posts_Navigation extends Jet_Blog_Base {
 			75
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'items_margin',
 			array(
 				'label'       => esc_html__( 'Gap Between Items', 'jet-blog' ),
@@ -390,7 +390,7 @@ class Jet_Blog_Posts_Navigation extends Jet_Blog_Base {
 			75
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Border::get_type(),
 			array(
 				'name'           => 'items_border',
@@ -401,7 +401,7 @@ class Jet_Blog_Posts_Navigation extends Jet_Blog_Base {
 			75
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'items_border_radius',
 			array(
 				'label'      => esc_html__( 'Border Radius', 'jet-blog' ),
@@ -415,9 +415,9 @@ class Jet_Blog_Posts_Navigation extends Jet_Blog_Base {
 			75
 		);
 
-		$this->__end_controls_section();
+		$this->_end_controls_section();
 
-		$this->__start_controls_section(
+		$this->_start_controls_section(
 			'icons_style',
 			array(
 				'label'      => esc_html__( 'Prev/Next Icons', 'jet-blog' ),
@@ -426,16 +426,16 @@ class Jet_Blog_Posts_Navigation extends Jet_Blog_Base {
 			)
 		);
 
-		$this->__start_controls_tabs( 'tabs_icons_style' );
+		$this->_start_controls_tabs( 'tabs_icons_style' );
 
-		$this->__start_controls_tab(
+		$this->_start_controls_tab(
 			'icons_normal',
 			array(
 				'label' => esc_html__( 'Normal', 'jet-blog' ),
 			)
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'icons_bg_color',
 			array(
 				'label'  => esc_html__( 'Background Color', 'jet-blog' ),
@@ -447,7 +447,7 @@ class Jet_Blog_Posts_Navigation extends Jet_Blog_Base {
 			75
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'icons_color',
 			array(
 				'label'  => esc_html__( 'Text Color', 'jet-blog' ),
@@ -459,16 +459,16 @@ class Jet_Blog_Posts_Navigation extends Jet_Blog_Base {
 			25
 		);
 
-		$this->__end_controls_tab();
+		$this->_end_controls_tab();
 
-		$this->__start_controls_tab(
+		$this->_start_controls_tab(
 			'icons_hover',
 			array(
 				'label' => esc_html__( 'Hover', 'jet-blog' ),
 			)
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'icons_bg_color_hover',
 			array(
 				'label'  => esc_html__( 'Background Color', 'jet-blog' ),
@@ -480,7 +480,7 @@ class Jet_Blog_Posts_Navigation extends Jet_Blog_Base {
 			75
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'icons_color_hover',
 			array(
 				'label'  => esc_html__( 'Text Color', 'jet-blog' ),
@@ -492,7 +492,7 @@ class Jet_Blog_Posts_Navigation extends Jet_Blog_Base {
 			25
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'icons_hover_border_color',
 			array(
 				'label' => esc_html__( 'Border Color', 'jet-blog' ),
@@ -507,11 +507,11 @@ class Jet_Blog_Posts_Navigation extends Jet_Blog_Base {
 			100
 		);
 
-		$this->__end_controls_tab();
+		$this->_end_controls_tab();
 
-		$this->__end_controls_tabs();
+		$this->_end_controls_tabs();
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'items_icon_size',
 			array(
 				'label'      => esc_html__( 'Icon Size', 'jet-blog' ),
@@ -531,7 +531,7 @@ class Jet_Blog_Posts_Navigation extends Jet_Blog_Base {
 			50
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'icons_box_size',
 			array(
 				'label'      => esc_html__( 'Icon Box Size', 'jet-blog' ),
@@ -554,7 +554,7 @@ class Jet_Blog_Posts_Navigation extends Jet_Blog_Base {
 			75
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Border::get_type(),
 			array(
 				'name'           => 'icons_border',
@@ -565,7 +565,7 @@ class Jet_Blog_Posts_Navigation extends Jet_Blog_Base {
 			100
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'icons_border_radius',
 			array(
 				'label'      => esc_html__( 'Border Radius', 'jet-blog' ),
@@ -578,7 +578,7 @@ class Jet_Blog_Posts_Navigation extends Jet_Blog_Base {
 			75
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'items_icon_gap',
 			array(
 				'label'      => esc_html__( 'Gap Between Text and Icon', 'jet-blog' ),
@@ -598,27 +598,27 @@ class Jet_Blog_Posts_Navigation extends Jet_Blog_Base {
 			50
 		);
 
-		$this->__end_controls_section();
+		$this->_end_controls_section();
 
 	}
 
 	protected function render() {
 
-		$this->__context = 'render';
+		$this->_context = 'render';
 
-		$this->__open_wrap();
-		include $this->__get_global_template( 'index' );
-		$this->__close_wrap();
+		$this->_open_wrap();
+		include $this->_get_global_template( 'index' );
+		$this->_close_wrap();
 
 	}
 
 	/* protected function _content_template() {
 
-		$this->__context = 'edit';
+		$this->_context = 'edit';
 
-		$this->__open_wrap();
-		include $this->__get_global_template( 'index' );
-		$this->__close_wrap();
+		$this->_open_wrap();
+		include $this->_get_global_template( 'index' );
+		$this->_close_wrap();
 
 	} */
 
@@ -627,9 +627,9 @@ class Jet_Blog_Posts_Navigation extends Jet_Blog_Base {
 	 *
 	 * @return string prev text
 	 */
-	public function __prev_text() {
+	public function _prev_text() {
 
-		return $this->__nav_text( 'prev' );
+		return $this->_nav_text( 'prev' );
 
 	}
 
@@ -638,9 +638,9 @@ class Jet_Blog_Posts_Navigation extends Jet_Blog_Base {
 	 *
 	 * @return string next text
 	 */
-	public function __next_text() {
+	public function _next_text() {
 
-		return $this->__nav_text( 'next' );
+		return $this->_nav_text( 'next' );
 
 	}
 
@@ -650,7 +650,7 @@ class Jet_Blog_Posts_Navigation extends Jet_Blog_Base {
 	 * @param  string $type prev/next.
 	 * @return string navigation text
 	 */
-	private function __nav_text( $type ) {
+	private function _nav_text( $type ) {
 
 		$settings = $this->get_settings();
 		$navigation_text = '';

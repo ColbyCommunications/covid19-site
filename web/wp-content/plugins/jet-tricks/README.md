@@ -4,6 +4,14 @@ Enjoy adding animation on the fly without coding skills
 
 # ChangeLog
 
+## [1.2.9](https://github.com/ZemezLab/jet-tricks/releases/tag/1.2.9) - 11.05.2020
+* Added: Icon Position/Orientation/Gap controls in the View More widget
+* Fixed: tooltip overlap in the Hotspot widget
+
+## [1.2.8](https://github.com/ZemezLab/jet-tricks/releases/tag/1.2.8) - 27.03.2020
+* Added: support for Font Awesome 5 and SVG icons
+* Added: template content in the Unfold widget
+
 ## [1.2.7](https://github.com/ZemezLab/jet-tricks/releases/tag/1.2.7) - 21.02.2020
 * Update: Jet-Dashboard module to 1.0.10
 * Update: Tooltip extention in the editor

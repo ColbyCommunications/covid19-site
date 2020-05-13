@@ -34,6 +34,19 @@ gulp.task( 'css-editor', () => {
 		.pipe( notify( 'Compile Sass Done!' ) );
 } );
 
+gulp.task( 'css-editor-icons', () => {
+	return gulp.src( './assets/admin/scss/editor-icons.scss' )
+		.pipe( sass( { outputStyle: 'compressed' } ) )
+		.pipe( autoprefixer( {
+			browsers: ['last 10 versions'],
+			cascade:  false
+		} ) )
+
+		.pipe( rename( 'editor-icons.css' ) )
+		.pipe( gulp.dest( './assets/admin/css/' ) )
+		.pipe( notify( 'Compile Sass Done!' ) );
+} );
+
 gulp.task('css-public', () => {
 	return gulp.src('./assets/public/scss/public.scss')
 		.pipe(sass( { outputStyle: 'compressed' } ))
@@ -49,8 +62,8 @@ gulp.task('css-public', () => {
 
 //watch
 gulp.task('watch', () => {
-	gulp.watch('./assets/admin/scss/**', ['css-admin', 'css-editor']);
-	gulp.watch('./assets/public/scss/**', ['css-public']);
+	gulp.watch( './assets/admin/scss/**', [ 'css-admin', 'css-editor', 'css-editor-icons'] );
+	gulp.watch( './assets/public/scss/**', [ 'css-public' ] );
 });
 
 gulp.task( 'checktextdomain', () => {

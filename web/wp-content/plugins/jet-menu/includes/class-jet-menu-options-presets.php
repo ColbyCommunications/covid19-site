@@ -26,7 +26,16 @@ if ( ! class_exists( 'Jet_Menu_Options_Presets' ) ) {
 		 */
 		public $post_type = 'jet_options_preset';
 
+		/**
+		 * [$settings_key description]
+		 * @var string
+		 */
 		public $settings_key = 'jet_preset_settings';
+
+		/**
+		 * [$title_key description]
+		 * @var string
+		 */
 		public $title_key    = 'jet_preset_name';
 
 		/**
@@ -43,17 +52,16 @@ if ( ! class_exists( 'Jet_Menu_Options_Presets' ) ) {
 
 			add_action( 'init', array( $this, 'register_post_type' ) );
 
-			add_filter( 'jet-menu/options-page/tabs', array( $this, 'register_presets_tab' ) );
-			add_filter( 'jet-menu/assets/admin/localize', array( $this, 'localize_presets_msg' ) );
-
-			add_filter( 'jet-menu/nav-settings/registered', array( $this, 'add_menu_settings' ) );
-
 			add_action( 'jet-menu/options-page/before-render', array( $this, 'register_presets_settings' ), 10, 2 );
+
 			add_action( 'jet-menu/widgets/mega-menu/controls', array( $this, 'add_widget_settings' ) );
 
 			add_action( 'wp_ajax_jet_menu_create_preset', array( $this, 'create_preset' ) );
+
 			add_action( 'wp_ajax_jet_menu_update_preset', array( $this, 'update_preset' ) );
+
 			add_action( 'wp_ajax_jet_menu_load_preset', array( $this, 'load_preset' ) );
+
 			add_action( 'wp_ajax_jet_menu_delete_preset', array( $this, 'delete_preset' ) );
 
 		}
@@ -150,10 +158,12 @@ if ( ! class_exists( 'Jet_Menu_Options_Presets' ) ) {
 			do_action( 'jet-menu/presets/created' );
 
 			wp_send_json_success( array(
+				'message' => esc_html__( 'Settings preset have been created', 'jet-menu' ),
 				'preset' => array(
-					'id'   => $preset_id,
-					'name' => esc_attr( $name ),
+					'id'      => $preset_id,
+					'name'    => esc_attr( $name ),
 				),
+				'presets' => $this->get_presets_select_options(),
 			) );
 
 		}
@@ -184,8 +194,9 @@ if ( ! class_exists( 'Jet_Menu_Options_Presets' ) ) {
 
 			do_action( 'jet-menu/presets/updated' );
 
-			wp_send_json_success( array() );
-
+			wp_send_json_success( array(
+				'message' => esc_html__( 'Preset have been updated', 'jet-menu' ),
+			) );
 		}
 
 		/**
@@ -215,8 +226,9 @@ if ( ! class_exists( 'Jet_Menu_Options_Presets' ) ) {
 
 			do_action( 'jet-menu/presets/loaded' );
 
-			wp_send_json_success( array() );
-
+			wp_send_json_success( array(
+				'message'  => esc_html__( 'Preset have been applyed', 'jet-menu' ),
+			) );
 		}
 
 		/**
@@ -244,58 +256,10 @@ if ( ! class_exists( 'Jet_Menu_Options_Presets' ) ) {
 
 			do_action( 'jet-menu/presets/deleted' );
 
-			wp_send_json_success( array() );
-
-		}
-
-		/**
-		 * Register prests tab.
-		 *
-		 * @param  array $tabs Existing tabs.
-		 * @return array
-		 */
-		public function register_presets_tab( $tabs ) {
-
-			$tabs['presets_tab'] = array(
-				'parent' => 'tab_vertical',
-				'title'  => esc_html__( 'Presets Manager', 'jet-menu' ),
-			);
-
-			return $tabs;
-
-		}
-
-		/**
-		 * Localized presets managers
-		 *
-		 * @return array
-		 */
-		public function localize_presets_msg( $data ) {
-
-			$strings = array();
-
-			$strings['preset'] = array(
-				'nameError'     => esc_html__( 'Please, specify preset name', 'jet-menu' ),
-				'loadError'     => esc_html__( 'Please, select preset to load', 'jet-menu' ),
-				'updateError'   => esc_html__( 'Please, select preset to update', 'jet-menu' ),
-				'deleteError'   => esc_html__( 'Please, select preset to delete', 'jet-menu' ),
-				'created'       => esc_html__( 'New preset was created. Page will be reloaded', 'jet-menu' ),
-				'updated'       => esc_html__( 'Preset updated', 'jet-menu' ),
-				'loaded'        => esc_html__( 'Preset loaded. Page will be reloaded to apply changes', 'jet-menu' ),
-				'deleted'       => esc_html__( 'Preset deleted. Page will be reloaded to apply changes', 'jet-menu' ),
-				'confirmUpdate' => esc_html__( 'Are you sure you want to rewrite existig preset?', 'jet-menu' ),
-				'confirmDelete' => esc_html__( 'Are you sure you want to delete this preset?', 'jet-menu' ),
-				'confirmLoad'   => esc_html__( 'Are you sure you want to load this preset? All unsaved options will be lost.', 'jet-menu' ),
-			);
-
-			$data['optionPageMessages'] = array_merge( $data['optionPageMessages'], $strings );
-			$data['menuPageUrl']        = add_query_arg(
-				array( 'page' => jet_menu()->plugin_slug ),
-				esc_url( admin_url( 'admin.php' ) )
-			);
-
-			return $data;
-
+			wp_send_json_success( array(
+				'message' => esc_html__( 'Preset have been removing', 'jet-menu' ),
+				'presets' => $this->get_presets_select_options(),
+			) );
 		}
 
 		/**
@@ -322,33 +286,6 @@ if ( ! class_exists( 'Jet_Menu_Options_Presets' ) ) {
 				)
 			);
 
-		}
-
-		/**
-		 * Add menu settings.
-		 *
-		 * @param  array $settings Settings array.
-		 */
-		public function add_menu_settings( $settings ) {
-
-			$presets = $this->get_presets();
-
-			if ( empty( $presets ) ) {
-				return $settings;
-			}
-
-			$presets = array( '0' => esc_html__( 'Not Selected', 'jet-menu' ) ) + $presets;
-
-			$settings['preset'] = array(
-				'type'    => 'select',
-				'id'      => 'jet-preset',
-				'name'    => 'preset',
-				'value'   => '',
-				'options' => $presets,
-				'label'   => esc_html__( 'Select menu preset', 'jet-menu' ),
-			);
-
-			return $settings;
 		}
 
 		/**
@@ -386,39 +323,31 @@ if ( ! class_exists( 'Jet_Menu_Options_Presets' ) ) {
 		}
 
 		/**
-		 * Presets select HTML for manager options
-		 *
-		 * @param  string $slug        Slug for JS processing.
-		 * @param  string $placeholder Placeholder.
-		 * @return void
+		 * [get_presets_select_options description]
+		 * @return [type] [description]
 		 */
-		public function preset_select( $slug = 'jet-load-preset', $placeholder = '' ) {
+		public function get_presets_select_options() {
 
 			$presets = $this->get_presets();
 
-			echo '<select class="cherry-ui-select ' . $slug . '">';
-				echo '<option value="" selected disabled>' . $placeholder . '</option>';
-				foreach ( $presets as $key => $name ) {
-					printf( '<option value="%1$s">%2$s</option>', $key, $name );
+			$preset_select_options = [];
+
+			if ( ! empty( $presets ) ) {
+
+				$preset_select_options[] = array(
+					'label' => esc_html( 'None', 'jet-menu' ),
+					'value' => '',
+				);
+
+				foreach ( $presets as $preset_slug => $preset_name ) {
+					$preset_select_options[] = array(
+						'label' => $preset_name,
+						'value' => $preset_slug,
+					);
 				}
-			echo '</select>';
+			}
 
-		}
-
-		/**
-		 * Preset action button
-		 *
-		 * @param  string $action Button ID.
-		 * @param  string $label  Button label.
-		 * @return void
-		 */
-		public function preset_action( $action = '', $label = '' ) {
-			echo '<button type="button" class="cherry5-ui-button cherry5-ui-button-normal-style ui-button" id="' . $action . '">';
-				echo '<span class="text">' . $label . '</span>';
-				echo '<span class="loader-wrapper"><span class="loader"></span></span>';
-				echo '<span class="dashicons dashicons-yes icon"></span>';
-			echo '</button>';
-			echo '<div class="jet-preset-msg"></div>';
+			return $preset_select_options;
 		}
 
 		/**

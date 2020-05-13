@@ -9,12 +9,12 @@
 		<div class="nav-previous">
 			<a href="#">
 				<i class="{{ iconsMap[settings.prev_icon] }} jet-arrow-prev jet-blog-arrow"></i>
-				<?php $this->__edit_html( 'prev_text' ); ?>
+				<?php $this->_edit_html( 'prev_text' ); ?>
 			</a>
 		</div>
 		<div class="nav-next">
 			<a href="#">
-				<?php $this->__edit_html( 'next_text' ); ?>
+				<?php $this->_edit_html( 'next_text' ); ?>
 				<i class="{{ iconsMap[settings.next_icon] }} jet-arrow-next jet-blog-arrow"></i>
 			</a>
 		</div>

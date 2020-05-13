@@ -42,6 +42,10 @@
 	}
 
 	.jet-menu-link-text {
+		display: flex;
+		flex-direction: column;
+		justify-content: flex-start;
+		align-self: stretch;
 		color: white;
 		font-size: 14px;
 
@@ -65,6 +69,11 @@
 		&:before {
 			font-size: 12px;
 			color: #7a7a7a;
+		}
+
+		svg {
+			fill: currentColor;
+			height: auto;
 		}
 	}
 

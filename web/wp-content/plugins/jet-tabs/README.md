@@ -6,14 +6,19 @@ The plugin makes it simple to create a template with Elementor and add it to the
 
 # ChangeLog
 
+## [2.1.4](https://github.com/ZemezLab/jet-tabs/releases/tag/2.1.4) - 30.03.2020
+* Added: `Control CSS ID` control in the Tabs and Accordion widgets
+* Added: responsive control to the Orientation control in the Image Accordion widget
+* Fixed: minor js issues
+
 ## [2.1.3](https://github.com/ZemezLab/jet-tabs/releases/tag/2.1.3) - 12.03.2020
 * Added: support for Font Awesome 5 and SVG icons
-* Fixed: minor js issues 
+* Fixed: minor js issues
 
 ## [2.1.2](https://github.com/ZemezLab/jet-tabs/releases/tag/2.1.2) - 21.02.2020
 * Updated: Jet Dashboard module to v1.0.10
 * Added: compatibility with Custom Link Attributes in Elementor 2.9
-* Fixed: compatibility the Switcher widget with the JetPopup 
+* Fixed: compatibility the Switcher widget with the JetPopup
 * Fixed: not working section handlers on ajax loading
 
 ## [2.1.1](https://github.com/ZemezLab/jet-tabs/releases/tag/2.1.1) - 06.12.2019

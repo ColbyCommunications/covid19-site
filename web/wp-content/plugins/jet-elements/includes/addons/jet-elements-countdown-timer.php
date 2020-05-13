@@ -47,12 +47,13 @@ class Jet_Elements_Countdown_Timer extends Jet_Elements_Base {
 		$css_scheme = apply_filters(
 			'jet-elements/jet-countdown-timer/css-scheme',
 			array(
-				'item'    => '.jet-countdown-timer__item',
-				'label'   => '.jet-countdown-timer__item-label',
-				'value'   => '.jet-countdown-timer__item-value',
-				'sep'     => '.jet-countdown-timer__separator',
-				'digit'   => '.jet-countdown-timer__digit',
-				'message' => '.jet-countdown-timer-message',
+				'container' => '.jet-countdown-timer',
+				'item'      => '.jet-countdown-timer__item',
+				'label'     => '.jet-countdown-timer__item-label',
+				'value'     => '.jet-countdown-timer__item-value',
+				'sep'       => '.jet-countdown-timer__separator',
+				'digit'     => '.jet-countdown-timer__digit',
+				'message'   => '.jet-countdown-timer-message',
 			)
 		);
 
@@ -435,6 +436,42 @@ class Jet_Elements_Countdown_Timer extends Jet_Elements_Base {
 		);
 
 		$this->end_controls_section();
+
+		$this->__start_controls_section(
+			'section_items_styles',
+			array(
+				'label' => esc_html__( 'Items', 'jet-elements' ),
+				'tab'   => Controls_Manager::TAB_STYLE,
+			)
+		);
+
+		$this->__add_responsive_control(
+			'items_align',
+			array(
+				'label'   => esc_html__( 'Alignment', 'jet-elements' ),
+				'type'    => Controls_Manager::CHOOSE,
+				'options' => array(
+					'flex-start' => array(
+						'title' => esc_html__( 'Start', 'jet-elements' ),
+						'icon'  => ! is_rtl() ? 'eicon-h-align-left' : 'eicon-h-align-right',
+					),
+					'center' => array(
+						'title' => esc_html__( 'Center', 'jet-elements' ),
+						'icon'  => 'eicon-h-align-center',
+					),
+					'flex-end' => array(
+						'title' => esc_html__( 'End', 'jet-elements' ),
+						'icon'  => ! is_rtl() ? 'eicon-h-align-right' : 'eicon-h-align-left',
+					),
+				),
+				'selectors' => array(
+					'{{WRAPPER}} ' . $css_scheme['container'] => 'justify-content: {{VALUE}}',
+				),
+			),
+			25
+		);
+
+		$this->__end_controls_section();
 
 		$this->__start_controls_section(
 			'section_item_styles',

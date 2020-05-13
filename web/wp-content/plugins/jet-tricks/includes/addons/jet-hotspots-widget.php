@@ -95,13 +95,17 @@ class Jet_Hotspots_Widget extends Jet_Tricks_Base {
 		);
 
 		$repeater->add_control(
-			'hotspot_icon',
+			$this->__new_icon_prefix . 'hotspot_icon',
 			array(
-				'label'       => esc_html__( 'Icon', 'jet-tricks' ),
-				'type'        => Controls_Manager::ICON,
-				'label_block' => true,
-				'file'        => '',
-				'default'     => 'fa fa-plus',
+				'label'            => esc_html__( 'Icon', 'jet-tricks' ),
+				'type'             => Controls_Manager::ICONS,
+				'label_block'      => false,
+				'skin'             => 'inline',
+				'fa4compatibility' => 'hotspot_icon',
+				'default'          => array(
+					'value'   => 'fas fa-plus',
+					'library' => 'fa-solid',
+				),
 			)
 		);
 
@@ -463,7 +467,7 @@ class Jet_Hotspots_Widget extends Jet_Tricks_Base {
 			array(
 				'name'     => 'hotspot_typography',
 				'scheme'   => Scheme_Typography::TYPOGRAPHY_1,
-				'selector' => '{{WRAPPER}} ' . $css_scheme['item_inner'] . ' span',
+				'selector' => '{{WRAPPER}} ' . $css_scheme['item_inner'] . ' .jet-hotspots__item-text',
 			),
 			50
 		);
@@ -483,7 +487,7 @@ class Jet_Hotspots_Widget extends Jet_Tricks_Base {
 					),
 				),
 				'selectors'  => array(
-					'{{WRAPPER}} ' . $css_scheme['item'] . ' ' . $css_scheme['item_inner'] . ' i' => 'font-size: {{SIZE}}{{UNIT}};',
+					'{{WRAPPER}} ' . $css_scheme['item'] . ' ' . $css_scheme['item_inner'] . ' .jet-hotspots__item-icon' => 'font-size: {{SIZE}}{{UNIT}};',
 				),
 			),
 			25
@@ -514,7 +518,7 @@ class Jet_Hotspots_Widget extends Jet_Tricks_Base {
 				'label'  => esc_html__( 'Icon Color', 'jet-tricks' ),
 				'type'   => Controls_Manager::COLOR,
 				'selectors' => array(
-					'{{WRAPPER}} ' . $css_scheme['item'] . ' ' . $css_scheme['item_inner'] . ' i' => 'color: {{VALUE}}',
+					'{{WRAPPER}} ' . $css_scheme['item'] . ' ' . $css_scheme['item_inner'] . ' .jet-hotspots__item-icon' => 'color: {{VALUE}}',
 				),
 			),
 			25
@@ -526,7 +530,7 @@ class Jet_Hotspots_Widget extends Jet_Tricks_Base {
 				'label'  => esc_html__( 'Text Color', 'jet-tricks' ),
 				'type'   => Controls_Manager::COLOR,
 				'selectors' => array(
-					'{{WRAPPER}} ' . $css_scheme['item'] . ' ' . $css_scheme['item_inner'] . ' span' => 'color: {{VALUE}}',
+					'{{WRAPPER}} ' . $css_scheme['item'] . ' ' . $css_scheme['item_inner'] . ' .jet-hotspots__item-text' => 'color: {{VALUE}}',
 				),
 			),
 			25
@@ -551,22 +555,13 @@ class Jet_Hotspots_Widget extends Jet_Tricks_Base {
 			25
 		);
 
-		$this->__add_responsive_control(
-			'hotspot_icon_size_hover',
+		$this->__add_control(
+			'hotspot_icon_color_hover',
 			array(
-				'label'      => esc_html__( 'Icon Size', 'jet-tricks' ),
-				'type'       => Controls_Manager::SLIDER,
-				'size_units' => array(
-					'px', 'em',
-				),
-				'range'      => array(
-					'px' => array(
-						'min' => 8,
-						'max' => 50,
-					),
-				),
-				'selectors'  => array(
-					'{{WRAPPER}} ' . $css_scheme['item'] . ':hover ' . $css_scheme['item_inner'] . ' i' => 'font-size: {{SIZE}}{{UNIT}};',
+				'label'  => esc_html__( 'Icon Color', 'jet-tricks' ),
+				'type'   => Controls_Manager::COLOR,
+				'selectors' => array(
+					'{{WRAPPER}} ' . $css_scheme['item'] . ':hover ' . $css_scheme['item_inner'] . ' .jet-hotspots__item-icon' => 'color: {{VALUE}}',
 				),
 			),
 			25
@@ -578,7 +573,7 @@ class Jet_Hotspots_Widget extends Jet_Tricks_Base {
 				'label'  => esc_html__( 'Text Color', 'jet-tricks' ),
 				'type'   => Controls_Manager::COLOR,
 				'selectors' => array(
-					'{{WRAPPER}} ' . $css_scheme['item'] . ':hover ' . $css_scheme['item_inner'] . ' span' => 'color: {{VALUE}}',
+					'{{WRAPPER}} ' . $css_scheme['item'] . ':hover ' . $css_scheme['item_inner'] . ' .jet-hotspots__item-text' => 'color: {{VALUE}}',
 				),
 			),
 			25
@@ -912,16 +907,12 @@ class Jet_Hotspots_Widget extends Jet_Tricks_Base {
 							}
 						}
 
-						$icon_html = '';
-
-						if ( ! empty( $hotspot['hotspot_icon'] ) ) {
-							$icon_html = sprintf( '<i class="%1$s"></i>', $hotspot['hotspot_icon'] );
-						}
+						$icon_html = $this->__get_icon( 'hotspot_icon', $hotspot, '<span class="jet-hotspots__item-icon jet-tricks-icon">%s</span>' );
 
 						$text_html = '';
 
 						if ( ! empty( $hotspot['hotspot_text'] ) ) {
-							$text_html = sprintf( '<span>%1$s</span>', $hotspot['hotspot_text'] );
+							$text_html = sprintf( '<span class="jet-hotspots__item-text">%1$s</span>', $hotspot['hotspot_text'] );
 						}
 
 						$tag = ! $is_link ? 'div' : 'a';

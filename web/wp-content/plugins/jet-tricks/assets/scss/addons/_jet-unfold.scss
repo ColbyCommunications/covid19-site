@@ -33,8 +33,13 @@
 		cursor: pointer;
 	}
 
-	&__button-icon {
+	&__button-icon:not(:empty) {
 		margin-right: 5px;
+
+		.rtl & {
+			margin-left: 5px;
+			margin-right: 0;
+		}
 	}
 
 	&-state {

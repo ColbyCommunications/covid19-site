@@ -4,6 +4,10 @@ The best tool for adding complex search functionality to pages built with Elemen
 
 # ChangeLog
 
+## [2.1.6](https://github.com/ZemezLab/jet-search/releases/tag/2.1.6) - 13.05.2020
+* Added: `jet-search/get-locate-template` filter hook
+* Added: multiple improvements and bug fixes
+
 ## [2.1.5](https://github.com/ZemezLab/jet-search/releases/tag/2.1.5) - 19.03.2020
 * Added: `Serach by the current query` option
 * Added: `Sentence Search` option

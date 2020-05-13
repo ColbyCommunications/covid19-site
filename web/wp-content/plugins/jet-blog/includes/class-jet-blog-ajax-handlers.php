@@ -54,15 +54,15 @@ if ( ! class_exists( 'Jet_Blog_Ajax_Handlers' ) ) {
 
 			$widget = new Elementor\Jet_Blog_Smart_Listing();
 
-			$widget->__get_posts();
-			$widget->__context = 'render';
+			$widget->_get_posts();
+			$widget->_context = 'render';
 
 			ob_start();
-			$widget->__render_posts();
+			$widget->_render_posts();
 			$posts = ob_get_clean();
 
 			ob_start();
-			$widget->__get_arrows();
+			$widget->_get_arrows();
 			$arrows = ob_get_clean();
 
 			wp_send_json_success( array(

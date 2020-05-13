@@ -44,10 +44,317 @@ if ( ! class_exists( 'Jet_Menu_Settings_Nav' ) ) {
 		 * Constructor for the class
 		 */
 		public function init() {
+
 			add_action( 'admin_head-nav-menus.php', array( $this, 'register_nav_meta_box' ), 9 );
-			add_filter( 'jet-menu/assets/admin/localize', array( $this, 'add_current_menu_id_to_localize' ) );
+
 			add_action( 'wp_ajax_jet_save_settings', array( $this, 'save_menu_settings' ) );
+
+			add_action( 'wp_ajax_jet_get_nav_item_settings', array( $this, 'get_nav_item_settings' ) );
+
+			add_action( 'wp_ajax_jet_save_nav_item_settings', array( $this, 'save_nav_item_settings' ) );
+
 			add_filter( 'get_user_option_metaboxhidden_nav-menus', array( $this, 'force_metabox_visibile' ), 10 );
+
+			add_action( 'admin_footer', array( $this, 'print_menu_settings_vue_template' ), 10 );
+
+			add_action( 'admin_enqueue_scripts', array( $this, 'admin_assets' ), 99 );
+
+		}
+
+		/**
+		 * Register nav menus page metabox with mega menu settings.
+		 *
+		 * @return void
+		 */
+		public function register_nav_meta_box() {
+
+			global $pagenow;
+
+			if ( 'nav-menus.php' !== $pagenow ) {
+				return;
+			}
+
+			add_meta_box(
+				'jet-menu-settings',
+				esc_html__( 'JetMenu Locations Settings', 'jet-menu' ),
+				array( $this, 'render_metabox' ),
+				'nav-menus',
+				'side',
+				'high'
+			);
+
+		}
+
+		/**
+		 * Print tabs templates
+		 *
+		 * @return void
+		 */
+		public function print_menu_settings_vue_template() {
+
+			$screen = get_current_screen();
+
+			if ( 'nav-menus' !== $screen->base ) {
+				return;
+			}
+
+			include jet_menu()->get_template( 'admin/menu-settings-nav.php' );
+		}
+
+		/**
+		 * [admin_assets description]
+		 * @return [type] [description]
+		 */
+		public function admin_assets() {
+
+			$screen = get_current_screen();
+
+			if ( 'nav-menus' !== $screen->base ) {
+				return;
+			}
+
+			$module_data = jet_menu()->module_loader->get_included_module_data( 'cherry-x-vue-ui.php' );
+			$ui          = new CX_Vue_UI( $module_data );
+
+			$ui->enqueue_assets();
+
+			wp_enqueue_style( 'jet-menu-admin' );
+
+			wp_enqueue_script(
+				'jet-menu-nav-settings-script',
+				jet_menu()->plugin_url( 'assets/admin/js/nav-settings.js' ),
+				array( 'cx-vue-ui' ),
+				jet_menu()->get_version(),
+				true
+			);
+
+			wp_localize_script(
+				'jet-menu-nav-settings-script',
+				'JetMenuNavSettingsConfig',
+				apply_filters( 'jet-menu/admin/nav-settings-config', array(
+					'labels'        => array(
+						'itemTriggerLabel' => __( 'JetMenu', 'jet-menu' ),
+					),
+					'currentMenuId' => $this->get_selected_menu_id(),
+					'editURL'       => add_query_arg(
+						array(
+							'jet-open-editor' => 1,
+							'item'            => '%id%',
+							'menu'            => '%menuid%',
+						),
+						esc_url( admin_url( '/' ) )
+					),
+					'optionMenuList'   => $this->get_menu_select_options(),
+					'optionPresetList' => jet_menu_options_presets()->get_presets_select_options(),
+					'controlData'      => $this->default_nav_item_controls_data(),
+					'locationSettings' => $this->get_nav_location_data(),
+					'iconsFetchJson'   => jet_menu()->plugin_url( 'assets/public/lib/font-awesome/js/solid.js' ),
+				) )
+			);
+		}
+
+		/**
+		 * [get_nav_settings_localize_data description]
+		 * @return [type] [description]
+		 */
+		public function get_nav_location_data() {
+			$menu_id         = $this->get_selected_menu_id();
+			$theme_locations = get_registered_nav_menus();
+			$saved_settings  = $this->get_settings( $menu_id );
+
+			$location_list = array();
+
+			foreach ( $theme_locations as $location => $name ) {
+
+				if ( isset( $saved_settings[ $location ] ) ) {
+
+					$location_list[ $location ] = array(
+						'label'   => $name,
+						'enabled' => isset( $saved_settings[ $location ]['enabled'] ) ? $saved_settings[ $location ]['enabled'] : false,
+						'preset'  => isset( $saved_settings[ $location ]['preset'] ) ? $saved_settings[ $location ]['preset'] : '',
+						'mobile'  => isset( $saved_settings[ $location ]['mobile'] ) ? $saved_settings[ $location ]['mobile'] : '',
+					);
+				} else {
+					$location_list[ $location ] = array(
+						'label'   => $name,
+						'enabled' => false,
+						'preset'  => '',
+						'mobile'  => '',
+					);
+				}
+
+			}
+
+			return $location_list;
+		}
+
+		/**
+		 * [get_controls_localize_data description]
+		 * @return [type] [description]
+		 */
+		public function default_nav_item_controls_data() {
+			return array(
+				'enabled' => array(
+					'value' => false,
+				),
+				'custom_mega_menu_position' => array(
+					'value'   => 'default',
+					'options' => array(
+						array(
+							'label' => esc_html__( 'Default', 'jet-menu' ),
+							'value' => 'default',
+						),
+						array(
+							'label' => esc_html__( 'Relative the menu item', 'jet-menu' ),
+							'value' => 'relative-item',
+						)
+					),
+				),
+				'custom_mega_menu_width' => array(
+					'value' => '',
+				),
+				'menu_icon_type' => array(
+					'value'   => 'icon',
+					'options' => array(
+						array(
+							'label' => esc_html__( 'Icon', 'jet-menu' ),
+							'value' => 'icon',
+						),
+						array(
+							'label' => esc_html__( 'Svg', 'jet-menu' ),
+							'value' => 'svg',
+						)
+					),
+				),
+				'menu_icon' => array(
+					'value' => '',
+				),
+				'menu_svg' => array(
+					'value' => '',
+				),
+				'icon_color' => array(
+					'value' => '',
+				),
+				'icon_size' => array(
+					'value' => '',
+				),
+				'menu_badge' => array(
+					'value' => '',
+				),
+				'badge_color' => array(
+					'value' => '',
+				),
+				'badge_bg_color' => array(
+					'value' => '',
+				),
+				'hide_item_text' => array(
+					'value' => '',
+				),
+				'item_padding' => array(
+					'value' => array(
+						'top'       => '',
+						'right'     => '',
+						'bottom'    => '',
+						'left'      => '',
+						'is_linked' => true,
+						'units'     => 'px',
+					),
+				),
+				'mega_menu_width' => array(
+					'value' => '',
+				),
+				'vertical_mega_menu_position' => array(
+					'value'   => 'default',
+					'options' => array(
+						array(
+							'label' => esc_html__( 'Relative the menu item', 'jet-menu' ),
+							'value' => 'default',
+						),
+						array(
+							'label' => esc_html__( 'Relative the menu container', 'jet-menu' ),
+							'value' => 'top',
+						)
+					),
+				),
+			);
+		}
+
+		/**
+		 * [get_nav_item_settings description]
+		 * @return [type] [description]
+		 */
+		public function get_nav_item_settings() {
+
+			if ( ! current_user_can( 'manage_options' ) ) {
+				wp_send_json_error( array(
+					'message' => esc_html__( 'You are not allowed to do this', 'jet-menu' ),
+				) );
+			}
+
+			$data = isset( $_POST['data'] ) ? $_POST['data'] : false;
+
+			if ( ! $data ) {
+				wp_send_json_error( array(
+					'message' => esc_html__( 'Incorrect input data', 'jet-menu' ),
+				) );
+			}
+
+			$default_settings = array();
+
+			foreach ( $this->default_nav_item_controls_data() as $key => $value ) {
+				$default_settings[ $key ] = $value['value'];
+			}
+
+			$current_settings = $this->get_item_settings( absint( $data['itemId'] ) );
+
+			$current_settings = wp_parse_args( $current_settings, $default_settings );
+
+			wp_send_json_success( array(
+				'message'  => esc_html__( 'Success!', 'jet-menu' ),
+				'settings' => $current_settings,
+			) );
+		}
+
+		/**
+		 * [save_nav_item_settings description]
+		 * @return [type] [description]
+		 */
+		public function save_nav_item_settings() {
+
+			if ( ! current_user_can( 'manage_options' ) ) {
+				wp_send_json_error( array(
+					'message' => esc_html__( 'You are not allowed to do this', 'jet-menu' ),
+				) );
+			}
+
+			$data = isset( $_POST['data'] ) ? $_POST['data'] : false;
+
+			if ( ! $data ) {
+				wp_send_json_error( array(
+					'message' => esc_html__( 'Incorrect input data', 'jet-menu' ),
+				) );
+			}
+
+			$item_id = $data['itemId'];
+			$settings = $data['itemSettings'];
+
+			$sanitized_settings = array();
+
+			foreach ( $settings as $key => $value ) {
+				$sanitized_settings[ $key ] = $this->sanitize_field( $key, $value );
+			}
+
+			$current_settings = $this->get_item_settings( $item_id );
+
+			$new_settings = array_merge( $current_settings, $sanitized_settings );
+
+			$this->set_item_settings( $item_id, $new_settings );
+
+			do_action( 'jet-menu/item-settings/save' );
+
+			wp_send_json_success( array(
+				'message' => esc_html__( 'Item settings have been saved', 'jet-menu' ),
+			) );
 		}
 
 		/**
@@ -63,31 +370,35 @@ if ( ! class_exists( 'Jet_Menu_Settings_Nav' ) ) {
 				) );
 			}
 
-			$menu_id = isset( $_POST['current_menu'] ) ? absint( $_POST['current_menu'] ) : false;
+			$data = isset( $_POST['data'] ) ? $_POST['data'] : false;
 
-			if ( ! $menu_id ) {
+			if ( ! $data ) {
 				wp_send_json_error( array(
 					'message' => esc_html__( 'Incorrect input data', 'jet-menu' ),
 				) );
 			}
 
-			$settings = $_POST;
+			$menu_id = isset( $data['menuId'] ) ? absint( $data['menuId'] ) : false;
+			$settings = isset( $data['settings'] ) ? $data['settings'] : false;
 
-			unset( $settings['current_menu'] );
-			unset( $settings['action'] );
-
-			$old_settings = $this->get_settings( $menu_id );
-
-			if ( ! $old_settings ) {
-				$old_settings = array();
+			if ( ! $menu_id || ! $settings ) {
+				wp_send_json_error( array(
+					'message' => esc_html__( 'Required data is missed', 'jet-menu' ),
+				) );
 			}
 
-			$new_settings = array_merge( $old_settings, $settings );
+			$current_settings = $this->get_settings( $menu_id );
+
+			if ( ! $current_settings ) {
+				$current_settings = array();
+			}
+
+			$new_settings = array_merge( $current_settings, $settings );
 
 			$this->update_settings( $menu_id, $new_settings );
 
 			wp_send_json_success( array(
-				'message' => esc_html__( 'Success!', 'jet-menu' ),
+				'message' => esc_html__( 'Menu settings have been saved', 'jet-menu' ),
 			) );
 		}
 
@@ -112,27 +423,25 @@ if ( ! class_exists( 'Jet_Menu_Settings_Nav' ) ) {
 		}
 
 		/**
-		 * Register nav menus page metabox with mega menu settings.
+		 * Returns menu item settings
 		 *
-		 * @return void
+		 * @param  [type] $id [description]
+		 * @return [type]     [description]
 		 */
-		public function register_nav_meta_box() {
+		public function get_item_settings( $id ) {
+			$settings = get_post_meta( $id, $this->meta_key, true );
 
-			global $pagenow;
+			return ! empty( $settings ) ? $settings : array();
+		}
 
-			if ( 'nav-menus.php' !== $pagenow ) {
-				return;
-			}
-
-			add_meta_box(
-				'jet-menu-settings',
-				esc_html__( 'JetMenu Settings', 'jet-menu' ),
-				array( $this, 'render_metabox' ),
-				'nav-menus',
-				'side',
-				'high'
-			);
-
+		/**
+		 * Update menu item settings
+		 *
+		 * @param integer $id       [description]
+		 * @param array   $settings [description]
+		 */
+		public function set_item_settings( $id = 0, $settings = array() ) {
+			update_post_meta( $id, $this->meta_key, $settings );
 		}
 
 		/**
@@ -154,14 +463,32 @@ if ( ! class_exists( 'Jet_Menu_Settings_Nav' ) ) {
 		}
 
 		/**
-		 * Add curretn menu ID to localized data
-		 *
-		 * @param  array
-		 * @return array
+		 * [get_menu_select_options description]
+		 * @return [type] [description]
 		 */
-		public function add_current_menu_id_to_localize( $data ) {
-			$data['currentMenuId'] = $this->get_selected_menu_id();
-			return $data;
+		public function get_menu_select_options() {
+
+			$menu_select_options = array();
+
+			$nav_menus = wp_get_nav_menus();
+
+			if ( ! $nav_menus || empty( $nav_menus ) ) {
+				return $menu_select_options;
+			}
+
+			$menu_select_options[] = array(
+				'label' => esc_html( 'None', 'jet-menu' ),
+				'value' => '',
+			);
+
+			foreach ( $nav_menus as $key => $menu_data ) {
+				$menu_select_options[] = array(
+					'label' => $menu_data->name,
+					'value' => $menu_data->term_id,
+				);
+			}
+
+			return $menu_select_options;
 		}
 
 		/**
@@ -181,35 +508,9 @@ if ( ! class_exists( 'Jet_Menu_Settings_Nav' ) ) {
 			} else if ( ! count ( $tagged_menu_locations ) ) {
 				$this->empty_location_message();
 			} else {
-				$wrapper        = jet_menu()->get_template( 'admin/settings-nav.php' );
-				$settings_list  = jet_menu()->get_template( 'admin/settings-nav-list.php' );
-				$settings_stack = $this->get_registered_nav_settings();
-				include $wrapper;
+
+				include jet_menu()->get_template( 'admin/settings-nav.php' );
 			}
-
-		}
-
-		/**
-		 * Returns list of registered navigation settings
-		 *
-		 * @return [type] [description]
-		 */
-		public function get_registered_nav_settings() {
-
-			return apply_filters( 'jet-menu/nav-settings/registered', array(
-				'enabled' => array(
-					'type'   => 'switcher',
-					'id'     => 'jet-enabled',
-					'name'   => 'enabled',
-					'value'  => '',
-					'style'  => 'small',
-					'toggle' => array(
-						'true_toggle'  => esc_html__( 'Yes', 'jet-menu' ),
-						'false_toggle' => esc_html__( 'No', 'jet-menu' ),
-					),
-					'label'  => esc_html__( 'Enable JetMenu for current location', 'jet-menu' ),
-				),
-			) );
 
 		}
 
@@ -247,8 +548,8 @@ if ( ! class_exists( 'Jet_Menu_Settings_Nav' ) ) {
 
 			foreach ( get_registered_nav_menus() as $id => $name ) {
 
-				if ( isset( $nav_menu_locations[ $id ] ) && $nav_menu_locations[$id] == $menu_id )
-					$locations[$id] = $name;
+				if ( isset( $nav_menu_locations[ $id ] ) && $nav_menu_locations[ $id ] == $menu_id )
+					$locations[ $id ] = $name;
 				}
 
 				return $locations;
@@ -303,6 +604,29 @@ if ( ! class_exists( 'Jet_Menu_Settings_Nav' ) ) {
 
 			return $this->current_menu_id;
 
+		}
+
+		/**
+		 * Sanitize field
+		 *
+		 * @param  [type] $key   [description]
+		 * @param  [type] $value [description]
+		 * @return [type]        [description]
+		 */
+		public function sanitize_field( $key, $value ) {
+
+			$specific_callbacks = apply_filters( 'jet-menu/admin/nav-item-settings/sanitize-callbacks', array(
+				'icon_size'    => 'absint',
+				'menu_badge'   => 'wp_kses_post',
+			) );
+
+			$callback = isset( $specific_callbacks[ $key ] ) ? $specific_callbacks[ $key ] : false;
+
+			if ( ! $callback ) {
+				return $value;
+			}
+
+			return call_user_func( $callback, $value );
 		}
 
 		/**

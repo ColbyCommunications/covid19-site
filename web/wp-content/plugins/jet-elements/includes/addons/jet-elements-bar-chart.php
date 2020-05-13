@@ -798,7 +798,7 @@ class Jet_Elements_Bar_Chart extends Jet_Elements_Base {
 		
 		foreach ( $chart_data as $item_data ) {
 			$item_data['label']                = ! empty( $item_data['label'] ) ? $item_data['label'] : '';
-			$item_data['data']                 = ! empty( $item_data['data'] ) ? array_map('intval', explode(',', $item_data['data'])) : '';
+			$item_data['data']                 = ! empty( $item_data['data'] ) ? array_map('floatval', explode(',', $item_data['data'])) : '';
 			$item_data['backgroundColor']      = ! empty( $item_data['bg_color'] ) ? $item_data['bg_color'] : '#cecece';
 			$item_data['hoverBackgroundColor'] = ! empty( $item_data['bg_hover_color'] ) ? $item_data['bg_hover_color'] : '#7a7a7a';
 			$item_data['borderColor']          = ! empty( $item_data['border_color'] ) ? $item_data['border_color'] : '#7a7a7a';

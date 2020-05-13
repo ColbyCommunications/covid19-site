@@ -39,6 +39,90 @@ if ( ! class_exists( 'Jet_Menu_Tools' ) ) {
 		}
 
 		/**
+		 * [get_svg_html description]
+		 * @param  string $svg_id [description]
+		 * @return [type]         [description]
+		 */
+		public function get_svg_html( $svg_id = '' ) {
+
+			if ( empty( $svg_id ) ) {
+				return '';
+			}
+
+			$url = wp_get_attachment_url( $svg_id );
+
+			if ( ! $url ) {
+				return '';
+			}
+
+			return $this->get_image_by_url( $url, array( 'class' => 'jet-menu-icon' ) );
+		}
+
+		/**
+		 * Rturns image tag or raw SVG
+		 *
+		 * @param  string $url  image URL.
+		 * @param  array  $attr [description]
+		 * @return string
+		 */
+		public function get_image_by_url( $url = null, $attr = array() ) {
+
+			$url = esc_url( $url );
+
+			if ( empty( $url ) ) {
+				return;
+			}
+
+			$ext  = pathinfo( $url, PATHINFO_EXTENSION );
+			$attr = array_merge( array( 'alt' => '' ), $attr );
+
+			if ( 'svg' !== $ext ) {
+				return sprintf( '<img src="%1$s"%2$s>', $url, $this->get_attr_string( $attr ) );
+			}
+
+			$base_url = site_url( '/' );
+			$svg_path = str_replace( $base_url, ABSPATH, $url );
+			$key      = md5( $svg_path );
+			$svg      = get_transient( $key );
+
+			if ( ! $svg ) {
+				$svg = file_get_contents( $svg_path );
+			}
+
+			if ( ! $svg ) {
+				return sprintf( '<img src="%1$s"%2$s>', $url, $this->get_attr_string( $attr ) );
+			}
+
+			set_transient( $key, $svg, DAY_IN_SECONDS );
+
+			unset( $attr['alt'] );
+
+			return sprintf( '<div%2$s>%1$s</div>', $svg, $this->get_attr_string( $attr ) );
+		}
+
+		/**
+		 * Return attributes string from attributes array.
+		 *
+		 * @param  array  $attr Attributes string.
+		 * @return string
+		 */
+		public function get_attr_string( $attr = array() ) {
+
+			if ( empty( $attr ) || ! is_array( $attr ) ) {
+				return;
+			}
+
+			$result = '';
+
+			foreach ( $attr as $key => $value ) {
+				$result .= sprintf( ' %s="%s"', esc_attr( $key ), esc_attr( $value ) );
+			}
+
+			return $result;
+		}
+
+
+		/**
 		 * Render Icon HTML
 		 *
 		 * @param  string $icon      Icon slug to render.
@@ -88,12 +172,23 @@ if ( ! class_exists( 'Jet_Menu_Tools' ) ) {
 		 */
 		public function add_menu_css( $item_id = 0, $wrapper = '' ) {
 
-			$settings   = jet_menu_settings_item()->get_settings( $item_id );
+			$settings   = jet_menu_settings_nav()->get_item_settings( $item_id );
 			$css_scheme = apply_filters( 'jet-menu/item-css/sheme', array(
 				'icon_color' => array(
-					'selector' => '> a .jet-menu-icon:before',
+					'selector' => array(
+						'> a .jet-menu-icon' => 'color',
+						'> a .jet-menu-icon:before' => 'color',
+					),
 					'rule'     => 'color',
 					'value'    => '%1$s !important;',
+				),
+				'icon_size' => array(
+					'selector' => array(
+						'> a .jet-menu-icon:before' => 'font-size',
+						'> a .jet-menu-icon svg'    => 'width',
+					),
+					'rule'     => 'font-size',
+					'value'    => '%1$spx !important;',
 				),
 				'badge_color' => array(
 					'selector' => '> a .jet-menu-badge .jet-menu-badge__inner',
@@ -133,33 +228,153 @@ if ( ! class_exists( 'Jet_Menu_Tools' ) ) {
 				$_wrapper = $wrapper;
 
 				if ( isset( $data['desktop'] ) && true === $data['desktop'] ) {
-					$_wrapper = 'body:not(.jet-mobile-menu-active) ' . $wrapper;
+					$_wrapper = '.jet-menu ' . $wrapper;
 				}
 
 				if ( is_array( $settings[ $setting ] ) && isset( $settings[ $setting ]['units'] ) ) {
 
-					jet_menu_dynmic_css()->add_dimensions_css(
-						array(
-							'selector'  => sprintf( '%1$s %2$s', $_wrapper, $data['selector'] ),
-							'rule'      => $data['rule'],
-							'values'    => $settings[ $setting ],
-							'important' => true,
-						)
-					);
+					if ( is_array( $data['selector'] ) ) {
+						foreach ( $data['selector'] as $selector => $rule ) {
+							jet_menu_dynmic_css()->add_dimensions_css(
+								array(
+									'selector'  => sprintf( '%1$s %2$s', $_wrapper, $selector ),
+									'rule'      => $rule,
+									'values'    => $settings[ $setting ],
+									'important' => true,
+								)
+							);
+						}
+					} else {
+						jet_menu_dynmic_css()->add_dimensions_css(
+							array(
+								'selector'  => sprintf( '%1$s %2$s', $_wrapper, $data['selector'] ),
+								'rule'      => $data['rule'],
+								'values'    => $settings[ $setting ],
+								'important' => true,
+							)
+						);
+					}
 
 				} else {
 
-					jet_menu()->dynamic_css()->add_style(
-						sprintf( '%1$s %2$s', $_wrapper, $data['selector'] ),
-						array(
-							$data['rule'] => sprintf( $data['value'], esc_attr( $settings[ $setting ] ) ),
-						)
-					);
+					if ( ! isset( $settings[ $setting ] ) || false === $settings[ $setting ] || 'false' === $settings[ $setting ] || '' === $settings[ $setting ] ) {
+						continue;
+					}
 
+					if ( is_array( $data['selector'] ) ) {
+						foreach ( $data['selector'] as $selector => $rule ) {
+							jet_menu()->dynamic_css()->add_style(
+								sprintf( '%1$s %2$s', $_wrapper, $selector ),
+								array(
+									$rule => sprintf( $data['value'], esc_attr( $settings[ $setting ] ) ),
+								)
+							);
+						}
+					} else {
+						jet_menu()->dynamic_css()->add_style(
+							sprintf( '%1$s %2$s', $_wrapper, $data['selector'] ),
+							array(
+								$data['rule'] => sprintf( $data['value'], esc_attr( $settings[ $setting ] ) ),
+							)
+						);
+					}
 				}
+			}
+		}
 
+		/**
+		 * [get_arrows_icons description]
+		 * @return [type] [description]
+		 */
+		public function get_arrows_icons() {
+			return apply_filters( 'jet-menu/arrow-icons', array(
+				'fa-angle-down',
+				'fa-angle-double-down',
+				'fa-arrow-circle-down',
+				'fa-arrow-down',
+				'fa-caret-down',
+				'fa-chevron-circle-down',
+				'fa-chevron-down',
+				'fa-long-arrow-down',
+				'fa-angle-right',
+				'fa-angle-double-right',
+				'fa-arrow-circle-right',
+				'fa-arrow-right',
+				'fa-caret-right',
+				'fa-chevron-circle-right',
+				'fa-chevron-right',
+				'fa-long-arrow-right',
+				'fa-angle-left',
+				'fa-angle-double-left',
+				'fa-arrow-circle-left',
+				'fa-arrow-left',
+				'fa-caret-left',
+				'fa-chevron-circle-left',
+				'fa-chevron-left',
+				'fa-long-arrow-left',
+			) );
+		}
+
+		/**
+		 * [get_elementor_templates_select_options description]
+		 * @return [type] [description]
+		 */
+		public function get_elementor_templates_select_options() {
+
+			if ( ! jet_menu()->has_elementor() ) {
+				return array();
 			}
 
+			$templates = jet_menu()->elementor()->templates_manager->get_source( 'local' )->get_items();
+
+			if ( ! $templates ) {
+				return array();
+			}
+
+			$select_options[] = array(
+				'label' => esc_html__( 'None', 'jet-menu' ),
+				'value' => '',
+			);
+
+			foreach ( $templates as $key => $template ) {
+				$select_options[] = array(
+					'label' => $template['title'],
+					'value' => $template['template_id'],
+				);
+			}
+
+			return $select_options;
+
+		}
+
+		/**
+		 * [my_wp_is_mobile description]
+		 * @return [type] [description]
+		 */
+		public static function is_phone() {
+			static $is_mobile;
+
+			if ( isset($is_mobile) )
+				return $is_mobile;
+
+			if ( empty($_SERVER['HTTP_USER_AGENT']) ) {
+				$is_mobile = false;
+			} elseif (
+				strpos($_SERVER['HTTP_USER_AGENT'], 'Android') !== false
+				|| strpos($_SERVER['HTTP_USER_AGENT'], 'Silk/') !== false
+				|| strpos($_SERVER['HTTP_USER_AGENT'], 'Kindle') !== false
+				|| strpos($_SERVER['HTTP_USER_AGENT'], 'BlackBerry') !== false
+				|| strpos($_SERVER['HTTP_USER_AGENT'], 'Opera Mini') !== false ) {
+					$is_mobile = true;
+			} elseif (strpos($_SERVER['HTTP_USER_AGENT'], 'Mobile') !== false && strpos($_SERVER['HTTP_USER_AGENT'], 'iPad') == false) {
+					$is_mobile = true;
+			} elseif (strpos($_SERVER['HTTP_USER_AGENT'], 'iPad') !== false) {
+				$is_mobile = false;
+			} else {
+				$is_mobile = false;
+			}
+
+			return $is_mobile;
 		}
 
 		/**

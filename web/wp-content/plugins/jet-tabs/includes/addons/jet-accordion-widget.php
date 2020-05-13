@@ -174,6 +174,17 @@ class Jet_Accordion_Widget extends Jet_Tabs_Base {
 			]
 		);
 
+		$repeater->add_control(
+			'control_id',
+			array(
+				'label'   => esc_html__( 'Control CSS ID', 'jet-tabs' ),
+				'type'    => Controls_Manager::TEXT,
+				'dynamic' => [
+					'active' => true,
+				],
+			)
+		);
+
 		$this->add_control(
 			'toggles',
 			array(
@@ -898,8 +909,10 @@ class Jet_Accordion_Widget extends Jet_Tabs_Base {
 
 						$is_item_active = filter_var( $item['item_active'], FILTER_VALIDATE_BOOLEAN );
 
+						$toggle_control_id = ! empty( $item['control_id'] ) ? esc_attr( $item['control_id'] ) : 'jet-toggle-control-' . $id_int . $toggle_count;
+
 						$this->add_render_attribute( $toggle_control_setting_key, array(
-							'id'            => 'jet-toggle-control-' . $id_int . $toggle_count,
+							'id'            => $toggle_control_id,
 							'class'         => array(
 								'jet-toggle__control',
 								'elementor-menu-anchor',

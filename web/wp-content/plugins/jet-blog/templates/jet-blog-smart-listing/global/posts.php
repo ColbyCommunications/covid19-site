@@ -5,10 +5,10 @@
 global $post;
 $context  = 'simple';
 
-$this->__maybe_adjust_query();
+$this->_maybe_adjust_query();
 
-$query    = $this->__get_query();
-$settings = $this->__get_widget_settings();
+$query    = $this->_get_query();
+$settings = $this->_get_widget_settings();
 $meta_pos = isset( $settings['meta_position'] ) ? $settings['meta_position'] : 'after';
 
 if ( empty( $query ) ) {
@@ -25,28 +25,28 @@ if ( empty( $query ) ) {
 			$is_featured = false;
 			?>
 			<div class="jet-smart-listing__post-wrapper">
-				<div class="<?php $this->__post_classes(); ?>">
-					<?php $this->__post_terms( $is_featured ); ?>
-					<?php $this->__featured_image( $context ); ?>
+				<div class="<?php $this->_post_classes(); ?>">
+					<?php $this->_post_terms( $is_featured ); ?>
+					<?php $this->_featured_image( $context ); ?>
 					<div class="jet-smart-listing__post-content"><?php
 
 						if ( 'before' === $meta_pos ) {
-							include $this->__get_global_template( 'post-meta' );
+							include $this->_get_global_template( 'post-meta' );
 						}
 
-						$this->__post_title( $context );
+						$this->_post_title( $context );
 
 						if ( 'after' === $meta_pos ) {
-							include $this->__get_global_template( 'post-meta' );
+							include $this->_get_global_template( 'post-meta' );
 						}
 
-						$this->__post_excerpt( $context );
+						$this->_post_excerpt( $context );
 
 						if ( 'after-excerpt' === $meta_pos ) {
-							include $this->__get_global_template( 'post-meta' );
+							include $this->_get_global_template( 'post-meta' );
 						}
 
-						$this->__read_more( $context );
+						$this->_read_more( $context );
 					?></div>
 				</div>
 			</div>

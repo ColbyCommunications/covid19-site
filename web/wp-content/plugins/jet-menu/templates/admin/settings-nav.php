@@ -1,37 +1,60 @@
-<div class="jet-menu-settings-fields">
-<?php
+<div
+	id="jet-menu-settings-fields"
+	class="jet-menu-settings-fields"
+>
+	<div
+		class="jet-menu-settings-fields__list"
+		:class="{ 'loading-state': savingState }"
+	>
+		<div
+			class="jet-menu-settings-fields__item"
+			v-for="(item, slug) in locationSettings"
+		>
+			<div
+				class="jet-menu-settings-fields__item-label"
+			>
+				{{ item.label }}
+			</div>
 
-if ( count( $tagged_menu_locations ) == 1 ) {
+			<div class="jet-menu-settings-fields__item-control enable-control">
+				<span class="label"><?php _e( 'Enable JetMenu for current location', 'jet-menu' ); ?></span>
+				<cx-vui-switcher
+					:name="`${slug}-enable`"
+					:wrapper-css="[ 'equalwidth' ]"
+					return-true="true"
+					return-false="false"
+					:prevent-wrap="true"
+					v-model="item.enabled"
+				>
+				</cx-vui-switcher>
+			</div>
 
-	$locations = array_keys( $tagged_menu_locations );
-	$location  = $locations[0];
+			<div class="jet-menu-settings-fields__item-control preset-control" v-if="isPresetsVisible">
+				<span class="label"><?php _e( 'Select options preset', 'jet-menu' ); ?></span>
+				<cx-vui-select
+					:name="`${slug}-preset`"
+					:wrapper-css="[ 'equalwidth' ]"
+					size="fullwidth"
+					:prevent-wrap="true"
+					:options-list="optionPresetList"
+					v-model="item.preset"
+				>
+				</cx-vui-select>
+			</div>
 
-	if ( isset( $tagged_menu_locations[ $location ] ) ) {
-		include $settings_list;
-	}
+			<div class="jet-menu-settings-fields__item-control mobile-layout-control" v-if="isMobileLayoutVisible">
+				<span class="label"><?php _e( 'Select menu for mobile layout', 'jet-menu' ); ?></span>
+				<cx-vui-select
+					:name="`${slug}-mobile-menu`"
+					:wrapper-css="[ 'equalwidth' ]"
+					size="fullwidth"
+					:prevent-wrap="true"
+					:options-list="optionMenuList"
+					v-model="item.mobile"
+				>
+				</cx-vui-select>
+			</div>
 
-} else {
-
-	echo '<div class="jet-menu-settings-locations">';
-
-		foreach ( $theme_locations as $location => $name ) {
-
-			if ( ! isset( $tagged_menu_locations[ $location ] ) ) {
-				continue;
-			}
-
-			printf( '<h4 class="theme_settings">%s</h4>', esc_html( $name ) );
-
-			echo '<div>';
-			include $settings_list;
-			echo '</div>';
-		}
-
-	echo '</div>';
-
-}
-?>
+		</div>
+	</div>
 </div>
-
-<?php submit_button( __( 'Save', 'jet-menu' ), 'jet-menu-settins-save button-primary alignright' ); ?>
-<span class='spinner'></span>

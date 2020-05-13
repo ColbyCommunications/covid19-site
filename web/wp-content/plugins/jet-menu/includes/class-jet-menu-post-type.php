@@ -36,12 +36,12 @@ if ( ! class_exists( 'Jet_Menu_Post_Type' ) ) {
 		public function init() {
 
 			$this->register_post_type();
+
 			$this->edit_redirect();
 
 			add_filter( 'option_elementor_cpt_support', array( $this, 'set_option_support' ) );
-			add_filter( 'default_option_elementor_cpt_support', array( $this, 'set_option_support' ) );
 
-			add_filter( 'jet-menu/assets/admin/localize', array( $this, 'localize_edit_url' ) );
+			add_filter( 'default_option_elementor_cpt_support', array( $this, 'set_option_support' ) );
 
 			add_action( 'template_include', array( $this, 'set_post_type_template' ), 9999 );
 		}
@@ -74,25 +74,6 @@ if ( ! class_exists( 'Jet_Menu_Post_Type' ) ) {
 			}
 
 			return array_merge( $value, array( $this->slug() ) );
-		}
-
-		/**
-		 * Add edit URL to JS settings
-		 *
-		 * @param  array $settings Default settings.
-		 * @return aray
-		 */
-		public function localize_edit_url( $settings ) {
-			$settings['editURL'] = add_query_arg(
-				array(
-					'jet-open-editor' => 1,
-					'item'            => '%id%',
-					'menu'            => '%menuid%',
-				),
-				esc_url( admin_url( '/' ) )
-			);
-
-			return $settings;
 		}
 
 		/**

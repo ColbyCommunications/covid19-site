@@ -8,6 +8,41 @@ The plugin works in tandem with Elementor live page builder, allowing to add con
 
 # ChangeLog
 
+## 2.0.4 - 24.04.2020
+* Added: Menu item icon svg option
+* Fixed: minor JS/PHP issue
+
+## 2.0.3 - 13.04.2020
+* Updated: Ajax get menu item request. 12 hour transit cache has been added
+* Fixed: minor JS/PHP issue
+
+## 2.0.2 - 06.04.2020
+* Added: Show Sub Menu Trigger option for mobile menu, now you can choose, which element could be a sub item trigger, menu item or submenu icon
+* Added: Toggle position option for mobile menu(slide-out layout), now you can choose toggle global position on window screen( default, fixed-left, fixed-right )
+* Added: Mobile menu items padding option to elementor widgets
+* Added: Mobile menu elementor templates style options to elementor widgets
+* Added: Mobile menu items state style options to widgets
+* Fixed: minor JS/PHP issue
+
+## 2.0.1 - 03.04.2020
+* Added: Header template to mobile menu
+* Added: Device view option for mobile menu
+* Added: Show/Hide toggle option for mobile menu
+* Fixed: Elementor css compatibility
+* Fixed: minor JS/PHP issue
+
+## 2.0.0 - 30.03.2020
+* Added: Mobile-first. With 2.0 version, you can set up the mobile menu independently of the desktop one. All the styles and layout of the mobile menu can be easily adjusted
+* Added: Mobile menu layouts. We’ve prepared three main layouts - slide out, dropdown, and push
+* Added: Different menus for desktop and mobile. Specify the WordPress menu IDs to be used for desktop and mobile
+* Added: Hamburger Menu widget. The purpose of this widget is to display the menu on both desktop and mobile in a toggle view
+* Added: Custom content before/after the menu items. Add any Elementor-built content, such as social items, subscribe forms, or call-to-action buttons right from the JetMenu widgets
+* Added: Breadcrumbs in the mobile menu. We’ve added breadcrumbs for comfier navigation
+* Added: Use AJAX loading. This option allows you to upload the mega menu content with AJAX
+* Added: User-friendly interface. So far, the JetMenu settings can be found in the JetPlugins Dashboard. As to the Preset Manager, it is now shown in the form of a popup
+* Updated: Clean code and FontAwesome 5. We’ve refactored the code and updated the FontAwesome to the latest version
+* Fixed: minor js/php issues
+
 ## 1.5.15 - 10.12.2019
 * Added: an active class for ancestor items
 * Added: compatibility with the elementor popup trigger URL

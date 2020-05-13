@@ -294,6 +294,37 @@ class Jet_Elements_Subscribe_Form extends Jet_Elements_Base {
 		);
 
 		$this->__add_responsive_control(
+			'container_align',
+			array(
+				'label' => esc_html__( 'Alignment', 'jet-elements' ),
+				'type'  => Controls_Manager::CHOOSE,
+				'options' => array(
+					'left' => array(
+						'title' => esc_html__( 'Left', 'jet-elements' ),
+						'icon' => 'eicon-h-align-left',
+					),
+					'center' => array(
+						'title' => esc_html__( 'Center', 'jet-elements' ),
+						'icon' => 'eicon-h-align-center',
+					),
+					'right' => array(
+						'title' => esc_html__( 'Right', 'jet-elements' ),
+						'icon' => 'eicon-h-align-right',
+					),
+				),
+				'selectors_dictionary' => array(
+					'left'   => 'margin-left: 0; margin-right: auto;',
+					'center' => 'margin-left: auto; margin-right: auto;',
+					'right'  => 'margin-left: auto; margin-right: 0;',
+				),
+				'selectors' => array(
+					'{{WRAPPER}} ' . $css_scheme['instance'] => '{{VALUE}}',
+				),
+			),
+		50
+		);
+
+		$this->__add_responsive_control(
 			'container_padding',
 			array(
 				'label'      => esc_html__( 'Padding', 'jet-elements' ),

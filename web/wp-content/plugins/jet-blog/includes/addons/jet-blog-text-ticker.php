@@ -11,6 +11,7 @@ use Elementor\Controls_Manager;
 use Elementor\Group_Control_Border;
 use Elementor\Group_Control_Box_Shadow;
 use Elementor\Group_Control_Typography;
+use Elementor\Modules\DynamicTags\Module as TagsModule;
 use Elementor\Repeater;
 use Elementor\Scheme_Color;
 use Elementor\Scheme_Typography;
@@ -148,7 +149,7 @@ class Jet_Blog_Text_Ticker extends Jet_Blog_Base {
 		);
 
 		$this->add_control(
-			$this->__new_icon_prefix . 'date_icon',
+			$this->_new_icon_prefix . 'date_icon',
 			array(
 				'type'             => Controls_Manager::ICONS,
 				'label'            => esc_html__( 'Date Icon', 'jet-blog' ),
@@ -290,6 +291,12 @@ class Jet_Blog_Text_Ticker extends Jet_Blog_Base {
 				'type'        => 'text',
 				'default'     => '',
 				'label_block' => true,
+				'dynamic'     => array(
+					'active'     => true,
+					'categories' => array(
+						TagsModule::POST_META_CATEGORY,
+					),
+				),
 				'conditions'  => array(
 					'relation' => 'or',
 					'terms'    => array(
@@ -336,6 +343,12 @@ class Jet_Blog_Text_Ticker extends Jet_Blog_Base {
 				'type'        => 'text',
 				'label_block' => true,
 				'default'     => '',
+				'dynamic'     => array(
+					'active'     => true,
+					'categories' => array(
+						TagsModule::POST_META_CATEGORY,
+					),
+				),
 			)
 		);
 
@@ -475,7 +488,7 @@ class Jet_Blog_Text_Ticker extends Jet_Blog_Base {
 		);
 
 		$this->add_control(
-			$this->__new_icon_prefix . 'show_author_icon',
+			$this->_new_icon_prefix . 'show_author_icon',
 			array(
 				'type'             => Controls_Manager::ICONS,
 				'label'            => esc_html__( 'Author Icon', 'jet-blog' ),
@@ -539,7 +552,7 @@ class Jet_Blog_Text_Ticker extends Jet_Blog_Base {
 			array(
 				'label'       => esc_html__( 'Post Date Format', 'jet-blog' ),
 				'type'        => Controls_Manager::TEXT,
-				'default'     => 'H:s',
+				'default'     => 'H:i',
 				'description' => sprintf( '<a href="https://codex.wordpress.org/Formatting_Date_and_Time" target="_blank">%s</a>', esc_html__( 'Documentation on date and time formatting', 'jet-blog' ) ),
 				'condition' => array(
 					'show_date' => 'yes',
@@ -548,7 +561,7 @@ class Jet_Blog_Text_Ticker extends Jet_Blog_Base {
 		);
 
 		$this->add_control(
-			$this->__new_icon_prefix . 'show_date_icon',
+			$this->_new_icon_prefix . 'show_date_icon',
 			array(
 				'type'             => Controls_Manager::ICONS,
 				'label'            => esc_html__( 'Date Icon', 'jet-blog' ),
@@ -694,7 +707,7 @@ class Jet_Blog_Text_Ticker extends Jet_Blog_Base {
 
 		$this->end_controls_section();
 
-		$this->__start_controls_section(
+		$this->_start_controls_section(
 			'section_box_style',
 			array(
 				'label'      => esc_html__( 'Container', 'jet-blog' ),
@@ -704,7 +717,7 @@ class Jet_Blog_Text_Ticker extends Jet_Blog_Base {
 			100
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Background::get_type(),
 			array(
 				'name'     => 'container_bg',
@@ -713,7 +726,7 @@ class Jet_Blog_Text_Ticker extends Jet_Blog_Base {
 			100
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'container_padding',
 			array(
 				'label'      => esc_html__( 'Padding', 'jet-blog' ),
@@ -726,7 +739,7 @@ class Jet_Blog_Text_Ticker extends Jet_Blog_Base {
 			100
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Border::get_type(),
 			array(
 				'name'           => 'container_border',
@@ -737,7 +750,7 @@ class Jet_Blog_Text_Ticker extends Jet_Blog_Base {
 			100
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'container_border_radius',
 			array(
 				'label'      => esc_html__( 'Border Radius', 'jet-blog' ),
@@ -750,7 +763,7 @@ class Jet_Blog_Text_Ticker extends Jet_Blog_Base {
 			100
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Box_Shadow::get_type(),
 			array(
 				'name'     => 'container_box_shadow',
@@ -759,9 +772,9 @@ class Jet_Blog_Text_Ticker extends Jet_Blog_Base {
 			100
 		);
 
-		$this->__end_controls_section( 100 );
+		$this->_end_controls_section( 100 );
 
-		$this->__start_controls_section(
+		$this->_start_controls_section(
 			'section_title_style',
 			array(
 				'label'      => esc_html__( 'Widget Title', 'jet-blog' ),
@@ -770,7 +783,7 @@ class Jet_Blog_Text_Ticker extends Jet_Blog_Base {
 			)
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'title_color',
 			array(
 				'label'     => esc_html__( 'Color', 'jet-blog' ),
@@ -782,7 +795,7 @@ class Jet_Blog_Text_Ticker extends Jet_Blog_Base {
 			25
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Typography::get_type(),
 			array(
 				'name'     => 'title_typography',
@@ -792,7 +805,7 @@ class Jet_Blog_Text_Ticker extends Jet_Blog_Base {
 			50
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Background::get_type(),
 			array(
 				'name'     => 'title_bg',
@@ -801,7 +814,7 @@ class Jet_Blog_Text_Ticker extends Jet_Blog_Base {
 			75
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'title_padding',
 			array(
 				'label'      => esc_html__( 'Padding', 'jet-blog' ),
@@ -814,7 +827,7 @@ class Jet_Blog_Text_Ticker extends Jet_Blog_Base {
 			75
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Border::get_type(),
 			array(
 				'name'           => 'title_border',
@@ -825,7 +838,7 @@ class Jet_Blog_Text_Ticker extends Jet_Blog_Base {
 			75
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'title_border_radius',
 			array(
 				'label'      => esc_html__( 'Border Radius', 'jet-blog' ),
@@ -838,7 +851,7 @@ class Jet_Blog_Text_Ticker extends Jet_Blog_Base {
 			75
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Box_Shadow::get_type(),
 			array(
 				'name'     => 'title_box_shadow',
@@ -847,7 +860,7 @@ class Jet_Blog_Text_Ticker extends Jet_Blog_Base {
 			100
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'show_title_pointer',
 			array(
 				'label'        => esc_html__( 'Show Title Pointer', 'jet-blog' ),
@@ -861,7 +874,7 @@ class Jet_Blog_Text_Ticker extends Jet_Blog_Base {
 			75
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'title_pointer_color',
 			array(
 				'label'     => esc_html__( 'Pointer Color', 'jet-blog' ),
@@ -875,7 +888,7 @@ class Jet_Blog_Text_Ticker extends Jet_Blog_Base {
 			75
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'title_pointer_height',
 			array(
 				'label'      => esc_html__( 'Pointer Height', 'jet-blog' ),
@@ -899,7 +912,7 @@ class Jet_Blog_Text_Ticker extends Jet_Blog_Base {
 			75
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'title_pointer_width',
 			array(
 				'label'      => esc_html__( 'Pointer Width', 'jet-blog' ),
@@ -927,9 +940,9 @@ class Jet_Blog_Text_Ticker extends Jet_Blog_Base {
 			75
 		);
 
-		$this->__end_controls_section();
+		$this->_end_controls_section();
 
-		$this->__start_controls_section(
+		$this->_start_controls_section(
 			'section_date_style',
 			array(
 				'label'      => esc_html__( 'Current Date', 'jet-blog' ),
@@ -938,7 +951,7 @@ class Jet_Blog_Text_Ticker extends Jet_Blog_Base {
 			)
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'current_date_color',
 			array(
 				'label'     => esc_html__( 'Color', 'jet-blog' ),
@@ -950,7 +963,7 @@ class Jet_Blog_Text_Ticker extends Jet_Blog_Base {
 			25
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Typography::get_type(),
 			array(
 				'name'     => 'current_date_typography',
@@ -960,7 +973,7 @@ class Jet_Blog_Text_Ticker extends Jet_Blog_Base {
 			50
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Background::get_type(),
 			array(
 				'name'     => 'current_date_bg',
@@ -969,7 +982,7 @@ class Jet_Blog_Text_Ticker extends Jet_Blog_Base {
 			75
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'current_date_padding',
 			array(
 				'label'      => esc_html__( 'Padding', 'jet-blog' ),
@@ -982,7 +995,7 @@ class Jet_Blog_Text_Ticker extends Jet_Blog_Base {
 			75
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Border::get_type(),
 			array(
 				'name'           => 'current_date_border',
@@ -993,7 +1006,7 @@ class Jet_Blog_Text_Ticker extends Jet_Blog_Base {
 			75
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'current_date_border_radius',
 			array(
 				'label'      => esc_html__( 'Border Radius', 'jet-blog' ),
@@ -1006,7 +1019,7 @@ class Jet_Blog_Text_Ticker extends Jet_Blog_Base {
 			75
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Box_Shadow::get_type(),
 			array(
 				'name'     => 'current_date_box_shadow',
@@ -1015,9 +1028,9 @@ class Jet_Blog_Text_Ticker extends Jet_Blog_Base {
 			100
 		);
 
-		$this->__end_controls_section();
+		$this->_end_controls_section();
 
-		$this->__start_controls_section(
+		$this->_start_controls_section(
 			'section_posts_style',
 			array(
 				'label'      => esc_html__( 'Posts', 'jet-blog' ),
@@ -1026,7 +1039,7 @@ class Jet_Blog_Text_Ticker extends Jet_Blog_Base {
 			)
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'posts_padding',
 			array(
 				'label'      => esc_html__( 'Padding', 'jet-blog' ),
@@ -1039,7 +1052,7 @@ class Jet_Blog_Text_Ticker extends Jet_Blog_Base {
 			50
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'posts_margin',
 			array(
 				'label'      => esc_html__( 'Margin', 'jet-blog' ),
@@ -1052,7 +1065,7 @@ class Jet_Blog_Text_Ticker extends Jet_Blog_Base {
 			50
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'posts_thumb',
 			array(
 				'label'     => esc_html__( 'Thumbnail', 'jet-blog' ),
@@ -1062,7 +1075,7 @@ class Jet_Blog_Text_Ticker extends Jet_Blog_Base {
 			50
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'thumb_margin',
 			array(
 				'label'      => esc_html__( 'Margin', 'jet-blog' ),
@@ -1075,7 +1088,7 @@ class Jet_Blog_Text_Ticker extends Jet_Blog_Base {
 			50
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Border::get_type(),
 			array(
 				'name'           => 'thumb_border',
@@ -1086,7 +1099,7 @@ class Jet_Blog_Text_Ticker extends Jet_Blog_Base {
 			75
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'thumb_border_radius',
 			array(
 				'label'      => esc_html__( 'Border Radius', 'jet-blog' ),
@@ -1099,7 +1112,7 @@ class Jet_Blog_Text_Ticker extends Jet_Blog_Base {
 			75
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Box_Shadow::get_type(),
 			array(
 				'name'     => 'thumb_box_shadow',
@@ -1108,7 +1121,7 @@ class Jet_Blog_Text_Ticker extends Jet_Blog_Base {
 			100
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'posts_author',
 			array(
 				'label'     => esc_html__( 'Author', 'jet-blog' ),
@@ -1118,7 +1131,7 @@ class Jet_Blog_Text_Ticker extends Jet_Blog_Base {
 			25
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'posts_author_color',
 			array(
 				'label'     => esc_html__( 'Color', 'jet-blog' ),
@@ -1130,7 +1143,7 @@ class Jet_Blog_Text_Ticker extends Jet_Blog_Base {
 			25
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Typography::get_type(),
 			array(
 				'name'     => 'posts_author_typography',
@@ -1140,7 +1153,7 @@ class Jet_Blog_Text_Ticker extends Jet_Blog_Base {
 			50
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'posts_date',
 			array(
 				'label'     => esc_html__( 'Date', 'jet-blog' ),
@@ -1150,7 +1163,7 @@ class Jet_Blog_Text_Ticker extends Jet_Blog_Base {
 			25
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'posts_date_color',
 			array(
 				'label'     => esc_html__( 'Color', 'jet-blog' ),
@@ -1162,7 +1175,7 @@ class Jet_Blog_Text_Ticker extends Jet_Blog_Base {
 			25
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Typography::get_type(),
 			array(
 				'name'     => 'posts_date_typography',
@@ -1172,7 +1185,7 @@ class Jet_Blog_Text_Ticker extends Jet_Blog_Base {
 			50
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'posts_link',
 			array(
 				'label'     => esc_html__( 'Link', 'jet-blog' ),
@@ -1182,7 +1195,7 @@ class Jet_Blog_Text_Ticker extends Jet_Blog_Base {
 			25
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'posts_link_color',
 			array(
 				'label'     => esc_html__( 'Color', 'jet-blog' ),
@@ -1194,7 +1207,7 @@ class Jet_Blog_Text_Ticker extends Jet_Blog_Base {
 			25
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'posts_link_color_hover',
 			array(
 				'label'     => esc_html__( 'Color Hover', 'jet-blog' ),
@@ -1206,7 +1219,7 @@ class Jet_Blog_Text_Ticker extends Jet_Blog_Base {
 			25
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Typography::get_type(),
 			array(
 				'name'     => 'posts_link_typography',
@@ -1216,9 +1229,9 @@ class Jet_Blog_Text_Ticker extends Jet_Blog_Base {
 			50
 		);
 
-		$this->__end_controls_section();
+		$this->_end_controls_section();
 
-		$this->__start_controls_section(
+		$this->_start_controls_section(
 			'section_paging_arrows',
 			array(
 				'label'      => esc_html__( 'Paging Arrows', 'jet-blog' ),
@@ -1227,9 +1240,9 @@ class Jet_Blog_Text_Ticker extends Jet_Blog_Base {
 			)
 		);
 
-		$this->__start_controls_tabs( 'tabs_arrows_style', 50 );
+		$this->_start_controls_tabs( 'tabs_arrows_style', 50 );
 
-		$this->__start_controls_tab(
+		$this->_start_controls_tab(
 			'tab_prev',
 			array(
 				'label' => esc_html__( 'Normal', 'jet-blog' ),
@@ -1237,7 +1250,7 @@ class Jet_Blog_Text_Ticker extends Jet_Blog_Base {
 			50
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			\Jet_Blog_Group_Control_Box_Style::get_type(),
 			array(
 				'name'           => 'arrows_style',
@@ -1254,9 +1267,9 @@ class Jet_Blog_Text_Ticker extends Jet_Blog_Base {
 			50
 		);
 
-		$this->__end_controls_tab( 50 );
+		$this->_end_controls_tab( 50 );
 
-		$this->__start_controls_tab(
+		$this->_start_controls_tab(
 			'tab_next_hover',
 			array(
 				'label' => esc_html__( 'Hover', 'jet-blog' ),
@@ -1264,7 +1277,7 @@ class Jet_Blog_Text_Ticker extends Jet_Blog_Base {
 			50
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			\Jet_Blog_Group_Control_Box_Style::get_type(),
 			array(
 				'name'           => 'arrows_style_hover',
@@ -1281,11 +1294,11 @@ class Jet_Blog_Text_Ticker extends Jet_Blog_Base {
 			50
 		);
 
-		$this->__end_controls_tab( 50 );
+		$this->_end_controls_tab( 50 );
 
-		$this->__end_controls_tabs( 50 );
+		$this->_end_controls_tabs( 50 );
 
-		$this->__add_control(
+		$this->_add_control(
 			'prev_arrow_position',
 			array(
 				'label'     => esc_html__( 'Prev Arrow Position', 'jet-blog' ),
@@ -1295,7 +1308,7 @@ class Jet_Blog_Text_Ticker extends Jet_Blog_Base {
 			25
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'prev_vert_position',
 			array(
 				'label'   => esc_html__( 'Vertical Postition by', 'jet-blog' ),
@@ -1309,7 +1322,7 @@ class Jet_Blog_Text_Ticker extends Jet_Blog_Base {
 			25
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'prev_top_position',
 			array(
 				'label'      => esc_html__( 'Top Indent', 'jet-blog' ),
@@ -1339,7 +1352,7 @@ class Jet_Blog_Text_Ticker extends Jet_Blog_Base {
 			25
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'prev_bottom_position',
 			array(
 				'label'      => esc_html__( 'Bottom Indent', 'jet-blog' ),
@@ -1369,7 +1382,7 @@ class Jet_Blog_Text_Ticker extends Jet_Blog_Base {
 			25
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'prev_hor_position',
 			array(
 				'label'   => esc_html__( 'Horizontal Postition by', 'jet-blog' ),
@@ -1383,7 +1396,7 @@ class Jet_Blog_Text_Ticker extends Jet_Blog_Base {
 			25
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'prev_left_position',
 			array(
 				'label'      => esc_html__( 'Left Indent', 'jet-blog' ),
@@ -1413,7 +1426,7 @@ class Jet_Blog_Text_Ticker extends Jet_Blog_Base {
 			25
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'prev_right_position',
 			array(
 				'label'      => esc_html__( 'Right Indent', 'jet-blog' ),
@@ -1443,7 +1456,7 @@ class Jet_Blog_Text_Ticker extends Jet_Blog_Base {
 			25
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'next_arrow_position',
 			array(
 				'label'     => esc_html__( 'Next Arrow Position', 'jet-blog' ),
@@ -1453,7 +1466,7 @@ class Jet_Blog_Text_Ticker extends Jet_Blog_Base {
 			25
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'next_vert_position',
 			array(
 				'label'   => esc_html__( 'Vertical Postition by', 'jet-blog' ),
@@ -1467,7 +1480,7 @@ class Jet_Blog_Text_Ticker extends Jet_Blog_Base {
 			25
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'next_top_position',
 			array(
 				'label'      => esc_html__( 'Top Indent', 'jet-blog' ),
@@ -1497,7 +1510,7 @@ class Jet_Blog_Text_Ticker extends Jet_Blog_Base {
 			25
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'next_bottom_position',
 			array(
 				'label'      => esc_html__( 'Bottom Indent', 'jet-blog' ),
@@ -1527,7 +1540,7 @@ class Jet_Blog_Text_Ticker extends Jet_Blog_Base {
 			25
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'next_hor_position',
 			array(
 				'label'   => esc_html__( 'Horizontal Postition by', 'jet-blog' ),
@@ -1541,7 +1554,7 @@ class Jet_Blog_Text_Ticker extends Jet_Blog_Base {
 			25
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'next_left_position',
 			array(
 				'label'      => esc_html__( 'Left Indent', 'jet-blog' ),
@@ -1571,7 +1584,7 @@ class Jet_Blog_Text_Ticker extends Jet_Blog_Base {
 			25
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'next_right_position',
 			array(
 				'label'      => esc_html__( 'Right Indent', 'jet-blog' ),
@@ -1601,18 +1614,18 @@ class Jet_Blog_Text_Ticker extends Jet_Blog_Base {
 			25
 		);
 
-		$this->__end_controls_section();
+		$this->_end_controls_section();
 
 	}
 
 	protected function render() {
 
-		$this->__context = 'render';
-		$this->__get_posts();
+		$this->_context = 'render';
+		$this->_get_posts();
 
-		$this->__open_wrap();
-		include $this->__get_global_template( 'index' );
-		$this->__close_wrap();
+		$this->_open_wrap();
+		include $this->_get_global_template( 'index' );
+		$this->_close_wrap();
 	}
 
 	/**
@@ -1620,9 +1633,9 @@ class Jet_Blog_Text_Ticker extends Jet_Blog_Base {
 	 *
 	 * @return void
 	 */
-	public function __get_posts() {
+	public function _get_posts() {
 
-		$settings  = $this->get_settings();
+		$settings  = $this->get_settings_for_display();
 		$num       = $settings['posts_num'];
 		$post_type = ! empty( $settings['post_type'] ) ? $settings['post_type'] : 'post';
 		$include   = ! empty( $settings['include_ids'] ) ? $settings['include_ids'] : '';
@@ -1715,7 +1728,7 @@ class Jet_Blog_Text_Ticker extends Jet_Blog_Base {
 		$query = new \WP_Query( $query_args );
 		$posts = ! empty( $query->posts ) ? $query->posts : array();
 
-		$this->__set_query( $posts );
+		$this->_set_query( $posts );
 
 	}
 
@@ -1724,7 +1737,7 @@ class Jet_Blog_Text_Ticker extends Jet_Blog_Base {
 	 *
 	 * @return void
 	 */
-	public function __slider_atts() {
+	public function _slider_atts() {
 
 		$slider_attributes = array(
 			'slidesToShow'   => 1,
@@ -1752,7 +1765,7 @@ class Jet_Blog_Text_Ticker extends Jet_Blog_Base {
 	 * @param  array $settings Settings.
 	 * @return void
 	 */
-	public function __post_author( $settings ) {
+	public function _post_author( $settings ) {
 
 		$show = isset( $settings['show_author'] ) ? $settings['show_author'] : '';
 
@@ -1765,7 +1778,7 @@ class Jet_Blog_Text_Ticker extends Jet_Blog_Base {
 			'<span class="jet-text-ticker__post-author-icon jet-blog-icon">%s</span>'
 		);
 
-		$icon_html = $this->__get_icon( 'show_author_icon', $settings, $icon_format );
+		$icon_html = $this->_get_icon( 'show_author_icon', $settings, $icon_format );
 
 		$hide_classes = '';
 
@@ -1792,7 +1805,7 @@ class Jet_Blog_Text_Ticker extends Jet_Blog_Base {
 	 * @param  array $settings Settings.
 	 * @return void
 	 */
-	public function __post_date( $settings ) {
+	public function _post_date( $settings ) {
 
 		$show = isset( $settings['show_date'] ) ? $settings['show_date'] : '';
 
@@ -1805,7 +1818,7 @@ class Jet_Blog_Text_Ticker extends Jet_Blog_Base {
 			'<span class="jet-text-ticker__post-date-icon jet-blog-icon">%s</span>'
 		);
 
-		$icon_html = $this->__get_icon( 'show_date_icon', $settings, $icon_format );
+		$icon_html = $this->_get_icon( 'show_date_icon', $settings, $icon_format );
 
 		$date_format = isset( $settings['post_date_format'] ) ? $settings['post_date_format'] : 'H:i';
 
@@ -1834,7 +1847,7 @@ class Jet_Blog_Text_Ticker extends Jet_Blog_Base {
 	 * @param  array $settings Settings.
 	 * @return void
 	 */
-	public function __get_widget_title( $settings ) {
+	public function _get_widget_title( $settings ) {
 
 		if ( empty( $settings['block_title'] ) ) {
 			return;
@@ -1865,7 +1878,7 @@ class Jet_Blog_Text_Ticker extends Jet_Blog_Base {
 	 * @param  array $settings Settings.
 	 * @return void
 	 */
-	public function __get_current_date( $settings ) {
+	public function _get_current_date( $settings ) {
 
 		if ( empty( $settings['show_current_date'] ) ) {
 			return;
@@ -1878,7 +1891,7 @@ class Jet_Blog_Text_Ticker extends Jet_Blog_Base {
 			'<span class="jet-text-ticker__date-icon jet-blog-icon">%s</span>'
 		);
 
-		$icon_html = $this->__get_icon( 'date_icon', $settings, $icon_format );
+		$icon_html = $this->_get_icon( 'date_icon', $settings, $icon_format );
 
 		$result_format = apply_filters(
 			'jet-blog/text-ticker/current-date/format',
@@ -1904,7 +1917,7 @@ class Jet_Blog_Text_Ticker extends Jet_Blog_Base {
 	 * @param  array $settings Settings.
 	 * @return void
 	 */
-	public function __post_thumbnail( $settings ) {
+	public function _post_thumbnail( $settings ) {
 
 		if ( ! has_post_thumbnail() ) {
 			return;
@@ -1945,7 +1958,7 @@ class Jet_Blog_Text_Ticker extends Jet_Blog_Base {
 	 * @param  array $settings Settings.
 	 * @return void
 	 */
-	public function __post_title( $settings ) {
+	public function _post_title( $settings ) {
 		$title_format = apply_filters(
 			'jet-blog/text-ticker/post-title/format',
 			'<a href="%1$s" class="jet-text-ticker__item-typed"><span class="jet-text-ticker__item-typed-inner"%3$s>%2$s</span></a>'

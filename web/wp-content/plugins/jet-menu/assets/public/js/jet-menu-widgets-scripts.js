@@ -8,7 +8,8 @@
 
 			var widgets = {
 				'jet-mega-menu.default' : JetMenuWidget.widgetMegaMenu,
-				'jet-custom-menu.default' : JetMenuWidget.widgetCustomMenu
+				'jet-custom-menu.default' : JetMenuWidget.widgetCustomMenu,
+				'jet-mobile-menu.default' : JetMenuWidget.widgetMobileMenu,
 			};
 
 			$.each( widgets, function( widget, callback ) {
@@ -18,31 +19,44 @@
 		},
 
 		widgetMegaMenu: function( $scope ) {
-			var $target                  = $scope.find( '.jet-menu-container' ),
-				rollUp                   = false,
-				jetMenuMouseleaveDelay   = 500,
-				jetMenuMegaWidthType     = 'container',
-				jetMenuMegaWidthSelector = '',
-				jetMenuMegaOpenSubType   = 'hover',
-				jetMenuMobileBreakpoint  = 768;
+			let $desktopTarget = $scope.find( '.jet-menu-container' ),
+				$mobileTarget  = $scope.find( '.jet-mobile-menu-single' );
 
-			if ( window.jetMenuPublicSettings && window.jetMenuPublicSettings.menuSettings ) {
-				rollUp                   = ( 'true' === jetMenuPublicSettings.menuSettings.jetMenuRollUp ) ? true : false;
-				jetMenuMouseleaveDelay   = jetMenuPublicSettings.menuSettings.jetMenuMouseleaveDelay || 500;
-				jetMenuMegaWidthType     = jetMenuPublicSettings.menuSettings.jetMenuMegaWidthType || 'container';
-				jetMenuMegaWidthSelector = jetMenuPublicSettings.menuSettings.jetMenuMegaWidthSelector || '';
-				jetMenuMegaOpenSubType   = jetMenuPublicSettings.menuSettings.jetMenuMegaOpenSubType || 'hover';
-				jetMenuMobileBreakpoint  = jetMenuPublicSettings.menuSettings.jetMenuMobileBreakpoint || 768;
+			if ( $desktopTarget[0] ) {
+				let rollUp                   = false,
+					jetMenuMouseleaveDelay   = 500,
+					jetMenuMegaWidthType     = 'container',
+					jetMenuMegaWidthSelector = '',
+					jetMenuMegaOpenSubType   = 'hover',
+					jetMenuMegaAjax          = false;
+
+				if ( window.jetMenuPublicSettings && window.jetMenuPublicSettings.menuSettings ) {
+					rollUp                   = ( 'true' === jetMenuPublicSettings.menuSettings.jetMenuRollUp ) ? true : false;
+					jetMenuMouseleaveDelay   = jetMenuPublicSettings.menuSettings.jetMenuMouseleaveDelay || 500;
+					jetMenuMegaWidthType     = jetMenuPublicSettings.menuSettings.jetMenuMegaWidthType || 'container';
+					jetMenuMegaWidthSelector = jetMenuPublicSettings.menuSettings.jetMenuMegaWidthSelector || '';
+					jetMenuMegaOpenSubType   = jetMenuPublicSettings.menuSettings.jetMenuMegaOpenSubType || 'hover';
+					jetMenuMegaAjax          = ( 'true' === jetMenuPublicSettings.menuSettings.jetMenuMegaAjax )  ? true : false;
+				}
+
+				$desktopTarget.JetMenuPlugin( {
+					enabled: rollUp,
+					mouseLeaveDelay: +jetMenuMouseleaveDelay,
+					megaWidthType: jetMenuMegaWidthType,
+					megaWidthSelector: jetMenuMegaWidthSelector,
+					openSubType: jetMenuMegaOpenSubType,
+					ajaxLoad: jetMenuMegaAjax,
+				} );
 			}
 
-			$target.JetMenu( {
-				enabled: rollUp,
-				mouseLeaveDelay: +jetMenuMouseleaveDelay,
-				megaWidthType: jetMenuMegaWidthType,
-				megaWidthSelector: jetMenuMegaWidthSelector,
-				openSubType: jetMenuMegaOpenSubType,
-				threshold: +jetMenuMobileBreakpoint
-			} );
+			if ( $mobileTarget[0] ) {
+				let menuInstanceId = $mobileTarget.attr( 'id' ),
+					menuId         = $mobileTarget.data( 'menu-id' ) || false,
+					menuOptions    = $mobileTarget.data( 'menu-options' ) || {};
+
+				window.jetMenu.createMobileMenuInstance( menuInstanceId, menuId, menuOptions );
+			}
+
 		},
 
 		widgetCustomMenu: function( $scope ) {
@@ -250,6 +264,19 @@
 			setMaxMegaMenuWidth();
 			$( window ).on( 'resize.JetCustomMenu orientationchange.JetCustomMenu', setMaxMegaMenuWidth );
 
+		},
+
+		widgetMobileMenu: function( $scope ) {
+			let $target        = $scope.find( '.jet-mobile-menu-widget' ),
+				menuInstanceId = $target.attr( 'id' ),
+				menuId         = $target.data( 'menu-id' ) || false,
+				menuOptions    = $target.data( 'menu-options' ) || {};
+
+			if ( !$target[0] ) {
+				return;
+			}
+
+			window.jetMenu.createMobileMenuInstance( menuInstanceId, menuId, menuOptions );
 		},
 
 		/**

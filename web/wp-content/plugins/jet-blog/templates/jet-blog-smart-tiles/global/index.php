@@ -14,17 +14,17 @@ if ( 'yes' === $settings['excerpt_on_hover'] ) {
 
 $dir = is_rtl() ? 'rtl' : 'ltr';
 ?>
-<div class="<?php $this->__tiles_wrap_classes(); ?>" <?php $this->__slider_atts(); ?> dir="<?php echo $dir; ?>"><?php
+<div class="<?php $this->_tiles_wrap_classes(); ?>" <?php $this->_slider_atts(); ?> dir="<?php echo $dir; ?>"><?php
 
-	foreach ( $this->__get_query() as $post ) {
+	foreach ( $this->_get_query() as $post ) {
 
 		setup_postdata( $post );
 
-		$this->__maybe_open_slide_wrapper( $settings );
-		include $this->__get_global_template( 'post' );
-		$this->__maybe_close_slide_wrapper( $settings );
+		$this->_maybe_open_slide_wrapper( $settings );
+		include $this->_get_global_template( 'post' );
+		$this->_maybe_close_slide_wrapper( $settings );
 
 	}
 
-	$this->__reset_data();
+	$this->_reset_data();
 ?></div>

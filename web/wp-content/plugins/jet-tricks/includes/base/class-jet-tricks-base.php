@@ -12,6 +12,7 @@ abstract class Jet_Tricks_Base extends Widget_Base {
 	public $__load_level       = 100;
 	public $__include_controls = [];
 	public $__exclude_controls = [];
+	public $__new_icon_prefix  = '';
 
 	/**
 	 * [__construct description]
@@ -20,6 +21,8 @@ abstract class Jet_Tricks_Base extends Widget_Base {
 	 */
 	public function __construct( $data = [], $args = null ) {
 		parent::__construct( $data, $args );
+
+		$this->__new_icon_prefix  = \Jet_Tricks_Tools::$new_icon_prefix;
 
 		$this->__load_level = (int)jet_tricks_settings()->get( 'widgets_load_level', 100 );
 
@@ -580,6 +583,38 @@ abstract class Jet_Tricks_Base extends Widget_Base {
 		}
 
 		$this->end_controls_tab();
+	}
+
+	/**
+	 * Get elementor templates list for options.
+	 *
+	 * @return array
+	 */
+	public function get_elementor_templates_options() {
+		$templates = jet_tricks()->elementor()->templates_manager->get_source( 'local' )->get_items();
+
+		$options = array(
+			'' => '— ' . esc_html__( 'Select', 'jet-tricks' ) . ' —',
+		);
+
+		foreach ( $templates as $template ) {
+			$options[ $template['template_id'] ] = $template['title'] . ' (' . $template['type'] . ')';
+		}
+
+		return $options;
+	}
+
+	/**
+	 * Returns HTML icon markup
+	 *
+	 * @param  array  $setting
+	 * @param  array  $settings
+	 * @param  string $format
+	 * @param  string $icon_class
+	 * @return string
+	 */
+	public function __get_icon( $setting = null, $settings = null, $format = '%s', $icon_class = '' ) {
+		return \Jet_Tricks_Tools::get_icon( $setting, $settings, $format, $icon_class, false );
 	}
 
 }

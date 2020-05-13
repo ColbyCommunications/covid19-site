@@ -3,14 +3,14 @@
  * Post meta template
  */
 
-$settings = $this->__get_widget_settings();
+$settings = $this->_get_widget_settings();
 $allowed  = ( true === $is_featured ) ? 'featured_show_meta' : 'show_meta';
 
 if ( 'yes' !== $settings[ $allowed ] ) {
 	return;
 }
 
-$meta_data = $this->__get_meta( $is_featured );
+$meta_data = $this->_get_meta( $is_featured );
 
 echo '<div class="jet-smart-listing__meta">';
 

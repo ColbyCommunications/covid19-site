@@ -34,6 +34,10 @@
 			.elementor-widget:not(.elementor-invisible) & {
 				visibility: visible;
 			}
+
+			.elementor-sticky.elementor-sticky__spacer & {
+				visibility: hidden;
+			}
 		}
 
 		span {

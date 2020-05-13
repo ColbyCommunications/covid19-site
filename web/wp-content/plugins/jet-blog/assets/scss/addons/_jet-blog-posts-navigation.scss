@@ -2,16 +2,23 @@
 	.nav-links {
 		display: flex;
 		align-items: center;
-		.nav-previous a,
-		.nav-next a {
-			display: flex;
-			align-items: center;
-			justify-content: center;
-		}
+
 		&:before {
 			content: "";
 			order:1;
 		}
+
+		.nav-previous,
+		.nav-next {
+			width: auto;
+
+			a {
+				display: flex;
+				align-items: center;
+				justify-content: center;
+			}
+		}
+
 		.nav-next {
 			order: 2;
 		}

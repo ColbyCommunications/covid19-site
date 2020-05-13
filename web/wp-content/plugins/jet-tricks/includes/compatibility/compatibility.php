@@ -33,6 +33,12 @@ if ( ! class_exists( 'Jet_Tricks_Compatibility' ) ) {
 				}
 
 				add_filter( 'wpml_elementor_widgets_to_translate', array( $this, 'add_translatable_nodes' ) );
+				add_filter( 'jet-tricks/widgets/template_id',      array( $this, 'set_wpml_translated_template_id' ) );
+			}
+
+			// Polylang compatibility
+			if ( class_exists( 'Polylang' ) ) {
+				add_filter( 'jet-tricks/widgets/template_id', array( $this, 'set_pll_translated_template_id' ) );
 			}
 		}
 
@@ -147,6 +153,47 @@ if ( ! class_exists( 'Jet_Tricks_Compatibility' ) ) {
 					'editor_type' => 'LINE',
 				),
 			);
+		}
+
+		/**
+		 * Set WPML translated template.
+		 *
+		 * @param $template_id
+		 *
+		 * @return mixed|void
+		 */
+		public function set_wpml_translated_template_id( $template_id ) {
+			$post_type = get_post_type( $template_id );
+
+			return apply_filters( 'wpml_object_id', $template_id, $post_type, true );
+		}
+
+		/**
+		 * Set Polylang translated template.
+		 *
+		 * @param $template_id
+		 *
+		 * @return false|int|null
+		 */
+		public function set_pll_translated_template_id( $template_id ) {
+
+			if ( function_exists( 'pll_get_post' ) ) {
+
+				$translation_template_id = pll_get_post( $template_id );
+
+				if ( null === $translation_template_id ) {
+					// the current language is not defined yet
+					return $template_id;
+				} elseif ( false === $translation_template_id ) {
+					//no translation yet
+					return $template_id;
+				} elseif ( $translation_template_id > 0 ) {
+					// return translated post id
+					return $translation_template_id;
+				}
+			}
+
+			return $template_id;
 		}
 
 		/**

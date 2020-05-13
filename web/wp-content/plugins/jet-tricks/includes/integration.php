@@ -152,28 +152,6 @@ if ( ! class_exists( 'Jet_Tricks_Integration' ) ) {
 		}
 
 		/**
-		 * Rewrite core controls.
-		 *
-		 * @param  object $controls_manager Controls manager instance.
-		 * @return void
-		 */
-		public function rewrite_controls( $controls_manager ) {
-
-			$controls = array(
-				$controls_manager::ICON => 'Jet_Tricks_Control_Icon',
-			);
-
-			foreach ( $controls as $control_id => $class_name ) {
-
-				if ( $this->include_control( $class_name ) ) {
-					$controls_manager->unregister_control( $control_id );
-					$controls_manager->register_control( $control_id, new $class_name() );
-				}
-			}
-
-		}
-
-		/**
 		 * Register addon by file name
 		 *
 		 * @param  string $file            File name.

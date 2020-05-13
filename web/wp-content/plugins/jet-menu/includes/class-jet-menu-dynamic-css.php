@@ -28,533 +28,11 @@ if ( ! class_exists( 'Jet_Menu_Dynamic_CSS' ) ) {
 		private static $instance = null;
 
 		/**
-		 * Builder instance
-		 *
-		 * @var null
-		 */
-		public $builder = null;
-
-		/**
 		 * Fonts holder.
 		 *
 		 * @var array
 		 */
-		private $fonts = null;
-
-		/**
-		 * Initialize builde rinstance
-		 *
-		 * @param  [type] $builder [description]
-		 * @return [type]          [description]
-		 */
-		public function init_builder( $builder ) {
-			$this->builder= $builder;
-		}
-
-		/**
-		 * Register typography options.
-		 *
-		 * @param array $args [description]
-		 */
-		public function add_typography_options( $args = array() ) {
-
-			$args = wp_parse_args( $args, array(
-				'label'   => '',
-				'name'    => '',
-				'parent'  => '',
-				'defaults' => array(),
-			) );
-
-			$this->builder->register_control(
-				array(
-					$args['name'] . '-switch' => array(
-						'type'   => 'switcher',
-						'title'  => sprintf( esc_html__( '%s typography', 'jet-menu' ), $args['label'] ),
-						'value'  => $this->get_option( $args['name'] . '-switch', 'false' ),
-						'toggle' => array(
-							'true_toggle'  => 'On',
-							'false_toggle' => 'Off',
-							'true_slave'   => $args['name'] . '-show',
-						),
-						'parent' => $args['parent'],
-					),
-					$args['name'] . '-font-size' => array(
-						'type'       => 'slider',
-						'max_value'  => 70,
-						'min_value'  => 8,
-						'value'      => $this->get_option(
-							$args['name'] . '-font-size',
-							isset( $args['defaults']['font-size'] ) ? $args['defaults']['font-size'] : false
-						),
-						'step_value' => 1,
-						'title'      => sprintf( esc_html__( '%s font size', 'jet-menu' ), $args['label'] ),
-						'parent'     => $args['parent'],
-						'master'     => $args['name'] . '-show',
-					),
-					$args['name'] . '-font-family' => array(
-						'type'             => 'select',
-						'parent'           => $args['parent'],
-						'title'            => sprintf( esc_html__( '%s font family', 'jet-menu' ), $args['label'] ),
-						'filter'           => true,
-						'value'            => $this->get_option(
-							$args['name'] . '-font-family',
-							isset( $args['defaults']['font-family'] ) ? $args['defaults']['font-family'] : false
-						),
-						'options'          => $this->get_fonts_list(),
-						'master'           => $args['name'] . '-show',
-					),
-					$args['name'] . '-font-weight' => array(
-						'type'             => 'select',
-						'parent'           => $args['parent'],
-						'title'            => sprintf( esc_html__( '%s font weight', 'jet-menu' ), $args['label'] ),
-						'value'            => $this->get_option(
-							$args['name'] . '-font-weight',
-							isset( $args['defaults']['font-weight'] ) ? $args['defaults']['font-weight'] : false
-						),
-						'options'          => array(
-							''       => esc_html__( 'Default', 'jet-menu' ),
-							'100'    => '100',
-							'200'    => '200',
-							'300'    => '300',
-							'400'    => '400',
-							'500'    => '500',
-							'600'    => '600',
-							'700'    => '700',
-							'800'    => '800',
-							'900'    => '900',
-						),
-						'master'           => $args['name'] . '-show',
-					),
-					$args['name'] . '-text-transform' => array(
-						'type'             => 'select',
-						'parent'           => $args['parent'],
-						'title'            => sprintf( esc_html__( '%s text transform', 'jet-menu' ), $args['label'] ),
-						'value'            => $this->get_option(
-							$args['name'] . '-text-transform',
-							isset( $args['defaults']['text-transform'] ) ? $args['defaults']['text-transform'] : false
-						),
-						'options'          => array(
-							''           => esc_html__( 'Default', 'jet-menu' ),
-							'uppercase'  => esc_html__( 'Uppercase', 'jet-menu' ),
-							'lowercase'  => esc_html__( 'Lowercase', 'jet-menu' ),
-							'capitalize' => esc_html__( 'Capitalize', 'jet-menu' ),
-							'none'       => esc_html__( 'Normal', 'jet-menu' ),
-						),
-						'master'           => $args['name'] . '-show',
-					),
-					$args['name'] . '-font-style' => array(
-						'type'             => 'select',
-						'parent'           => $args['parent'],
-						'title'            => sprintf( esc_html__( '%s font style', 'jet-menu' ), $args['label'] ),
-						'value'            => $this->get_option(
-							$args['name'] . '-font-style',
-							isset( $args['defaults']['font-style'] ) ? $args['defaults']['font-style'] : false
-						),
-						'options'          => array(
-							''           => esc_html__( 'Default', 'jet-menu' ),
-							'normal' => esc_html__( 'Normal', 'jet-menu' ),
-							'italic' => esc_html__( 'Italic', 'jet-menu' ),
-							'oblique' => esc_html__( 'Oblique', 'jet-menu' ),
-						),
-						'master'           => $args['name'] . '-show',
-					),
-					$args['name'] . '-line-height' => array(
-						'type'       => 'slider',
-						'max_value'  => 10,
-						'min_value'  => 0.1,
-						'value'      => $this->get_option(
-							$args['name'] . '-line-height',
-							isset( $args['defaults']['line-height'] ) ? $args['defaults']['line-height'] : false
-						),
-						'step_value' => 0.1,
-						'title'      => sprintf( esc_html__( '%s line height', 'jet-menu' ), $args['label'] ),
-						'parent'     => $args['parent'],
-						'master'     => $args['name'] . '-show',
-					),
-					$args['name'] . '-letter-spacing' => array(
-						'type'       => 'slider',
-						'max_value'  => 5,
-						'min_value'  => -5,
-						'value'      => $this->get_option(
-							$args['name'] . '-letter-spacing',
-							isset( $args['defaults']['letter-spacing'] ) ? $args['defaults']['letter-spacing'] : false
-						),
-						'step_value' => 0.1,
-						'title'      => sprintf( esc_html__( '%s letter spacing', 'jet-menu' ), $args['label'] ),
-						'parent'     => $args['parent'],
-						'master'     => $args['name'] . '-show',
-					),
-					$args['name'] . '-subset' => array(
-						'type'             => 'select',
-						'parent'           => $args['parent'],
-						'title'            => sprintf( esc_html__( '%s subset', 'jet-menu' ), $args['label'] ),
-						'value'            => $this->get_option(
-							$args['name'] . '-subset',
-							isset( $args['defaults']['subset'] ) ? $args['defaults']['subset'] : false
-						),
-						'options'          => array(
-							'latin'    => esc_html__( 'Latin', 'jet-menu' ),
-							'greek'    => esc_html__( 'Greek', 'jet-menu' ),
-							'cyrillic' => esc_html__( 'Cyrillic', 'jet-menu' ),
-						),
-						'master'           => $args['name'] . '-show',
-					),
-				)
-			);
-
-		}
-
-		/**
-		 * Background options array
-		 *
-		 * @param array $args [description]
-		 */
-		public function add_background_options( $args = array() ) {
-
-			$args = wp_parse_args( $args, array(
-				'label'    => '',
-				'name'     => '',
-				'parent'   => '',
-				'defaults' => array(),
-			) );
-
-			$this->builder->register_control(
-				array(
-					$args['name'] . '-switch' => array(
-						'type'   => 'switcher',
-						'title'  => sprintf( esc_html__( '%s background', 'jet-menu' ), $args['label'] ),
-						'value'  => $this->get_option( $args['name'] . '-switch', 'false' ),
-						'toggle' => array(
-							'true_toggle'  => 'On',
-							'false_toggle' => 'Off',
-							'true_slave'   => $args['name'] . '-show',
-						),
-						'parent' => $args['parent'],
-					),
-					$args['name'] . '-color' => array(
-						'type'        => 'colorpicker',
-						'parent'      => $args['parent'],
-						'title'       => sprintf( esc_html__( '%s background color', 'jet-menu' ), $args['label'] ),
-						'value'       => $this->get_option(
-							$args['name'] . '-color',
-							isset( $args['defaults']['color'] ) ? $args['defaults']['color'] : false
-						),
-						'alpha'       => true,
-						'master'      => $args['name'] . '-show',
-					),
-					$args['name'] . '-gradient-switch' => array(
-						'type'   => 'switcher',
-						'title'  => esc_html__( 'Gradient background', 'jet-menu' ),
-						'value'  => $this->get_option( $args['name'] . '-gradient-switch', 'false' ),
-						'toggle' => array(
-							'true_toggle'  => 'On',
-							'false_toggle' => 'Off',
-						),
-						'parent' => $args['parent'],
-						'master'      => $args['name'] . '-show',
-					),
-					$args['name'] . '-second-color' => array(
-						'type'        => 'colorpicker',
-						'parent'      => $args['parent'],
-						'title'       => sprintf( esc_html__( '%s background second color', 'jet-menu' ), $args['label'] ),
-						'value'       => $this->get_option(
-							$args['name'] . '-second-color',
-							isset( $args['defaults']['second-color'] ) ? $args['defaults']['second-color'] : false
-						),
-						'alpha'       => true,
-						'master'      => $args['name'] . '-show',
-					),
-					$args['name'] . '-direction' => array(
-						'type'             => 'select',
-						'parent'           => $args['parent'],
-						'title'            => sprintf( esc_html__( '%s background gradient direction', 'jet-menu' ), $args['label'] ),
-						'value'            => $this->get_option(
-							$args['name'] . '-direction',
-							isset( $args['defaults']['direction'] ) ? $args['defaults']['direction'] : false
-						),
-						'options'          => array(
-							'right'  => esc_html__( 'From Left to Right', 'jet-menu' ),
-							'left'   => esc_html__( 'From Right to Left', 'jet-menu' ),
-							'bottom' => esc_html__( 'From Top to Bottom', 'jet-menu' ),
-							'top'    => esc_html__( 'From Bottom to Top', 'jet-menu' ),
-						),
-						'master'           => $args['name'] . '-show',
-					),
-					$args['name'] . '-image' => array(
-						'type'           => 'media',
-						'parent'         => $args['parent'],
-						'title'          => sprintf( esc_html__( '%s background image', 'jet-menu' ), $args['label'] ),
-						'value'          => $this->get_option(
-							$args['name'] . '-image',
-							isset( $args['defaults']['image'] ) ? $args['defaults']['image'] : false
-						),
-						'multi_upload'       => false,
-						'library_type'       => 'image',
-						'upload_button_text' => esc_html__( 'Choose Image', 'jet-menu' ),
-						'class'              => '',
-						'label'              => '',
-						'master'             => $args['name'] . '-show',
-					),
-					$args['name'] . '-position' => array(
-						'type'             => 'select',
-						'parent'           => $args['parent'],
-						'title'            => sprintf( esc_html__( '%s background position', 'jet-menu' ), $args['label'] ),
-						'value'            => $this->get_option(
-							$args['name'] . '-position',
-							isset( $args['defaults']['position'] ) ? $args['defaults']['position'] : false
-						),
-						'options'          => array(
-							''              => esc_html__( 'Default', 'jet-menu' ),
-							'top left'      => esc_html__( 'Top Left', 'jet-menu' ),
-							'top center'    => esc_html__( 'Top Center', 'jet-menu' ),
-							'top right'     => esc_html__( 'Top Right', 'jet-menu' ),
-							'center left'   => esc_html__( 'Center Left', 'jet-menu' ),
-							'center center' => esc_html__( 'Center Center', 'jet-menu' ),
-							'center right'  => esc_html__( 'Center Right', 'jet-menu' ),
-							'bottom left'   => esc_html__( 'Bottom Left', 'jet-menu' ),
-							'bottom center' => esc_html__( 'Bottom Center', 'jet-menu' ),
-							'bottom right'  => esc_html__( 'Bottom Right', 'jet-menu' ),
-						),
-						'master'           => $args['name'] . '-show',
-					),
-					$args['name'] . '-attachment' => array(
-						'type'             => 'select',
-						'parent'           => $args['parent'],
-						'title'            => sprintf( esc_html__( '%s background attachment', 'jet-menu' ), $args['label'] ),
-						'value'            => $this->get_option(
-							$args['name'] . '-attachment',
-							isset( $args['defaults']['attachment'] ) ? $args['defaults']['attachment'] : false
-						),
-						'options'          => array(
-							''       => esc_html__( 'Default', 'jet-menu' ),
-							'scroll' => esc_html__( 'Scroll', 'jet-menu' ),
-							'fixed'  => esc_html__( 'Fixed', 'jet-menu' ),
-						),
-						'master'           => $args['name'] . '-show',
-					),
-					$args['name'] . '-repeat' => array(
-						'type'             => 'select',
-						'parent'           => $args['parent'],
-						'title'            => sprintf( esc_html__( '%s background repeat', 'jet-menu' ), $args['label'] ),
-						'value'            => $this->get_option(
-							$args['name'] . '-repeat',
-							isset( $args['defaults']['repeat'] ) ? $args['defaults']['repeat'] : false
-						),
-						'options'          => array(
-							''          => esc_html__( 'Default', 'jet-menu' ),
-							'no-repeat' => esc_html__( 'No Repeat', 'jet-menu' ),
-							'repeat'    => esc_html__( 'Repeat', 'jet-menu' ),
-							'repeat-x'  => esc_html__( 'Repeat X', 'jet-menu' ),
-							'repeat-y'  => esc_html__( 'Repeat Y', 'jet-menu' ),
-						),
-						'master'           => $args['name'] . '-show',
-					),
-					$args['name'] . '-size' => array(
-						'type'             => 'select',
-						'parent'           => $args['parent'],
-						'title'            => sprintf( esc_html__( '%s background size', 'jet-menu' ), $args['label'] ),
-						'value'            => $this->get_option(
-							$args['name'] . '-size',
-							isset( $args['defaults']['size'] ) ? $args['defaults']['size'] : false
-						),
-						'options'          => array(
-							''        => esc_html__( 'Default', 'jet-menu' ),
-							'auto'    => esc_html__( 'Auto', 'jet-menu' ),
-							'cover'   => esc_html__( 'Cover', 'jet-menu' ),
-							'contain' => esc_html__( 'Contain', 'jet-menu' ),
-						),
-						'master'           => $args['name'] . '-show',
-					),
-				)
-			);
-
-		}
-
-		/**
-		 * Register border options
-		 *
-		 * @param array $args [description]
-		 */
-		public function add_border_options( $args = array() ) {
-
-			$args = wp_parse_args( $args, array(
-				'label'    => '',
-				'name'     => '',
-				'parent'   => '',
-				'defaults' => array(),
-			) );
-
-			$this->builder->register_control(
-				array(
-					$args['name'] . '-border-switch' => array(
-						'type'   => 'switcher',
-						'title'  => sprintf( esc_html__( '%s border', 'jet-menu' ), $args['label'] ),
-						'value'  => $this->get_option( $args['name'] . '-border-switch', 'false' ),
-						'toggle' => array(
-							'true_toggle'  => 'On',
-							'false_toggle' => 'Off',
-							'true_slave'   => $args['name'] . '-border-show',
-						),
-						'parent' => $args['parent'],
-					),
-					$args['name'] . '-border-style' => array(
-						'type'    => 'select',
-						'parent'  => $args['parent'],
-						'title'   => sprintf( esc_html__( '%s border style', 'jet-menu' ), $args['label'] ),
-						'value'   => $this->get_option(
-							$args['name'] . '-border-style',
-							isset( $args['defaults']['border-style'] ) ? $args['defaults']['border-style'] : false
-						),
-						'options' => array(
-							'solid'  => esc_html__( 'Solid', 'jet-menu' ),
-							'double' => esc_html__( 'Double', 'jet-menu' ),
-							'dotted' => esc_html__( 'Dotted', 'jet-menu' ),
-							'dashed' => esc_html__( 'Dashed', 'jet-menu' ),
-							'none'   => esc_html__( 'None', 'jet-menu' ),
-						),
-						'master'           => $args['name'] . '-border-show',
-					),
-					$args['name'] . '-border-width' => array(
-						'type'        => 'dimensions',
-						'parent'      => $args['parent'],
-						'title'       => sprintf( esc_html__( '%s border width', 'jet-menu' ), $args['label'] ),
-						'range'       => array(
-							'px' => array(
-								'min'  => 0,
-								'max'  => 30,
-								'step' => 1,
-							),
-						),
-						'value' => $this->get_option(
-							$args['name'] . '-border-width',
-							isset( $args['defaults']['border-width'] ) ? $args['defaults']['border-width'] : false
-						),
-						'master' => $args['name'] . '-border-show',
-					),
-					$args['name'] . '-border-color' => array(
-						'type'        => 'colorpicker',
-						'parent'      => $args['parent'],
-						'title'       => sprintf( esc_html__( '%s border color', 'jet-menu' ), $args['label'] ),
-						'value'       => $this->get_option(
-							$args['name'] . '-border-color',
-							isset( $args['defaults']['border-color'] ) ? $args['defaults']['border-color'] : false
-						),
-						'alpha'       => true,
-						'master'      => $args['name'] . '-border-show',
-					),
-				)
-			);
-
-		}
-
-		/**
-		 * Register box-shadow options
-		 *
-		 * @param array $args [description]
-		 */
-		public function add_box_shadow_options( $args = array() ) {
-
-			$args = wp_parse_args( $args, array(
-				'label'    => '',
-				'name'     => '',
-				'parent'   => '',
-				'defaults' => array(),
-			) );
-
-			$this->builder->register_control(
-				array(
-					$args['name'] . '-box-shadow-switch' => array(
-						'type'   => 'switcher',
-						'title'  => sprintf( esc_html__( '%s box shadow', 'jet-menu' ), $args['label'] ),
-						'value'  => $this->get_option( $args['name'] . '-box-shadow-switch', 'false' ),
-						'toggle' => array(
-							'true_toggle'  => 'On',
-							'false_toggle' => 'Off',
-							'true_slave'   => $args['name'] . '-box-shadow-show',
-						),
-						'parent' => $args['parent'],
-					),
-					$args['name'] . '-box-shadow-h' => array(
-						'type'       => 'slider',
-						'max_value'  => 50,
-						'min_value'  => -50,
-						'value'      => $this->get_option(
-							$args['name'] . '-box-shadow-h',
-							isset( $args['defaults']['box-shadow-h'] ) ? $args['defaults']['box-shadow-h'] : false
-						),
-						'step_value' => 1,
-						'title'      => sprintf( esc_html__( '%s - position of the horizontal shadow', 'jet-menu' ), $args['label'] ),
-						'parent'     => $args['parent'],
-						'master'     => $args['name'] . '-box-shadow-show',
-					),
-					$args['name'] . '-box-shadow-v' => array(
-						'type'       => 'slider',
-						'max_value'  => 50,
-						'min_value'  => -50,
-						'value'      => $this->get_option(
-							$args['name'] . '-box-shadow-v',
-							isset( $args['defaults']['box-shadow-v'] ) ? $args['defaults']['box-shadow-v'] : false
-						),
-						'step_value' => 1,
-						'title'      => sprintf( esc_html__( '%s - position of the vertical shadow', 'jet-menu' ), $args['label'] ),
-						'parent'     => $args['parent'],
-						'master'     => $args['name'] . '-box-shadow-show',
-					),
-					$args['name'] . '-box-shadow-blur' => array(
-						'type'       => 'slider',
-						'max_value'  => 50,
-						'min_value'  => -50,
-						'value'      => $this->get_option(
-							$args['name'] . '-box-shadow-blur',
-							isset( $args['defaults']['box-shadow-blur'] ) ? $args['defaults']['box-shadow-blur'] : false
-						),
-						'step_value' => 1,
-						'title'      => sprintf( esc_html__( '%s - shadow blur distance', 'jet-menu' ), $args['label'] ),
-						'parent'     => $args['parent'],
-						'master'     => $args['name'] . '-box-shadow-show',
-					),
-					$args['name'] . '-box-shadow-spread' => array(
-						'type'       => 'slider',
-						'max_value'  => 50,
-						'min_value'  => -50,
-						'value'      => $this->get_option(
-							$args['name'] . '-box-shadow-spread',
-							isset( $args['defaults']['box-shadow-spread'] ) ? $args['defaults']['box-shadow-spread'] : false
-						),
-						'step_value' => 1,
-						'title'      => sprintf( esc_html__( '%s - shadow size', 'jet-menu' ), $args['label'] ),
-						'parent'     => $args['parent'],
-						'master'     => $args['name'] . '-box-shadow-show',
-					),
-					$args['name'] . '-box-shadow-color' => array(
-						'type'        => 'colorpicker',
-						'parent'      => $args['parent'],
-						'title'       => sprintf( esc_html__( '%s shadow color', 'jet-menu' ), $args['label'] ),
-						'value'       => $this->get_option(
-							$args['name'] . '-box-shadow-color',
-							isset( $args['defaults']['box-shadow-color'] ) ? $args['defaults']['box-shadow-color'] : false
-						),
-						'alpha'       => true,
-						'master'      => $args['name'] . '-box-shadow-show',
-					),
-					$args['name'] . '-box-shadow-inset' => array(
-						'type'   => 'switcher',
-						'title'  => sprintf( esc_html__( '%s shadow inset', 'jet-menu' ), $args['label'] ),
-						'value'       => $this->get_option(
-							$args['name'] . '-box-shadow-color',
-							isset( $args['defaults']['box-shadow-inset'] ) ? $args['defaults']['box-shadow-inset'] : 'false'
-						),
-						'toggle' => array(
-							'true_toggle'  => 'On',
-							'false_toggle' => 'Off',
-						),
-						'parent' => $args['parent'],
-						'master' => $args['name'] . '-box-shadow-show',
-					),
-				)
-			);
-
-		}
+		private $fonts = array();
 
 		/**
 		 * Returns google fonts list.
@@ -564,7 +42,7 @@ if ( ! class_exists( 'Jet_Menu_Dynamic_CSS' ) ) {
 		public function get_fonts_list() {
 
 			if ( empty( $this->fonts ) ) {
-				$this->fonts = jet_menu()->customizer()->get_fonts();
+				$this->fonts = $this->get_fonts();
 				$this->fonts = array_merge( array( '0' => esc_html__( 'Select Font...', 'jet-menu' ) ), $this->fonts );
 			}
 
@@ -572,23 +50,173 @@ if ( ! class_exists( 'Jet_Menu_Dynamic_CSS' ) ) {
 		}
 
 		/**
+		 * Retrieve array with font-family (for select element).
+		 *
+		 * @since  1.0.0
+		 * @param  string $type Font type.
+		 * @return array
+		 */
+		public function get_fonts( $type = '' ) {
+
+			if ( ! empty( $this->fonts[ $type ] ) ) {
+				return $this->fonts[ $type ];
+			}
+
+			if ( ! empty( $this->fonts ) ) {
+				return $this->fonts;
+			}
+
+			$this->prepare_fonts( $type );
+
+			return ! empty( $type ) && isset( $this->fonts[ $type ] ) ? $this->fonts[ $type ] : $this->fonts;
+		}
+
+		/**
+		 * Prepare fonts.
+		 *
+		 * @since 1.0.0
+		 */
+		public function prepare_fonts() {
+
+			$fonts_data = $this->get_fonts_data();
+
+			foreach ( $fonts_data as $type => $file ) {
+
+				$fonts = $this->read_font_file( $file );
+
+				if ( is_array( $fonts ) ) {
+					$this->fonts = array_merge( $this->fonts, $this->satizite_font_family( $fonts ) );
+				}
+			}
+
+			/**
+			 * Filter array of prepared fonts.
+			 * You can add new fonts from here
+			 *
+			 * @var   array         $this->fonts
+			 * @param CX_Customizer $this
+			 */
+			$this->fonts = apply_filters( 'jet_menu/fonts_list', $this->fonts, $this );
+		}
+
+		/**
+		 * Retrieve array with fonts file path.
+		 *
+		 * @since  1.0.0
+		 * @return array
+		 */
+		public function get_fonts_data() {
+
+			/**
+			 * Filter array of fonts data.
+			 *
+			 * @since 1.0.0
+			 * @param array  $data Set of fonts data.
+			 * @param object $this Cherry_Customiser instance.
+			 */
+			return apply_filters( 'jet_menu/fonts_data', array(
+				'standard' => jet_menu()->plugin_path( 'assets/fonts/standard.json' ),
+				'google'   => jet_menu()->plugin_path( 'assets/fonts/google.json' ),
+			), $this );
+		}
+
+		/**
+		 * Retrieve a data from font's file.
+		 *
+		 * @since  1.0.0
+		 * @param  string $file          File path.
+		 * @return array        Fonts data.
+		 */
+		public function read_font_file( $file ) {
+
+			if ( ! file_exists( $file ) ) {
+				return false;
+			}
+
+			// Read the file.
+			ob_start();
+			include $file;
+			$json = ob_get_clean();
+
+			if ( ! $json ) {
+				return new WP_Error( 'reading_error', 'Error when reading file' );
+			}
+
+			$content = json_decode( $json, true );
+
+			return $content['items'];
+		}
+
+		/**
+		 * Retrieve a set with `font-family` ( 'foo' => 'foo' ).
+		 *
+		 * @since  1.0.0
+		 * @param  array $data All fonts data.
+		 * @return array
+		 */
+		public function satizite_font_family( $data ) {
+
+			$keys   = array_map( array( $this, '_build_keys' ), $data );
+			$values = array_map( array( $this, '_build_values' ), $data );
+
+			array_filter( $keys );
+			array_filter( $values );
+
+			return array_combine( $keys, $values );
+		}
+
+		/**
+		 * Function _build_keys.
+		 *
+		 * @since 1.0.0
+		 */
+		public function _build_keys( $item ) {
+
+			if ( empty( $item['family'] ) ) {
+				return false;
+			}
+
+			return sprintf( '%1$s, %2$s', $item['family'], $item['category'] );
+		}
+
+		/**
+		 * Function _build_values.
+		 *
+		 * @since 1.0.0
+		 */
+		public function _build_values( $item ) {
+
+			if ( empty( $item['family'] ) ) {
+				return false;
+			}
+
+			return $item['family'];
+		}
+
+		/**
 		 * Add font-related styles.
 		 */
-		public function add_fonts_styles( $wrapper = '' ) {
+		public function add_fonts_styles( $preset = '' ) {
 
-			$wrapper = ( ! empty( $wrapper ) ) ? $wrapper : '.jet-menu';
+			$preset = ( ! empty( $preset ) ) ? $preset : '';
 
 			$fonts_options = apply_filters( 'jet-menu/menu-css/fonts', array(
-				'jet-top-menu'       => '.jet-menu-item .top-level-link',
-				'jet-top-menu-desc'  => '.jet-menu-item-desc.top-level-desc',
-				'jet-sub-menu'       => '.jet-menu-item .sub-level-link',
-				'jet-sub-menu-desc'  => '.jet-menu-item-desc.sub-level-desc',
-				'jet-menu-top-badge' => '.jet-menu-item .top-level-link .jet-menu-badge__inner',
-				'jet-menu-sub-badge' => '.jet-menu-item .sub-level-link .jet-menu-badge__inner',
+				'jet-top-menu'                     => '.jet-menu .jet-menu-item .top-level-link',
+				'jet-top-menu-desc'                => '.jet-menu .jet-menu-item-desc.top-level-desc',
+				'jet-sub-menu'                     => '.jet-menu .jet-menu-item .sub-level-link',
+				'jet-sub-menu-desc'                => '.jet-menu .jet-menu-item-desc.sub-level-desc',
+				'jet-menu-top-badge'               => '.jet-menu .jet-menu-item .top-level-link .jet-menu-badge__inner',
+				'jet-menu-sub-badge'               => '.jet-menu .jet-menu-item .sub-level-link .jet-menu-badge__inner',
+				'jet-menu-mobile-toggle-text'      => '.jet-mobile-menu-single .jet-mobile-menu__toggle .jet-mobile-menu__toggle-text',
+				'jet-menu-mobile-back-text'        => '.jet-mobile-menu-single .jet-mobile-menu__container .jet-mobile-menu__back span',
+				'jet-menu-mobile-breadcrumbs-text' => '.jet-mobile-menu-single .jet-mobile-menu__container .breadcrumb-label',
+				'jet-mobile-items-label'           => '.jet-mobile-menu-single .jet-mobile-menu__item .mobile-link .jet-menu-label',
+				'jet-mobile-items-desc'            => '.jet-mobile-menu-single .jet-mobile-menu__item .mobile-link .jet-menu-desc',
+				'jet-mobile-items-badge'           => '.jet-mobile-menu-single .jet-mobile-menu__item .mobile-link .jet-menu-badge__inner',
 			) );
 
 			foreach ( $fonts_options as $font => $selector ) {
-				$this->add_single_font_styles( $font, $wrapper . ' ' . $selector );
+				$this->add_single_font_styles( $font, $preset . $selector );
 			}
 
 		}
@@ -596,26 +224,26 @@ if ( ! class_exists( 'Jet_Menu_Dynamic_CSS' ) ) {
 		/**
 		 * Add backgound styles.
 		 */
-		public function add_backgrounds( $wrapper = '' ) {
+		public function add_backgrounds( $preset = '' ) {
 
-			$wrapper = ( ! empty( $wrapper ) ) ? $wrapper : '.jet-menu';
+			$preset = ( ! empty( $preset ) ) ? $preset : '';
 
 			$bg_options = apply_filters( 'jet-menu/menu-css/backgrounds', array(
-				'jet-menu-container'        => '',
-				'jet-menu-item'             => '.jet-menu-item .top-level-link',
-				'jet-menu-item-hover'       => '.jet-menu-item:hover > .top-level-link',
-				'jet-menu-item-active'      => '.jet-menu-item.jet-current-menu-item .top-level-link',
-				'jet-menu-top-badge-bg'     => '.jet-menu-item .top-level-link .jet-menu-badge__inner',
-				'jet-menu-sub-badge-bg'     => '.jet-menu-item .sub-level-link .jet-menu-badge__inner',
-				'jet-menu-sub-panel-simple' => 'ul.jet-sub-menu',
-				'jet-menu-sub-panel-mega'   => 'div.jet-sub-mega-menu',
-				'jet-menu-sub'              => 'li.jet-sub-menu-item .sub-level-link',
-				'jet-menu-sub-hover'        => 'li.jet-sub-menu-item:hover > .sub-level-link',
-				'jet-menu-sub-active'       => 'li.jet-sub-menu-item.jet-current-menu-item .sub-level-link',
+				'jet-menu-container'        => '.jet-menu',
+				'jet-menu-item'             => '.jet-menu .jet-menu-item .top-level-link',
+				'jet-menu-item-hover'       => '.jet-menu .jet-menu-item:hover > .top-level-link',
+				'jet-menu-item-active'      => '.jet-menu .jet-menu-item.jet-current-menu-item .top-level-link',
+				'jet-menu-top-badge-bg'     => '.jet-menu .jet-menu-item .top-level-link .jet-menu-badge__inner',
+				'jet-menu-sub-badge-bg'     => '.jet-menu .jet-menu-item .sub-level-link .jet-menu-badge__inner',
+				'jet-menu-sub-panel-simple' => '.jet-menu ul.jet-sub-menu',
+				'jet-menu-sub-panel-mega'   => '.jet-menu div.jet-sub-mega-menu',
+				'jet-menu-sub'              => '.jet-menu li.jet-sub-menu-item .sub-level-link',
+				'jet-menu-sub-hover'        => '.jet-menu li.jet-sub-menu-item:hover > .sub-level-link',
+				'jet-menu-sub-active'       => '.jet-menu li.jet-sub-menu-item.jet-current-menu-item .sub-level-link',
 			) );
 
 			foreach ( $bg_options as $option => $selector ) {
-				$this->add_single_bg_styles( $option, $wrapper . ' ' . $selector );
+				$this->add_single_bg_styles( $option, $preset . $selector );
 			}
 
 		}
@@ -623,46 +251,49 @@ if ( ! class_exists( 'Jet_Menu_Dynamic_CSS' ) ) {
 		/**
 		 * Add border styles.
 		 */
-		public function add_borders( $wrapper = '' ) {
+		public function add_borders( $preset = '' ) {
 
-			$wrapper = ( ! empty( $wrapper ) ) ? $wrapper : '.jet-menu';
+			$preset = ( ! empty( $preset ) ) ? $preset : '';
 
 			$options = apply_filters( 'jet-menu/menu-css/borders', array(
-				'jet-menu-container'         => '',
-				'jet-menu-item'              => '.jet-menu-item .top-level-link',
-				'jet-menu-first-item'        => '> .jet-regular-item:first-child .top-level-link',
+				'jet-menu-container'         => '.jet-menu',
+				'jet-menu-item'              => '.jet-menu .jet-menu-item .top-level-link',
+				'jet-menu-first-item'        => '.jet-menu > .jet-regular-item:first-child .top-level-link',
 				'jet-menu-last-item'         => array(
-					'> .jet-regular-item.jet-has-roll-up:nth-last-child(2) .top-level-link',
-					'> .jet-regular-item.jet-no-roll-up:nth-last-child(1) .top-level-link',
-					'> .jet-responsive-menu-available-items:last-child .top-level-link',
+					'.jet-menu > .jet-regular-item.jet-has-roll-up:nth-last-child(2) .top-level-link',
+					'.jet-menu > .jet-regular-item.jet-no-roll-up:nth-last-child(1) .top-level-link',
+					'.jet-menu > .jet-responsive-menu-available-items:last-child .top-level-link',
 				),
-				'jet-menu-item-hover'        => '.jet-menu-item:hover > .top-level-link',
-				'jet-menu-first-item-hover'  => '> .jet-regular-item:first-child:hover > .top-level-link',
+				'jet-menu-item-hover'        => '.jet-menu .jet-menu-item:hover > .top-level-link',
+				'jet-menu-first-item-hover'  => '.jet-menu > .jet-regular-item:first-child:hover > .top-level-link',
 				'jet-menu-last-item-hover'   => array(
-					'> .jet-regular-item.jet-has-roll-up:nth-last-child(2):hover .top-level-link',
-					'> .jet-regular-item.jet-no-roll-up:nth-last-child(1):hover .top-level-link',
-					'> .jet-responsive-menu-available-items:last-child:hover .top-level-link',
+					'.jet-menu > .jet-regular-item.jet-has-roll-up:nth-last-child(2):hover .top-level-link',
+					'.jet-menu > .jet-regular-item.jet-no-roll-up:nth-last-child(1):hover .top-level-link',
+					'.jet-menu > .jet-responsive-menu-available-items:last-child:hover .top-level-link',
 				),
-				'jet-menu-item-active'       => '.jet-menu-item.jet-current-menu-item .top-level-link',
-				'jet-menu-first-item-active' => '> .jet-regular-item:first-child.jet-current-menu-item .top-level-link',
+				'jet-menu-item-active'       => '.jet-menu .jet-menu-item.jet-current-menu-item .top-level-link',
+				'jet-menu-first-item-active' => '.jet-menu > .jet-regular-item:first-child.jet-current-menu-item .top-level-link',
 				'jet-menu-last-item-active'  => array(
-					'> .jet-regular-item.jet-current-menu-item.jet-has-roll-up:nth-last-child(2) .top-level-link',
-					'> .jet-regular-item.jet-current-menu-item.jet-no-roll-up:nth-last-child(1) .top-level-link',
-					'> .jet-responsive-menu-available-items.jet-current-menu-item:last-child .top-level-link',
+					'.jet-menu > .jet-regular-item.jet-current-menu-item.jet-has-roll-up:nth-last-child(2) .top-level-link',
+					'.jet-menu > .jet-regular-item.jet-current-menu-item.jet-no-roll-up:nth-last-child(1) .top-level-link',
+					'.jet-menu > .jet-responsive-menu-available-items.jet-current-menu-item:last-child .top-level-link',
 				),
-				'jet-menu-top-badge'         => '.jet-menu-item .top-level-link .jet-menu-badge__inner',
-				'jet-menu-sub-badge'         => '.jet-menu-item .sub-level-link .jet-menu-badge__inner',
-				'jet-menu-sub-panel-simple'  => 'ul.jet-sub-menu',
-				'jet-menu-sub-panel-mega'    => 'div.jet-sub-mega-menu',
-				'jet-menu-sub'               => 'li.jet-sub-menu-item .sub-level-link',
-				'jet-menu-sub-hover'         => 'li.jet-sub-menu-item:hover > .sub-level-link',
-				'jet-menu-sub-active'        => 'li.jet-sub-menu-item.jet-current-menu-item .sub-level-link',
-				'jet-menu-sub-first'         => '.jet-sub-menu > li.jet-sub-menu-item:first-child > .sub-level-link',
-				'jet-menu-sub-first-hover'   => '.jet-sub-menu > li.jet-sub-menu-item:first-child:hover > .sub-level-link',
-				'jet-menu-sub-first-active'  => '.jet-sub-menu > li.jet-sub-menu-item.jet-current-menu-item:first-child > .sub-level-link',
-				'jet-menu-sub-last'          => '.jet-sub-menu > li.jet-sub-menu-item:last-child > .sub-level-link',
-				'jet-menu-sub-last-hover'    => '.jet-sub-menu > li.jet-sub-menu-item:last-child:hover > .sub-level-link',
-				'jet-menu-sub-last-active'   => '.jet-sub-menu > li.jet-sub-menu-item.jet-current-menu-item:last-child > .sub-level-link',
+				'jet-menu-top-badge'         => '.jet-menu .jet-menu-item .top-level-link .jet-menu-badge__inner',
+				'jet-menu-sub-badge'         => '.jet-menu .jet-menu-item .sub-level-link .jet-menu-badge__inner',
+				'jet-menu-sub-panel-simple'  => '.jet-menu ul.jet-sub-menu',
+				'jet-menu-sub-panel-mega'    => '.jet-menu div.jet-sub-mega-menu',
+				'jet-menu-sub'               => '.jet-menu li.jet-sub-menu-item .sub-level-link',
+				'jet-menu-sub-hover'         => '.jet-menu li.jet-sub-menu-item:hover > .sub-level-link',
+				'jet-menu-sub-active'        => '.jet-menu li.jet-sub-menu-item.jet-current-menu-item .sub-level-link',
+				'jet-menu-sub-first'         => '.jet-menu .jet-sub-menu > li.jet-sub-menu-item:first-child > .sub-level-link',
+				'jet-menu-sub-first-hover'   => '.jet-menu .jet-sub-menu > li.jet-sub-menu-item:first-child:hover > .sub-level-link',
+				'jet-menu-sub-first-active'  => '.jet-menu .jet-sub-menu > li.jet-sub-menu-item.jet-current-menu-item:first-child > .sub-level-link',
+				'jet-menu-sub-last'          => '.jet-menu .jet-sub-menu > li.jet-sub-menu-item:last-child > .sub-level-link',
+				'jet-menu-sub-last-hover'    => '.jet-menu .jet-sub-menu > li.jet-sub-menu-item:last-child:hover > .sub-level-link',
+				'jet-menu-sub-last-active'   => '.jet-menu .jet-sub-menu > li.jet-sub-menu-item.jet-current-menu-item:last-child > .sub-level-link',
+
+				'jet-menu-mobile-container'  => '.jet-mobile-menu-single .jet-mobile-menu__container-inner',
+				'jet-menu-mobile-toggle'     => '.jet-mobile-menu-single .jet-mobile-menu__toggle',
 			) );
 
 			foreach ( $options as $option => $selector ) {
@@ -675,14 +306,14 @@ if ( ! class_exists( 'Jet_Menu_Dynamic_CSS' ) ) {
 					foreach ( $selector as $part ) {
 						$final_selector .= sprintf(
 							'%3$s%1$s %2$s',
-							$wrapper,
+							$preset,
 							$part,
 							$delimiter
 						);
 						$delimiter = ', ';
 					}
 				} else {
-					$final_selector = $wrapper . ' ' . $selector;
+					$final_selector = $preset . $selector;
 				}
 
 				$this->add_single_border_styles( $option, $final_selector );
@@ -693,26 +324,29 @@ if ( ! class_exists( 'Jet_Menu_Dynamic_CSS' ) ) {
 		/**
 		 * Add shadows styles.
 		 */
-		public function add_shadows( $wrapper = '' ) {
+		public function add_shadows( $preset = '' ) {
 
-			$wrapper = ( ! empty( $wrapper ) ) ? $wrapper : '.jet-menu';
+			$preset = ( ! empty( $preset ) ) ? $preset : '';
 
 			$options = apply_filters( 'jet-menu/menu-css/shadows', array(
-				'jet-menu-container'        => '',
-				'jet-menu-item'             => '.jet-menu-item .top-level-link',
-				'jet-menu-item-hover'       => '.jet-menu-item:hover > .top-level-link',
-				'jet-menu-item-active'      => '.jet-menu-item.jet-current-menu-item .top-level-link',
-				'jet-menu-top-badge'        => '.jet-menu-item .top-level-link .jet-menu-badge__inner',
-				'jet-menu-sub-badge'        => '.jet-menu-item .sub-level-link .jet-menu-badge__inner',
-				'jet-menu-sub-panel-simple' => 'ul.jet-sub-menu',
-				'jet-menu-sub-panel-mega'   => 'div.jet-sub-mega-menu',
-				'jet-menu-sub'              => 'li.jet-sub-menu-item .sub-level-link',
-				'jet-menu-sub-hover'        => 'li.jet-sub-menu-item:hover > .sub-level-link',
-				'jet-menu-sub-active'       => 'li.jet-sub-menu-item.jet-current-menu-item .sub-level-link',
+				'jet-menu-container'        => '.jet-menu ',
+				'jet-menu-item'             => '.jet-menu .jet-menu-item .top-level-link',
+				'jet-menu-item-hover'       => '.jet-menu .jet-menu-item:hover > .top-level-link',
+				'jet-menu-item-active'      => '.jet-menu .jet-menu-item.jet-current-menu-item .top-level-link',
+				'jet-menu-top-badge'        => '.jet-menu .jet-menu-item .top-level-link .jet-menu-badge__inner',
+				'jet-menu-sub-badge'        => '.jet-menu .jet-menu-item .sub-level-link .jet-menu-badge__inner',
+				'jet-menu-sub-panel-simple' => '.jet-menu ul.jet-sub-menu',
+				'jet-menu-sub-panel-mega'   => '.jet-menu div.jet-sub-mega-menu',
+				'jet-menu-sub'              => '.jet-menu li.jet-sub-menu-item .sub-level-link',
+				'jet-menu-sub-hover'        => '.jet-menu li.jet-sub-menu-item:hover > .sub-level-link',
+				'jet-menu-sub-active'       => '.jet-menu li.jet-sub-menu-item.jet-current-menu-item .sub-level-link',
+
+				'jet-menu-mobile-container' => '.jet-mobile-menu-single .jet-mobile-menu__container',
+				'jet-menu-mobile-toggle'    => '.jet-mobile-menu-single .jet-mobile-menu__toggle',
 			) );
 
 			foreach ( $options as $option => $selector ) {
-				$this->add_single_shadow_styles( $option, $wrapper . ' ' . $selector );
+				$this->add_single_shadow_styles( $option, $preset . $selector );
 			}
 
 		}
@@ -742,7 +376,7 @@ if ( ! class_exists( 'Jet_Menu_Dynamic_CSS' ) ) {
 
 				$value = $this->get_option( $font . '-' . $setting );
 
-				if ( '' === $value || false === $value ) {
+				if ( '' === $value || false === $value || 'false' === $value ) {
 					continue;
 				}
 
@@ -791,7 +425,7 @@ if ( ! class_exists( 'Jet_Menu_Dynamic_CSS' ) ) {
 
 				$value = $this->get_option( $option . '-' . $setting );
 
-				if ( '' === $value || false === $value ) {
+				if ( '' === $value || false === $value || 'false' === $value ) {
 					continue;
 				}
 
@@ -832,6 +466,10 @@ if ( ! class_exists( 'Jet_Menu_Dynamic_CSS' ) ) {
 
 		}
 
+		/**
+		 * [add_dimensions_css description]
+		 * @param array $args [description]
+		 */
 		public function add_dimensions_css( $args = array() ) {
 
 			$defaults = array(
@@ -908,7 +546,7 @@ if ( ! class_exists( 'Jet_Menu_Dynamic_CSS' ) ) {
 
 				$value = $this->get_option( $option . '-' . $setting );
 
-				if ( '' === $value || false === $value ) {
+				if ( '' === $value || false === $value || 'false' === $value ) {
 					continue;
 				}
 
@@ -936,6 +574,11 @@ if ( ! class_exists( 'Jet_Menu_Dynamic_CSS' ) ) {
 
 		}
 
+		/**
+		 * [add_single_shadow_styles description]
+		 * @param [type] $option   [description]
+		 * @param [type] $selector [description]
+		 */
 		public function add_single_shadow_styles( $option, $selector ) {
 
 			$enbaled = $this->get_option( $option . '-box-shadow-switch' );
@@ -950,7 +593,7 @@ if ( ! class_exists( 'Jet_Menu_Dynamic_CSS' ) ) {
 
 				$value = $this->get_option( $option . '-' . $setting );
 
-				if ( '' === $value || false === $value ) {
+				if ( '' === $value || false === $value || 'false' === $value ) {
 					$value = 0;
 				}
 
@@ -959,7 +602,7 @@ if ( ! class_exists( 'Jet_Menu_Dynamic_CSS' ) ) {
 
 			$spread = $this->get_option( $option . '-box-shadow-spread' );
 
-			if ( '' !== $spread && false !== $spread ) {
+			if ( '' !== $spread && false !== $spread && 'false' !== $spread ) {
 				$result .= $spread . 'px ';
 			}
 
@@ -987,21 +630,21 @@ if ( ! class_exists( 'Jet_Menu_Dynamic_CSS' ) ) {
 		/**
 		 * Process position styles
 		 */
-		public function add_positions( $wrapper = '' ) {
+		public function add_positions( $preset = '' ) {
 
-			$wrapper = ( ! empty( $wrapper ) ) ? $wrapper : '.jet-menu';
+			$preset = ( ! empty( $preset ) ) ? $preset : '';
 
 			$options = apply_filters( 'jet-menu/menu-css/positions', array(
-				'jet-menu-top-icon-%s-position'  => '.jet-menu-item .top-level-link .jet-menu-icon',
-				'jet-menu-sub-icon-%s-position'  => '.jet-menu-item .sub-level-link .jet-menu-icon',
-				'jet-menu-top-badge-%s-position' => '.jet-menu-item .top-level-link .jet-menu-badge',
-				'jet-menu-sub-badge-%s-position' => '.jet-menu-item .sub-level-link .jet-menu-badge',
-				'jet-menu-top-arrow-%s-position' => '.jet-menu-item .top-level-link .jet-dropdown-arrow',
-				'jet-menu-sub-arrow-%s-position' => '.jet-menu-item .sub-level-link .jet-dropdown-arrow',
+				'jet-menu-top-icon-%s-position'  => '.jet-menu .jet-menu-item .top-level-link .jet-menu-icon',
+				'jet-menu-sub-icon-%s-position'  => '.jet-menu .jet-menu-item .sub-level-link .jet-menu-icon',
+				'jet-menu-top-badge-%s-position' => '.jet-menu .jet-menu-item .top-level-link .jet-menu-badge',
+				'jet-menu-sub-badge-%s-position' => '.jet-menu .jet-menu-item .sub-level-link .jet-menu-badge',
+				'jet-menu-top-arrow-%s-position' => '.jet-menu .jet-menu-item .top-level-link .jet-dropdown-arrow',
+				'jet-menu-sub-arrow-%s-position' => '.jet-menu .jet-menu-item .sub-level-link .jet-dropdown-arrow',
 			) );
 
 			foreach ( $options as $option => $selector ) {
-				$this->add_single_position( $option, $wrapper . ' ' . $selector );
+				$this->add_single_position( $option, $preset . $selector );
 			}
 
 		}

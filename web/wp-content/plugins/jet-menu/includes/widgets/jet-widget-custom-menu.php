@@ -40,7 +40,7 @@ class Jet_Widget_Custom_Menu extends Widget_Base {
 	 * @return string Widget icon.
 	 */
 	public function get_icon() {
-		return 'jetmenu-icon-87';
+		return 'jet-menu-icon-vertical-menu';
 	}
 
 	public function get_help_url() {
@@ -127,6 +127,7 @@ class Jet_Widget_Custom_Menu extends Widget_Base {
 				'type'    => Controls_Manager::SELECT,
 				'default' => '',
 				'options' => $this->get_available_menus(),
+				'description' => sprintf( __( 'Go to the <a href="%s" target="_blank">Menus screen</a> to manage your menus.', 'jet-menu' ), admin_url( 'nav-menus.php' ) ),
 			)
 		);
 
@@ -550,7 +551,7 @@ class Jet_Widget_Custom_Menu extends Widget_Base {
 				'label' => esc_html__( 'Normal', 'jet-menu' ),
 			)
 		);
-		
+
 		$this->add_group_control(
 			Group_Control_Background::get_type(),
 			array(
@@ -584,7 +585,7 @@ class Jet_Widget_Custom_Menu extends Widget_Base {
 				'label'     => esc_html__( 'Text Color', 'jet-menu' ),
 				'type'      => Controls_Manager::COLOR,
 				'selectors' => array(
-					'{{WRAPPER}} ' . $css_scheme['main_items_link'] . ' .jet-menu-link-text' => 'color: {{VALUE}}',
+					'{{WRAPPER}} ' . $css_scheme['main_items_link'] . ' .jet-custom-item-label.top-level-label' => 'color: {{VALUE}}',
 				),
 			)
 		);
@@ -594,7 +595,7 @@ class Jet_Widget_Custom_Menu extends Widget_Base {
 			array(
 				'name'     => 'main_items_typography',
 				'scheme'   => Scheme_Typography::TYPOGRAPHY_4,
-				'selector' => '{{WRAPPER}}  ' . $css_scheme['main_items_link'] . ' .jet-menu-link-text',
+				'selector' => '{{WRAPPER}}  ' . $css_scheme['main_items_link'] . ' .jet-custom-item-label.top-level-label',
 			)
 		);
 
@@ -719,7 +720,7 @@ class Jet_Widget_Custom_Menu extends Widget_Base {
 				'label'     => esc_html__( 'Text Color', 'jet-menu' ),
 				'type'      => Controls_Manager::COLOR,
 				'selectors' => array(
-					'{{WRAPPER}} ' . $css_scheme['main_items_link_hover'] . ' .jet-menu-link-text' => 'color: {{VALUE}}',
+					'{{WRAPPER}} ' . $css_scheme['main_items_link_hover'] . ' .jet-custom-item-label.top-level-label' => 'color: {{VALUE}}',
 					'{{WRAPPER}} ' . $css_scheme['main_items_link_hover'] . ' .jet-menu-icon:before' => 'color: {{VALUE}}',
 				),
 			)
@@ -729,7 +730,7 @@ class Jet_Widget_Custom_Menu extends Widget_Base {
 			Group_Control_Typography::get_type(),
 			array(
 				'name'     => 'main_items_hover_typography',
-				'selector' => '{{WRAPPER}} ' . $css_scheme['main_items_link_hover'] . ' .jet-menu-link-text',
+				'selector' => '{{WRAPPER}} ' . $css_scheme['main_items_link_hover'] . ' .jet-custom-item-label.top-level-label',
 			)
 		);
 
@@ -845,7 +846,7 @@ class Jet_Widget_Custom_Menu extends Widget_Base {
 				'label'     => esc_html__( 'Text Color', 'jet-menu' ),
 				'type'      => Controls_Manager::COLOR,
 				'selectors' => array(
-					'{{WRAPPER}} ' . $css_scheme['main_items_link_active'] . ' .jet-menu-link-text' => 'color: {{VALUE}}',
+					'{{WRAPPER}} ' . $css_scheme['main_items_link_active'] . ' .jet-custom-item-label.top-level-label' => 'color: {{VALUE}}',
 					'{{WRAPPER}} ' . $css_scheme['main_items_link_active'] . ' .jet-menu-icon:before' => 'color: {{VALUE}}',
 				),
 			)
@@ -855,7 +856,7 @@ class Jet_Widget_Custom_Menu extends Widget_Base {
 			Group_Control_Typography::get_type(),
 			array(
 				'name'     => 'main_items_active_typography',
-				'selector' => '{{WRAPPER}} ' . $css_scheme['main_items_link_active'] . ' .jet-menu-link-text',
+				'selector' => '{{WRAPPER}} ' . $css_scheme['main_items_link_active'] . ' .jet-custom-item-label.top-level-label',
 			)
 		);
 
@@ -951,7 +952,7 @@ class Jet_Widget_Custom_Menu extends Widget_Base {
 				'separator'    => 'before',
 			)
 		);
-		
+
 		$this->start_controls_tabs(
 			'tabs_main_first_item_style',
 			array(
@@ -960,14 +961,14 @@ class Jet_Widget_Custom_Menu extends Widget_Base {
 				),
 			)
 			);
-		
+
 		$this->start_controls_tab(
 			'tab_main_first_item_normal',
 			array(
 				'label' => esc_html__( 'Normal', 'jet-menu' ),
 			)
 		);
-		
+
 		$this->add_group_control(
 			Group_Control_Background::get_type(),
 			array(
@@ -988,7 +989,7 @@ class Jet_Widget_Custom_Menu extends Widget_Base {
 				),
 			)
 		);
-		
+
 		$this->add_responsive_control(
 			'main_first_item_border_radius',
 			array(
@@ -1000,7 +1001,7 @@ class Jet_Widget_Custom_Menu extends Widget_Base {
 				),
 			)
 		);
-		
+
 		$this->add_group_control(
 			Group_Control_Border::get_type(),
 			array(
@@ -1011,16 +1012,16 @@ class Jet_Widget_Custom_Menu extends Widget_Base {
 				'selector'    => '{{WRAPPER}} ' . $css_scheme['main_items'] . ':first-child > a',
 			)
 		);
-		
+
 		$this->end_controls_tab();
-		
+
 		$this->start_controls_tab(
 			'tab_main_first_item_hover',
 			array(
 				'label' => esc_html__( 'Hover', 'jet-menu' ),
 			)
 		);
-		
+
 		$this->add_group_control(
 			Group_Control_Background::get_type(),
 			array(
@@ -1041,7 +1042,7 @@ class Jet_Widget_Custom_Menu extends Widget_Base {
 				),
 			)
 		);
-		
+
 		$this->add_responsive_control(
 			'main_first_item_hover_border_radius',
 			array(
@@ -1053,7 +1054,7 @@ class Jet_Widget_Custom_Menu extends Widget_Base {
 				),
 			)
 		);
-		
+
 		$this->add_group_control(
 			Group_Control_Border::get_type(),
 			array(
@@ -1064,16 +1065,16 @@ class Jet_Widget_Custom_Menu extends Widget_Base {
 				'selector'    => '{{WRAPPER}} ' . $css_scheme['main_items_hover'] . ':first-child > a',
 			)
 		);
-		
+
 		$this->end_controls_tab();
-		
+
 		$this->start_controls_tab(
 			'tab_main_first_item_active',
 			array(
 				'label' => esc_html__( 'Active', 'jet-menu' ),
 			)
 		);
-		
+
 		$this->add_group_control(
 			Group_Control_Background::get_type(),
 			array(
@@ -1094,7 +1095,7 @@ class Jet_Widget_Custom_Menu extends Widget_Base {
 				),
 			)
 		);
-		
+
 		$this->add_responsive_control(
 			'main_first_item_active_border_radius',
 			array(
@@ -1106,7 +1107,7 @@ class Jet_Widget_Custom_Menu extends Widget_Base {
 				),
 			)
 		);
-		
+
 		$this->add_group_control(
 			Group_Control_Border::get_type(),
 			array(
@@ -1117,9 +1118,9 @@ class Jet_Widget_Custom_Menu extends Widget_Base {
 				'selector'    => '{{WRAPPER}} ' . $css_scheme['main_items_active'] . ':first-child > a',
 			)
 		);
-		
+
 		$this->end_controls_tab();
-		
+
 		$this->end_controls_tabs();
 
 		$this->add_control(
@@ -1133,7 +1134,7 @@ class Jet_Widget_Custom_Menu extends Widget_Base {
 				'default'      => 'false',
 			)
 		);
-		
+
 		$this->start_controls_tabs(
 			'tabs_main_last_item_style',
 			array(
@@ -1142,14 +1143,14 @@ class Jet_Widget_Custom_Menu extends Widget_Base {
 				),
 			)
 		);
-		
+
 		$this->start_controls_tab(
 			'tab_main_last_item_normal',
 			array(
 				'label' => esc_html__( 'Normal', 'jet-menu' ),
 			)
 		);
-		
+
 		$this->add_group_control(
 			Group_Control_Background::get_type(),
 			array(
@@ -1170,7 +1171,7 @@ class Jet_Widget_Custom_Menu extends Widget_Base {
 				),
 			)
 		);
-		
+
 		$this->add_responsive_control(
 			'main_last_item_border_radius',
 			array(
@@ -1182,7 +1183,7 @@ class Jet_Widget_Custom_Menu extends Widget_Base {
 				),
 			)
 		);
-		
+
 		$this->add_group_control(
 			Group_Control_Border::get_type(),
 			array(
@@ -1193,16 +1194,16 @@ class Jet_Widget_Custom_Menu extends Widget_Base {
 				'selector'    => '{{WRAPPER}} ' . $css_scheme['main_items'] . ':last-child > a',
 			)
 		);
-		
+
 		$this->end_controls_tab();
-		
+
 		$this->start_controls_tab(
 			'tab_main_last_item_hover',
 			array(
 				'label' => esc_html__( 'Hover', 'jet-menu' ),
 			)
 		);
-		
+
 		$this->add_group_control(
 			Group_Control_Background::get_type(),
 			array(
@@ -1223,7 +1224,7 @@ class Jet_Widget_Custom_Menu extends Widget_Base {
 				),
 			)
 		);
-		
+
 		$this->add_responsive_control(
 			'main_last_item_hover_border_radius',
 			array(
@@ -1235,7 +1236,7 @@ class Jet_Widget_Custom_Menu extends Widget_Base {
 				),
 			)
 		);
-		
+
 		$this->add_group_control(
 			Group_Control_Border::get_type(),
 			array(
@@ -1246,16 +1247,16 @@ class Jet_Widget_Custom_Menu extends Widget_Base {
 				'selector'    => '{{WRAPPER}} ' . $css_scheme['main_items_hover'] . ':last-child > a',
 			)
 		);
-		
+
 		$this->end_controls_tab();
-		
+
 		$this->start_controls_tab(
 			'tab_main_last_item_active',
 			array(
 				'label' => esc_html__( 'Active', 'jet-menu' ),
 			)
 		);
-		
+
 		$this->add_group_control(
 			Group_Control_Background::get_type(),
 			array(
@@ -1276,7 +1277,7 @@ class Jet_Widget_Custom_Menu extends Widget_Base {
 				),
 			)
 		);
-		
+
 		$this->add_responsive_control(
 			'main_last_item_active_border_radius',
 			array(
@@ -1288,7 +1289,7 @@ class Jet_Widget_Custom_Menu extends Widget_Base {
 				),
 			)
 		);
-		
+
 		$this->add_group_control(
 			Group_Control_Border::get_type(),
 			array(
@@ -1299,9 +1300,9 @@ class Jet_Widget_Custom_Menu extends Widget_Base {
 				'selector'    => '{{WRAPPER}} ' . $css_scheme['main_items_active'] . ':last-child > a',
 			)
 		);
-		
+
 		$this->end_controls_tab();
-		
+
 		$this->end_controls_tabs();
 
 		$this->end_controls_section();
@@ -1946,6 +1947,8 @@ class Jet_Widget_Custom_Menu extends Widget_Base {
 				'selectors'  => array(
 					'{{WRAPPER}} ' . $css_scheme['icon'] . ':before' => 'font-size: {{SIZE}}{{UNIT}}',
 					'{{WRAPPER}} ' . $css_scheme['icon_sub'] . ':before' => 'font-size: {{SIZE}}{{UNIT}}',
+					'{{WRAPPER}} ' . $css_scheme['icon'] . ' svg' => 'width: {{SIZE}}{{UNIT}}',
+					'{{WRAPPER}} ' . $css_scheme['icon_sub'] . ' svg' => 'width: {{SIZE}}{{UNIT}}',
 				),
 				'separator' => 'before'
 			)
@@ -2499,9 +2502,9 @@ class Jet_Widget_Custom_Menu extends Widget_Base {
 
 		if ( $this->is_css_required() ) {
 			$dynamic_css = jet_menu()->dynamic_css();
-			add_filter( 'cherry_dynamic_css_collector_localize_object', array( $this, 'fix_preview_css' ) );
-			$dynamic_css::$collector->print_style();
-			remove_filter( 'cherry_dynamic_css_collector_localize_object', array( $this, 'fix_preview_css' ) );
+			add_filter( 'cx_dynamic_css/collector/localize_object', array( $this, 'fix_preview_css' ) );
+			$dynamic_css->collector->print_style();
+			remove_filter( 'cx_dynamic_css/collector/localize_object', array( $this, 'fix_preview_css' ) );
 		}
 
 	}

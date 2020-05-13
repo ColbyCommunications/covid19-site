@@ -260,12 +260,19 @@ class Jet_Menu_Main_Walker extends Walker_Nav_Menu {
 		$item_output .= '<a'. $attributes .'>';
 
 		$icon  = '';
+		$icon_type = isset( $settings['menu_icon_type'] ) ? $settings['menu_icon_type'] : 'icon';
 		$desc  = '';
 		$badge = '';
 		$arrow = '';
 
-		if ( ! empty( $settings['menu_icon'] ) ) {
-			$icon = jet_menu_tools()->get_icon_html( $settings['menu_icon'] );
+		switch ( $icon_type ) {
+			case 'icon':
+				$icon = ! empty( $settings['menu_icon'] ) ? jet_menu_tools()->get_icon_html( $settings['menu_icon'] ) : '';
+			break;
+
+			case 'svg':
+				$icon = ! empty( $settings['menu_svg'] ) ? jet_menu_tools()->get_svg_html( $settings['menu_svg'] ) : '';
+			break;
 		}
 
 		if ( ! empty( $item->description ) ) {
@@ -332,16 +339,28 @@ class Jet_Menu_Main_Walker extends Walker_Nav_Menu {
 
 			$content = '';
 
-			do_action( 'jet-menu/mega-sub-menu/before-render', $item->ID );
+			$ajax_loading = jet_menu_option_page()->get_option( 'jet-menu-mega-ajax-loading', false );
 
-			if ( class_exists( 'Elementor\Plugin' ) ) {
-				$elementor = Elementor\Plugin::instance();
-				$content   = $elementor->frontend->get_builder_content_for_display( $mega_item );
+			if ( ! filter_var( $ajax_loading, FILTER_VALIDATE_BOOLEAN ) ) {
+				do_action( 'jet-menu/mega-sub-menu/before-render', $item->ID );
+
+				if ( class_exists( 'Elementor\Plugin' ) ) {
+					$elementor = Elementor\Plugin::instance();
+					$content   = $elementor->frontend->get_builder_content_for_display( $mega_item );
+				}
+
+				$content = do_shortcode( $content );
+
+				do_action( 'jet-menu/mega-sub-menu/after-render', $item->ID );
+
+			} else {
+
+				ob_start();
+				include jet_menu()->get_template( 'public/mega-content-loader.php' );
+				$content = ob_get_clean();
 			}
 
-			do_action( 'jet-menu/mega-sub-menu/after-render', $item->ID );
-
-			$item_output .= sprintf( '<div class="jet-sub-mega-menu">%s</div>', do_shortcode( $content ) );
+			$item_output .= sprintf( '<div class="jet-sub-mega-menu" data-template-id="%s">%s</div>', $mega_item, $content );
 
 		}
 
@@ -467,7 +486,7 @@ class Jet_Menu_Main_Walker extends Walker_Nav_Menu {
 	public function get_settings( $item_id = 0 ) {
 
 		if ( null === $this->item_settings ) {
-			$this->item_settings = jet_menu_settings_item()->get_settings( $item_id );
+			$this->item_settings = jet_menu_settings_nav()->get_item_settings( $item_id );
 		}
 
 		return $this->item_settings;

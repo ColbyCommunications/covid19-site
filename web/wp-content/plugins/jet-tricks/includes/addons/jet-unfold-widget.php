@@ -239,14 +239,51 @@ class Jet_Unfold_Widget extends Jet_Tricks_Base {
 		);
 
 		$this->add_control(
+			'content_type',
+			array(
+				'label'   => esc_html__( 'Content Type', 'jet-tricks' ),
+				'type'    => Controls_Manager::CHOOSE,
+				'default' => 'editor',
+				'toggle'  => false,
+				'options' => array(
+					'editor' => array(
+						'title' => esc_html__( 'Editor', 'jet-tricks' ),
+						'icon'  => 'fas fa-text-width',
+					),
+					'template' => array(
+						'title' => esc_html__( 'Template', 'jet-tricks' ),
+						'icon'  => 'fas fa-file',
+					),
+				),
+			)
+		);
+
+		$this->add_control(
 			'editor',
 			array(
-				'label'   => '',
-				'type'    => Controls_Manager::WYSIWYG,
-				'dynamic' => array(
+				'label'     => '',
+				'type'      => Controls_Manager::WYSIWYG,
+				'dynamic'   => array(
 					'active' => true,
 				),
-				'default'  => esc_html__( 'I am text block. Click edit button to change this text. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut elit tellus, luctus nec ullamcorper mattis, pulvinar dapibus leo. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut elit tellus, luctus nec ullamcorper mattis, pulvinar dapibus leo. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut elit tellus, luctus nec ullamcorper mattis, pulvinar dapibus leo. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut elit tellus, luctus nec ullamcorper mattis, pulvinar dapibus leo. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut elit tellus, luctus nec ullamcorper mattis, pulvinar dapibus leo.', 'jet-tricks' ),
+				'default'   => esc_html__( 'I am text block. Click edit button to change this text. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut elit tellus, luctus nec ullamcorper mattis, pulvinar dapibus leo. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut elit tellus, luctus nec ullamcorper mattis, pulvinar dapibus leo. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut elit tellus, luctus nec ullamcorper mattis, pulvinar dapibus leo. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut elit tellus, luctus nec ullamcorper mattis, pulvinar dapibus leo. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut elit tellus, luctus nec ullamcorper mattis, pulvinar dapibus leo.', 'jet-tricks' ),
+				'condition' => array(
+					'content_type' => 'editor',
+				),
+			)
+		);
+
+		$this->add_control(
+			'template_id',
+			array(
+				'label'       => esc_html__( 'Choose Template', 'jet-tricks' ),
+				'label_block' => 'true',
+				'type'        => Controls_Manager::SELECT,
+				'default'     => '',
+				'options'     => $this->get_elementor_templates_options(),
+				'condition'   => array(
+					'content_type' => 'template',
+				),
 			)
 		);
 
@@ -267,16 +304,16 @@ class Jet_Unfold_Widget extends Jet_Tricks_Base {
 				'default' => 'center',
 				'options' => array(
 					'flex-start'    => array(
-						'title' => esc_html__( 'Left', 'jet-tricks' ),
-						'icon'  => 'eicon-h-align-left',
+						'title' => esc_html__( 'Start', 'jet-tricks' ),
+						'icon'  => ! is_rtl() ? 'eicon-h-align-left' : 'eicon-h-align-right',
 					),
 					'center' => array(
 						'title' => esc_html__( 'Center', 'jet-tricks' ),
 						'icon'  => 'eicon-h-align-center',
 					),
 					'flex-end' => array(
-						'title' => esc_html__( 'Right', 'jet-tricks' ),
-						'icon'  => 'eicon-h-align-right',
+						'title' => esc_html__( 'End', 'jet-tricks' ),
+						'icon'  => ! is_rtl() ? 'eicon-h-align-right' : 'eicon-h-align-left',
 					),
 				),
 				'selectors'  => array(
@@ -295,14 +332,18 @@ class Jet_Unfold_Widget extends Jet_Tricks_Base {
 		);
 
 		$this->add_control(
-			'button_fold_icon',
+			$this->__new_icon_prefix . 'button_fold_icon',
 			array(
-				'label'       => esc_html__( 'Fold Icon', 'jet-tricks' ),
-				'type'        => Controls_Manager::ICON,
-				'label_block' => true,
-				'file'        => '',
-				'default'     => 'fa fa-chevron-down',
-				'render_type' => 'template',
+				'label'            => esc_html__( 'Fold Icon', 'jet-tricks' ),
+				'type'             => Controls_Manager::ICONS,
+				'label_block'      => false,
+				'skin'             => 'inline',
+				'fa4compatibility' => 'button_fold_icon',
+				'default'          => array(
+					'value'   => 'fas fa-chevron-down',
+					'library' => 'fa-solid',
+				),
+				'render_type'      => 'template',
 			)
 		);
 
@@ -325,14 +366,18 @@ class Jet_Unfold_Widget extends Jet_Tricks_Base {
 		);
 
 		$this->add_control(
-			'button_unfold_icon',
+			$this->__new_icon_prefix . 'button_unfold_icon',
 			array(
-				'label'       => esc_html__( 'Unfold Icon', 'jet-tricks' ),
-				'type'        => Controls_Manager::ICON,
-				'label_block' => true,
-				'file'        => '',
-				'default'     => 'fa fa-chevron-up',
-				'render_type' => 'template',
+				'label'            => esc_html__( 'Unfold Icon', 'jet-tricks' ),
+				'type'             => Controls_Manager::ICONS,
+				'label_block'      => false,
+				'skin'             => 'inline',
+				'fa4compatibility' => 'button_unfold_icon',
+				'default'          => array(
+					'value'   => 'fas fa-chevron-up',
+					'library' => 'fa-solid',
+				),
+				'render_type'      => 'template',
 			)
 		);
 
@@ -846,25 +891,60 @@ class Jet_Unfold_Widget extends Jet_Tricks_Base {
 			),
 			'data-unfold-text' => $settings['button_unfold_text'],
 			'data-fold-text'   => $settings['button_fold_text'],
-			'data-fold-icon'   => $settings['button_fold_icon'],
-			'data-unfold-icon' => $settings['button_unfold_icon'],
+			'data-fold-icon'   => htmlspecialchars( $this->__get_icon( 'button_fold_icon', $settings ) ),
+			'data-unfold-icon' => htmlspecialchars( $this->__get_icon( 'button_unfold_icon', $settings ) ),
 		) );
 
-		$editor_content = $this->get_settings_for_display( 'editor' );
+		$content_type = ! empty( $settings['content_type'] ) ? $settings['content_type'] : 'editor';
 
-		$editor_content = $this->parse_text_editor( $editor_content );
+		$this->add_render_attribute( 'editor', 'class', array( 'jet-unfold__content-inner' ) );
 
-		$this->add_render_attribute( 'editor', 'class', array( 'elementor-text-editor', 'elementor-clearfix' ) );
+		switch ( $content_type ) :
+			case 'editor':
+				$editor_content = $this->get_settings_for_display( 'editor' );
+				$editor_content = $this->parse_text_editor( $editor_content );
 
-		$this->add_inline_editing_attributes( 'editor', 'advanced' );
+				$this->add_render_attribute( 'editor', 'class', array( 'elementor-text-editor', 'elementor-clearfix' ) );
+				$this->add_inline_editing_attributes( 'editor', 'advanced' );
+				break;
 
-		$button_icon_html = '';
+			case 'template':
+				$template_id = $settings['template_id'];
 
-		if ( ! empty( $settings['button_unfold_icon'] ) && ! empty( $settings['button_fold_icon'] ) ) {
-			$button_icon = ! filter_var( $settings['fold'], FILTER_VALIDATE_BOOLEAN ) ? $settings['button_unfold_icon'] : $settings['button_fold_icon'];
+				if ( '' !== $template_id ) {
 
-			$button_icon_html = sprintf( '<span class="jet-unfold__button-icon"><i class="%1$s"></i></span>', $button_icon );
-		}
+					// for multi-language plugins
+					$template_id = apply_filters( 'jet-tricks/widgets/template_id', $template_id, $this );
+
+					$editor_content = jet_tricks()->elementor()->frontend->get_builder_content_for_display( $template_id );
+
+					if ( jet_tricks()->elementor()->editor->is_edit_mode() ) {
+						$edit_url = add_query_arg(
+							array(
+								'elementor' => '',
+							),
+							get_permalink( $template_id )
+						);
+
+						$edit_link = sprintf(
+							'<a class="jet-tricks-edit-template-link" href="%s" target="_blank"><i class="fas fa-pencil-alt"></i><span>%s</span></a>',
+							esc_url( $edit_url ),
+							esc_html__( 'Edit Template', 'jet-tricks' )
+						);
+
+						$editor_content .= $edit_link;
+					}
+				} else {
+					$editor_content = $this->no_templates_message();
+				}
+
+				break;
+
+		endswitch;
+
+		$button_icon_key  = ! filter_var( $settings['fold'], FILTER_VALIDATE_BOOLEAN ) ? 'button_unfold_icon' : 'button_fold_icon';
+		$button_icon      = $this->__get_icon( $button_icon_key, $settings );
+		$button_icon_html = sprintf( '<span class="jet-unfold__button-icon jet-tricks-icon">%s</span>', $button_icon );
 
 		$button_text_html = '';
 
@@ -893,5 +973,17 @@ class Jet_Unfold_Widget extends Jet_Tricks_Base {
 			</div>
 		</div>
 		<?php
+	}
+
+	/**
+	 * No templates message
+	 *
+	 * @return string
+	 */
+	public function no_templates_message() {
+		return sprintf(
+			'<div class="jet-tricks-no-template-message">%s</div>',
+			esc_html__( 'Template is not defined. ', 'jet-tricks' )
+		);
 	}
 }

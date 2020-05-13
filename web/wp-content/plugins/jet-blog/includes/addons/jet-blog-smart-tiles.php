@@ -11,6 +11,7 @@ use Elementor\Controls_Manager;
 use Elementor\Group_Control_Border;
 use Elementor\Group_Control_Box_Shadow;
 use Elementor\Group_Control_Typography;
+use Elementor\Modules\DynamicTags\Module as TagsModule;
 use Elementor\Repeater;
 use Elementor\Scheme_Color;
 use Elementor\Scheme_Typography;
@@ -21,8 +22,8 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 class Jet_Blog_Smart_Tiles extends Jet_Blog_Base {
 
-	public $__current_post_index = 0;
-	public $__current_posts_num  = 0;
+	public $_current_post_index = 0;
+	public $_current_posts_num  = 0;
 
 	public function get_name() {
 		return 'jet-blog-smart-tiles';
@@ -50,7 +51,7 @@ class Jet_Blog_Smart_Tiles extends Jet_Blog_Base {
 
 	protected function _register_controls() {
 
-		$layout_data       = $this->__layout_data();
+		$layout_data       = $this->_layout_data();
 		$available_layouts = array();
 		$has_rows          = array();
 
@@ -313,7 +314,7 @@ class Jet_Blog_Smart_Tiles extends Jet_Blog_Base {
 		);
 
 		$this->add_control(
-			$this->__new_icon_prefix . 'show_author_icon',
+			$this->_new_icon_prefix . 'show_author_icon',
 			array(
 				'type'             => Controls_Manager::ICONS,
 				'label'            => esc_html__( 'Author Icon', 'jet-blog' ),
@@ -347,7 +348,7 @@ class Jet_Blog_Smart_Tiles extends Jet_Blog_Base {
 		);
 
 		$this->add_control(
-			$this->__new_icon_prefix . 'show_date_icon',
+			$this->_new_icon_prefix . 'show_date_icon',
 			array(
 				'type'             => Controls_Manager::ICONS,
 				'label'            => esc_html__( 'Date Icon', 'jet-blog' ),
@@ -381,7 +382,7 @@ class Jet_Blog_Smart_Tiles extends Jet_Blog_Base {
 		);
 
 		$this->add_control(
-			$this->__new_icon_prefix . 'show_comments_icon',
+			$this->_new_icon_prefix . 'show_comments_icon',
 			array(
 				'type'             => Controls_Manager::ICONS,
 				'label'            => esc_html__( 'Comments Icon', 'jet-blog' ),
@@ -530,6 +531,12 @@ class Jet_Blog_Smart_Tiles extends Jet_Blog_Base {
 				'label'       => esc_html__( 'Set comma separated IDs list (10, 22, 19 etc.)', 'jet-blog' ),
 				'default'     => '',
 				'label_block' => true,
+				'dynamic'     => array(
+					'active'     => true,
+					'categories' => array(
+						TagsModule::POST_META_CATEGORY,
+					),
+				),
 				'condition'   => array(
 					'use_custom_query!'    => 'true',
 					'is_archive_template!' => 'yes',
@@ -560,10 +567,16 @@ class Jet_Blog_Smart_Tiles extends Jet_Blog_Base {
 		$this->add_control(
 			'post_ids',
 			array(
-				'type'      => 'text',
-				'label'     => esc_html__( 'Set comma separated IDs list (10, 22, 19 etc.)', 'jet-blog' ),
-				'default'   => '',
+				'type'        => 'text',
+				'label'       => esc_html__( 'Set comma separated IDs list (10, 22, 19 etc.)', 'jet-blog' ),
+				'default'     => '',
 				'label_block' => true,
+				'dynamic'     => array(
+					'active'     => true,
+					'categories' => array(
+						TagsModule::POST_META_CATEGORY,
+					),
+				),
 				'condition' => array(
 					'use_custom_query!'    => 'true',
 					'is_archive_template!' => 'yes',
@@ -581,6 +594,12 @@ class Jet_Blog_Smart_Tiles extends Jet_Blog_Base {
 				'description' => esc_html__( 'If this is used with query posts by ID, it will be ignored', 'jet-blog' ),
 				'label'       => esc_html__( 'Exclude posts by IDs (eg. 10, 22, 19 etc.)', 'jet-blog' ),
 				'default'     => '',
+				'dynamic'     => array(
+					'active' => true,
+					'categories' => array(
+						TagsModule::POST_META_CATEGORY,
+					),
+				),
 				'condition' => array(
 					'use_custom_query!'    => 'true',
 					'is_archive_template!' => 'yes',
@@ -784,13 +803,13 @@ class Jet_Blog_Smart_Tiles extends Jet_Blog_Base {
 			)
 		);
 
-		$this->__add_meta_controls( 'title_related', esc_html__( 'Before/After Title', 'jet-blog' ) );
+		$this->_add_meta_controls( 'title_related', esc_html__( 'Before/After Title', 'jet-blog' ) );
 
-		$this->__add_meta_controls( 'content_related', esc_html__( 'Before/After Content', 'jet-blog' ) );
+		$this->_add_meta_controls( 'content_related', esc_html__( 'Before/After Content', 'jet-blog' ) );
 
 		$this->end_controls_section();
 
-		$this->__start_controls_section(
+		$this->_start_controls_section(
 			'section_box_style',
 			array(
 				'label'      => esc_html__( 'Box', 'jet-blog' ),
@@ -799,7 +818,7 @@ class Jet_Blog_Smart_Tiles extends Jet_Blog_Base {
 			)
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'boxes_gap',
 			array(
 				'label'      => esc_html__( 'Gap Between Boxes', 'jet-blog' ),
@@ -825,7 +844,7 @@ class Jet_Blog_Smart_Tiles extends Jet_Blog_Base {
 			25
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'boxes_padding',
 			array(
 				'label'      => esc_html__( 'Padding', 'jet-blog' ),
@@ -838,7 +857,7 @@ class Jet_Blog_Smart_Tiles extends Jet_Blog_Base {
 			25
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Border::get_type(),
 			array(
 				'name'           => 'boxes_border',
@@ -849,7 +868,7 @@ class Jet_Blog_Smart_Tiles extends Jet_Blog_Base {
 			75
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'boxes_border_radius',
 			array(
 				'label'      => esc_html__( 'Border Radius', 'jet-blog' ),
@@ -862,7 +881,7 @@ class Jet_Blog_Smart_Tiles extends Jet_Blog_Base {
 			75
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Box_Shadow::get_type(),
 			array(
 				'name'     => 'boxes_box_shadow',
@@ -871,7 +890,7 @@ class Jet_Blog_Smart_Tiles extends Jet_Blog_Base {
 			100
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'boxes_overlay_styles',
 			array(
 				'label'     => esc_html__( 'Box Overlay', 'jet-blog' ),
@@ -881,9 +900,9 @@ class Jet_Blog_Smart_Tiles extends Jet_Blog_Base {
 			50
 		);
 
-		$this->__start_controls_tabs( 'tabs_overlay_style', 50 );
+		$this->_start_controls_tabs( 'tabs_overlay_style', 50 );
 
-		$this->__start_controls_tab(
+		$this->_start_controls_tab(
 			'tab_overlay_normal',
 			array(
 				'label' => esc_html__( 'Normal', 'jet-blog' ),
@@ -891,7 +910,7 @@ class Jet_Blog_Smart_Tiles extends Jet_Blog_Base {
 			50
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Background::get_type(),
 			array(
 				'name'     => 'boxes_overlay_background_normal',
@@ -900,9 +919,9 @@ class Jet_Blog_Smart_Tiles extends Jet_Blog_Base {
 			50
 		);
 
-		$this->__end_controls_tab( 50 );
+		$this->_end_controls_tab( 50 );
 
-		$this->__start_controls_tab(
+		$this->_start_controls_tab(
 			'tab_overlay_hover',
 			array(
 				'label' => esc_html__( 'Hover', 'jet-blog' ),
@@ -910,7 +929,7 @@ class Jet_Blog_Smart_Tiles extends Jet_Blog_Base {
 			50
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Background::get_type(),
 			array(
 				'name'     => 'boxes_overlay_background_hover',
@@ -919,13 +938,13 @@ class Jet_Blog_Smart_Tiles extends Jet_Blog_Base {
 			50
 		);
 
-		$this->__end_controls_tab( 50 );
+		$this->_end_controls_tab( 50 );
 
-		$this->__end_controls_tabs( 50 );
+		$this->_end_controls_tabs( 50 );
 
-		$this->__end_controls_section();
+		$this->_end_controls_section();
 
-		$this->__start_controls_section(
+		$this->_start_controls_section(
 			'section_content_style',
 			array(
 				'label'      => esc_html__( 'Content', 'jet-blog' ),
@@ -934,7 +953,7 @@ class Jet_Blog_Smart_Tiles extends Jet_Blog_Base {
 			)
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'boxes_title_styles',
 			array(
 				'label'     => esc_html__( 'Title', 'jet-blog' ),
@@ -944,7 +963,7 @@ class Jet_Blog_Smart_Tiles extends Jet_Blog_Base {
 			25
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'boxes_title_color',
 			array(
 				'label'     => esc_html__( 'Color', 'jet-blog' ),
@@ -956,7 +975,7 @@ class Jet_Blog_Smart_Tiles extends Jet_Blog_Base {
 			25
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'boxes_title_color_hover',
 			array(
 				'label'     => esc_html__( 'Color Hover', 'jet-blog' ),
@@ -968,7 +987,7 @@ class Jet_Blog_Smart_Tiles extends Jet_Blog_Base {
 			25
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Typography::get_type(),
 			array(
 				'name'     => 'boxes_title_typography',
@@ -978,7 +997,7 @@ class Jet_Blog_Smart_Tiles extends Jet_Blog_Base {
 			50
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'boxes_title_margin',
 			array(
 				'label'      => esc_html__( 'Margin', 'jet-blog' ),
@@ -991,7 +1010,7 @@ class Jet_Blog_Smart_Tiles extends Jet_Blog_Base {
 			50
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'boxes_title_alignment',
 			array(
 				'label'   => esc_html__( 'Alignment', 'jet-blog' ),
@@ -1018,7 +1037,7 @@ class Jet_Blog_Smart_Tiles extends Jet_Blog_Base {
 			50
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'boxes_main_title_styles',
 			array(
 				'label'     => esc_html__( 'Main Box Title', 'jet-blog' ),
@@ -1028,7 +1047,7 @@ class Jet_Blog_Smart_Tiles extends Jet_Blog_Base {
 			25
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'boxes_main_title_color',
 			array(
 				'label'     => esc_html__( 'Color', 'jet-blog' ),
@@ -1044,7 +1063,7 @@ class Jet_Blog_Smart_Tiles extends Jet_Blog_Base {
 			25
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'boxes_main_title_color_hover',
 			array(
 				'label'     => esc_html__( 'Color Hover', 'jet-blog' ),
@@ -1060,7 +1079,7 @@ class Jet_Blog_Smart_Tiles extends Jet_Blog_Base {
 			25
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Typography::get_type(),
 			array(
 				'name'     => 'boxes_main_title_typography',
@@ -1070,7 +1089,7 @@ class Jet_Blog_Smart_Tiles extends Jet_Blog_Base {
 			50
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'boxes_text_style',
 			array(
 				'label'     => esc_html__( 'Post Text', 'jet-blog' ),
@@ -1080,7 +1099,7 @@ class Jet_Blog_Smart_Tiles extends Jet_Blog_Base {
 			25
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'boxes_text_color',
 			array(
 				'label'     => esc_html__( 'Color', 'jet-blog' ),
@@ -1092,7 +1111,7 @@ class Jet_Blog_Smart_Tiles extends Jet_Blog_Base {
 			25
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Typography::get_type(),
 			array(
 				'name'     => 'boxes_text_typography',
@@ -1102,7 +1121,7 @@ class Jet_Blog_Smart_Tiles extends Jet_Blog_Base {
 			50
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'boxes_text_margin',
 			array(
 				'label'      => esc_html__( 'Margin', 'jet-blog' ),
@@ -1115,7 +1134,7 @@ class Jet_Blog_Smart_Tiles extends Jet_Blog_Base {
 			50
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'boxes_text_alignment',
 			array(
 				'label'   => esc_html__( 'Alignment', 'jet-blog' ),
@@ -1142,9 +1161,9 @@ class Jet_Blog_Smart_Tiles extends Jet_Blog_Base {
 			50
 		);
 
-		$this->__end_controls_section();
+		$this->_end_controls_section();
 
-		$this->__start_controls_section(
+		$this->_start_controls_section(
 			'section_meta_style',
 			array(
 				'label'      => esc_html__( 'Meta', 'jet-blog' ),
@@ -1153,7 +1172,7 @@ class Jet_Blog_Smart_Tiles extends Jet_Blog_Base {
 			)
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'meta_icon_size',
 			array(
 				'label'      => esc_html__( 'Meta Icon Size', 'jet-blog' ),
@@ -1172,7 +1191,7 @@ class Jet_Blog_Smart_Tiles extends Jet_Blog_Base {
 			50
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'meta_icon_gap',
 			array(
 				'label'      => esc_html__( 'Meta Icon Gap', 'jet-blog' ),
@@ -1192,7 +1211,7 @@ class Jet_Blog_Smart_Tiles extends Jet_Blog_Base {
 			50
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'meta_bg',
 			array(
 				'label' => esc_html__( 'Background Color', 'jet-blog' ),
@@ -1204,7 +1223,7 @@ class Jet_Blog_Smart_Tiles extends Jet_Blog_Base {
 			75
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'meta_color',
 			array(
 				'label'  => esc_html__( 'Text Color', 'jet-blog' ),
@@ -1220,7 +1239,7 @@ class Jet_Blog_Smart_Tiles extends Jet_Blog_Base {
 			25
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Typography::get_type(),
 			array(
 				'name'     => 'meta_typography',
@@ -1230,7 +1249,7 @@ class Jet_Blog_Smart_Tiles extends Jet_Blog_Base {
 			50
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'meta_padding',
 			array(
 				'label'      => esc_html__( 'Padding', 'jet-blog' ),
@@ -1243,7 +1262,7 @@ class Jet_Blog_Smart_Tiles extends Jet_Blog_Base {
 			75
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'meta_margin',
 			array(
 				'label'      => esc_html__( 'Margin', 'jet-blog' ),
@@ -1256,7 +1275,7 @@ class Jet_Blog_Smart_Tiles extends Jet_Blog_Base {
 			50
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'meta_alignment',
 			array(
 				'label'   => esc_html__( 'Alignment', 'jet-blog' ),
@@ -1283,7 +1302,7 @@ class Jet_Blog_Smart_Tiles extends Jet_Blog_Base {
 			50
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'meta_divider',
 			array(
 				'label'     => esc_html__( 'Meta Divider', 'jet-blog' ),
@@ -1296,7 +1315,7 @@ class Jet_Blog_Smart_Tiles extends Jet_Blog_Base {
 			50
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'meta_divider_gap',
 			array(
 				'label'      => esc_html__( 'Divider Gap', 'jet-blog' ),
@@ -1315,9 +1334,9 @@ class Jet_Blog_Smart_Tiles extends Jet_Blog_Base {
 			50
 		);
 
-		$this->__end_controls_section();
+		$this->_end_controls_section();
 
-		$this->__start_controls_section(
+		$this->_start_controls_section(
 			'section_terms_link_style',
 			array(
 				'label'      => esc_html__( 'Terms Links', 'jet-blog' ),
@@ -1329,16 +1348,16 @@ class Jet_Blog_Smart_Tiles extends Jet_Blog_Base {
 			)
 		);
 
-		$this->__start_controls_tabs( 'tabs_terms_link_style' );
+		$this->_start_controls_tabs( 'tabs_terms_link_style' );
 
-		$this->__start_controls_tab(
+		$this->_start_controls_tab(
 			'tab_terms_link_normal',
 			array(
 				'label' => esc_html__( 'Normal', 'jet-blog' ),
 			)
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'terms_link_bg_color',
 			array(
 				'label'     => _x( 'Color', 'Background Control', 'jet-blog' ),
@@ -1356,7 +1375,7 @@ class Jet_Blog_Smart_Tiles extends Jet_Blog_Base {
 			25
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'terms_link_color',
 			array(
 				'label' => esc_html__( 'Text Color', 'jet-blog' ),
@@ -1368,7 +1387,7 @@ class Jet_Blog_Smart_Tiles extends Jet_Blog_Base {
 			25
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Typography::get_type(),
 			array(
 				'name'     => 'terms_link_typography',
@@ -1378,7 +1397,7 @@ class Jet_Blog_Smart_Tiles extends Jet_Blog_Base {
 			50
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'terms_link_text_decor',
 			array(
 				'label'   => esc_html__( 'Text Decoration', 'jet-blog' ),
@@ -1395,7 +1414,7 @@ class Jet_Blog_Smart_Tiles extends Jet_Blog_Base {
 			100
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'terms_link_border_radius',
 			array(
 				'label'      => esc_html__( 'Border Radius', 'jet-blog' ),
@@ -1408,7 +1427,7 @@ class Jet_Blog_Smart_Tiles extends Jet_Blog_Base {
 			75
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Border::get_type(),
 			array(
 				'name'        => 'terms_link_border',
@@ -1420,7 +1439,7 @@ class Jet_Blog_Smart_Tiles extends Jet_Blog_Base {
 			75
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Box_Shadow::get_type(),
 			array(
 				'name'     => 'terms_link_box_shadow',
@@ -1429,16 +1448,16 @@ class Jet_Blog_Smart_Tiles extends Jet_Blog_Base {
 			100
 		);
 
-		$this->__end_controls_tab();
+		$this->_end_controls_tab();
 
-		$this->__start_controls_tab(
+		$this->_start_controls_tab(
 			'tab_terms_link_hover',
 			array(
 				'label' => esc_html__( 'Hover', 'jet-blog' ),
 			)
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'terms_link_hover_bg_color',
 			array(
 				'label'     => _x( 'Color', 'Background Control', 'jet-blog' ),
@@ -1456,7 +1475,7 @@ class Jet_Blog_Smart_Tiles extends Jet_Blog_Base {
 			25
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'terms_link_hover_color',
 			array(
 				'label' => esc_html__( 'Text Color', 'jet-blog' ),
@@ -1468,7 +1487,7 @@ class Jet_Blog_Smart_Tiles extends Jet_Blog_Base {
 			25
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Typography::get_type(),
 			array(
 				'name' => 'terms_link_hover_typography',
@@ -1478,7 +1497,7 @@ class Jet_Blog_Smart_Tiles extends Jet_Blog_Base {
 			50
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'terms_link_hover_text_decor',
 			array(
 				'label'   => esc_html__( 'Text Decoration', 'jet-blog' ),
@@ -1495,7 +1514,7 @@ class Jet_Blog_Smart_Tiles extends Jet_Blog_Base {
 			100
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'terms_link_hover_border_radius',
 			array(
 				'label'      => esc_html__( 'Border Radius', 'jet-blog' ),
@@ -1508,7 +1527,7 @@ class Jet_Blog_Smart_Tiles extends Jet_Blog_Base {
 			75
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Border::get_type(),
 			array(
 				'name'        => 'terms_link_hover_border',
@@ -1520,7 +1539,7 @@ class Jet_Blog_Smart_Tiles extends Jet_Blog_Base {
 			75
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Box_Shadow::get_type(),
 			array(
 				'name'     => 'terms_link_hover_box_shadow',
@@ -1529,11 +1548,11 @@ class Jet_Blog_Smart_Tiles extends Jet_Blog_Base {
 			100
 		);
 
-		$this->__end_controls_tab();
+		$this->_end_controls_tab();
 
-		$this->__end_controls_tabs();
+		$this->_end_controls_tabs();
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'terms_link_padding',
 			array(
 				'label'      => esc_html__( 'Padding', 'jet-blog' ),
@@ -1547,7 +1566,7 @@ class Jet_Blog_Smart_Tiles extends Jet_Blog_Base {
 			25
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'terms_link_margin',
 			array(
 				'label'      => esc_html__( 'Margin', 'jet-blog' ),
@@ -1560,7 +1579,7 @@ class Jet_Blog_Smart_Tiles extends Jet_Blog_Base {
 			50
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'terms_link_alignment_h',
 			array(
 				'label'   => esc_html__( 'Horizontal Alignment', 'jet-blog' ),
@@ -1579,7 +1598,7 @@ class Jet_Blog_Smart_Tiles extends Jet_Blog_Base {
 			25
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'terms_link_alignment_v',
 			array(
 				'label'   => esc_html__( 'Vertical Alignment', 'jet-blog' ),
@@ -1596,9 +1615,9 @@ class Jet_Blog_Smart_Tiles extends Jet_Blog_Base {
 			25
 		);
 
-		$this->__end_controls_section();
+		$this->_end_controls_section();
 
-		$this->__start_controls_section(
+		$this->_start_controls_section(
 			'section_pagination_arrows',
 			array(
 				'label'      => esc_html__( 'Paging Arrows', 'jet-blog' ),
@@ -1607,9 +1626,9 @@ class Jet_Blog_Smart_Tiles extends Jet_Blog_Base {
 			)
 		);
 
-		$this->__start_controls_tabs( 'tabs_arrows_style', 50 );
+		$this->_start_controls_tabs( 'tabs_arrows_style', 50 );
 
-		$this->__start_controls_tab(
+		$this->_start_controls_tab(
 			'tab_prev',
 			array(
 				'label' => esc_html__( 'Normal', 'jet-blog' ),
@@ -1617,7 +1636,7 @@ class Jet_Blog_Smart_Tiles extends Jet_Blog_Base {
 			50
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			\Jet_Blog_Group_Control_Box_Style::get_type(),
 			array(
 				'name'           => 'arrows_style',
@@ -1634,9 +1653,9 @@ class Jet_Blog_Smart_Tiles extends Jet_Blog_Base {
 			50
 		);
 
-		$this->__end_controls_tab( 50 );
+		$this->_end_controls_tab( 50 );
 
-		$this->__start_controls_tab(
+		$this->_start_controls_tab(
 			'tab_next_hover',
 			array(
 				'label' => esc_html__( 'Hover', 'jet-blog' ),
@@ -1644,7 +1663,7 @@ class Jet_Blog_Smart_Tiles extends Jet_Blog_Base {
 			50
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			\Jet_Blog_Group_Control_Box_Style::get_type(),
 			array(
 				'name'           => 'arrows_style_hover',
@@ -1661,11 +1680,11 @@ class Jet_Blog_Smart_Tiles extends Jet_Blog_Base {
 			50
 		);
 
-		$this->__end_controls_tab( 50 );
+		$this->_end_controls_tab( 50 );
 
-		$this->__end_controls_tabs( 50 );
+		$this->_end_controls_tabs( 50 );
 
-		$this->__add_control(
+		$this->_add_control(
 			'prev_arrow_position',
 			array(
 				'label'     => esc_html__( 'Prev Arrow Position', 'jet-blog' ),
@@ -1675,7 +1694,7 @@ class Jet_Blog_Smart_Tiles extends Jet_Blog_Base {
 			25
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'prev_vert_position',
 			array(
 				'label'   => esc_html__( 'Vertical Postition by', 'jet-blog' ),
@@ -1689,7 +1708,7 @@ class Jet_Blog_Smart_Tiles extends Jet_Blog_Base {
 			25
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'prev_top_position',
 			array(
 				'label'      => esc_html__( 'Top Indent', 'jet-blog' ),
@@ -1719,7 +1738,7 @@ class Jet_Blog_Smart_Tiles extends Jet_Blog_Base {
 			25
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'prev_bottom_position',
 			array(
 				'label'      => esc_html__( 'Bottom Indent', 'jet-blog' ),
@@ -1749,7 +1768,7 @@ class Jet_Blog_Smart_Tiles extends Jet_Blog_Base {
 			25
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'prev_hor_position',
 			array(
 				'label'   => esc_html__( 'Horizontal Postition by', 'jet-blog' ),
@@ -1763,7 +1782,7 @@ class Jet_Blog_Smart_Tiles extends Jet_Blog_Base {
 			25
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'prev_left_position',
 			array(
 				'label'      => esc_html__( 'Left Indent', 'jet-blog' ),
@@ -1793,7 +1812,7 @@ class Jet_Blog_Smart_Tiles extends Jet_Blog_Base {
 			25
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'prev_right_position',
 			array(
 				'label'      => esc_html__( 'Right Indent', 'jet-blog' ),
@@ -1823,7 +1842,7 @@ class Jet_Blog_Smart_Tiles extends Jet_Blog_Base {
 			25
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'next_arrow_position',
 			array(
 				'label'     => esc_html__( 'Next Arrow Position', 'jet-blog' ),
@@ -1833,7 +1852,7 @@ class Jet_Blog_Smart_Tiles extends Jet_Blog_Base {
 			25
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'next_vert_position',
 			array(
 				'label'   => esc_html__( 'Vertical Postition by', 'jet-blog' ),
@@ -1847,7 +1866,7 @@ class Jet_Blog_Smart_Tiles extends Jet_Blog_Base {
 			25
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'next_top_position',
 			array(
 				'label'      => esc_html__( 'Top Indent', 'jet-blog' ),
@@ -1877,7 +1896,7 @@ class Jet_Blog_Smart_Tiles extends Jet_Blog_Base {
 			25
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'next_bottom_position',
 			array(
 				'label'      => esc_html__( 'Bottom Indent', 'jet-blog' ),
@@ -1907,7 +1926,7 @@ class Jet_Blog_Smart_Tiles extends Jet_Blog_Base {
 			25
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'next_hor_position',
 			array(
 				'label'   => esc_html__( 'Horizontal Postition by', 'jet-blog' ),
@@ -1921,7 +1940,7 @@ class Jet_Blog_Smart_Tiles extends Jet_Blog_Base {
 			25
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'next_left_position',
 			array(
 				'label'      => esc_html__( 'Left Indent', 'jet-blog' ),
@@ -1951,7 +1970,7 @@ class Jet_Blog_Smart_Tiles extends Jet_Blog_Base {
 			25
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'next_right_position',
 			array(
 				'label'      => esc_html__( 'Right Indent', 'jet-blog' ),
@@ -1981,9 +2000,9 @@ class Jet_Blog_Smart_Tiles extends Jet_Blog_Base {
 			25
 		);
 
-		$this->__end_controls_section();
+		$this->_end_controls_section();
 
-		$this->__start_controls_section(
+		$this->_start_controls_section(
 			'section_custom_fields_styles',
 			array(
 				'label'      => esc_html__( 'Custom Fields', 'jet-blog' ),
@@ -1992,19 +2011,19 @@ class Jet_Blog_Smart_Tiles extends Jet_Blog_Base {
 			)
 		);
 
-		$this->__add_meta_style_controls(
+		$this->_add_meta_style_controls(
 			'title_related',
 			esc_html__( 'Before/After Title', 'jet-blog' ),
 			'jet-title-fields'
 		);
 
-		$this->__add_meta_style_controls(
+		$this->_add_meta_style_controls(
 			'content_related',
 			esc_html__( 'Before/After Content', 'jet-blog' ),
 			'jet-content-fields'
 		);
 
-		$this->__end_controls_section();
+		$this->_end_controls_section();
 
 	}
 
@@ -2013,7 +2032,7 @@ class Jet_Blog_Smart_Tiles extends Jet_Blog_Base {
 	 *
 	 * @return array
 	 */
-	public function __layout_data() {
+	public function _layout_data() {
 
 		return apply_filters( 'jet-blog/samrt-tiles/available_layouts', array(
 			'2-1-2'   => array(
@@ -2080,7 +2099,7 @@ class Jet_Blog_Smart_Tiles extends Jet_Blog_Base {
 	 *
 	 * @return void|null
 	 */
-	public function __get_post_bg_attr() {
+	public function _get_post_bg_attr() {
 
 		$settings = $this->get_settings();
 
@@ -2100,7 +2119,7 @@ class Jet_Blog_Smart_Tiles extends Jet_Blog_Base {
 	 *
 	 * @return void
 	 */
-	public function __slider_atts() {
+	public function _slider_atts() {
 
 		$slider_attributes                  = array( 'adaptiveHeight' => true );
 		$settings                           = $this->get_settings();
@@ -2117,28 +2136,28 @@ class Jet_Blog_Smart_Tiles extends Jet_Blog_Base {
 
 	}
 
-	public function __get_posts_num( $settings ) {
+	public function _get_posts_num( $settings ) {
 
-		if ( 0 === $this->__current_posts_num ) {
+		if ( 0 === $this->_current_posts_num ) {
 
 			$layout         = $settings['layout'];
-			$layouts_data   = $this->__layout_data();
+			$layouts_data   = $this->_layout_data();
 			$current_layout = isset( $layouts_data[ $layout ] ) ? $layouts_data[ $layout ] : false;
 
 			if ( ! $current_layout ) {
-				return $this->__current_posts_num;
+				return $this->_current_posts_num;
 			}
 
-			$this->__current_posts_num = $current_layout['num'];
+			$this->_current_posts_num = $current_layout['num'];
 
 			if ( $this->is_multirow_layout( $layout ) ) {
 				$rows = isset( $settings['rows_num'] ) ? absint( $settings['rows_num'] ) : 1;
-				$this->__current_posts_num = $this->__current_posts_num * $rows;
+				$this->_current_posts_num = $this->_current_posts_num * $rows;
 			}
 
 		}
 
-		return $this->__current_posts_num;
+		return $this->_current_posts_num;
 
 	}
 
@@ -2153,9 +2172,9 @@ class Jet_Blog_Smart_Tiles extends Jet_Blog_Base {
 		return in_array( $layout, $multirow_layouts );
 	}
 
-	public function __maybe_open_slide_wrapper( $settings ) {
+	public function _maybe_open_slide_wrapper( $settings ) {
 
-		$num = $this->__get_posts_num( $settings );
+		$num = $this->_get_posts_num( $settings );
 
 		if ( ! $num ) {
 			return;
@@ -2169,38 +2188,38 @@ class Jet_Blog_Smart_Tiles extends Jet_Blog_Base {
 			$classes[] = 'rows-' . $rows;
 		}
 
-		if ( 0 === ( $this->__current_post_index % $num ) ) {
+		if ( 0 === ( $this->_current_post_index % $num ) ) {
 			printf( '<div class="jet-smart-tiles-slide"><div class="%s">', implode( ' ', $classes ) );
 		}
 
 	}
 
-	public function __maybe_close_slide_wrapper( $settings ) {
+	public function _maybe_close_slide_wrapper( $settings ) {
 
-		$num = $this->__get_posts_num( $settings );
+		$num = $this->_get_posts_num( $settings );
 
 		if ( ! $num ) {
 			return;
 		}
 
-		if ( 0 === ( ( $this->__current_post_index + 1 ) % $num ) ) {
+		if ( 0 === ( ( $this->_current_post_index + 1 ) % $num ) ) {
 			echo '</div></div>';
-		} elseif ( $this->__current_post_index + 1 === count( $this->__query ) ) {
+		} elseif ( $this->_current_post_index + 1 === count( $this->_query ) ) {
 			echo '</div></div>';
 		}
 
-		$this->__current_post_index++;
+		$this->_current_post_index++;
 
 	}
 
-	public function __reset_data() {
+	public function _reset_data() {
 		wp_reset_postdata();
-		$this->__current_post_index = 0;
+		$this->_current_post_index = 0;
 	}
 
 	public function get_default_query_args( $settings = array() ) {
 
-		$num       = $this->__get_posts_num( $settings );
+		$num       = $this->_get_posts_num( $settings );
 		$post_type = ! empty( $settings['post_type'] ) ? $settings['post_type'] : 'post';
 		$exclude   = ! empty( $settings['exclude_ids'] ) ? $settings['exclude_ids'] : '';
 		$include   = ! empty( $settings['include_ids'] ) ? $settings['include_ids'] : '';
@@ -2299,21 +2318,21 @@ class Jet_Blog_Smart_Tiles extends Jet_Blog_Base {
 	 *
 	 * @return void
 	 */
-	public function __get_posts() {
+	public function _get_posts() {
 
-		$settings = $this->get_settings();
+		$settings = $this->get_settings_for_display();
 		$posts = array();
 
 		if ( isset( $settings['is_archive_template'] ) && 'yes' === $settings['is_archive_template'] ) {
 
 			if ( $this->_is_template_preview() ){
-				$this->__set_query( get_posts( array(
+				$this->_set_query( get_posts( array(
 					'post_type'   => 'post',
 					'numberposts' => get_option( 'posts_per_page', 10 ),
 				) ) );
 			} else {
 				global $wp_query;
-				$this->__set_query( $wp_query->posts );
+				$this->_set_query( $wp_query->posts );
 			}
 
 			return;
@@ -2340,13 +2359,13 @@ class Jet_Blog_Smart_Tiles extends Jet_Blog_Base {
 			$hide_unfilled_slide_enabled = filter_var( $hide_unfilled_slide_enabled, FILTER_VALIDATE_BOOLEAN );
 
 			if ( 'yes' === $settings['carousel_enabled'] && $hide_unfilled_slide_enabled ) {
-				$posts = $this->__remove_unfilled_slide( $query->posts, $this->__get_posts_num( $settings ) );
+				$posts = $this->_remove_unfilled_slide( $query->posts, $this->_get_posts_num( $settings ) );
 			} else {
 				$posts = $query->posts;
 			}
 		}
 
-		$this->__set_query( $posts );
+		$this->_set_query( $posts );
 
 	}
 
@@ -2357,7 +2376,7 @@ class Jet_Blog_Smart_Tiles extends Jet_Blog_Base {
 	 * @param number $posts_per_slide number of posts per slide
 	 * @return array posts
 	 */
-	public function __remove_unfilled_slide( $posts, $posts_per_slide ) {
+	public function _remove_unfilled_slide( $posts, $posts_per_slide ) {
 
 		while ( count( $posts ) % $posts_per_slide !== 0 ) {
 			array_pop( $posts );
@@ -2372,7 +2391,7 @@ class Jet_Blog_Smart_Tiles extends Jet_Blog_Base {
 	 *
 	 * @return void|null
 	 */
-	public function __post_terms() {
+	public function _post_terms() {
 
 		$settings = $this->get_settings();
 		$show     = isset( $settings['show_terms'] ) ? $settings['show_terms'] : '';
@@ -2414,7 +2433,7 @@ class Jet_Blog_Smart_Tiles extends Jet_Blog_Base {
 	 *
 	 * @return array
 	 */
-	public function __get_meta() {
+	public function _get_meta() {
 
 		$settings = $this->get_settings();
 
@@ -2435,7 +2454,7 @@ class Jet_Blog_Smart_Tiles extends Jet_Blog_Base {
 
 		foreach ( $show as $key => $setting ) {
 
-			$prefix = $this->__get_icon( $setting . '_icon', $settings, $icon_format );
+			$prefix = $this->_get_icon( $setting . '_icon', $settings, $icon_format );
 
 			$current_html = $html[ $key ];
 
@@ -2457,7 +2476,7 @@ class Jet_Blog_Smart_Tiles extends Jet_Blog_Base {
 	 * Show post excerpt.
 	 * @return [type] [description]
 	 */
-	public function __post_excerpt( $before = '', $after = '' ) {
+	public function _post_excerpt( $before = '', $after = '' ) {
 
 		$excerpt  = has_excerpt( get_the_ID() ) ? apply_filters( 'the_excerpt', get_the_excerpt() ) : '';
 		$settings = $this->get_settings();
@@ -2492,7 +2511,7 @@ class Jet_Blog_Smart_Tiles extends Jet_Blog_Base {
 	 *
 	 * @return void
 	 */
-	public function __tiles_wrap_classes() {
+	public function _tiles_wrap_classes() {
 
 		$settings = $this->get_settings();
 		$classes  = array( 'jet-smart-tiles-wrap' );
@@ -2512,7 +2531,7 @@ class Jet_Blog_Smart_Tiles extends Jet_Blog_Base {
 		echo implode( ' ', $classes );
 	}
 
-	public function __trim_title( $title ) {
+	public function _trim_title( $title ) {
 
 		$settings = $this->get_settings();
 
@@ -2539,15 +2558,15 @@ class Jet_Blog_Smart_Tiles extends Jet_Blog_Base {
 
 	protected function render() {
 
-		$this->__context = 'render';
+		$this->_context = 'render';
 
-		$this->__get_posts();
+		$this->_get_posts();
 
-		$this->__open_wrap();
-		add_filter( 'the_title', array( $this, '__trim_title' ), 999 );
-		include $this->__get_global_template( 'index' );
-		remove_filter( 'the_title', array( $this, '__trim_title' ), 999 );
-		$this->__close_wrap();
+		$this->_open_wrap();
+		add_filter( 'the_title', array( $this, '_trim_title' ), 999 );
+		include $this->_get_global_template( 'index' );
+		remove_filter( 'the_title', array( $this, '_trim_title' ), 999 );
+		$this->_close_wrap();
 	}
 
 }

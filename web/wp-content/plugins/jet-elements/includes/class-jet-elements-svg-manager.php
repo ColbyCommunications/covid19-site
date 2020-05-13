@@ -117,7 +117,7 @@ if ( ! class_exists( 'Jet_Elements_SVG_Manager' ) ) {
 		 * @return object
 		 */
 		public function svg_dimensions( $svg ){
-			$svg = simplexml_load_file( $svg );
+			$svg = function_exists( 'simplexml_load_file' ) ? simplexml_load_file( $svg ) : null;
 			$width = 0;
 			$height = 0;
 			if( $svg ){

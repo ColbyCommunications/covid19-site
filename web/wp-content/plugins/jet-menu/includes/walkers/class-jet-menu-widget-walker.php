@@ -196,7 +196,13 @@ class Jet_Menu_Widget_Walker extends Walker_Nav_Menu {
 			);
 		}
 
-		$title = sprintf( '<span class="jet-menu-link-text">%s%s</span>', $title, $desc );
+		$label = sprintf(
+			'<span class="jet-custom-item-label %s">%s</span>',
+			( 0 === $depth ) ? 'top-level-label' : 'sub-level-label',
+			$title
+		);
+
+		$title = sprintf( '<span class="jet-menu-link-text">%s%s</span>', $label, $desc );
 
 		/**
 		 * Filters a menu item's title.
@@ -213,8 +219,20 @@ class Jet_Menu_Widget_Walker extends Walker_Nav_Menu {
 		$item_output = $args->before;
 		$item_output .= '<a'. $attributes .'>';
 
-		if ( ! empty( $settings['menu_icon'] ) ) {
-			$title = jet_menu_tools()->get_icon_html( $settings['menu_icon'] ) . $title;
+		$icon_type = isset( $settings['menu_icon_type'] ) ? $settings['menu_icon_type'] : 'icon';
+
+		switch ( $icon_type ) {
+			case 'icon':
+				$item_icon = ! empty( $settings['menu_icon'] ) ? jet_menu_tools()->get_icon_html( $settings['menu_icon'] ) : '';
+			break;
+
+			case 'svg':
+				$item_icon = ! empty( $settings['menu_svg'] ) ? jet_menu_tools()->get_svg_html( $settings['menu_svg'] ) : '';
+			break;
+		}
+
+		if ( ! empty( $item_icon ) ) {
+			$title = $item_icon . $title;
 		}
 
 		if ( ! empty( $settings['menu_badge'] ) ) {
@@ -353,7 +371,7 @@ class Jet_Menu_Widget_Walker extends Walker_Nav_Menu {
 	public function get_settings( $item_id = 0 ) {
 
 		if ( null === $this->item_settings ) {
-			$this->item_settings = jet_menu_settings_item()->get_settings( $item_id );
+			$this->item_settings = jet_menu_settings_nav()->get_item_settings( $item_id );
 		}
 
 		return $this->item_settings;

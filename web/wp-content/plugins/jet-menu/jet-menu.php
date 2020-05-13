@@ -3,7 +3,7 @@
  * Plugin Name: JetMenu
  * Plugin URI: https://crocoblock.com/plugins/jetmenu/
  * Description: A top-notch mega menu addon for Elementor. Use it to create a fully responsive mega menu with drop-down items, rich in content modules, and change your menu style according to your vision without any coding knowledge!
- * Version:     1.5.15
+ * Version:     2.0.4
  * Author:      Crocoblock
  * Author URI:  https://crocoblock.com/
  * Text Domain: jet-menu
@@ -44,20 +44,11 @@ if ( ! class_exists( 'Jet_Menu' ) ) {
 		private $core = null;
 
 		/**
-		 * Holder for base plugin URL
-		 *
-		 * @since  1.0.0
-		 * @access private
-		 * @var    string
-		 */
-		private $plugin_url = null;
-
-		/**
 		 * Plugin version
 		 *
 		 * @var string
 		 */
-		private $version = '1.5.15';
+		private $version = '2.0.4';
 
 		/**
 		 * Plugin slug
@@ -65,6 +56,15 @@ if ( ! class_exists( 'Jet_Menu' ) ) {
 		 * @var string
 		 */
 		public $plugin_slug = 'jet-menu';
+
+		/**
+		 * Holder for base plugin URL
+		 *
+		 * @since  1.0.0
+		 * @access private
+		 * @var    string
+		 */
+		private $plugin_url = null;
 
 		/**
 		 * Holder for base plugin path
@@ -76,13 +76,6 @@ if ( ! class_exists( 'Jet_Menu' ) ) {
 		private $plugin_path = null;
 
 		/**
-		 * UI elements instance
-		 *
-		 * @var object
-		 */
-		private $ui = null;
-
-		/**
 		 * Dynamic CSS module instance
 		 *
 		 * @var object
@@ -90,18 +83,20 @@ if ( ! class_exists( 'Jet_Menu' ) ) {
 		private $dynamic_css = null;
 
 		/**
-		 * Customizer module instance
-		 *
-		 * @var object
-		 */
-		private $customizer = null;
-
-		/**
 		 * Dirname holder for plugins integration loader
 		 *
 		 * @var string
 		 */
 		private $dir = null;
+
+		/**
+		 * Framework component
+		 *
+		 * @since  1.0.0
+		 * @access public
+		 * @var    object
+		 */
+		public $module_loader = null;
 
 		/**
 		 * Sets up needed actions/filters for the plugin to initialize.
@@ -112,106 +107,21 @@ if ( ! class_exists( 'Jet_Menu' ) ) {
 		 */
 		public function __construct() {
 
-			// Load the installer core.
-			add_action( 'after_setup_theme', require( dirname( __FILE__ ) . '/cherry-framework/setup.php' ), 0 );
-
-			// Load the core functions/classes required by the rest of the plugin.
-			add_action( 'after_setup_theme', array( $this, 'get_core' ), 1 );
-			// Load the modules.
-			add_action( 'after_setup_theme', array( 'Cherry_Core', 'load_all_modules' ), 2 );
+			// Load the CX Loader.
+			add_action( 'after_setup_theme', array( $this, 'module_loader' ), -20 );
 
 			// Internationalize the text strings used.
 			add_action( 'init', array( $this, 'lang' ), -999 );
+
 			// Load files.
 			add_action( 'init', array( $this, 'init' ), -999 );
+
+			// Jet Dashboard Init
+			add_action( 'init', array( $this, 'jet_dashboard_init' ), -999 );
 
 			// Register activation and deactivation hook.
 			register_activation_hook( __FILE__, array( $this, 'activation' ) );
 			register_deactivation_hook( __FILE__, array( $this, 'deactivation' ) );
-		}
-
-		/**
-		 * Loads the core functions. These files are needed before loading anything else in the
-		 * plugin because they have required functions for use.
-		 *
-		 * @since  1.0.0
-		 * @access public
-		 * @return object
-		 */
-		public function get_core() {
-
-			/**
-			 * Fires before loads the plugin's core.
-			 *
-			 * @since 1.0.0
-			 */
-			do_action( 'jet-menu/core_before' );
-
-			global $chery_core_version;
-
-			if ( null !== $this->core ) {
-				return $this->core;
-			}
-
-			if ( 0 < sizeof( $chery_core_version ) ) {
-				$core_paths = array_values( $chery_core_version );
-				require_once( $core_paths[0] );
-			} else {
-				die( 'Class Cherry_Core not found' );
-			}
-
-			$this->core = new Cherry_Core( array(
-				'base_dir' => $this->plugin_path( 'cherry-framework' ),
-				'base_url' => $this->plugin_url( 'cherry-framework' ),
-				'modules'  => array(
-					'cherry-js-core' => array(
-						'autoload' => true,
-					),
-					'cherry-ui-elements' => array(
-						'autoload' => false,
-					),
-					'cherry-handler' => array(
-						'autoload' => false,
-					),
-					'cherry-interface-builder' => array(
-						'autoload' => false,
-					),
-					'cherry-utility' => array(
-						'autoload' => true,
-						'args'     => array(
-							'meta_key' => array(
-								'term_thumb' => 'cherry_terms_thumbnails'
-							),
-						)
-					),
-					'cherry-widget-factory' => array(
-						'autoload' => true,
-					),
-					'cherry-term-meta' => array(
-						'autoload' => false,
-					),
-					'cherry-post-meta' => array(
-						'autoload' => false,
-					),
-					'cherry-dynamic-css' => array(
-						'autoload' => false,
-					),
-					'cherry-customizer' => array(
-						'autoload' => false,
-					),
-					'cherry-google-fonts-loader' => array(
-						'autoload' => false,
-					),
-					'cherry5-insert-shortcode' => array(
-						'autoload' => false,
-					),
-					'cherry5-assets-loader' => array(
-						'autoload' => false,
-					),
-				),
-			) );
-
-			return $this->core;
 		}
 
 		/**
@@ -224,6 +134,26 @@ if ( ! class_exists( 'Jet_Menu' ) ) {
 		}
 
 		/**
+		 * Load the theme modules.
+		 *
+		 * @since  1.0.0
+		 */
+		public function module_loader() {
+			require $this->plugin_path( 'includes/modules/loader.php' );
+
+			$this->module_loader = new Jet_Menu_CX_Loader(
+				array(
+					$this->plugin_path( 'includes/modules/vue-ui/cherry-x-vue-ui.php' ),
+					$this->plugin_path( 'includes/modules/dynamic-css/cherry-x-dynamic-css.php' ),
+					$this->plugin_path( 'includes/modules/customizer/cherry-x-customizer.php' ),
+					$this->plugin_path( 'includes/modules/fonts-manager/cherry-x-fonts-manager.php' ),
+					$this->plugin_path( 'includes/modules/jet-dashboard/jet-dashboard.php' ),
+					$this->plugin_path( 'includes/modules/db-updater/cx-db-updater.php' ),
+				)
+			);
+		}
+
+		/**
 		 * Manually init required modules.
 		 *
 		 * @return void
@@ -232,83 +162,73 @@ if ( ! class_exists( 'Jet_Menu' ) ) {
 
 			$this->load_files();
 
-			$this->dynamic_css = $this->get_core()->init_module( 'cherry-dynamic-css' );
-			$this->customizer  = $this->get_core()->init_module( 'cherry-customizer', array( 'just_fonts' => true ) );
-
-			$this->customizer->init_fonts();
+			$this->dynamic_css = new CX_Dynamic_CSS( array(
+				'parent_handles' => array(
+					'js'  => 'jet-menu-public',
+				),
+			) );
 
 			jet_menu_assets()->init();
 			jet_menu_post_type()->init();
 			jet_menu_css_file()->init();
 			jet_menu_public_manager()->init();
 			jet_menu_integration()->init();
-
 			jet_menu_option_page();
 			jet_menu_options_presets()->init();
+			jet_menu_svg_manager()->init();
 
 			$this->include_integration_theme_file();
 			$this->include_integration_plugin_file();
 
+			//Init Rest Api
+			new \Jet_Menu\Rest_Api();
+
+			jet_menu_settings_nav()->init();
+
 			if ( is_admin() ) {
-
-				jet_menu_settings_item()->init();
-				jet_menu_settings_nav()->init();
-
-				add_action( 'admin_init', array( $this, 'init_ui' ) );
-
-				require $this->plugin_path( 'includes/updater/class-jet-menu-plugin-update.php' );
-
-				jet_menu_updater()->init( array(
-					'version' => $this->get_version(),
-					'slug'    => 'jet-menu',
-				) );
-
-				// Init plugin changelog
-				require $this->plugin_path( 'includes/updater/class-jet-menu-plugin-changelog.php' );
-
-				jet_menu_plugin_changelog()->init( array(
-					'name'     => 'JetMenu',
-					'slug'     => 'jet-menu',
-					'version'  => $this->get_version(),
-					'author'   => 'Crocoblock',
-					'homepage' => 'https://crocoblock.com/plugins/jetmenu/',
-					'banners'  => array(
-						'high' => $this->plugin_url( 'assets/admin/images/banner.png' ),
-						'low'  => $this->plugin_url( 'assets/admin/images/banner.png' ),
-					),
-				) );
 
 				if ( ! $this->has_elementor() ) {
 					$this->required_plugins_notice();
 				}
 
+				// Init DB upgrader
+				new Jet_Menu_DB_Upgrader();
 			}
-
 		}
 
 		/**
-		 * Initialize UI elements instance
-		 *
-		 * @return void
+		 * [jet_dashboard_init description]
+		 * @return [type] [description]
 		 */
-		public function init_ui() {
+		public function jet_dashboard_init() {
 
-			global $pagenow;
+			if ( is_admin() ) {
 
-			if ( 'nav-menus.php' !== $pagenow ) {
-				return;
+				$jet_dashboard_module_data = $this->module_loader->get_included_module_data( 'jet-dashboard.php' );
+
+				$jet_dashboard = \Jet_Dashboard\Dashboard::get_instance();
+
+				$jet_dashboard->init( array(
+					'path'           => $jet_dashboard_module_data['path'],
+					'url'            => $jet_dashboard_module_data['url'],
+					'cx_ui_instance' => array( $this, 'jet_dashboard_ui_instance_init' ),
+					'plugin_data'    => array(
+						'slug'    => 'jet-menu',
+						'file'    => 'jet-menu/jet-menu.php',
+						'version' => $this->get_version(),
+					),
+				) );
 			}
-
-			$this->ui = $this->get_core()->init_module( 'cherry-ui-elements' );
 		}
 
 		/**
-		 * Return UI elements instance
-		 *
-		 * @return object
+		 * [jet_dashboard_ui_instance_init description]
+		 * @return [type] [description]
 		 */
-		public function ui() {
-			return $this->ui;
+		public function jet_dashboard_ui_instance_init() {
+			$cx_ui_module_data = $this->module_loader->get_included_module_data( 'cherry-x-vue-ui.php' );
+
+			return new CX_Vue_UI( $cx_ui_module_data );
 		}
 
 		/**
@@ -318,15 +238,6 @@ if ( ! class_exists( 'Jet_Menu' ) ) {
 		 */
 		public function dynamic_css() {
 			return $this->dynamic_css;
-		}
-
-		/**
-		 * Return customizer instance
-		 *
-		 * @return object
-		 */
-		public function customizer() {
-			return $this->customizer;
 		}
 
 		/**
@@ -392,14 +303,11 @@ if ( ! class_exists( 'Jet_Menu' ) ) {
 		}
 
 		/**
-		 * Returns utility instance
-		 *
-		 * @return object
+		 * [elementor description]
+		 * @return [type] [description]
 		 */
-		public function utility() {
-			$utility = $this->get_core()->modules['cherry-utility'];
-
-			return $utility->utility;
+		public function elementor() {
+			return \Elementor\Plugin::$instance;
 		}
 
 		/**
@@ -410,7 +318,6 @@ if ( ! class_exists( 'Jet_Menu' ) ) {
 		public function load_files() {
 			require $this->plugin_path( 'includes/class-jet-menu-assets.php' );
 			require $this->plugin_path( 'includes/class-jet-menu-dynamic-css.php' );
-			require $this->plugin_path( 'includes/class-jet-menu-settings-item.php' );
 			require $this->plugin_path( 'includes/class-jet-menu-settings-nav.php' );
 			require $this->plugin_path( 'includes/class-jet-menu-post-type.php' );
 			require $this->plugin_path( 'includes/class-jet-menu-tools.php' );
@@ -421,6 +328,15 @@ if ( ! class_exists( 'Jet_Menu' ) ) {
 			require $this->plugin_path( 'includes/class-jet-menu-options-page.php' );
 			require $this->plugin_path( 'includes/class-jet-menu-options-presets.php' );
 			require $this->plugin_path( 'includes/class-jet-menu-css-file.php' );
+			require $this->plugin_path( 'includes/class-jet-menu-db-upgrader.php' );
+			require $this->plugin_path( 'includes/class-jet-menu-svg-manager.php' );
+
+			// Rest Api
+			require $this->plugin_path( 'includes/rest-api/rest-api.php' );
+			require $this->plugin_path( 'includes/rest-api/endpoints/base.php' );
+			require $this->plugin_path( 'includes/rest-api/endpoints/elementor-template.php' );
+			require $this->plugin_path( 'includes/rest-api/endpoints/plugin-settings.php' );
+			require $this->plugin_path( 'includes/rest-api/endpoints/get-menu-items.php' );
 		}
 
 		/**
@@ -590,6 +506,7 @@ if ( ! class_exists( 'Jet_Menu' ) ) {
 		 * @return object
 		 */
 		public static function get_instance() {
+
 			// If the single instance hasn't been set, set it now.
 			if ( null == self::$instance ) {
 				self::$instance = new self;

@@ -156,6 +156,18 @@ class Jet_Elements_Team_Member extends Jet_Elements_Base {
 		);
 
 		$repeater->add_control(
+			'label_visible',
+			array(
+				'label'        => esc_html__( 'Label visible', 'jet-elements' ),
+				'type'         => Controls_Manager::SWITCHER,
+				'label_on'     => esc_html__( 'Yes', 'jet-elements' ),
+				'label_off'    => esc_html__( 'No', 'jet-elements' ),
+				'return_value' => 'yes',
+				'default'      => 'false',
+			)
+		);
+
+		$repeater->add_control(
 			'social_link',
 			array(
 				'label' => esc_html__( 'Link', 'jet-elements' ),
@@ -172,14 +184,24 @@ class Jet_Elements_Team_Member extends Jet_Elements_Base {
 		);
 
 		$repeater->add_control(
-			'label_visible',
+			'social_link_target',
 			array(
-				'label'        => esc_html__( 'Label visible', 'jet-elements' ),
-				'type'         => Controls_Manager::SWITCHER,
-				'label_on'     => esc_html__( 'Yes', 'jet-elements' ),
-				'label_off'    => esc_html__( 'No', 'jet-elements' ),
-				'return_value' => 'yes',
-				'default'      => 'false',
+				'label'     => esc_html__( 'Open link in new window', 'jet-elements' ),
+				'type'      => Controls_Manager::SWITCHER,
+				'condition' => array(
+					'social_link!' => '',
+				),
+			)
+		);
+
+		$repeater->add_control(
+			'social_link_rel',
+			array(
+				'label'     => esc_html__( 'Add nofollow', 'jet-elements' ),
+				'type'      => Controls_Manager::SWITCHER,
+				'condition' => array(
+					'social_link!' => '',
+				),
 			)
 		);
 
@@ -1927,13 +1949,26 @@ class Jet_Elements_Team_Member extends Jet_Elements_Base {
 
 			if ( ! empty( $icon_data[ 'social_link' ] ) ) {
 
+				$this->add_render_attribute( 'social-link-' . $icon_data['_id'], 'href', esc_url( $icon_data[ 'social_link' ] ) );
+
+				if ( ! empty( $icon_data[ 'social_link_target' ] ) ) {
+					$this->add_render_attribute( 'social-link-' . $icon_data['_id'], 'target', '_blank' );
+				}
+
+				if ( ! empty( $icon_data[ 'social_link_rel' ] ) ) {
+					$this->add_render_attribute( 'social-link-' . $icon_data['_id'], 'rel', 'nofollow' );
+				}
+
 				$icon = $this->__get_icon( 'social_icon', '<div class="jet-team-member__socials-icon"><div class="inner"><span class="jet-elements-icon">%s</span></div></div>' );
 
 				if ( filter_var( $icon_data['label_visible'], FILTER_VALIDATE_BOOLEAN ) ) {
 					$label = sprintf( '<span class="jet-team-member__socials-label">%s</span>', $icon_data[ 'social_label' ] );
 				}
 
-				$icon_list .= sprintf( '<div class="jet-team-member__socials-item"><a href="%1$s">%2$s%3$s</a></div>', $icon_data[ 'social_link' ], $icon, $label );
+				$icon_list .= sprintf(
+					'<div class="jet-team-member__socials-item"><a %1$s>%2$s%3$s</a></div>',
+					$this->get_render_attribute_string( 'social-link-' . $icon_data['_id'] ), $icon, $label
+				);
 			}
 		}
 

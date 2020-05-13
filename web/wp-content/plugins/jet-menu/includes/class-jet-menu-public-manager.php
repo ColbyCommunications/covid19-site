@@ -28,12 +28,26 @@ if ( ! class_exists( 'Jet_Menu_Public_Manager' ) ) {
 		private static $instance = null;
 
 		/**
+		 * [$raw_menu_data description]
+		 * @var array
+		 */
+		public $raw_menu_data = array();
+
+		/**
 		 * Constructor for the class
 		 */
 		public function init() {
+
 			add_filter( 'wp_nav_menu_args', array( $this, 'set_menu_args' ), 99999 );
+
+			add_filter( 'pre_wp_nav_menu', array( $this, 'modify_pre_wp_nav_menu' ), 10, 2 );
+
 			add_filter( 'walker_nav_menu_start_el', array( $this, 'fix_double_desc' ), 0, 4 );
+
 			add_action( 'jet-menu/blank-page/after-content', array( $this, 'set_menu_canvas_bg' ) );
+
+			add_filter( 'body_class', array( $this, 'modify_body_class' ) );
+
 		}
 
 		/**
@@ -41,6 +55,18 @@ if ( ! class_exists( 'Jet_Menu_Public_Manager' ) ) {
 		 */
 		public function set_menu_canvas_bg() {
 			jet_menu_dynmic_css()->add_single_bg_styles( 'jet-menu-sub-panel-mega', 'body' );
+		}
+
+		/**
+		 * [modify_body_class description]
+		 * @param  [type] $classes [description]
+		 * @return [type]          [description]
+		 */
+		public function modify_body_class( $classes ) {
+
+			$classes[] = ! Jet_Menu_Tools::is_phone() ? 'jet-desktop-menu-active' : 'jet-mobile-menu-active';
+
+			return $classes;
 		}
 
 		/**
@@ -54,6 +80,7 @@ if ( ! class_exists( 'Jet_Menu_Public_Manager' ) ) {
 		 */
 		public function fix_double_desc( $item_output, $item, $depth, $args ) {
 			$item->description = '';
+
 			return $item_output;
 		}
 
@@ -62,6 +89,7 @@ if ( ! class_exists( 'Jet_Menu_Public_Manager' ) ) {
 		 *
 		 * @param [type] $args [description]
 		 */
+
 		public function set_menu_args( $args ) {
 
 			if ( ! isset( $args['theme_location'] ) ) {
@@ -153,6 +181,104 @@ if ( ! class_exists( 'Jet_Menu_Public_Manager' ) ) {
 		}
 
 		/**
+		 * [modify_pre_wp_nav_menu description]
+		 * @param  [type] $args [description]
+		 * @return [type]       [description]
+		 */
+		public function modify_pre_wp_nav_menu( $desktop_output, $args ) {
+
+			if ( ! isset( $args->theme_location ) ) {
+				return $desktop_output;
+			}
+
+			$location = $args->theme_location;
+
+			$menu_id = $this->get_menu_id( $location );
+
+			if ( false === $menu_id ) {
+				return $desktop_output;
+			}
+
+			$settings = jet_menu_settings_nav()->get_settings( $menu_id );
+
+			if ( ! isset( $settings[ $location ] ) ) {
+				return $desktop_output;
+			}
+
+			if ( ! isset( $settings[ $location ]['enabled'] ) || 'true' !== $settings[ $location ]['enabled'] ) {
+				return $desktop_output;
+			}
+
+			$preset = isset( $settings[ $location ]['preset'] ) ? absint( $settings[ $location ]['preset'] ) : 0;
+
+			$show_for_device = jet_menu_option_page()->get_option( 'jet-menu-show-for-device', 'both' );
+
+
+			switch ( $show_for_device ) {
+				case 'both':
+					if ( ! Jet_Menu_Tools::is_phone() ) {
+						return $desktop_output;
+					}
+				break;
+
+				case 'desktop':
+					return $desktop_output;
+				break;
+			}
+
+			$this->add_menu_advanced_styles( $menu_id );
+
+			$menu_uniqid = uniqid();
+
+			$toggle_closed_icon_html = sprintf( '<i class="fa %s"></i>', jet_menu_option_page()->get_option( 'jet-menu-mobile-toggle-icon', 'fa-bars' ) );
+			$toggle_opened_icon_html = sprintf( '<i class="fa %s"></i>', jet_menu_option_page()->get_option( 'jet-menu-mobile-toggle-opened-icon', 'fa-times' ) );
+			$container_close_icon_html = sprintf( '<i class="fa %s"></i>', jet_menu_option_page()->get_option( 'jet-menu-mobile-container-close-icon', 'fa-times' ) );
+			$container_back_icon_html = sprintf( '<i class="fa %s"></i>', jet_menu_option_page()->get_option( 'jet-menu-mobile-container-back-icon', 'fa-angle-left' ) );
+			$dropdown_icon_html = sprintf( '<i class="fa %s"></i>', jet_menu_option_page()->get_option( 'jet-mobile-items-dropdown-icon', 'fa-angle-right' ) );
+			$breadcrumb_icon_html = sprintf( '<i class="fa %s"></i>', jet_menu_option_page()->get_option( 'jet-menu-mobile-breadcrumb-icon', 'fa-angle-right' ) );
+			$use_breadcrumbs = jet_menu_option_page()->get_option( 'jet-menu-mobile-use-breadcrumb', 'true' );
+			$toggle_loader = jet_menu_option_page()->get_option( 'jet-menu-mobile-toggle-loader', 'true' );
+
+			$menu_options = array(
+				'menuUniqId'       => $menu_uniqid,
+				'menuId'           => $menu_id,
+				'mobileMenuId'     => isset( $settings[ $location ]['mobile'] ) ? intval( $settings[ $location ]['mobile'] ) : false,
+				'menuLocation'     => $location,
+				'menuLayout'       => jet_menu_option_page()->get_option( 'jet-menu-mobile-layout', 'slide-out' ),
+				'togglePosition'   => jet_menu_option_page()->get_option( 'jet-menu-mobile-toggle-position', 'default' ),
+				'menuPosition'     => jet_menu_option_page()->get_option( 'jet-menu-mobile-container-position', 'right' ),
+				'headerTemplate'   => jet_menu_option_page()->get_option( 'jet-menu-mobile-header-template', 0 ),
+				'beforeTemplate'   => jet_menu_option_page()->get_option( 'jet-menu-mobile-before-template', 0 ),
+				'afterTemplate'    => jet_menu_option_page()->get_option( 'jet-menu-mobile-after-template', 0 ),
+				'toggleClosedIcon' => $toggle_closed_icon_html ? $toggle_closed_icon_html : '',
+				'toggleOpenedIcon' => $toggle_opened_icon_html ? $toggle_opened_icon_html : '',
+				'closeIcon'        => $container_close_icon_html ? $container_close_icon_html : '',
+				'backIcon'         => $container_back_icon_html ? $container_back_icon_html : '',
+				'dropdownIcon'     => $dropdown_icon_html ? $dropdown_icon_html : '',
+				'useBreadcrumb'    => filter_var( $use_breadcrumbs, FILTER_VALIDATE_BOOLEAN ),
+				'breadcrumbIcon'   => $breadcrumb_icon_html ? $breadcrumb_icon_html : '',
+				'toggleText'       => jet_menu_option_page()->get_option( 'jet-menu-mobile-toggle-text', '' ),
+				'toggleLoader'     => filter_var( $toggle_loader, FILTER_VALIDATE_BOOLEAN ),
+				'backText'         => jet_menu_option_page()->get_option( 'jet-menu-mobile-back-text', '' ),
+				'itemIconVisible'  => jet_menu_option_page()->get_option( 'jet-mobile-items-icon-enabled', 'true' ),
+				'itemBadgeVisible' => jet_menu_option_page()->get_option( 'jet-mobile-items-badge-enabled', 'true' ),
+				'itemDescVisible'  => jet_menu_option_page()->get_option( 'jet-mobile-items-desc-enable', 'false' ),
+				'loaderColor'      => jet_menu_option_page()->get_option( 'jet-mobile-loader-color', 'false' ),
+				'subTrigger'       => jet_menu_option_page()->get_option( 'jet-menu-mobile-sub-trigger', 'item' ),
+			);
+
+			$output = sprintf(
+				'<div id="%1$s" class="jet-mobile-menu jet-mobile-menu-single %2$s" data-menu-id="%3$s" data-menu-options=\'%4$s\'><MobileMenu :menu-options="menuOptions"></MobileMenu></div>',
+				'jet-mobile-menu-' . $menu_uniqid,
+				0 !== $preset ? 'jet-preset-' . $preset : '',
+				$menu_id,
+				json_encode( $menu_options )
+			);
+
+			return $output;
+		}
+
+		/**
 		 * Add menu dynamic styles
 		 */
 		public function add_dynamic_styles( $preset = 0 ) {
@@ -164,13 +290,13 @@ if ( ! class_exists( 'Jet_Menu_Public_Manager' ) ) {
 			}
 
 			$preset_class = ( 0 !== $preset ) ? '.jet-preset-' . $preset : '';
-			$wrapper      = sprintf( '.jet-menu%1$s', $preset_class );
+			$wrapper      = $preset_class;
 
-			jet_menu_dynmic_css()->add_fonts_styles( $wrapper );
-			jet_menu_dynmic_css()->add_backgrounds( $wrapper );
-			jet_menu_dynmic_css()->add_borders( $wrapper );
-			jet_menu_dynmic_css()->add_shadows( $wrapper );
-			jet_menu_dynmic_css()->add_positions( $wrapper );
+			jet_menu_dynmic_css()->add_fonts_styles( $preset_class );
+			jet_menu_dynmic_css()->add_backgrounds( $preset_class );
+			jet_menu_dynmic_css()->add_borders( $preset_class );
+			jet_menu_dynmic_css()->add_shadows( $preset_class );
+			jet_menu_dynmic_css()->add_positions( $preset_class );
 
 			$css_scheme = apply_filters( 'jet-menu/menu-css/scheme', array(
 				'jet-menu-container-alignment' => array(
@@ -624,24 +750,98 @@ if ( ! class_exists( 'Jet_Menu_Public_Manager' ) ) {
 					'value'     => '',
 					'important' => false,
 				),
+
 				'jet-menu-mobile-toggle-color' => array(
-					'selector'  => '.jet-menu-container .jet-mobile-menu-toggle-button',
+					'selector'  => '.jet-mobile-menu__toggle',
 					'rule'      => 'color',
 					'value'     => '%s',
 					'important' => false,
 					'mobile'    => true,
 				),
 				'jet-menu-mobile-toggle-bg' => array(
-					'selector'  => '.jet-menu-container .jet-mobile-menu-toggle-button',
+					'selector'  => '.jet-mobile-menu__toggle',
 					'rule'      => 'background-color',
 					'value'     => '%s',
 					'important' => false,
 					'mobile'    => true,
 				),
+				'jet-menu-mobile-toggle-text-color' => array(
+					'selector'  => '.jet-mobile-menu__toggle .jet-mobile-menu__toggle-text',
+					'rule'      => 'color',
+					'value'     => '%s',
+					'important' => false,
+					'mobile'    => true,
+				),
+				'jet-menu-mobile-toggle-size' => array(
+					'selector'  => '.jet-mobile-menu__toggle',
+					'rule'      => 'font-size',
+					'value'     => '%spx',
+					'important' => false,
+					'mobile'    => true,
+				),
+				'jet-menu-mobile-toggle-border-radius' => array(
+					'selector'  => '.jet-mobile-menu__toggle',
+					'rule'      => 'border-%s-radius',
+					'value'     => '',
+					'important' => false,
+					'mobile'    => true,
+				),
+				'jet-menu-mobile-toggle-padding' => array(
+					'selector'  => '.jet-mobile-menu__toggle',
+					'rule'      => 'padding-%s',
+					'value'     => '',
+					'important' => false,
+					'mobile'    => true,
+				),
+				'jet-menu-mobile-breadcrumbs-text-color' => array(
+					'selector'  => '.jet-mobile-menu__breadcrumbs .breadcrumb-label',
+					'rule'      => 'color',
+					'value'     => '%s',
+					'important' => false,
+					'mobile'    => true,
+				),
+				'jet-menu-mobile-breadcrumbs-icon-color' => array(
+					'selector'  => '.jet-mobile-menu__breadcrumbs .breadcrumb-divider',
+					'rule'      => 'color',
+					'value'     => '%s',
+					'important' => false,
+					'mobile'    => true,
+				),
+				'jet-menu-mobile-breadcrumbs-icon-size' => array(
+					'selector'  => '.jet-mobile-menu__breadcrumbs .breadcrumb-divider',
+					'rule'      => 'font-size',
+					'value'     => '%spx',
+					'important' => false,
+					'mobile'    => true,
+				),
+				'jet-menu-mobile-container-width' => array(
+					'selector'  => '.jet-mobile-menu__container',
+					'rule'      => 'width',
+					'value'     => '%spx',
+					'important' => false,
+					'mobile'    => true,
+				),
 				'jet-menu-mobile-container-bg' => array(
-					'selector'  => '.jet-menu-container .jet-menu-inner',
+					'selector'  => '.jet-mobile-menu__container-inner',
 					'rule'      => 'background-color',
 					'value'     => '%s',
+					'important' => false,
+					'mobile'    => true,
+				),
+				'jet-menu-mobile-container-border-radius' => array(
+					'selector'  => array(
+						'.jet-mobile-menu__container',
+						'.jet-mobile-menu__container-inner',
+					),
+					'rule'      => 'border-%s-radius',
+					'value'     => '',
+					'important' => false,
+					'mobile'    => true,
+				),
+				'jet-menu-mobile-container-padding' => array(
+					'selector'  => '.jet-mobile-menu__container-inner',
+					'rule'      => 'padding-%s',
+					'value'     => '',
 					'important' => false,
 					'mobile'    => true,
 				),
@@ -652,51 +852,192 @@ if ( ! class_exists( 'Jet_Menu_Public_Manager' ) ) {
 					'important' => false,
 					'mobile'    => true,
 				),
+				'jet-menu-mobile-container-close-color' => array(
+					'selector'  => '.jet-mobile-menu__back i',
+					'rule'      => 'color',
+					'value'     => '%s',
+					'important' => false,
+					'mobile'    => true,
+				),
+				'jet-menu-mobile-container-close-size' => array(
+					'selector'  => '.jet-mobile-menu__back i',
+					'rule'      => 'font-size',
+					'value'     => '%spx',
+					'important' => false,
+					'mobile'    => true,
+				),
+				'jet-menu-mobile-container-back-text-color' => array(
+					'selector'  => '.jet-mobile-menu__back span',
+					'rule'      => 'color',
+					'value'     => '%s',
+					'important' => false,
+					'mobile'    => true,
+				),
+				'jet-mobile-items-dropdown-color' => array(
+					'selector'  => '.jet-dropdown-arrow',
+					'rule'      => 'color',
+					'value'     => '%s',
+					'important' => false,
+					'mobile'    => true,
+				),
+				'jet-mobile-items-dropdown-size' => array(
+					'selector'  => '.jet-dropdown-arrow',
+					'rule'      => 'font-size',
+					'value'     => '%spx',
+					'important' => false,
+					'mobile'    => true,
+				),
+				'jet-mobile-items-label-color' => array(
+					'selector'  => '.jet-mobile-menu__item .jet-menu-label',
+					'rule'      => 'color',
+					'value'     => '%s',
+					'important' => false,
+					'mobile'    => true,
+				),
+				'jet-mobile-items-label-color-active' => array(
+					'selector'  => '.jet-mobile-menu__item.jet-mobile-menu__item--active .jet-menu-label',
+					'rule'      => 'color',
+					'value'     => '%s',
+					'important' => false,
+					'mobile'    => true,
+				),
+				'jet-mobile-items-desc-color' => array(
+					'selector'  => '.jet-mobile-menu__item.jet-mobile-menu__item--active .jet-menu-desc',
+					'rule'      => 'color',
+					'value'     => '%s',
+					'important' => false,
+					'mobile'    => true,
+				),
+				'jet-mobile-items-desc-color-active' => array(
+					'selector'  => '.jet-mobile-menu__item.jet-mobile-menu__item--active .jet-menu-desc',
+					'rule'      => 'color',
+					'value'     => '%s',
+					'important' => false,
+					'mobile'    => true,
+				),
+				'jet-mobile-items-icon-color' => array(
+					'selector'  => '.jet-mobile-menu__item .jet-menu-icon',
+					'rule'      => 'color',
+					'value'     => '%s',
+					'important' => false,
+					'mobile'    => true,
+				),
+				'jet-mobile-items-icon-size' => array(
+					'selector'  => '.jet-mobile-menu__item .jet-menu-icon',
+					'rule'      => 'font-size',
+					'value'     => '%spx',
+					'important' => false,
+					'mobile'    => true,
+				),
+				'jet-mobile-items-icon-margin' => array(
+					'selector'  => '.jet-mobile-menu__item .jet-menu-icon',
+					'rule'      => 'margin-%s',
+					'value'     => '',
+					'important' => false,
+					'mobile'    => true,
+				),
+				'jet-mobile-items-badge-color' => array(
+					'selector'  => '.jet-mobile-menu__item .jet-menu-badge__inner',
+					'rule'      => 'color',
+					'value'     => '%s',
+					'important' => false,
+					'mobile'    => true,
+				),
+				'jet-mobile-items-badge-bg-color' => array(
+					'selector'  => '.jet-mobile-menu__item .jet-menu-badge__inner',
+					'rule'      => 'background-color',
+					'value'     => '%s',
+					'important' => false,
+					'mobile'    => true,
+				),
+				'jet-mobile-items-badge-padding' => array(
+					'selector'  => '.jet-mobile-menu__item .jet-menu-badge__inner',
+					'rule'      => 'padding-%s',
+					'value'     => '%s',
+					'important' => false,
+					'mobile'    => true,
+				),
+				'jet-mobile-items-badge-border-radius' => array(
+					'selector'  => '.jet-mobile-menu__item .jet-menu-badge__inner',
+					'rule'      => 'border-%s-radius',
+					'value'     => '',
+					'important' => false,
+					'mobile'    => true,
+				),
+
 			) );
 
 			foreach ( $css_scheme as $setting => $data ) {
 
 				$value = jet_menu_option_page()->get_option( $setting );
 
-				if ( empty( $value ) ) {
+				if ( empty( $value ) || 'false' === $value ) {
 					continue;
 				}
 
 				$_wrapper = $wrapper;
 
 				if ( isset( $data['mobile'] ) && true === $data['mobile'] ) {
-					$_wrapper = '.jet-mobile-menu-active';
+					$_wrapper = '.jet-mobile-menu-single';
+				} else {
+					$_wrapper = '.jet-menu';
 				}
 
-				if ( isset( $data['desktop'] ) && true === $data['desktop'] ) {
-					$_wrapper = '.jet-desktop-menu-active ' . $_wrapper;
-				}
+				$selector = $data['selector'];
 
 				if ( is_array( $value ) && isset( $value['units'] ) ) {
 
-					jet_menu_dynmic_css()->add_dimensions_css(
-						array(
-							'selector'  => sprintf( '%1$s %2$s', $_wrapper, $data['selector'] ),
-							'rule'      => $data['rule'],
-							'values'    => $value,
-							'important' => $data['important'],
-						)
-					);
+					if ( is_array( $selector ) ) {
+
+						foreach ( $selector as $key => $selector_item ) {
+							jet_menu_dynmic_css()->add_dimensions_css(
+								array(
+									'selector'  => sprintf( '%1$s %2$s', $_wrapper, $selector_item ),
+									'rule'      => $data['rule'],
+									'values'    => $value,
+									'important' => $data['important'],
+								)
+							);
+						}
+
+					} else {
+						jet_menu_dynmic_css()->add_dimensions_css(
+							array(
+								'selector'  => sprintf( '%1$s %2$s', $_wrapper, $selector ),
+								'rule'      => $data['rule'],
+								'values'    => $value,
+								'important' => $data['important'],
+							)
+						);
+					}
 
 					continue;
 				}
 
 				$important = ( true === $data['important'] ) ? ' !important' : '';
 
-				jet_menu()->dynamic_css()->add_style(
-					sprintf( '%1$s %2$s', $_wrapper, $data['selector'] ),
-					array(
-						$data['rule'] => sprintf( $data['value'], esc_attr( $value ) ) . $important,
-					)
-				);
+				if ( is_array( $selector ) ) {
+
+					foreach ( $selector as $key => $selector_item ) {
+						jet_menu()->dynamic_css()->add_style(
+							sprintf( '%1$s %2$s', $_wrapper, $selector_item ),
+							array(
+								$data['rule'] => sprintf( $data['value'], esc_attr( $value ) ) . $important,
+							)
+						);
+					}
+				} else {
+					jet_menu()->dynamic_css()->add_style(
+						sprintf( '%1$s %2$s', $_wrapper, $selector ),
+						array(
+							$data['rule'] => sprintf( $data['value'], esc_attr( $value ) ) . $important,
+						)
+					);
+				}
 
 			}
 
+			// Items Styles
 			$items_map = array(
 				'first' => array(
 					'top-left'    => 'top',
@@ -707,6 +1048,8 @@ if ( ! class_exists( 'Jet_Menu_Public_Manager' ) ) {
 					'bottom-right' => 'bottom',
 				),
 			);
+
+			$wrapper = empty( $wrapper ) ? '.jet-menu' : $wrapper;
 
 			foreach ( $items_map as $item => $data ) {
 
@@ -755,43 +1098,221 @@ if ( ! class_exists( 'Jet_Menu_Public_Manager' ) ) {
 
 			}
 
-			// extra options
+			// Extra Styles
 			$max_width = jet_menu_option_page()->get_option( 'jet-menu-item-max-width', 0 );
 
 			if ( 0 !== absint( $max_width ) ) {
 				jet_menu()->dynamic_css()->add_style(
-					sprintf( '.jet-desktop-menu-active %1$s > .jet-menu-item', $wrapper ),
+					sprintf( '%1$s > .jet-menu-item', $wrapper ),
 					array(
 						'max-width' => absint( $max_width ) . '%',
 					)
 				);
 			}
 
-			jet_menu()->dynamic_css()->add_style(
-				sprintf( '%1$s .jet-menu-badge', $wrapper ),
-				array(
-					'display' => 'block',
-				)
-			);
-
 			$menu_align = jet_menu_option_page()->get_option( 'jet-menu-container-alignment' );
 
 			if ( 'stretch' === $menu_align ) {
 				jet_menu()->dynamic_css()->add_style(
-					sprintf( '.jet-desktop-menu-active %1$s > .jet-menu-item', $wrapper ),
+					sprintf( '%1$s > .jet-menu-item', $wrapper ),
 					array(
 						'flex-grow' => 1,
 					)
 				);
 
 				jet_menu()->dynamic_css()->add_style(
-					sprintf( '.jet-desktop-menu-active %1$s > .jet-menu-item > a', $wrapper ),
+					sprintf( '%1$s > .jet-menu-item > a', $wrapper ),
 					array(
 						'justify-content' => 'center',
 					)
 				);
 			}
 
+			// Mobile Styles
+			$divider_enabled = jet_menu_option_page()->get_option( 'jet-mobile-items-divider-enabled', false );
+
+			if ( filter_var( $divider_enabled, FILTER_VALIDATE_BOOLEAN ) ) {
+
+				$divider_color = jet_menu_option_page()->get_option( 'jet-mobile-items-divider-color', '#3a3a3a' );
+				$divider_width = jet_menu_option_page()->get_option( 'jet-mobile-items-divider-width', '1' );
+
+				jet_menu()->dynamic_css()->add_style(
+					'.jet-mobile-menu-single .jet-mobile-menu__item',
+					array(
+						'border-bottom-style' => 'solid',
+						'border-bottom-width' => sprintf( '%spx', $divider_width ),
+						'border-bottom-color' => $divider_color,
+					)
+				);
+			}
+
+			$item_icon_enabled = jet_menu_option_page()->get_option( 'jet-mobile-items-icon-enabled', 'true' );
+
+			if ( filter_var( $item_icon_enabled, FILTER_VALIDATE_BOOLEAN ) ) {
+				$item_icon_ver_position = jet_menu_option_page()->get_option( 'jet-mobile-items-icon-ver-position', 'center' );
+
+				switch ( $item_icon_ver_position ) {
+					case 'top':
+						$ver_position = 'flex-start';
+					break;
+					case 'center':
+						$ver_position = 'center';
+					break;
+					case 'bottom':
+						$ver_position = 'flex-end';
+					break;
+					default:
+						$ver_position = 'center';
+						break;
+				}
+
+				jet_menu()->dynamic_css()->add_style( '.jet-mobile-menu-single .jet-menu-icon', array(
+					'-webkit-align-self' => $ver_position,
+					'align-self'         => $ver_position,
+				) );
+			}
+
+			$item_badge_enabled = jet_menu_option_page()->get_option( 'jet-mobile-items-badge-enabled', 'true' );
+
+			if ( filter_var( $item_badge_enabled, FILTER_VALIDATE_BOOLEAN ) ) {
+				$item_badge_ver_position = jet_menu_option_page()->get_option( 'jet-mobile-items-badge-ver-position', 'center' );
+
+				switch ( $item_badge_ver_position ) {
+					case 'top':
+						$ver_position = 'flex-start';
+					break;
+					case 'center':
+						$ver_position = 'center';
+					break;
+					case 'bottom':
+						$ver_position = 'flex-end';
+					break;
+					default:
+						$ver_position = 'center';
+						break;
+				}
+
+				jet_menu()->dynamic_css()->add_style( '.jet-mobile-menu-single .jet-menu-badge', array(
+					'-webkit-align-self' => $ver_position,
+					'align-self'         => $ver_position,
+				) );
+			}
+
+		}
+
+		/**
+		 * [generate_menu_raw_data description]
+		 * @param  string  $menu_slug [description]
+		 * @param  boolean $is_return [description]
+		 * @return [type]             [description]
+		 */
+		public function generate_menu_raw_data( $menu_id = false ) {
+
+			if ( ! $menu_id ) {
+				return false;
+			}
+
+			$menu_items = $this->get_menu_items_object_data( $menu_id );
+
+			$items = array();
+
+			foreach ( $menu_items as $key => $item ) {
+
+				$item_id = $item->ID;
+
+				$item_settings = jet_menu_settings_nav()->get_item_settings( $item_id );
+
+				$item_template_id = get_post_meta( $item_id, jet_menu_post_type()->meta_key(), true );
+
+				$elementor_template_id = ( isset( $item_settings['enabled'] ) && filter_var( $item_settings['enabled'], FILTER_VALIDATE_BOOLEAN ) ) ? (int)$item_template_id : false;
+
+				$icon_type = isset( $item_settings['menu_icon_type'] ) ? $item_settings['menu_icon_type'] : 'icon';
+
+				switch ( $icon_type ) {
+					case 'icon':
+						$item_icon = ! empty( $item_settings['menu_icon'] ) ? jet_menu_tools()->get_icon_html( $item_settings['menu_icon'] ) : false;
+					break;
+
+					case 'svg':
+						$item_icon = ! empty( $item_settings['menu_svg'] ) ? jet_menu_tools()->get_svg_html( $item_settings['menu_svg'] ) : false;
+					break;
+				}
+
+				$items[] = array(
+					'id'                  => 'item-' . $item_id,
+					'name'                => $item->title,
+					'description'         => $item->description,
+					'url'                 => $item->url,
+					'itemParent'          => '0' !== $item->menu_item_parent ? 'item-' . (int)$item->menu_item_parent : false,
+					'itemId'              => $item_id,
+					'elementorTemplateId' => $elementor_template_id,
+					'elementorContent'    => false,
+					'open'                => false,
+					'badgeText'           => isset( $item_settings['menu_badge'] ) ? $item_settings['menu_badge'] : false,
+					'itemIcon'            => $item_icon,
+				);
+			}
+
+			if ( ! empty( $items ) ) {
+				$items = $this->buildItemsTree( $items, false );
+			}
+
+			$menu_data = array(
+				'items' => $items,
+			);
+
+			return $menu_data;
+		}
+
+		/**
+		 * [buildItemsTree description]
+		 * @param  array   &$items   [description]
+		 * @param  integer $parentId [description]
+		 * @return [type]            [description]
+		 */
+		public function buildItemsTree( array &$items, $parentId = false ) {
+
+			$branch = [];
+
+			foreach ( $items as &$item ) {
+
+				if ( $item['itemParent'] === $parentId ) {
+					$children = $this->buildItemsTree( $items, $item['id'] );
+
+					if ( $children && !$item['elementorTemplateId'] ) {
+						$item['children'] = $children;
+					}
+
+					$branch[ $item['id'] ] = $item;
+
+					unset( $item );
+				}
+			}
+
+			return $branch;
+
+		}
+
+		/**
+		 * [get_menu_items_object_data description]
+		 * @param  boolean $menu_id [description]
+		 * @return [type]           [description]
+		 */
+		public function get_menu_items_object_data( $menu_id = false ) {
+
+			if ( ! $menu_id ) {
+				return false;
+			}
+
+			$menu = wp_get_nav_menu_object( $menu_id );
+
+			$menu_items = wp_get_nav_menu_items( $menu );
+
+			if ( ! $menu_items ) {
+				return false;
+			}
+
+			return $menu_items;
 		}
 
 		/**
@@ -801,8 +1322,31 @@ if ( ! class_exists( 'Jet_Menu_Public_Manager' ) ) {
 		 * @return [type]           [description]
 		 */
 		public function get_menu_id( $location = null ) {
+
 			$locations = get_nav_menu_locations();
+
 			return isset( $locations[ $location ] ) ? $locations[ $location ] : false;
+		}
+
+		/**
+		 * [add_menu_advanced_styles description]
+		 * @param boolean $menu_id [description]
+		 */
+		public function add_menu_advanced_styles( $menu_id = false ) {
+
+			if ( ! $menu_id ) {
+				return false;
+			}
+
+			$menu_items = $this->get_menu_items_object_data( $menu_id );
+
+			if ( ! $menu_items ) {
+				return false;
+			}
+
+			foreach ( $menu_items as $key => $item ) {
+				jet_menu_tools()->add_menu_css( $item->ID, '.jet-menu-item-' . $item->ID );
+			}
 		}
 
 		/**

@@ -3,7 +3,7 @@
  * Plugin Name: JetBlog For Elementor
  * Plugin URI:  https://crocoblock.com/plugins/jetblog/
  * Description: Blogging Package for Elementor Page Builder
- * Version:    2.2.4
+ * Version:    2.2.6
  * Author:     Crocoblock
  * Author URI: https://crocoblock.com/
  * Text Domain: jet-blog
@@ -48,7 +48,7 @@ if ( ! class_exists( 'Jet_Blog' ) ) {
 		 *
 		 * @var string
 		 */
-		private $version = '2.2.4';
+		private $version = '2.2.6';
 
 		/**
 		 * Holder for base plugin path

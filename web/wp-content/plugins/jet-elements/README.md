@@ -4,6 +4,17 @@ Brand new addon for Elementor Page builder. It provides the set of modules to cr
 
 # ChangeLog
 
+## [2.2.14](https://github.com/ZemezLab/jet-elements/archive/2.2.14.zip) - 21.04.2020
+* Added: `Open link in new window` and `Add nofollow` controls for the social link in the Team Member widget
+* Fixed: [#1116](https://github.com/Crocoblock/suggestions/issues/1116)
+* Fixed: prevent error in svg-manager
+
+## [2.2.13](https://github.com/ZemezLab/jet-elements/archive/2.2.13.zip) - 31.03.2020
+* Added: `Alignment` control for items in the Countdown Timer widget
+* Added: `Alignment` control for the form in the Subscribe widget
+* Added: Possibility to display float numbers in Bar Chart widget
+* Added: better compatibility the Image Comparison widget with Dynamic Tags
+
 ## [2.2.12](https://github.com/ZemezLab/jet-elements/archive/2.2.12.zip) - 16.03.2020
 * Added: `alt` attribute for images in the Instagram Gallery widget
 * Update: JetDashboard Module to v1.0.11

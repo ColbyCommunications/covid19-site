@@ -283,17 +283,17 @@ class Jet_Elements_Image_Comparison extends Jet_Elements_Base {
 			)
 		);
 
-		$this->add_control(
-			'infinite',
-			array(
-				'label'        => esc_html__( 'Infinite Loop', 'jet-elements' ),
-				'type'         => Controls_Manager::SWITCHER,
-				'label_on'     => esc_html__( 'Yes', 'jet-elements' ),
-				'label_off'    => esc_html__( 'No', 'jet-elements' ),
-				'return_value' => 'true',
-				'default'      => 'true',
-			)
-		);
+//		$this->add_control(
+//			'infinite',
+//			array(
+//				'label'        => esc_html__( 'Infinite Loop', 'jet-elements' ),
+//				'type'         => Controls_Manager::SWITCHER,
+//				'label_on'     => esc_html__( 'Yes', 'jet-elements' ),
+//				'label_off'    => esc_html__( 'No', 'jet-elements' ),
+//				'return_value' => 'true',
+//				'default'      => 'true',
+//			)
+//		);
 
 		$this->add_control(
 			'effect',
@@ -1610,7 +1610,7 @@ class Jet_Elements_Image_Comparison extends Jet_Elements_Base {
 			),
 			'autoplaySpeed'  => absint( $settings['autoplay_speed'] ),
 			'autoplay'       => filter_var( $settings['autoplay'], FILTER_VALIDATE_BOOLEAN ),
-			'infinite'       => filter_var( $settings['infinite'], FILTER_VALIDATE_BOOLEAN ),
+			//'infinite'       => filter_var( $settings['infinite'], FILTER_VALIDATE_BOOLEAN ),
 			'pauseOnHover'   => filter_var( $settings['pause_on_hover'], FILTER_VALIDATE_BOOLEAN ),
 			'speed'          => absint( $settings['speed'] ),
 			'arrows'         => filter_var( $settings['arrows'], FILTER_VALIDATE_BOOLEAN ),

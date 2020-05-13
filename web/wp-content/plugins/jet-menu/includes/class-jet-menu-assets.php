@@ -7,6 +7,8 @@
  * @license   GPL-2.0+
  */
 
+use Elementor\Icons_Manager;
+
 // If this file is called directly, abort.
 if ( ! defined( 'WPINC' ) ) {
 	die;
@@ -32,17 +34,25 @@ if ( ! class_exists( 'Jet_Menu_Assets' ) ) {
 		 */
 		public function init() {
 
-			add_action( 'admin_enqueue_scripts', array( $this, 'admin_assets' ), 99 );
-			add_action( 'elementor/editor/after_enqueue_styles', array( $this, 'editor_styles' ) );
-			add_action( 'admin_footer', array( $this, 'admin_templates' ) );
+			add_action( 'admin_enqueue_scripts', array( $this, 'register_admin_assets' ), 99 );
 
-			// Register public assets.
+			add_action( 'elementor/editor/after_enqueue_styles', array( $this, 'editor_styles' ) );
+
 			add_action( 'wp_enqueue_scripts', array( $this, 'register_public_assets' ) );
 
-			// Enqueue public assets.
 			add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_public_assets' ), 10 );
 
+			add_action( 'wp_footer', array( $this, 'init_elementor_frontend_assets' ), 9 );
+
+			add_action( 'wp_footer', array( $this, 'render_vue_template' ) );
+
 			add_action( 'elementor/frontend/before_enqueue_scripts', array( $this, 'enqueue_elementor_widget_scripts' ) );
+
+			add_action( 'elementor/editor/after_enqueue_styles', array( $this, 'icons_font_styles' ) );
+
+			add_action( 'elementor/preview/enqueue_styles', array( $this, 'icons_font_styles' ) );
+
+			add_action( 'elementor/editor/before_enqueue_scripts', array( $this, 'editor_scripts' ) );
 		}
 
 		/**
@@ -51,63 +61,28 @@ if ( ! class_exists( 'Jet_Menu_Assets' ) ) {
 		 * @param  string $hook Current page hook.
 		 * @return void
 		 */
-		public function admin_assets( $hook ) {
+		public function register_admin_assets( $hook ) {
 
-			wp_register_script(
-				'jet-sticky-sidebar',
-				jet_menu()->plugin_url( 'assets/admin/js/jquery.sticky-sidebar.min.js' ),
-				array( 'jquery' ),
-				'3.2.0',
-				true
+			wp_register_style(
+				'font-awesome-all',
+				jet_menu()->plugin_url( 'assets/public/lib/font-awesome/css/all.min.css' ),
+				array(),
+				'5.12.0'
 			);
 
-			wp_register_script(
-				'jet-menu-admin',
-				jet_menu()->plugin_url( 'assets/admin/js/admin.js' ),
-				array( 'jet-sticky-sidebar', 'wp-util' ),
-				jet_menu()->get_version(),
-				true
+			wp_register_style(
+				'font-awesome-v4-shims',
+				jet_menu()->plugin_url( 'assets/public/lib/font-awesome/css/v4-shims.min.css' ),
+				array(),
+				'5.12.0'
 			);
-
-			wp_localize_script( 'jet-menu-admin', 'jetMenuAdminSettings', apply_filters(
-				'jet-menu/assets/admin/localize',
-				array(
-					'tabs'    => jet_menu_settings_item()->get_tabs(),
-					'strings' => array(
-						'leaveEditor' => esc_html__( 'Do you want to leave the editor? Changes you made may not be saved.', 'jet-menu' ),
-						'saveLabel' => esc_html__( 'Save', 'jet-menu' ),
-						'triggerLabel' => esc_html__( 'JetMenu', 'jet-menu' ),
-					),
-					'optionPageMessages' => array(
-						'saveMessage'         => esc_html__( 'Options have been saved', 'jet-menu' ),
-						'restoreMessage'      => esc_html__( 'Settings have been restored, page will be reloaded', 'jet-menu' ),
-						'emptyImportFile'     => esc_html__( 'Please select options file to import.', 'jet-menu' ),
-						'incorrectImportFile' => esc_html__( 'Options file must be only in .json format.', 'jet-menu' ),
-						'redirectUrl'         => menu_page_url( 'jet-menu-options', false ),
-						'resetMessage'        => esc_html__( 'All menu options will be reseted to defaults. Please export current options to prevent data lost. Are you sure you want to continue?', 'jet-menu' ),
-					),
-					'importUrl' => add_query_arg( array( 'jet-action' => 'import-options' ), esc_url( admin_url( 'admin.php' ) ) ),
-					'resetUrl'  => add_query_arg( array( 'jet-action' => 'reset-options' ), esc_url( admin_url( 'admin.php' ) ) ),
-				)
-			) );
 
 			wp_register_style(
 				'jet-menu-admin',
 				jet_menu()->plugin_url( 'assets/admin/css/admin.css' ),
-				array(),
+				array( 'font-awesome-all', 'font-awesome-v4-shims' ),
 				jet_menu()->get_version()
 			);
-
-			wp_register_style(
-				'font-awesome',
-				jet_menu()->plugin_url( 'assets/public/css/font-awesome.min.css' ),
-				array(),
-				'4.7.0'
-			);
-
-			wp_enqueue_script( 'jet-menu-admin' );
-			wp_enqueue_style( 'jet-menu-admin' );
-			wp_enqueue_style( 'font-awesome' );
 		}
 
 		/**
@@ -131,6 +106,38 @@ if ( ! class_exists( 'Jet_Menu_Assets' ) ) {
 		}
 
 		/**
+		 * Enqueue icons font styles
+		 *
+		 * @return void
+		 */
+		public function icons_font_styles() {
+
+			wp_enqueue_style(
+				'jet-menu-icons',
+				jet_menu()->plugin_url( 'assets/admin/css/editor-icons.css' ),
+				array(),
+				jet_menu()->get_version()
+			);
+
+		}
+
+		/**
+		 * Enqueue plugin scripts only with elementor scripts
+		 *
+		 * @return void
+		 */
+		public function editor_scripts() {
+
+			wp_enqueue_script(
+				'jet-menu-editor',
+				jet_menu()->plugin_url( 'assets/editor/js/jet-menu-editor.js' ),
+				array( 'jquery' ),
+				jet_menu()->get_version(),
+				true
+			);
+		}
+
+		/**
 		 * Load public assets
 		 *
 		 * @param  string $hook Current page hook.
@@ -138,48 +145,67 @@ if ( ! class_exists( 'Jet_Menu_Assets' ) ) {
 		 */
 		public function register_public_assets() {
 
+			$suffix = '.min';
+
+			if ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ) {
+				$suffix = '';
+			}
+
 			wp_register_style(
-				'font-awesome',
-				jet_menu()->plugin_url( 'assets/public/css/font-awesome.min.css' ),
+				'font-awesome-all',
+				jet_menu()->plugin_url( 'assets/public/lib/font-awesome/css/all.min.css' ),
 				array(),
-				'4.7.0'
+				'5.12.0'
+			);
+
+			wp_register_style(
+				'font-awesome-v4-shims',
+				jet_menu()->plugin_url( 'assets/public/lib/font-awesome/css/v4-shims.min.css' ),
+				array(),
+				'5.12.0'
 			);
 
 			wp_register_style(
 				'jet-menu-public',
 				jet_menu()->plugin_url( 'assets/public/css/public.css' ),
-				array( 'font-awesome' ),
+				array( 'font-awesome-all', 'font-awesome-v4-shims' ),
 				jet_menu()->get_version()
 			);
 
 			wp_register_script(
-				'jet-menu-plugin',
-				jet_menu()->plugin_url( 'assets/public/js/jet-menu-plugin.js' ),
-				array( 'jquery' ),
-				jet_menu()->get_version(),
+				'jet-menu-vue',
+				jet_menu()->plugin_url( 'assets/public/js/vue' . $suffix . '.js' ),
+				array(),
+				'2.6.11',
 				true
 			);
 
 			wp_register_script(
 				'jet-menu-public',
 				jet_menu()->plugin_url( 'assets/public/js/jet-menu-public-script.js' ),
-				array( 'jquery', 'jet-menu-plugin' ),
+				array( 'jquery', 'jet-menu-vue' ),
 				jet_menu()->get_version(),
 				true
 			);
 
-			$default_mobile_breakpoint = jet_menu_option_page()->get_default_mobile_breakpoint();
+			$rest_api_url = apply_filters( 'jet-menu/rest/url', get_rest_url() );
 
 			wp_localize_script( 'jet-menu-public', 'jetMenuPublicSettings', apply_filters(
 				'jet-menu/assets/public/localize',
 				array(
-					'menuSettings' => array(
+					'version'        => jet_menu()->get_version(),
+					'ajaxUrl'        => esc_url( admin_url( 'admin-ajax.php' ) ),
+					'isMobile'       => filter_var( Jet_Menu_Tools::is_phone(), FILTER_VALIDATE_BOOLEAN ) ? 'true' : 'false',
+					'templateApiUrl' => $rest_api_url . 'jet-menu-api/v1/elementor-template',
+					'menuItemsApiUrl'=> $rest_api_url . 'jet-menu-api/v1/get-menu-items',
+					'devMode'        => is_user_logged_in() ? 'true' : 'false',
+					'menuSettings'   => array(
 						'jetMenuRollUp'            => jet_menu_option_page()->get_option( 'jet-menu-roll-up', 'false' ),
 						'jetMenuMouseleaveDelay'   => jet_menu_option_page()->get_option( 'jet-menu-mouseleave-delay', 500 ),
 						'jetMenuMegaWidthType'     => jet_menu_option_page()->get_option( 'jet-mega-menu-width-type', 'container' ),
 						'jetMenuMegaWidthSelector' => jet_menu_option_page()->get_option( 'jet-mega-menu-selector-width-type', '' ),
 						'jetMenuMegaOpenSubType'   => jet_menu_option_page()->get_option( 'jet-menu-open-sub-type', 'hover' ),
-						'jetMenuMobileBreakpoint'  => jet_menu_option_page()->get_option( 'jet-menu-mobile-breakpoint', $default_mobile_breakpoint ),
+						'jetMenuMegaAjax'          => jet_menu_option_page()->get_option( 'jet-menu-mega-ajax-loading', 'false' ),
 					),
 				)
 			) );
@@ -191,9 +217,45 @@ if ( ! class_exists( 'Jet_Menu_Assets' ) ) {
 		 * @since 1.0.0
 		 */
 		public function enqueue_public_assets() {
-
 			wp_enqueue_style( 'jet-menu-public' );
 			wp_enqueue_script( 'jet-menu-public' );
+		}
+
+		/**
+		 * [init_elementor_frontend_assets description]
+		 * @return [type] [description]
+		 */
+		public function init_elementor_frontend_assets() {
+
+			// Init Elementor frontend essets if template loaded using ajax
+			if ( ! \Elementor\Plugin::$instance->frontend->has_elementor_in_page() ) {
+				\Elementor\Plugin::$instance->frontend->enqueue_styles();
+				\Elementor\Plugin::$instance->frontend->enqueue_scripts();
+			}
+		}
+
+		/**
+		 * [render_vue_template description]
+		 * @return [type] [description]
+		 */
+		public function render_vue_template() {
+
+			$vue_templates = array(
+				'mobile-menu',
+				'mobile-menu-list',
+				'mobile-menu-item',
+			);
+
+			foreach ( glob( jet_menu()->plugin_path() . 'templates/public/vue-templates/*.php' ) as $file ) {
+				$path_info = pathinfo( $file );
+				$template_name = $path_info['filename'];
+
+				if ( in_array( $template_name, $vue_templates ) ) {?>
+					<script type="text/x-template" id="<?php echo $template_name; ?>-template"><?php
+						require $file; ?>
+					</script><?php
+				}
+			}
 		}
 
 		/**
@@ -205,64 +267,10 @@ if ( ! class_exists( 'Jet_Menu_Assets' ) ) {
 			wp_enqueue_script(
 				'jet-menu-widgets-scripts',
 				jet_menu()->plugin_url( 'assets/public/js/jet-menu-widgets-scripts.js' ),
-				array( 'jquery', 'elementor-frontend' ),
+				array( 'jquery', 'elementor-frontend', 'jet-menu-public' ),
 				jet_menu()->get_version(),
 				true
 			);
-		}
-
-		/**
-		 * Print admin templates
-		 *
-		 * @return void
-		 */
-		public function admin_templates() {
-
-			$screen = get_current_screen();
-
-			if ( 'nav-menus' !== $screen->base ) {
-				return;
-			}
-
-			$templates = array(
-				'menu-trigger'  => 'admin/html/menu-trigger.html',
-				'popup-wrapper' => 'admin/html/popup-wrapper.html',
-				'popup-tabs'    => 'admin/html/popup-tabs.html',
-				'editor-frame'  => 'admin/html/editor-frame.html',
-			);
-
-			$this->print_templates_array( $templates );
-
-		}
-
-		/**
-		 * Print templates array
-		 *
-		 * @param  array  $templates List of templates to print.
-		 * @return [type]            [description]
-		 */
-		public function print_templates_array( $templates = array() ) {
-
-			if ( empty( $templates ) ) {
-				return;
-			}
-
-			foreach ( $templates as $id => $file ) {
-
-				$file = jet_menu()->get_template( $file );
-
-				if ( ! file_exists( $file ) ) {
-					continue;
-				}
-
-				ob_start();
-				include $file;
-				$content = ob_get_clean();
-
-				printf( '<script type="text/html" id="tmpl-%1$s">%2$s</script>', $id, $content );
-
-			}
-
 		}
 
 		/**

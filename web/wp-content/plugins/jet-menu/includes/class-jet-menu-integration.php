@@ -28,23 +28,6 @@ if ( ! class_exists( 'Jet_Menu_Integration' ) ) {
 		public function init() {
 			add_action( 'elementor/init', array( $this, 'register_category' ) );
 			add_action( 'elementor/widgets/widgets_registered', array( $this, 'register_addons' ), 10 );
-			add_action( 'elementor/editor/after_enqueue_styles', array( $this, 'editor_styles' ) );
-		}
-
-		/**
-		 * Enqueue editor styles
-		 *
-		 * @return void
-		 */
-		public function editor_styles() {
-
-			wp_enqueue_style(
-				'jet-menu-font',
-				jet_menu()->plugin_url( 'assets/public/lib/jetmenu-font/css/jetmenu.css' ),
-				array(),
-				jet_menu()->get_version()
-			);
-
 		}
 
 		/**

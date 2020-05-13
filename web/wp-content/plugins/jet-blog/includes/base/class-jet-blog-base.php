@@ -5,24 +5,24 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 abstract class Jet_Blog_Base extends Widget_Base {
 
-	public $__context          = 'render';
-	public $__processed_item   = false;
-	public $__processed_index  = 0;
-	public $__query            = array();
-	public $__load_level       = 100;
-	public $__include_controls = array();
-	public $__exclude_controls = array();
-	public $__new_icon_prefix  = 'selected_';
+	public $_context          = 'render';
+	public $_processed_item   = false;
+	public $_processed_index  = 0;
+	public $_query            = array();
+	public $_load_level       = 100;
+	public $_include_controls = array();
+	public $_exclude_controls = array();
+	public $_new_icon_prefix  = 'selected_';
 
 	public function __construct( $data = array(), $args = null ) {
 		parent::__construct( $data, $args );
 
-		$this->__load_level = (int) jet_blog_settings()->get( 'widgets_load_level', 100 );
+		$this->_load_level = (int) jet_blog_settings()->get( 'widgets_load_level', 100 );
 
 		$widget_name = $this->get_name();
 
-		$this->__include_controls = apply_filters( "jet-blog/editor/{$widget_name}/include-controls", array(), $widget_name, $this );
-		$this->__exclude_controls = apply_filters( "jet-blog/editor/{$widget_name}/exclude-controls", array(), $widget_name, $this );
+		$this->_include_controls = apply_filters( "jet-blog/editor/{$widget_name}/include-controls", array(), $widget_name, $this );
+		$this->_exclude_controls = apply_filters( "jet-blog/editor/{$widget_name}/exclude-controls", array(), $widget_name, $this );
 	}
 
 	public function get_jet_help_url() {
@@ -53,9 +53,9 @@ abstract class Jet_Blog_Base extends Widget_Base {
 	 * @param  [type] $name [description]
 	 * @return [type]       [description]
 	 */
-	public function __get_global_template( $name = null ) {
+	public function _get_global_template( $name = null ) {
 
-		$template = call_user_func( array( $this, sprintf( '__get_%s_template', $this->__context ) ), $name );
+		$template = call_user_func( array( $this, sprintf( '_get_%s_template', $this->_context ) ), $name );
 
 		if ( ! $template ) {
 			$template = jet_blog()->get_template( $this->get_name() . '/global/' . $name . '.php' );
@@ -69,7 +69,7 @@ abstract class Jet_Blog_Base extends Widget_Base {
 	 * @param  [type] $name [description]
 	 * @return [type]       [description]
 	 */
-	public function __get_render_template( $name = null ) {
+	public function _get_render_template( $name = null ) {
 		return jet_blog()->get_template( $this->get_name() . '/render/' . $name . '.php' );
 	}
 
@@ -78,7 +78,7 @@ abstract class Jet_Blog_Base extends Widget_Base {
 	 * @param  [type] $name [description]
 	 * @return [type]       [description]
 	 */
-	public function __get_edit_template( $name = null ) {
+	public function _get_edit_template( $name = null ) {
 		return jet_blog()->get_template( $this->get_name() . '/edit/' . $name . '.php' );
 	}
 
@@ -90,16 +90,16 @@ abstract class Jet_Blog_Base extends Widget_Base {
 	 * @param  string $setting Repeater setting that provide data for template.
 	 * @return void
 	 */
-	public function __get_global_looped_template( $name = null, $setting = null ) {
+	public function _get_global_looped_template( $name = null, $setting = null ) {
 
 		$templates = array(
-			'start' => $this->__get_global_template( $name . '-loop-start' ),
-			'loop'  => $this->__get_global_template( $name . '-loop-item' ),
-			'end'   => $this->__get_global_template( $name . '-loop-end' ),
+			'start' => $this->_get_global_template( $name . '-loop-start' ),
+			'loop'  => $this->_get_global_template( $name . '-loop-item' ),
+			'end'   => $this->_get_global_template( $name . '-loop-end' ),
 		);
 
 		call_user_func(
-			array( $this, sprintf( '__get_%s_looped_template', $this->__context ) ), $templates, $setting
+			array( $this, sprintf( '_get_%s_looped_template', $this->_context ) ), $templates, $setting
 		);
 
 	}
@@ -111,7 +111,7 @@ abstract class Jet_Blog_Base extends Widget_Base {
 	 * @param  [type] $setting   [description]
 	 * @return [type]            [description]
 	 */
-	public function __get_render_looped_template( $templates = array(), $setting = null ) {
+	public function _get_render_looped_template( $templates = array(), $setting = null ) {
 
 		$loop = $this->get_settings( $setting );
 
@@ -125,15 +125,15 @@ abstract class Jet_Blog_Base extends Widget_Base {
 
 		foreach ( $loop as $item ) {
 
-			$this->__processed_item = $item;
+			$this->_processed_item = $item;
 			if ( ! empty( $templates['start'] ) ) {
 				include $templates['loop'];
 			}
-			$this->__processed_index++;
+			$this->_processed_index++;
 		}
 
-		$this->__processed_item = false;
-		$this->__processed_index = 0;
+		$this->_processed_item = false;
+		$this->_processed_index = 0;
 
 		if ( ! empty( $templates['end'] ) ) {
 			include $templates['end'];
@@ -148,7 +148,7 @@ abstract class Jet_Blog_Base extends Widget_Base {
 	 * @param  [type] $setting   [description]
 	 * @return [type]            [description]
 	 */
-	public function __get_edit_looped_template( $templates = array(), $setting = null ) {
+	public function _get_edit_looped_template( $templates = array(), $setting = null ) {
 		?>
 		<# if ( settings.<?php echo $setting; ?> ) { #>
 		<?php
@@ -178,9 +178,9 @@ abstract class Jet_Blog_Base extends Widget_Base {
 	 * @param  string $key Key to get from processed item
 	 * @return mixed
 	 */
-	public function __loop_item( $keys = array(), $format = '%s' ) {
+	public function _loop_item( $keys = array(), $format = '%s' ) {
 
-		return call_user_func( array( $this, sprintf( '__%s_loop_item', $this->__context ) ), $keys, $format );
+		return call_user_func( array( $this, sprintf( '_%s_loop_item', $this->_context ) ), $keys, $format );
 
 	}
 
@@ -192,7 +192,7 @@ abstract class Jet_Blog_Base extends Widget_Base {
 	 * @param  boolean $nested_key [description]
 	 * @return [type]              [description]
 	 */
-	public function __edit_loop_item( $keys = array(), $format = '%s' ) {
+	public function _edit_loop_item( $keys = array(), $format = '%s' ) {
 
 		$settings = $keys[0];
 
@@ -217,9 +217,9 @@ abstract class Jet_Blog_Base extends Widget_Base {
 	 * @param  boolean $nested_key [description]
 	 * @return [type]              [description]
 	 */
-	public function __render_loop_item( $keys = array(), $format = '%s' ) {
+	public function _render_loop_item( $keys = array(), $format = '%s' ) {
 
-		$item = $this->__processed_item;
+		$item = $this->_processed_item;
 
 		$key        = $keys[0];
 		$nested_key = isset( $keys[1] ) ? $keys[1] : false;
@@ -247,11 +247,11 @@ abstract class Jet_Blog_Base extends Widget_Base {
 	 * @param  [type] $settings [description]
 	 * @return [type]           [description]
 	 */
-	public function __glob_inc_if( $name = null, $settings = array() ) {
+	public function _glob_inc_if( $name = null, $settings = array() ) {
 
-		$template = $this->__get_global_template( $name );
+		$template = $this->_get_global_template( $name );
 
-		call_user_func( array( $this, sprintf( '__%s_inc_if', $this->__context ) ), $template, $settings );
+		call_user_func( array( $this, sprintf( '_%s_inc_if', $this->_context ) ), $template, $settings );
 
 	}
 
@@ -262,7 +262,7 @@ abstract class Jet_Blog_Base extends Widget_Base {
 	 * @param  [type] $settings [description]
 	 * @return [type]           [description]
 	 */
-	public function __render_inc_if( $file = null, $settings = array() ) {
+	public function _render_inc_if( $file = null, $settings = array() ) {
 
 		foreach ( $settings as $setting ) {
 			$val = $this->get_settings( $setting );
@@ -283,7 +283,7 @@ abstract class Jet_Blog_Base extends Widget_Base {
 	 * @param  [type] $settings [description]
 	 * @return [type]           [description]
 	 */
-	public function __edit_inc_if( $file = null, $settings = array() ) {
+	public function _edit_inc_if( $file = null, $settings = array() ) {
 
 		$condition = null;
 		$sep       = null;
@@ -309,7 +309,7 @@ abstract class Jet_Blog_Base extends Widget_Base {
 	 *
 	 * @return void
 	 */
-	public function __open_wrap() {
+	public function _open_wrap() {
 		printf( '<div class="elementor-%s jet-blog">', $this->get_name() );
 	}
 
@@ -318,7 +318,7 @@ abstract class Jet_Blog_Base extends Widget_Base {
 	 *
 	 * @return void
 	 */
-	public function __close_wrap() {
+	public function _close_wrap() {
 		echo '</div>';
 	}
 
@@ -331,9 +331,9 @@ abstract class Jet_Blog_Base extends Widget_Base {
 	 * @param  bool   $echo    Echo or return.
 	 * @return string|void
 	 */
-	public function __html( $setting = null, $format = '%s' ) {
+	public function _html( $setting = null, $format = '%s' ) {
 
-		call_user_func( array( $this, sprintf( '__%s_html', $this->__context ) ), $setting, $format );
+		call_user_func( array( $this, sprintf( '_%s_html', $this->_context ) ), $setting, $format );
 
 	}
 
@@ -346,10 +346,10 @@ abstract class Jet_Blog_Base extends Widget_Base {
 	 * @param  bool   $echo    Echo or return.
 	 * @return string|void
 	 */
-	public function __get_html( $setting = null, $format = '%s' ) {
+	public function _get_html( $setting = null, $format = '%s' ) {
 
 		ob_start();
-		$this->__html( $setting, $format );
+		$this->_html( $setting, $format );
 		return ob_get_clean();
 
 	}
@@ -361,7 +361,7 @@ abstract class Jet_Blog_Base extends Widget_Base {
 	 * @param  [type] $format  [description]
 	 * @return [type]          [description]
 	 */
-	public function __render_html( $setting = null, $format = '%s' ) {
+	public function _render_html( $setting = null, $format = '%s' ) {
 
 		if ( is_array( $setting ) ) {
 			$key     = $setting[1];
@@ -400,7 +400,7 @@ abstract class Jet_Blog_Base extends Widget_Base {
 	 *
 	 * @return void
 	 */
-	public function __render_meta( $position = '', $base = '', $context = array( 'before' ), $settings = array() ) {
+	public function _render_meta( $position = '', $base = '', $context = array( 'before' ), $settings = array() ) {
 
 		$settings      = ! empty( $settings ) ? $settings : $this->get_settings();
 		$config_key    = $position . '_meta';
@@ -511,7 +511,7 @@ abstract class Jet_Blog_Base extends Widget_Base {
 	 * @param string $position_slug
 	 * @param string $position_name
 	 */
-	public function __add_meta_controls( $position_slug, $position_name ) {
+	public function _add_meta_controls( $position_slug, $position_name ) {
 
 		$this->add_control(
 			'show_' . $position_slug . '_meta',
@@ -632,9 +632,9 @@ abstract class Jet_Blog_Base extends Widget_Base {
 	 *
 	 * @return void
 	 */
-	public function __add_meta_style_controls( $position_slug, $position_name, $base ) {
+	public function _add_meta_style_controls( $position_slug, $position_name, $base ) {
 
-		$this->__add_control(
+		$this->_add_control(
 			$position_slug . '_meta_styles',
 			array(
 				'label'     => sprintf( esc_html__( 'Meta Styles %s', 'jet-blog' ), $position_name ),
@@ -643,7 +643,7 @@ abstract class Jet_Blog_Base extends Widget_Base {
 			)
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			$position_slug . '_meta_bg_color',
 			array(
 				'label'     => esc_html__( 'Background Color', 'jet-blog' ),
@@ -655,7 +655,7 @@ abstract class Jet_Blog_Base extends Widget_Base {
 			75
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			$position_slug . '_meta_label_heading',
 			array(
 				'label'     => esc_html__( 'Meta Label', 'jet-blog' ),
@@ -665,7 +665,7 @@ abstract class Jet_Blog_Base extends Widget_Base {
 			25
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			$position_slug . '_meta_label_color',
 			array(
 				'label'     => esc_html__( 'Color', 'jet-blog' ),
@@ -677,7 +677,7 @@ abstract class Jet_Blog_Base extends Widget_Base {
 			25
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Typography::get_type(),
 			array(
 				'name'     => $position_slug . '_meta_label_typography',
@@ -687,7 +687,7 @@ abstract class Jet_Blog_Base extends Widget_Base {
 			50
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			$position_slug . '_meta_label_display',
 			array(
 				'label'   => esc_html__( 'Display Meta Label and Value', 'jet-blog' ),
@@ -705,7 +705,7 @@ abstract class Jet_Blog_Base extends Widget_Base {
 			50
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			$position_slug . '_meta_label_gap',
 			array(
 				'label'       => esc_html__( 'Horizontal Gap Between Label and Value', 'jet-blog' ),
@@ -721,7 +721,7 @@ abstract class Jet_Blog_Base extends Widget_Base {
 			50
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			$position_slug . '_meta_value_heading',
 			array(
 				'label'     => esc_html__( 'Meta Value', 'jet-blog' ),
@@ -731,7 +731,7 @@ abstract class Jet_Blog_Base extends Widget_Base {
 			25
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			$position_slug . '_meta_color',
 			array(
 				'label'     => esc_html__( 'Color', 'jet-blog' ),
@@ -743,7 +743,7 @@ abstract class Jet_Blog_Base extends Widget_Base {
 			25
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Typography::get_type(),
 			array(
 				'name'     => $position_slug . '_meta_typography',
@@ -752,7 +752,7 @@ abstract class Jet_Blog_Base extends Widget_Base {
 			50
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			$position_slug . '_meta_margin',
 			array(
 				'label'      => esc_html__( 'Margin', 'jet-blog' ),
@@ -766,7 +766,7 @@ abstract class Jet_Blog_Base extends Widget_Base {
 			50
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			$position_slug . '_meta_padding',
 			array(
 				'label'      => esc_html__( 'Padding', 'jet-blog' ),
@@ -779,7 +779,7 @@ abstract class Jet_Blog_Base extends Widget_Base {
 			75
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			$position_slug . '_meta_border_radius',
 			array(
 				'label'      => esc_html__( 'Border Radius', 'jet-blog' ),
@@ -792,7 +792,7 @@ abstract class Jet_Blog_Base extends Widget_Base {
 			75
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			$position_slug . '_meta_align',
 			array(
 				'label'   => esc_html__( 'Alignment', 'jet-blog' ),
@@ -831,7 +831,7 @@ abstract class Jet_Blog_Base extends Widget_Base {
 	 * @param  [type] $format  [description]
 	 * @return [type]          [description]
 	 */
-	public function __edit_html( $setting = null, $format = '%s' ) {
+	public function _edit_html( $setting = null, $format = '%s' ) {
 
 		if ( is_array( $setting ) ) {
 			$setting = $setting[0] . '.' . $setting[1];
@@ -845,15 +845,15 @@ abstract class Jet_Blog_Base extends Widget_Base {
 	/**
 	 * Set posts query results
 	 */
-	public function __set_query( $posts ) {
-		$this->__query = $posts;
+	public function _set_query( $posts ) {
+		$this->_query = $posts;
 	}
 
 	/**
 	 * Return posts query results
 	 */
-	public function __get_query() {
-		return $this->__query;
+	public function _get_query() {
+		return $this->_query;
 	}
 
 	/**
@@ -881,10 +881,10 @@ abstract class Jet_Blog_Base extends Widget_Base {
 	 *
 	 * @return bool
 	 */
-	public function __is_visible_control( $control_id, $load_level ) {
+	public function _is_visible_control( $control_id, $load_level ) {
 
-		if ( ( $this->__load_level < $load_level || in_array( $control_id, $this->__exclude_controls ) )
-			&& ! in_array( $control_id, $this->__include_controls )
+		if ( ( $this->_load_level < $load_level || in_array( $control_id, $this->_exclude_controls ) )
+			&& ! in_array( $control_id, $this->_include_controls )
 		) {
 			return false;
 		}
@@ -901,9 +901,9 @@ abstract class Jet_Blog_Base extends Widget_Base {
 	 *
 	 * @return bool|void
 	 */
-	public function __add_control( $control_id = false, $control_args = array(), $load_level = 1 ) {
+	public function _add_control( $control_id = false, $control_args = array(), $load_level = 1 ) {
 
-		if ( ! $this->__is_visible_control( $control_id, $load_level ) ) {
+		if ( ! $this->_is_visible_control( $control_id, $load_level ) ) {
 			return false;
 		}
 
@@ -927,9 +927,9 @@ abstract class Jet_Blog_Base extends Widget_Base {
 	 *
 	 * @return bool|void
 	 */
-	public function __add_responsive_control( $control_id = false, $control_args = array(), $load_level = 1 ) {
+	public function _add_responsive_control( $control_id = false, $control_args = array(), $load_level = 1 ) {
 
-		if ( ! $this->__is_visible_control( $control_id, $load_level ) ) {
+		if ( ! $this->_is_visible_control( $control_id, $load_level ) ) {
 			return false;
 		}
 
@@ -953,9 +953,9 @@ abstract class Jet_Blog_Base extends Widget_Base {
 	 *
 	 * @return bool|void
 	 */
-	public function __add_group_control( $group_control_type = false, $group_control_args = array(), $load_level = 1 ) {
+	public function _add_group_control( $group_control_type = false, $group_control_args = array(), $load_level = 1 ) {
 
-		if ( ! $this->__is_visible_control( $group_control_args['name'], $load_level ) ) {
+		if ( ! $this->_is_visible_control( $group_control_args['name'], $load_level ) ) {
 			return false;
 		}
 
@@ -980,9 +980,9 @@ abstract class Jet_Blog_Base extends Widget_Base {
 	 *
 	 * @return bool|void
 	 */
-	public function __start_controls_section( $controls_section_id = false, $controls_section_args = array(), $load_level = 25 ) {
+	public function _start_controls_section( $controls_section_id = false, $controls_section_args = array(), $load_level = 25 ) {
 
-		if ( ! $controls_section_id || $this->__load_level < $load_level ) {
+		if ( ! $controls_section_id || $this->_load_level < $load_level ) {
 			return false;
 		}
 
@@ -996,9 +996,9 @@ abstract class Jet_Blog_Base extends Widget_Base {
 	 *
 	 * @return bool|void
 	 */
-	public function __end_controls_section( $load_level = 25 ) {
+	public function _end_controls_section( $load_level = 25 ) {
 
-		if ( $this->__load_level < $load_level ) {
+		if ( $this->_load_level < $load_level ) {
 			return false;
 		}
 
@@ -1013,9 +1013,9 @@ abstract class Jet_Blog_Base extends Widget_Base {
 	 *
 	 * @return bool|void
 	 */
-	public function __start_controls_tabs( $tabs_id = false, $load_level = 25 ) {
+	public function _start_controls_tabs( $tabs_id = false, $load_level = 25 ) {
 
-		if ( ! $tabs_id || $this->__load_level < $load_level ) {
+		if ( ! $tabs_id || $this->_load_level < $load_level ) {
 			return false;
 		}
 
@@ -1029,9 +1029,9 @@ abstract class Jet_Blog_Base extends Widget_Base {
 	 *
 	 * @return bool|void
 	 */
-	public function __end_controls_tabs( $load_level = 25 ) {
+	public function _end_controls_tabs( $load_level = 25 ) {
 
-		if ( $this->__load_level < $load_level ) {
+		if ( $this->_load_level < $load_level ) {
 			return false;
 		}
 
@@ -1047,9 +1047,9 @@ abstract class Jet_Blog_Base extends Widget_Base {
 	 *
 	 * @return bool|void
 	 */
-	public function __start_controls_tab( $tab_id = false, $tab_args = array(), $load_level = 25 ) {
+	public function _start_controls_tab( $tab_id = false, $tab_args = array(), $load_level = 25 ) {
 
-		if ( ! $tab_id || $this->__load_level < $load_level ) {
+		if ( ! $tab_id || $this->_load_level < $load_level ) {
 			return false;
 		}
 
@@ -1063,9 +1063,9 @@ abstract class Jet_Blog_Base extends Widget_Base {
 	 *
 	 * @return bool|void
 	 */
-	public function __end_controls_tab( $load_level = 25 ) {
+	public function _end_controls_tab( $load_level = 25 ) {
 
-		if ( $this->__load_level < $load_level ) {
+		if ( $this->_load_level < $load_level ) {
 			return false;
 		}
 
@@ -1081,8 +1081,8 @@ abstract class Jet_Blog_Base extends Widget_Base {
 	 * @param  string $icon_class
 	 * @return string
 	 */
-	public function __get_icon( $setting = null, $settings = null, $format = '%s', $icon_class = '' ) {
-		return $this->__render_icon( $setting, $settings, $format, $icon_class, false );
+	public function _get_icon( $setting = null, $settings = null, $format = '%s', $icon_class = '' ) {
+		return $this->_render_icon( $setting, $settings, $format, $icon_class, false );
 	}
 
 	/**
@@ -1096,13 +1096,13 @@ abstract class Jet_Blog_Base extends Widget_Base {
 	 *
 	 * @return void|string
 	 */
-	public function __render_icon( $setting = null, $settings = null, $format = '%s', $icon_class = '', $echo = true ) {
+	public function _render_icon( $setting = null, $settings = null, $format = '%s', $icon_class = '', $echo = true ) {
 
 		if ( null === $settings ) {
 			$settings = $this->get_settings_for_display();
 		}
 
-		$new_setting = $this->__new_icon_prefix . $setting;
+		$new_setting = $this->_new_icon_prefix . $setting;
 
 		$migrated = isset( $settings['__fa4_migrated'][ $new_setting ] );
 		$is_new = ( empty( $settings[ $setting ] ) || 'false' === $settings[ $setting ] )

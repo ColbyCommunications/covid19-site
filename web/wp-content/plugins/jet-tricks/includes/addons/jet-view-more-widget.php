@@ -94,13 +94,17 @@ class Jet_View_More_Widget extends Jet_Tricks_Base {
 		);
 
 		$this->add_control(
-			'button_icon',
+			$this->__new_icon_prefix . 'button_icon',
 			array(
-				'label'       => esc_html__( 'Icon', 'jet-tricks' ),
-				'type'        => Controls_Manager::ICON,
-				'label_block' => true,
-				'file'        => '',
-				'default'     => 'fa fa-arrow-circle-right',
+				'label'            => esc_html__( 'Icon', 'jet-tricks' ),
+				'type'             => Controls_Manager::ICONS,
+				'label_block'      => false,
+				'skin'             => 'inline',
+				'fa4compatibility' => 'button_icon',
+				'default'          => array(
+					'value'   => 'fas fa-arrow-circle-right',
+					'library' => 'fa-solid',
+				),
 			)
 		);
 
@@ -157,7 +161,7 @@ class Jet_View_More_Widget extends Jet_Tricks_Base {
 		$this->__add_responsive_control(
 			'button_padding',
 			array(
-				'label'      => __( 'Padding', 'jet-tricks' ),
+				'label'      => esc_html__( 'Padding', 'jet-tricks' ),
 				'type'       => Controls_Manager::DIMENSIONS,
 				'size_units' => array( 'px', '%' ),
 				'selectors'  => array(
@@ -170,11 +174,58 @@ class Jet_View_More_Widget extends Jet_Tricks_Base {
 		$this->__add_responsive_control(
 			'button_margin',
 			array(
-				'label'      => __( 'Margin', 'jet-tricks' ),
+				'label'      => esc_html__( 'Margin', 'jet-tricks' ),
 				'type'       => Controls_Manager::DIMENSIONS,
 				'size_units' => array( 'px', '%' ),
 				'selectors'  => array(
 					'{{WRAPPER}} ' . $css_scheme['button'] => 'margin: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+				),
+			),
+			75
+		);
+
+		$this->__add_responsive_control (
+			'icon_position',
+			array(
+				'label'   => esc_html__( 'Icon Position', 'jet-tricks' ),
+				'type'    => Controls_Manager::SELECT,
+				'default' => 1,
+				'options' => array(
+					1 => esc_html__( 'Before Label', 'jet-tricks' ),
+					3 => esc_html__( 'After Label', 'jet-tricks' )
+				),
+				'selectors'  => array(
+					'{{WRAPPER}} ' . $css_scheme['button'] . ' ' . $css_scheme['icon'] => 'order: {{VALUE}};',
+				),
+			),
+			75
+		);
+
+		$this->__add_responsive_control (
+			'icon_orientation',
+			array(
+				'label'   => esc_html__( 'Icon Orientation', 'jet-tricks' ),
+				'type'    => Controls_Manager::SELECT,
+				'default' => 'row',
+				'options' => array(
+					'row'    => esc_html__( 'Horizontal', 'jet-tricks' ),
+					'column' => esc_html__( 'Vertical', 'jet-tricks' ),
+				),
+				'selectors'  => array(
+					'{{WRAPPER}} ' . $css_scheme['button'] => 'flex-direction: {{VALUE}};',
+				),
+			),
+			75
+		);
+
+		$this->__add_responsive_control(
+			'icon_gap',
+			array(
+				'label'      => esc_html__( 'Icon Gap', 'jet-tricks' ),
+				'type'       => Controls_Manager::DIMENSIONS,
+				'size_units' => array( 'px' ),
+				'selectors'  => array(
+					'{{WRAPPER}} ' . $css_scheme['button'] . ' ' . $css_scheme['icon'] => 'margin: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				),
 			),
 			75
@@ -438,11 +489,7 @@ class Jet_View_More_Widget extends Jet_Tricks_Base {
 			'data-settings' => json_encode( $settings ),
 		) );
 
-		$button_icon_html = '';
-
-		if ( ! empty( $button_settings['button_icon'] ) ) {
-			$button_icon_html = sprintf( '<div class="jet-view-more__icon"><i class="%1$s"></i></div>', $button_settings['button_icon'] );
-		}
+		$button_icon_html = $this->__get_icon( 'button_icon', $button_settings, '<div class="jet-view-more__icon jet-tricks-icon">%s</div>' );
 
 		$button_label_html = '';
 

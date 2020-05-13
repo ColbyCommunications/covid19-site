@@ -214,7 +214,7 @@ class Elementor_Template extends Base {
 
 			$src = $wp_scripts->registered[ $handler ]->src;
 
-			if ( 0 === strpos( $src, site_url() ) ) {
+			if ( 0 === strpos( $src, site_url() ) || false === strpos( $src, site_url() ) ) {
 				return $src;
 			} else {
 				return site_url() . $src;

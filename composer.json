@@ -8,7 +8,6 @@
         "wpackagist-theme/twentyseventeen": "^2.1",
         "wpackagist-plugin/classic-editor": "^1.4",
         "wpackagist-plugin/elementor": "^2.9.0",
-        "wpackagist-plugin/jetwidgets-for-elementor": "1.0.7",
         "colbycommunications/colby-groups": "dev-wp4-test",
         "wpackagist-plugin/capability-manager-enhanced": "1.9",
         "wpackagist-plugin/tablepress": "^1.10",

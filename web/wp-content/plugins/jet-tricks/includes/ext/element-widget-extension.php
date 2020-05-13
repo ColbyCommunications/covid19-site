@@ -46,7 +46,6 @@ if ( ! class_exists( 'Jet_Tricks_Elementor_Widget_Extension' ) ) {
 			'jet_tricks_widget_satellite'          => 'false',
 			'jet_tricks_widget_satellite_type'     => 'text',
 			'jet_tricks_widget_satellite_position' => 'top-center',
-			'jet_tricks_widget_satellite_icon'     => 'fa fa-plus',
 			'jet_tricks_widget_satellite_image'    => array(
 				'url' => '',
 				'id' => '',
@@ -82,10 +81,14 @@ if ( ! class_exists( 'Jet_Tricks_Elementor_Widget_Extension' ) ) {
 		 */
 		private static $instance = null;
 
+		public $__new_icon_prefix  = '';
+
 		/**
 		 * Init Handler
 		 */
 		public function init() {
+
+			$this->__new_icon_prefix  = Jet_Tricks_Tools::$new_icon_prefix;
 
 			$this->avaliable_extensions = jet_tricks_settings()->get( 'avaliable_extensions', jet_tricks_settings()->default_avaliable_extensions );
 
@@ -302,18 +305,22 @@ if ( ! class_exists( 'Jet_Tricks_Elementor_Widget_Extension' ) ) {
 			);
 
 			$obj->add_control(
-				'jet_tricks_widget_satellite_icon',
+				$this->__new_icon_prefix . 'jet_tricks_widget_satellite_icon',
 				array(
-					'label'       => esc_html__( 'Icon', 'jet-tricks' ),
-					'type'        => Elementor\Controls_Manager::ICON,
-					'label_block' => true,
-					'file'        => '',
-					'default'     => 'fa fa-plus',
-					'condition' => array(
+					'label'            => esc_html__( 'Icon', 'jet-tricks' ),
+					'type'             => Elementor\Controls_Manager::ICONS,
+					'label_block'      => false,
+					'skin'             => 'inline',
+					'fa4compatibility' => 'jet_tricks_widget_satellite_icon',
+					'default'          => array(
+						'value'   => 'fas fa-plus',
+						'library' => 'fa-solid',
+					),
+					'condition'        => array(
 						'jet_tricks_widget_satellite'      => 'true',
 						'jet_tricks_widget_satellite_type' => 'icon',
 					),
-					'render_type'  => 'template',
+					'render_type'      => 'template',
 				)
 			);
 
@@ -987,7 +994,7 @@ if ( ! class_exists( 'Jet_Tricks_Elementor_Widget_Extension' ) ) {
 		public function widget_before_render_content( $widget ) {
 
 			$data     = $widget->get_data();
-			$settings = $data['settings'];
+			$settings = $widget->get_settings();
 
 			$settings = wp_parse_args( $settings, $this->default_widget_settings );
 
@@ -1013,8 +1020,14 @@ if ( ! class_exists( 'Jet_Tricks_Elementor_Widget_Extension' ) ) {
 
 					case 'icon':
 
-						if ( ! empty( $settings['jet_tricks_widget_satellite_icon'] ) ) {
-							echo sprintf( '<div class="jet-tricks-satellite jet-tricks-satellite--%1$s"><div class="jet-tricks-satellite__inner"><div class="jet-tricks-satellite__icon"><div class="jet-tricks-satellite__icon-instance"><i class="%2$s"></i></div></div></div></div>', $settings['jet_tricks_widget_satellite_position'], $settings['jet_tricks_widget_satellite_icon'] );
+						$icon_html = Jet_Tricks_Tools::get_icon( 'jet_tricks_widget_satellite_icon', $settings );
+
+						if ( ! empty( $icon_html ) ) {
+							echo sprintf(
+								'<div class="jet-tricks-satellite jet-tricks-satellite--%1$s"><div class="jet-tricks-satellite__inner"><div class="jet-tricks-satellite__icon"><div class="jet-tricks-satellite__icon-instance jet-tricks-icon">%2$s</div></div></div></div>',
+								$settings['jet_tricks_widget_satellite_position'],
+								$icon_html
+							);
 						}
 					break;
 

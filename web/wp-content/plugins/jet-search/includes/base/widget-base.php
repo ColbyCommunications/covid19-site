@@ -22,7 +22,7 @@ abstract class Jet_Search_Widget_Base extends Widget_Base {
 	 */
 	public function __get_global_template( $name = null ) {
 
-		$template = call_user_func( array( $this, sprintf( '__get_%s_template', $this->__context ) ) );
+		$template = call_user_func( array( $this, sprintf( '__get_%s_template', $this->__context ) ), $name );
 
 		if ( ! $template ) {
 			$template = jet_search()->get_template( $this->get_name() . '/global/' . $name . '.php' );

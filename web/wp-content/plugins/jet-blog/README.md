@@ -1,5 +1,15 @@
 # ChangeLog
 
+## [2.2.6](https://github.com/ZemezLab/jet-blog/releases/tag/2.2.6)
+* Added: `To Top` control in the Smart Posts List widget
+* Fixed: not working pagination for CPT in the Smart Posts List widget
+
+## [2.2.5](https://github.com/ZemezLab/jet-blog/releases/tag/2.2.5)
+* Added: `Posts Offset` control in the Smart Posts List widget
+* Added: an ability to use dynamic tags in the `Include posts by IDs` and `Exclude posts by IDs` controls
+* Added: multiple improvements
+* Fixed: [Crocoblock/suggestions/#970](https://github.com/Crocoblock/suggestions/issues/970)
+
 ## [2.2.4](https://github.com/ZemezLab/jet-blog/releases/tag/2.2.4)
 * Added: the number of possible columns is increased to 8 in the Smart Posts List widget
 * Added: scrolling to the top of the widget after a click on pagination arrow in the Smart Posts List widget

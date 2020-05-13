@@ -351,10 +351,12 @@
 
 			var $this       = $( this ),
 				$wrapper    = $this.closest( '.jet-smart-listing-wrap' ),
+				$arrowsWrap = $this.closest( '.jet-smart-listing__arrows' ),
 				currentPage = parseInt( $wrapper.data( 'page' ), 10 ),
 				newPage     = 1,
 				currentTerm = parseInt( $wrapper.data( 'term' ), 10 ),
-				direction   = $this.data( 'dir' );
+				direction   = $this.data( 'dir' ),
+				scrollTop   = $arrowsWrap.data(  'scroll-top' );
 
 			if ( $this.hasClass( 'jet-arrow-disabled' ) ) {
 				return;
@@ -370,7 +372,9 @@
 
 			JetBlog.requestPosts( $this, { term: currentTerm, paged: newPage } );
 
-			$( 'html, body' ).stop().animate( { scrollTop: $wrapper.offset().top }, 500 );
+			if ( scrollTop ) {
+				$( 'html, body' ).stop().animate( { scrollTop: $wrapper.offset().top }, 500 );
+			}
 
 		},
 

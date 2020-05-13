@@ -368,7 +368,7 @@ class Jet_Blog_Video_Playlist extends Jet_Blog_Base {
 		);
 
 		$this->add_control(
-			$this->__new_icon_prefix . 'heading_icon',
+			$this->_new_icon_prefix . 'heading_icon',
 			array(
 				'type'             => Controls_Manager::ICONS,
 				'label'            => esc_html__( 'Heading Icon', 'jet-blog' ),
@@ -543,7 +543,7 @@ class Jet_Blog_Video_Playlist extends Jet_Blog_Base {
 
 		$this->end_controls_section();
 
-		$this->__start_controls_section(
+		$this->_start_controls_section(
 			'section_general_style',
 			array(
 				'label'      => esc_html__( 'General Styles', 'jet-blog' ),
@@ -552,7 +552,7 @@ class Jet_Blog_Video_Playlist extends Jet_Blog_Base {
 			)
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'canvas_bg',
 			array(
 				'label'  => esc_html__( 'Canvas Background', 'jet-blog' ),
@@ -568,7 +568,7 @@ class Jet_Blog_Video_Playlist extends Jet_Blog_Base {
 			25
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'thumbs_bg',
 			array(
 				'label'  => esc_html__( 'Thumbnails Background', 'jet-blog' ),
@@ -584,7 +584,7 @@ class Jet_Blog_Video_Playlist extends Jet_Blog_Base {
 			25
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'heading_bg',
 			array(
 				'label'  => esc_html__( 'Heading Background', 'jet-blog' ),
@@ -600,7 +600,7 @@ class Jet_Blog_Video_Playlist extends Jet_Blog_Base {
 			25
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'playlist_border_radius',
 			array(
 				'label'      => esc_html__( 'Wrapper Border Radius', 'jet-blog' ),
@@ -613,7 +613,7 @@ class Jet_Blog_Video_Playlist extends Jet_Blog_Base {
 			75
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'heading_padding',
 			array(
 				'label'      => esc_html__( 'Heading Padding', 'jet-blog' ),
@@ -626,7 +626,7 @@ class Jet_Blog_Video_Playlist extends Jet_Blog_Base {
 			50
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'heading_icon_styles',
 			array(
 				'label'     => esc_html__( 'Heading Icon', 'jet-blog' ),
@@ -636,7 +636,7 @@ class Jet_Blog_Video_Playlist extends Jet_Blog_Base {
 			25
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'heading_icon_color',
 			array(
 				'label'  => esc_html__( 'Color', 'jet-blog' ),
@@ -649,7 +649,7 @@ class Jet_Blog_Video_Playlist extends Jet_Blog_Base {
 			25
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'heading_icon_size',
 			array(
 				'label'      => esc_html__( 'Icon Size', 'jet-blog' ),
@@ -672,7 +672,7 @@ class Jet_Blog_Video_Playlist extends Jet_Blog_Base {
 			50
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'heading_icon_padding',
 			array(
 				'label'      => esc_html__( 'Icon Padding', 'jet-blog' ),
@@ -685,7 +685,7 @@ class Jet_Blog_Video_Playlist extends Jet_Blog_Base {
 			50
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'heading_title_styles',
 			array(
 				'label'     => esc_html__( 'Heading Title', 'jet-blog' ),
@@ -695,7 +695,7 @@ class Jet_Blog_Video_Playlist extends Jet_Blog_Base {
 			25
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'heading_title_color',
 			array(
 				'label'  => esc_html__( 'Color', 'jet-blog' ),
@@ -708,7 +708,7 @@ class Jet_Blog_Video_Playlist extends Jet_Blog_Base {
 			25
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Typography::get_type(),
 			array(
 				'name'     => 'heading_title_typography',
@@ -718,7 +718,7 @@ class Jet_Blog_Video_Playlist extends Jet_Blog_Base {
 			50
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'heading_counter_styles',
 			array(
 				'label'     => esc_html__( 'Heading Counter', 'jet-blog' ),
@@ -728,7 +728,7 @@ class Jet_Blog_Video_Playlist extends Jet_Blog_Base {
 			25
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'heading_counter_color',
 			array(
 				'label'  => esc_html__( 'Color', 'jet-blog' ),
@@ -741,7 +741,7 @@ class Jet_Blog_Video_Playlist extends Jet_Blog_Base {
 			25
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Typography::get_type(),
 			array(
 				'name'     => 'heading_counter_typography',
@@ -762,9 +762,9 @@ class Jet_Blog_Video_Playlist extends Jet_Blog_Base {
 			50
 		);
 
-		$this->__end_controls_section();
+		$this->_end_controls_section();
 
-		$this->__start_controls_section(
+		$this->_start_controls_section(
 			'section_thumb_item_style',
 			array(
 				'label'      => esc_html__( 'Thumbnail Styles', 'jet-blog' ),
@@ -773,7 +773,7 @@ class Jet_Blog_Video_Playlist extends Jet_Blog_Base {
 			)
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'thumb_item_padding',
 			array(
 				'label'      => esc_html__( 'Thumbnail Row Padding', 'jet-blog' ),
@@ -786,7 +786,7 @@ class Jet_Blog_Video_Playlist extends Jet_Blog_Base {
 			50
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Border::get_type(),
 			array(
 				'name'        => 'thumb_title_border',
@@ -797,7 +797,7 @@ class Jet_Blog_Video_Playlist extends Jet_Blog_Base {
 			75
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'thumb_img_gap',
 			array(
 				'label'      => esc_html__( 'Thumbnail Image Gap', 'jet-blog' ),
@@ -817,7 +817,7 @@ class Jet_Blog_Video_Playlist extends Jet_Blog_Base {
 			50
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'thumb_title_styles',
 			array(
 				'label'     => esc_html__( 'Title', 'jet-blog' ),
@@ -827,7 +827,7 @@ class Jet_Blog_Video_Playlist extends Jet_Blog_Base {
 			50
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Typography::get_type(),
 			array(
 				'name'     => 'thumb_title_typography',
@@ -854,7 +854,7 @@ class Jet_Blog_Video_Playlist extends Jet_Blog_Base {
 			50
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'thumb_item_title_padding',
 			array(
 				'label'      => esc_html__( 'Padding', 'jet-blog' ),
@@ -867,7 +867,7 @@ class Jet_Blog_Video_Playlist extends Jet_Blog_Base {
 			50
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'thumb_duration_styles',
 			array(
 				'label'     => esc_html__( 'Duration', 'jet-blog' ),
@@ -877,7 +877,7 @@ class Jet_Blog_Video_Playlist extends Jet_Blog_Base {
 			50
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Typography::get_type(),
 			array(
 				'name'     => 'thumb_duration_typography',
@@ -904,7 +904,7 @@ class Jet_Blog_Video_Playlist extends Jet_Blog_Base {
 			50
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'thumb_item_duration_padding',
 			array(
 				'label'      => esc_html__( 'Padding', 'jet-blog' ),
@@ -917,16 +917,16 @@ class Jet_Blog_Video_Playlist extends Jet_Blog_Base {
 			50
 		);
 
-		$this->__start_controls_tabs( 'tabs_thumb_item_style' );
+		$this->_start_controls_tabs( 'tabs_thumb_item_style' );
 
-		$this->__start_controls_tab(
+		$this->_start_controls_tab(
 			'tab_thumb_item_normal',
 			array(
 				'label' => esc_html__( 'Normal', 'jet-blog' ),
 			)
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'thumb_item_title_color',
 			array(
 				'label'     => esc_html__( 'Title Color', 'jet-blog' ),
@@ -939,7 +939,7 @@ class Jet_Blog_Video_Playlist extends Jet_Blog_Base {
 			25
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'thumb_item_duration_color',
 			array(
 				'label'     => esc_html__( 'Duration Color', 'jet-blog' ),
@@ -952,7 +952,7 @@ class Jet_Blog_Video_Playlist extends Jet_Blog_Base {
 			25
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Background::get_type(),
 			array(
 				'name'     => 'thumb_item_background',
@@ -961,9 +961,9 @@ class Jet_Blog_Video_Playlist extends Jet_Blog_Base {
 			25
 		);
 
-		$this->__end_controls_tab();
+		$this->_end_controls_tab();
 
-		$this->__start_controls_tab(
+		$this->_start_controls_tab(
 			'tab_thumb_item_hover',
 			array(
 				'label' => esc_html__( 'Hover', 'jet-blog' ),
@@ -971,7 +971,7 @@ class Jet_Blog_Video_Playlist extends Jet_Blog_Base {
 			25
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'thumb_item_title_color_hover',
 			array(
 				'label'     => esc_html__( 'Title Color', 'jet-blog' ),
@@ -983,7 +983,7 @@ class Jet_Blog_Video_Playlist extends Jet_Blog_Base {
 			25
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'thumb_item_duration_color_hover',
 			array(
 				'label'     => esc_html__( 'Duration Color', 'jet-blog' ),
@@ -995,7 +995,7 @@ class Jet_Blog_Video_Playlist extends Jet_Blog_Base {
 			25
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Background::get_type(),
 			array(
 				'name'     => 'thumb_item_background_hover',
@@ -1004,9 +1004,9 @@ class Jet_Blog_Video_Playlist extends Jet_Blog_Base {
 			25
 		);
 
-		$this->__end_controls_tab();
+		$this->_end_controls_tab();
 
-		$this->__start_controls_tab(
+		$this->_start_controls_tab(
 			'tab_thumb_item_active',
 			array(
 				'label' => esc_html__( 'Active', 'jet-blog' ),
@@ -1014,7 +1014,7 @@ class Jet_Blog_Video_Playlist extends Jet_Blog_Base {
 			25
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'thumb_item_title_color_active',
 			array(
 				'label'     => esc_html__( 'Title Color', 'jet-blog' ),
@@ -1026,7 +1026,7 @@ class Jet_Blog_Video_Playlist extends Jet_Blog_Base {
 			25
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'thumb_item_duration_color_active',
 			array(
 				'label'     => esc_html__( 'Duration Color', 'jet-blog' ),
@@ -1038,7 +1038,7 @@ class Jet_Blog_Video_Playlist extends Jet_Blog_Base {
 			25
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Background::get_type(),
 			array(
 				'name'     => 'thumb_item_background_active',
@@ -1047,13 +1047,13 @@ class Jet_Blog_Video_Playlist extends Jet_Blog_Base {
 			25
 		);
 
-		$this->__end_controls_tab();
+		$this->_end_controls_tab();
 
-		$this->__end_controls_tabs();
+		$this->_end_controls_tabs();
 
-		$this->__end_controls_section();
+		$this->_end_controls_section();
 
-		$this->__start_controls_section(
+		$this->_start_controls_section(
 			'section_thumb_index_style',
 			array(
 				'label'      => esc_html__( 'Thumbnails Numbers and Status Icons', 'jet-blog' ),
@@ -1062,7 +1062,7 @@ class Jet_Blog_Video_Playlist extends Jet_Blog_Base {
 			)
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Typography::get_type(),
 			array(
 				'name'     => 'thumb_index_typography',
@@ -1083,7 +1083,7 @@ class Jet_Blog_Video_Playlist extends Jet_Blog_Base {
 			50
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'thumb_index_margin',
 			array(
 				'label'      => esc_html__( 'Margin', 'jet-blog' ),
@@ -1096,16 +1096,16 @@ class Jet_Blog_Video_Playlist extends Jet_Blog_Base {
 			50
 		);
 
-		$this->__start_controls_tabs( 'tabs_thumb_index_style' );
+		$this->_start_controls_tabs( 'tabs_thumb_index_style' );
 
-		$this->__start_controls_tab(
+		$this->_start_controls_tab(
 			'tab_thumb_index_normal',
 			array(
 				'label' => esc_html__( 'Normal', 'jet-blog' ),
 			)
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			\Jet_Blog_Group_Control_Box_Style::get_type(),
 			array(
 				'name'     => 'thumb_index',
@@ -1128,16 +1128,16 @@ class Jet_Blog_Video_Playlist extends Jet_Blog_Base {
 			25
 		);
 
-		$this->__end_controls_tab();
+		$this->_end_controls_tab();
 
-		$this->__start_controls_tab(
+		$this->_start_controls_tab(
 			'tab_thumb_index_hover',
 			array(
 				'label' => esc_html__( 'Hover', 'jet-blog' ),
 			)
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			\Jet_Blog_Group_Control_Box_Style::get_type(),
 			array(
 				'name'     => 'thumb_index_hover',
@@ -1153,16 +1153,16 @@ class Jet_Blog_Video_Playlist extends Jet_Blog_Base {
 			25
 		);
 
-		$this->__end_controls_tab();
+		$this->_end_controls_tab();
 
-		$this->__start_controls_tab(
+		$this->_start_controls_tab(
 			'tab_thumb_index_active',
 			array(
 				'label' => esc_html__( 'Active', 'jet-blog' ),
 			)
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			\Jet_Blog_Group_Control_Box_Style::get_type(),
 			array(
 				'name'     => 'thumb_index_active',
@@ -1178,13 +1178,13 @@ class Jet_Blog_Video_Playlist extends Jet_Blog_Base {
 			25
 		);
 
-		$this->__end_controls_tab();
+		$this->_end_controls_tab();
 
-		$this->__end_controls_tabs();
+		$this->_end_controls_tabs();
 
-		$this->__end_controls_section();
+		$this->_end_controls_section();
 
-		$this->__start_controls_section(
+		$this->_start_controls_section(
 			'section_scroll_style',
 			array(
 				'label'      => esc_html__( 'Scrollbar Styles', 'jet-blog' ),
@@ -1193,7 +1193,7 @@ class Jet_Blog_Video_Playlist extends Jet_Blog_Base {
 			)
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'non_webkit_notice',
 			array(
 				'type' => Controls_Manager::RAW_HTML,
@@ -1202,7 +1202,7 @@ class Jet_Blog_Video_Playlist extends Jet_Blog_Base {
 			25
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'scroll_thumb',
 			array(
 				'label'     => esc_html__( 'Scrollbar Thumb', 'jet-blog' ),
@@ -1214,7 +1214,7 @@ class Jet_Blog_Video_Playlist extends Jet_Blog_Base {
 			25
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'scroll_track',
 			array(
 				'label'     => esc_html__( 'Scrollbar Track', 'jet-blog' ),
@@ -1226,22 +1226,22 @@ class Jet_Blog_Video_Playlist extends Jet_Blog_Base {
 			25
 		);
 
-		$this->__end_controls_section();
+		$this->_end_controls_section();
 
 	}
 
 	protected function render() {
 
-		$this->__context = 'render';
+		$this->_context = 'render';
 
 		add_filter( 'no_texturize_tags', array( $this, 'prevent_playlist_from_texturizing' ) );
 		add_filter( 'elementor/widget/render_content', array( $this, 'clear_notexturize_filter' ), 10, 2 );
 
 		jet_blog_integration()->set_playlist_trigger();
 
-		$this->__open_wrap();
-		include $this->__get_global_template( 'index' );
-		$this->__close_wrap();
+		$this->_open_wrap();
+		include $this->_get_global_template( 'index' );
+		$this->_close_wrap();
 	}
 
 	/**
@@ -1290,7 +1290,7 @@ class Jet_Blog_Video_Playlist extends Jet_Blog_Base {
 	 *
 	 * @return string
 	 */
-	public function __container_classes( $settings ) {
+	public function _container_classes( $settings ) {
 
 		$classes     = array( 'jet-blog-playlist' );
 		$orientation = $settings['thumbnails_orientation'];
@@ -1312,7 +1312,7 @@ class Jet_Blog_Video_Playlist extends Jet_Blog_Base {
 		echo implode( ' ', $classes );
 	}
 
-	public function __get_video_data_atts( $video_data, $item, $settings, $index ) {
+	public function _get_video_data_atts( $video_data, $item, $settings, $index ) {
 
 		$data = array(
 			'data-id'          => $item['_id'],
@@ -1332,7 +1332,7 @@ class Jet_Blog_Video_Playlist extends Jet_Blog_Base {
 		return $result;
 	}
 
-	public function __video_counter( $settings, $list ) {
+	public function _video_counter( $settings, $list ) {
 
 		if ( 'yes' !== $settings['show_counter'] ) {
 			return;
@@ -1355,7 +1355,7 @@ class Jet_Blog_Video_Playlist extends Jet_Blog_Base {
 
 	}
 
-	public function __get_hide_classes( $settings ) {
+	public function _get_hide_classes( $settings ) {
 
 		$keys   = array( 'index', 'duration', 'image' );
 		$result = array();
@@ -1381,7 +1381,7 @@ class Jet_Blog_Video_Playlist extends Jet_Blog_Base {
 		return $result;
 	}
 
-	public function __get_custom_thumb( $item ) {
+	public function _get_custom_thumb( $item ) {
 
 		if ( empty( $item['custom_thumb']['id'] ) ) {
 			return '';

@@ -9,7 +9,7 @@ if ( 'yes' !== $settings[ 'show_meta' ] ) {
 	return;
 }
 
-$meta_data = $this->__get_meta();
+$meta_data = $this->_get_meta();
 
 echo '<div class="jet-smart-tiles__meta">';
 

@@ -180,6 +180,17 @@ class Jet_Tabs_Widget extends Jet_Tabs_Base {
 			]
 		);
 
+		$repeater->add_control(
+			'control_id',
+			array(
+				'label'   => esc_html__( 'Control CSS ID', 'jet-tabs' ),
+				'type'    => Controls_Manager::TEXT,
+				'dynamic' => [
+					'active' => true,
+				],
+			)
+		);
+
 		$this->add_control(
 			'tabs',
 			array(
@@ -1310,9 +1321,10 @@ class Jet_Tabs_Widget extends Jet_Tabs_Base {
 					foreach ( $tabs as $index => $item ) {
 						$tab_count = $index + 1;
 						$tab_title_setting_key = $this->get_repeater_setting_key( 'jet_tab_control', 'tabs', $index );
+						$tab_control_id = ! empty( $item['control_id'] ) ? esc_attr( $item['control_id'] ) : 'jet-tabs-control-' . $id_int . $tab_count;
 
 						$this->add_render_attribute( $tab_title_setting_key, array(
-							'id'            => 'jet-tabs-control-' . $id_int . $tab_count,
+							'id'            => $tab_control_id,
 							'class'         => array(
 								'jet-tabs__control',
 								'jet-tabs__control-icon-' . $this->get_settings( 'tabs_control_icon_position' ),
