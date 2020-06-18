@@ -1,0 +1,64 @@
+###
+# Controls how the application container responds to incoming requests. See https://docs.platform.sh/configuration/app/web.html#locations
+###
+
+################################
+###          CORE           ###
+###############################
+
+# Root location
+"/":
+  # The public directory of the app, relative to its root.
+  root: "web"
+  # The front-controller script to send non-static requests to.
+  passthru: "/index.php"
+  # Wordpress has multiple roots (wp-admin) so the following is required
+  index:
+    - "index.php"
+  # The number of seconds whitelisted (static) content should be cached.
+  expires: 3600s
+  scripts: true
+  allow: true
+  rules: !include web.locations.root.rules.yaml
+
+"/simplesaml":
+  root: 'vendor/simplesamlphp/simplesamlphp/www'
+  allow: true
+  scripts: true
+  index:
+    - index.php
+
+################################
+###        WORDPRESS        ###
+###############################
+# For both /wp-admin/ and /wp-includes/ :
+# Multi domain multisites do not respect the WP_SITEURL constant in Wp-config. Since the vast majority of
+# migrated multisites were not set up using this constant, their siteurl location is hard-coded into the db
+# Because of this, WordPress and plugins are unaware that core files are located in /wp/. This allows those
+# sites to continue to function properly, and single sites are unaffected as they respect the WP_SITEURL
+# constant. New multisites set up with the new paradigm will have their siteurl setting set correctly and will
+# also not be affected by this setting.
+"/wp-admin":
+  root: 'web/wp/wp-admin'
+  allow: true
+  scripts: true
+  index:
+    - 'index.php'
+"/wp-includes":
+  root: 'web/wp/wp-includes'
+  allow: true
+  scripts: true
+# Prevents scripts from running inside of the wp-content directory (and subdirectories) but allows media to still be
+# available
+"/wp-content":
+      allow: false
+      scripts: false
+      rules:
+            # Allow access to common static files.
+            '(?<!lock)\.(?i:jpe?g|gif|png|svg|bmp|ico|css|js(?:on)?|eot|ttf|woff|woff2|pdf|docx?|xlsx?|pp[st]x?|psd|odt|key|mp[2-5g]|m4[av]|og[gv]|wav|mov|wm[av]|avi|3g[p2])$':
+                  allow: true
+                  expires: 1w
+################################
+###     Project Specific    ###
+###############################
+# Add any additional project specific php dependencies you need in the environment after this line

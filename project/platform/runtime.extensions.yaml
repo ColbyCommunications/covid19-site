@@ -1,0 +1,21 @@
+###
+# Contains a listing of environment runtime extensions needed in the environment. See https://docs.platform.sh/languages/php/extensions.html#php-extensions
+###
+################################
+###          CORE           ###
+###############################
+# reserved
+
+
+
+################################
+###        WORDPRESS        ###
+###############################
+# needed by the cli bundle
+- readline
+
+
+################################
+###     Project Specific    ###
+###############################
+# Add any additional project specific php dependencies you need in the environment after this line

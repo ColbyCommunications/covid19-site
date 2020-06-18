@@ -1,0 +1,41 @@
+###
+# Contains hooks that are fired when an environment is built. See https://docs.platform.sh/configuration/app/build.html#build-hook
+###
+# Ensures that if an error occurs in one of our hooks it will fail the build
+set -e
+################################
+###          CORE           ###
+###############################
+# In build hook, install platform CLI in case we need it. Will require an ENV
+curl -sS https://platform.sh/cli/installer | php
+
+# install redis cache
+./scripts/install-redis.sh 5.1.1
+
+################################
+###        WORDPRESS        ###
+###############################
+# create a symlink to our actual file in the root of mu-plugins
+./scripts/setup-mu-plugins.sh
+
+################################
+###          NODE           ###
+###############################
+unset NPM_CONFIG_PREFIX
+curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.8/install.sh | dash
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+nvm current
+nvm install 10.16.3
+
+
+unset NPM_CONFIG_PREFIX
+nvm use 10.16.3
+
+# run npm install in all colby dependencies
+./scripts/dependencies-run-install-build.sh
+
+################################
+###     Project Specific    ###
+###############################
+# Add any additional project specific build hooks you need in the environment after this line.

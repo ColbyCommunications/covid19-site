@@ -1,0 +1,39 @@
+###
+# Override rules for the root (/) web location. See https://docs.platform.sh/configuration/app/web.html#rules
+###
+
+################################
+###          CORE           ###
+###############################
+'^/robots\.txt$':
+  allow: true
+'^/sitemap\.xml$':
+  allow: true
+#reserved
+
+
+################################
+###        WORDPRESS        ###
+###############################
+# We need to allow requests to wp-login.php to pass through
+# Multisites do not respect the WP_SITEURL constant in Wp-config. Since the vast majority of
+# migrated multisites were not set up using this constant, their siteurl location is hard-coded into the db
+# In addition, directory-based multisites include the virtual directory before the wp-login.php
+# Because of this, WordPress and plugins are unaware that core files are located in /wp/. This allows those
+# sites to continue to function properly, and single sites are unaffected as they respect the WP_SITEURL
+# constant. New multisites set up with the new paradigm will have their siteurl setting set correctly and will
+# also not be affected by this setting.
+'^/(?!wp/)([_0-9a-zA-Z-]+/)?wp-login.php$':
+  allow: true
+  scripts: true
+  passthru: '/wp/wp-login.php'
+# Allows directory-based multisites to still access the wp-admin and wp-include locations
+'^/(?!wp/)([_0-9a-zA-Z-]+/)?(?<adminrewrite>wp-(admin|includes).*)':
+  allow: true
+  scripts: true
+  passthru: '/wp/$adminrewrite'
+
+################################
+###     Project Specific    ###
+###############################
+# Add any additional project specific root override rules after this line

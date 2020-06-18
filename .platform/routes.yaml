@@ -1,0 +1,31 @@
+# The routes of the project.
+#
+# Each route describes how an incoming URL is going
+# to be processed by Platform.sh.
+
+"https://{default}/":
+    type: upstream
+    upstream: "app:http"
+    cache:
+        enabled: true
+
+        # Base the cache on the session cookie and custom Drupal cookies. Ignore all other cookies.
+        cookies: ['/^SS?ESS/', '/^SimpleSAML/', '/^wordpress_/', '/^wp-settings/']
+    redirects:
+      expires: 1d
+      paths:
+        '^/wp-admin$':
+          to: "/wp/wp-admin/"
+          regexp: true
+        '^/wp-admin/(.*)':
+          to: "/wp/wp-admin/$1"
+          regexp: true
+
+# *ALL* www.* requests should be redirected back to primary domain
+"https://www.{all}/":
+    type: redirect
+    to: "https://{default}/"
+# All vanity domain requests should be redirected to primary domain
+"https://{all}/":
+  type: redirect
+  to: "https://{default}/"

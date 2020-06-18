@@ -1,0 +1,26 @@
+###
+# Contains hooks that are fired when an environment is deployed. See https://docs.platform.sh/configuration/app/build.html#deploy-hook
+###
+# Ensures that if an error occurs in one of our hooks it will fail the build
+set -e
+################################
+###          CORE           ###
+###############################
+
+
+################################
+###        WORDPRESS        ###
+###############################
+# If we're on a MULTISITE and not on the master branch
+if [ "$PLATFORM_BRANCH" != master ] && [ ! -z ${MULTISITE+x} ]; then
+  php scripts/update-multisite-db.php
+fi
+
+#Import the base settings for the cache-control plugin
+php scripts/wp-import-config.php
+
+
+################################
+###     Project Specific    ###
+###############################
+# Add any additional project specific deploy hooks you need in the environment after this line

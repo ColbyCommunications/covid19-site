@@ -1,0 +1,40 @@
+# Route file specific to multidomain multisites.
+# DO NOT USE THIS FILE IF YOU ARE NOT RUNNING A MULTIDOMAIN WORDPRESS MULTISITE
+#
+# Each route describes how an incoming URL is going
+# to be processed by Platform.sh.
+
+"https://{all}/":
+    type: upstream
+    upstream: "app:http"
+    cache:
+        enabled: true
+
+        # Base the cache on the session cookie and custom Drupal cookies. Ignore all other cookies.
+        cookies: ['/^SS?ESS/', '/^SimpleSAML/', '/^wordpress_/', '/^wp-settings/']
+    redirects:
+        expires: 30s
+        paths:
+          '^/wp-admin$':
+            to: '/wp-admin/'
+            regexp: true
+
+"https://www.{all}/":
+    type: redirect
+    to: "https://{all}/"
+
+# During development, especially before you have moved the site to platform, you will need to add a new section similar
+# to the following lines, for each domain that will be pointed to the production site
+#
+# "https://site.colby.edu":
+#   type: upstream
+#   upstream: "app:http"
+#
+# The three lines above instruct platform to create a 'site.colby.edu' domain variant for the environment domain.
+# For example, if the environment domain is `branch-name-g47gxgq-5w4husorlbktu.us-2.platformsh.site`, platform will also
+# create the domain `site.colby.edu.branch-name-g47gxgq-5w4husorlbktu.us-2.platformsh.site`
+#
+# If you are running a multi-domain multisite, you will need a section for each domain in your multisite.
+# If you are running a subdirectory multisite, you will need one section for the site's primary domain.
+#
+# Once your site has moved to platform and the domains have been added to the project, the lines can be removed.

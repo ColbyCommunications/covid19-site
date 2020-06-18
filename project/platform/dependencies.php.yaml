@@ -1,0 +1,23 @@
+###
+# Contains all of the php dependencies the _environment_ needs
+###
+################################
+###          CORE           ###
+###############################
+# reserved
+
+
+
+################################
+###        WORDPRESS        ###
+###############################
+# Install wp cli and its bundles
+wp-cli/wp-cli: "^2.1"
+wp-cli/wp-cli-bundle: "^2.1"
+wp-cli/find-command: "dev-master"
+psy/psysh: "^0.8.4"
+
+################################
+###     Project Specific    ###
+###############################
+# Add any additional project specific php dependencies you need in the environment after this line

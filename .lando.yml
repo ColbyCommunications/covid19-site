@@ -1,0 +1,72 @@
+# Change the name property to the name of your project. Suggestions is to use the name of your project in Platform,
+# which is also the name/slug of your repository on gitlab
+name: some-site
+recipe: wordpress
+config:
+    webroot: web
+    via: nginx
+    config:
+      vhosts: ./project/lando/wordpress.conf
+env_file:
+    - lando.env
+
+services:
+  appserver:
+    type: php:7.2
+    build:
+        # Intall the platform.sh CLI and make sure it is up to date.
+        - "./scripts/lando-platform-install.sh"
+    run:
+        - "platform self-update -y"
+        # 'w' to let it know we're dealing with WordPress
+        - "./scripts/lando-run.sh n w"
+        - "./scripts/setup-mu-plugins.sh"
+events:
+  post-start:
+    # Install composer dependencies
+    - "cd /app && composer install"
+
+tooling:
+  platform-setup:
+    service: appserver
+    description: Runs the platform setup scripts to associate your lando project with a platform project, then syncs the database and media files from platform to lando
+    cmd: "/app/scripts/lando-run.sh y w"
+  platform-db-pull:
+    service: appserver
+    description: DESTRUCTIVE Pull the current Platform environment's DB into the current Lando project.
+    cmd: "/app/scripts/lando-platform-db-pull.sh"
+  platform-db-ms-update:
+    service: appserver
+    description: Updates the domains in a multisite to the ones created by lando
+    cmd: "php /app/scripts/update-multisite-db.php"
+  platform-sync-all:
+    service: appserver
+    description: Syncs both the database and the media files (uploads) from the associated platform project.
+    cmd: "/app/scripts/lando-platform-sync.sh y y"
+  platform-media-sync:
+    service: appserver
+    description: Syncs the media files (uploads) from the associated platform project.
+    cmd: "/app/scripts/lando-platform-media-sync.sh"
+  platform-set-project:
+    service: appserver
+    description: Associates this lando project with a platform project so you don't have to select it every time.
+    cmd: "/app/scripts/lando-project-set.sh y"
+  platform-setup-ssh-key:
+    service: appserver
+    description: Sets up a local ssh key and associates with your platform account.
+    cmd: "/app/scripts/lando-create-ssh-key.sh y"
+  platform-check-keys:
+    service: appserver
+    description: Checks your local ssh keys and sees if any are associated with your platform account.
+    cmd: "/app/scripts/lando-check-ssh-keys.sh y"
+
+  platform:
+    service: appserver
+    description: Platform CLI passthru
+    cmd: "platform"
+
+# If you are setting up a WordPress multisite, you will need to uncomment the next few lines.  For each domain in your
+# multisite, you will need them in the list.
+# proxy:
+#    appserver_nginx:
+#        - site.colby.edu
