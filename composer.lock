@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "5d22f98bd47689c794c2ad4edc262f22",
+    "content-hash": "3bafd58f22bf33ae5f39ff0e5ae5d227",
     "packages": [
         {
             "name": "colbycommunications/colby-groups",
@@ -477,6 +477,24 @@
             },
             "type": "wordpress-plugin",
             "homepage": "https://wordpress.org/plugins/w3-total-cache/"
+        },
+        {
+            "name": "wpackagist-plugin/wordpress-importer",
+            "version": "0.7",
+            "source": {
+                "type": "svn",
+                "url": "https://plugins.svn.wordpress.org/wordpress-importer/",
+                "reference": "tags/0.7"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://downloads.wordpress.org/plugin/wordpress-importer.0.7.zip"
+            },
+            "require": {
+                "composer/installers": "~1.0"
+            },
+            "type": "wordpress-plugin",
+            "homepage": "https://wordpress.org/plugins/wordpress-importer/"
         },
         {
             "name": "wpackagist-plugin/wordpress-seo",
