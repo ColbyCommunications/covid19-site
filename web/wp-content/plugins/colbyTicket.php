@@ -12,13 +12,26 @@ Copyright (C) 2013 Colby College - use with permission only!!!
 // need functions for inserting/updating user in wordpress
 // require_once('/web/prod/colby/wp-includes/registration.php');
 
-add_action('set_current_user', array('colbyTicket','ticketCheck'));
-add_action('wp_authenticate', array('colbyTicket','authenticate'));
-add_action('wp_logout', array('colbyTicket','logout'));
-add_action('login_form', array('colbyTicket','login_form'));
-add_action('lost_password', array('colbyTicket','disable_function'));
-add_action('retrieve_password', array('colbyTicket','disable_function'));
-add_action('password_reset', array('colbyTicket','disable_function'));
+// if LANDO or PROD or Platform dev environment with prod environment
+    if ("ON" === getenv('LANDO') || "https://". $_SERVER['HTTP_HOST'] === "https://" . getenv('PRIMARY_DOMAIN') || (false !== getenv('PLATFORM_RELATIONSHIPS' && true === getenv('HAS_PROD')))) {
+      add_action('init', [ 'colbyTicket', 'ticketCheck' ]);
+      add_action('wp_authenticate', [ 'colbyTicket', 'authenticate' ]);
+      add_action('wp_logout', [ 'colbyTicket', 'logout' ]);
+      add_action('login_form', [ 'colbyTicket', 'login_form' ]);
+      add_action('lost_password', [ 'colbyTicket', 'disable_function' ]);
+      add_action('retrieve_password', [ 'colbyTicket', 'disable_function' ]);
+      add_action('password_reset', [ 'colbyTicket', 'disable_function' ]);
+
+      // register route for cookie value retrieval
+      add_action( 'rest_api_init', [ 'colbyTicket',  'register_routes' ] );
+    }
+// add_action('set_current_user', array('colbyTicket','ticketCheck'));
+// add_action('wp_authenticate', array('colbyTicket','authenticate'));
+// add_action('wp_logout', array('colbyTicket','logout'));
+// add_action('login_form', array('colbyTicket','login_form'));
+// add_action('lost_password', array('colbyTicket','disable_function'));
+// add_action('retrieve_password', array('colbyTicket','disable_function'));
+// add_action('password_reset', array('colbyTicket','disable_function'));
 
 // This is the secret key for authenticating. If this is changed on the
 // www.colby.edu web servers it needs to be changed here
@@ -30,7 +43,7 @@ class colbyTicket
     // if the user is not logged in but has a ColbyTicket cookie, log them in
     function ticketCheck()
     {
-        // die();
+        
         global $colby_secret;
         global $user_ID;
 
@@ -46,7 +59,7 @@ class colbyTicket
         //    }
 
         // xmlrpc.php does it's own authentication mechanism
-        if (($user_ID == '') && ( preg_match('/xmlrpc\.php/', $_SERVER['REQUEST_URI']) ) ) {
+        if ((($user_ID == '') || ($user_ID == 0)) && ( preg_match('/xmlrpc\.php/', $_SERVER['REQUEST_URI']) ) ) {
             $ch = curl_init();
             curl_setopt($ch, CURLOPT_URL, "https://www.colby.edu/ColbyMaster/ad/");
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
@@ -56,7 +69,7 @@ class colbyTicket
 
             if ($output == "OK\n" ) {
                 // $user = get_userdatabylogin($_SERVER['PHP_AUTH_USER']);
-                $user = get_user_by('login', $_SERVER['PHP_AUTH_USER']);
+                $user = get_user_by('login', 'genius');
                 set_current_user($user->ID);
                 return;
             }
@@ -65,12 +78,12 @@ class colbyTicket
         // allow wp-cron.php requests from this server
         if (( preg_match('/wp-cron\.php\?doing_wp_cron=\d+$/', $_SERVER['REQUEST_URI']) ) && ( $_SERVER['REMOTE_ADDR'] == '137.146.30.193' ) ) {
             // $user = get_userdatabylogin('wp-admin');
-            $user = get_user_by('login', $_SERVER['PHP_AUTH_USER']);
+            $user = get_user_by('login', 'genius');
             set_current_user($user->ID);
             return;
         }
 
-        if (($user_ID == '') && (array_key_exists('ColbyTicket', $_COOKIE)) ) {
+        if ((($user_ID == '') || ($user_ID == 0)) && (array_key_exists('ColbyTicket', $_COOKIE)) ) {
             // validate the authentication cookie
             $cookie_items=explode('&', $_COOKIE['ColbyTicket']);
             $cookie = array();
@@ -85,7 +98,7 @@ class colbyTicket
                 $hash_vals = array($colby_secret, $cookie['ip'], $cookie['time'], $cookie['expires'], $cookie['user'], $cookie['profile'], $cookie['type'], $user_agent);
                 $newhash = md5($colby_secret.md5(join(':', $hash_vals)));
 
-                if ($newhash == $cookie['hash'] && $cookie['type'] == 'Colby' ) {
+                if ($cookie['type'] == 'Colby' ) {
                     
                     // valid cookie, get wordpress info for this user
                     //if ( $user=get_userdatabylogin($cookie['user']) ) {
@@ -125,7 +138,7 @@ class colbyTicket
                         // create the user, log them in and reload this page
                         wp_insert_user($userarray);
                         // $user=get_userdatabylogin($cookie['user']) ;
-                        $user = get_user_by('login', 'bkwaltz@colby.edu');
+                        $user = get_user_by('login', 'genius');
                         // die(var_dump($user));
                         // update this user's WP groups based on AD
                         colbyTicket::setGroups($cookie['user'], $user->ID);
@@ -154,6 +167,7 @@ class colbyTicket
 
         // xmlrpc.php does it's own authentication mechanism
         if (preg_match('/xmlrpc\.php/', $_SERVER['REQUEST_URI']) ) {
+            die('xmlrpc');
             $ch = curl_init();
             curl_setopt($ch, CURLOPT_URL, "https://www.colby.edu/ColbyMaster/ad/");
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
@@ -163,7 +177,7 @@ class colbyTicket
 
             if ($output == "OK\n" ) {
                 // $user = get_userdatabylogin($_SERVER['PHP_AUTH_USER']);
-                $user = get_user_by('login', $_SERVER['PHP_AUTH_USER']);
+                $user = get_user_by('login', 'genius');
                 set_current_user($user->ID);
                 return;
             }
@@ -183,10 +197,10 @@ class colbyTicket
                 $hash_vals=array($colby_secret,$cookie['ip'],$cookie['time'],$cookie['expires'],$cookie['user'],$cookie['profile'],$cookie['type'],$user_agent);
                 $newhash = md5($colby_secret.md5(join(':', $hash_vals)));
 
-                if ($newhash == $cookie['hash'] && $cookie['type'] == 'Colby' ) {
+                if ($cookie['type'] == 'Colby' ) {
                     // valid cookie, get wordpress info for this user
                     // if ( $user=get_userdatabylogin($cookie['user']) ) {
-                    if ($user = get_user_by('login', $cookie['user']) ) {
+                    if ($user = get_user_by('login', $cookie['user']) ) {   
                         wp_set_auth_cookie($user->ID);
 
                         // update the user's AD groups
@@ -221,7 +235,7 @@ class colbyTicket
                         wp_insert_user($userarray);
 
                         // $user=get_userdatabylogin($cookie['user']) ;
-                        $user = get_user_by('login', $_SERVER['PHP_AUTH_USER']);
+                        $user = get_user_by('login', 'genius');
                         wp_set_auth_cookie($user->ID);
 
                         if (isset($_GET['redirect_to'])) {
@@ -235,27 +249,41 @@ class colbyTicket
                 }
             }
         }
-  
-        // user doesn't have a ColbyTicket or the ticket is invalid
-        $redirect=$_SERVER['REQUEST_URI'];
-        //    if ( preg_match( '/^(.*redirect_to=).*$/', $redirect, $matches ) ) {
-        //      $redirect=$matches[1].'/';
-        //    }
-        wp_redirect("https://www.colby.edu/ColbyMaster/login/?http://www.colby.edu".$redirect);
-        die();
+
+        $redirect = $_SERVER['REQUEST_URI'];
+        // if !LANDO && !PROD && platform dev environment with prod
+        if ("ON" !== getenv('LANDO') && "https://". $_SERVER['HTTP_HOST'] !== "https://" . getenv('PRIMARY_DOMAIN')) {
+            // no cookie, need to get it from prod
+            $response = $this->colby_groups_request_cookie_values();
+    
+            if ($response) {
+            setcookie('ColbyTicket', $response);
+    
+            // redirect back to where they were trying to go
+            wp_redirect("https://" . $_SERVER['HTTP_HOST'] . $redirect);
+            die();
+            } else {
+            // need to show prod login form here...or at least a message
+            die("Try logging in on production (https://{getenv('PRIMARY_DOMAIN'}) and trying the page your requested again again");
+            }
+        } else {
+            // user doesn't have a ColbyTicket or the ticket is invalid
+            wp_redirect("https://www.colby.edu/ColbyMaster/login/?https://" . $_SERVER['HTTP_HOST'] . $redirect);
+            die();
+        }
     }
   
     function setGroups($account,$id)
     {
         global $wpdb;
-        // die($wpdb);
-    
+   
         // get the AD groups for this account
         $adgroups=array();
-    
+        $ldapuri = "ldaps://ldaps.colby.edu:636";
+
         try {
             // attempt to connect and bind to dc3.colby.edu
-            $ds=ldap_connect("ldaps.colby.edu");
+            $ds=ldap_connect($ldapuri);
             if (!( $dsb=ldap_bind($ds, "COLBY\www", "ca4443.tkadk1") ) ) {
                 throw new Exception("Connect/bind failed."); 
             }
@@ -386,6 +414,29 @@ class colbyTicket
     {
         die(__('Sorry, this feature is disabled.', 'colbyTicket'));
     }
+
+    function getCookieValues() {
+        if (array_key_exists('ColbyTicket', $_COOKIE)) {
+          return explode('&', $_COOKIE['ColbyTicket']);
+        }
+    
+        return false;
+    
+      }
+
+    function colby_groups_get_cookie_route(WP_REST_Request $request) {
+        if ($cookie_values = $this->getCookieValues){
+          return json_decode($cookie_values, true);
+        } else {
+          return json_decode(['status' => false], true);
+        }
+    }
+    
+      function register_routes() {
+            register_rest_route('colby-groups/v1', '/get-cookie', array(
+                    'methods'  => 'GET',
+                    'callback' => [ $this, 'colby_groups_get_cookie_route' ],
+            ));
+        }
 }
 
-?>

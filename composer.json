@@ -17,7 +17,8 @@
         "wpackagist-plugin/wordpress-seo": "^13.3",
         "wpackagist-plugin/cloudflare": "^3.4.1",
         "devgeniem/wp-redis-object-cache-dropin": "^1.6",
-        "wpackagist-plugin/w3-total-cache": "^0.13.2"
+        "wpackagist-plugin/cache-control": "^2.2.3",
+        "colbycommunications/colby-base-theme": "dev-master"
     },
     "authors": [
         {
@@ -26,6 +27,10 @@
         }
     ],
     "repositories": [
+        {
+            "type": "git",
+            "url": "https://github.com/ColbyCommunications/colby-base-theme"
+        },
         {
             "type": "git",
             "url": "https://github.com/ColbyCommunications/colby-groups"
@@ -39,7 +44,8 @@
         "wordpress-install-dir": "web/wp",
         "installer-paths": {
             "web/wp-content/mu-plugins/{$name}": [
-                "type:wordpress-muplugin"
+                "type:wordpress-muplugin",
+                "wpackagist-plugin/cache-control"
             ],
             "web/wp-content/plugins/{$name}": [
                 "type:wordpress-plugin"

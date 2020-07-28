@@ -13,15 +13,33 @@ npm install
 gulp
 cd -
 
-NPM_DIRS=`ls web/wp-content/@(plugins|themes)/colby-*/src/@(index.js)` # Saves it to a variable
-for NPMDIR in $NPM_DIRS; do
-  NPMDIR=`dirname $NPMDIR`
-  NPMDIR_PRUNED=${NPMDIR:0:$((${#NPMDIR}-3))}
-  cd $NPMDIR_PRUNED
-  printf "Installing NPM dependencies for ${NPMDIR_PRUNED}... \n"
+printf "Plugins... \n"
+NPM_PLUGIN_DIRS=`ls web/wp-content/plugins/colby-*/src/@(index.js)` # Saves it to a variable
+for NPMPLUGINDIR in $NPM_PLUGIN_DIRS; do
+  NPMPLUGINDIR=`dirname $NPMPLUGINDIR`
+  NPMPLUGINDIR_PRUNED=${NPMPLUGINDIR:0:$((${#NPMPLUGINDIR}-3))}
+  cd $NPMPLUGINDIR_PRUNED
+  printf "Installing NPM dependencies for ${NPMPLUGINDIR_PRUNED}... \n"
   npm install
-  printf "Running build for ${NPMDIR_PRUNED}... \n"
+  printf "Running build for ${NPMPLUGINDIR_PRUNED}... \n"
   npm run build
+  cd -
+done
+
+
+printf "Sage Themes... \n"
+NPM_THEME_DIRS=`ls web/wp-content/themes/colby-*/resources/assets/scripts/@(main.js)` # Saves it to a variable
+for NPMTHEMEDIR in $NPM_THEME_DIRS; do
+  NPMTHEMEDIR=`dirname $NPMTHEMEDIR`
+  # NPMTHEMEDIR_PRUNED=${NPMTHEMEDIR:0:$((${#NPMTHEMEDIR}-3))}
+  cd $NPMTHEMEDIR
+  printf "Installing Composer dependencies for ${NPMTHEMEDIR_PRUNED}... \n"
+  composer install
+  composer dump-autoload
+  printf "Installing NPM dependencies for ${NPMTHEMEDIR_PRUNED}... \n"
+  npm install
+  printf "Running build for ${NPMTHEMEDIR_PRUNED}... \n"
+  npm run build:production
   cd -
 done
 
