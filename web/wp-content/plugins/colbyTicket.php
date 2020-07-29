@@ -35,8 +35,7 @@ Copyright (C) 2013 Colby College - use with permission only!!!
 
 // This is the secret key for authenticating. If this is changed on the
 // www.colby.edu web servers it needs to be changed here
-$colby_secret='DSFGJDfkldsalfkalkDSAFGjioerwroeiR@%$54$56DFGFf
-';
+$colby_secret=getenv('colby_ldap_secret');
 
 class colbyTicket
 {
