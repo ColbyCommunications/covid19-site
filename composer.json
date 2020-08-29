@@ -19,7 +19,10 @@
         "devgeniem/wp-redis-object-cache-dropin": "^1.6",
         "wpackagist-plugin/cache-control": "^2.2.3",
         "colbycommunications/colby-base-theme": "dev-master",
-        "wpackagist-plugin/public-post-preview": "^2.9.1"
+        "wpackagist-plugin/public-post-preview": "^2.9.1",
+        "wp-graphql/wp-graphql": "^0.12.1",
+        "wp-graphql/wp-graphiql": "^1.0",
+        "pristas-peter/wp-graphql-gutenberg": "^0.3.4"
     },
     "authors": [
         {
