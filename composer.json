@@ -49,7 +49,8 @@
         "installer-paths": {
             "web/wp-content/mu-plugins/{$name}": [
                 "type:wordpress-muplugin",
-                "wpackagist-plugin/cache-control"
+                "wpackagist-plugin/cache-control",
+                "wpackagist-plugin/wordpress-seo"
             ],
             "web/wp-content/plugins/{$name}": [
                 "type:wordpress-plugin"
