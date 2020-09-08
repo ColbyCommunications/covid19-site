@@ -20,7 +20,7 @@
         '^/wp-admin/(.*)':
           to: "/wp/wp-admin/$1"
           regexp: true
-        '^/wp':
+        '^/wp$':
           to: "/"
 
 # *ALL* www.* requests should be redirected back to primary domain
