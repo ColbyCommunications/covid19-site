@@ -18,7 +18,8 @@
         "wpackagist-plugin/wordpress-importer": "^0.7",
         "wpackagist-plugin/cloudflare": "^3.4.1",
         "devgeniem/wp-redis-object-cache-dropin": "^1.6",
-        "wpackagist-plugin/public-post-preview": "^2.9.1"
+        "wpackagist-plugin/public-post-preview": "^2.9.1",
+        "wpackagist-plugin/siteimprove": "^1.2.1"
     },
     "authors": [
         {
