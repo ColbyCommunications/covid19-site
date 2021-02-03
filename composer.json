@@ -22,7 +22,9 @@
         "wpackagist-plugin/public-post-preview": "^2.9.1",
         "wp-graphql/wp-graphql": "^0.12.1",
         "wp-graphql/wp-graphiql": "^1.0",
-        "pristas-peter/wp-graphql-gutenberg": "^0.3.4"
+        "pristas-peter/wp-graphql-gutenberg": "^0.3.4",
+        "wpackagist-plugin/wp-saml-auth": "^1.1.0",
+        "wpackagist-plugin/siteimprove": "1.2.0"
     },
     "authors": [
         {
