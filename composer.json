@@ -7,7 +7,7 @@
         "johnpbloch/wordpress-core": "^5.1.1",
         "wpackagist-theme/twentyseventeen": "^2.1",
         "wpackagist-plugin/classic-editor": "^1.4",
-        "wpackagist-plugin/elementor": "^2.9.0",
+        "wpackagist-plugin/elementor": "^3.1.4",
         "colbycommunications/colby-groups": "dev-wp4-test",
         "wpackagist-plugin/capability-manager-enhanced": "1.9",
         "wpackagist-plugin/tablepress": "^1.10",

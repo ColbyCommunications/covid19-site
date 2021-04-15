@@ -2,7 +2,8 @@
 namespace ElementorPro\Modules\Woocommerce\Widgets;
 
 use Elementor\Controls_Manager;
-use Elementor\Core\Schemes;
+use Elementor\Core\Kits\Documents\Tabs\Global_Colors;
+use Elementor\Core\Kits\Documents\Tabs\Global_Typography;
 use Elementor\Group_Control_Typography;
 use ElementorPro\Modules\Woocommerce\Classes\Products_Renderer;
 
@@ -26,8 +27,8 @@ class Archive_Products extends Products {
 		];
 	}
 
-	protected function _register_controls() {
-		parent::_register_controls();
+	protected function register_controls() {
+		parent::register_controls();
 
 		$this->remove_responsive_control( 'columns' );
 		$this->remove_responsive_control( 'rows' );
@@ -148,9 +149,8 @@ class Archive_Products extends Products {
 			[
 				'label' => __( 'Color', 'elementor-pro' ),
 				'type' => Controls_Manager::COLOR,
-				'scheme' => [
-					'type' => Schemes\Color::get_type(),
-					'value' => Schemes\Color::COLOR_3,
+				'global' => [
+					'default' => Global_Colors::COLOR_TEXT,
 				],
 				'selectors' => [
 					'{{WRAPPER}} .elementor-products-nothing-found' => 'color: {{VALUE}};',
@@ -162,7 +162,9 @@ class Archive_Products extends Products {
 			Group_Control_Typography::get_type(),
 			[
 				'name' => 'nothing_found_typography',
-				'scheme' => Schemes\Typography::TYPOGRAPHY_3,
+				'global' => [
+					'default' => Global_Typography::TYPOGRAPHY_TEXT,
+				],
 				'selector' => '{{WRAPPER}} .elementor-products-nothing-found',
 			]
 		);

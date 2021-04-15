@@ -1,7 +1,6 @@
 <?php
 namespace ElementorPro\Modules\DynamicTags\ACF\Tags;
 
-use Elementor\Controls_Manager;
 use ElementorPro\Modules\DynamicTags\Tags\Base\Data_Tag;
 use ElementorPro\Modules\DynamicTags\ACF\Module;
 
@@ -90,7 +89,7 @@ class ACF_URL extends Data_Tag {
 		return wp_kses_post( $value );
 	}
 
-	protected function _register_controls() {
+	protected function register_controls() {
 		Module::add_key_control( $this );
 
 		$this->add_control(

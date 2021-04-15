@@ -5,7 +5,6 @@ use Elementor\Controls_Manager;
 use ElementorPro\Modules\Forms\Classes\Ajax_Handler;
 use ElementorPro\Modules\Forms\Classes\Form_Record;
 use ElementorPro\Modules\Forms\Classes\Integration_Base;
-use ElementorPro\Modules\Forms\Controls\Fields_Map;
 use ElementorPro\Modules\Forms\Classes\Mailchimp_Handler;
 use Elementor\Settings;
 
@@ -141,27 +140,7 @@ class Mailchimp extends Integration_Base {
 			]
 		);
 
-		$widget->add_control(
-			'mailchimp_fields_map',
-			[
-				'label' => __( 'Field Mapping', 'elementor-pro' ),
-				'type' => Fields_Map::CONTROL_TYPE,
-				'separator' => 'before',
-				'fields' => [
-					[
-						'name' => 'remote_id',
-						'type' => Controls_Manager::HIDDEN,
-					],
-					[
-						'name' => 'local_id',
-						'type' => Controls_Manager::SELECT,
-					],
-				],
-				'condition' => [
-					'mailchimp_list!' => '',
-				],
-			]
-		);
+		$this->register_fields_map_control( $widget );
 
 		$widget->end_controls_section();
 	}
@@ -202,23 +181,19 @@ class Mailchimp extends Integration_Base {
 			$api_key = $form_settings['mailchimp_api_key'];
 		}
 
-		try {
-			$handler = new Mailchimp_Handler( $api_key );
+		$handler = new Mailchimp_Handler( $api_key );
 
-			$subscriber['status_if_new'] = 'yes' === $form_settings['mailchimp_double_opt_in'] ? 'pending' : 'subscribed';
-			$subscriber['status'] = 'subscribed';
+		$subscriber['status_if_new'] = 'yes' === $form_settings['mailchimp_double_opt_in'] ? 'pending' : 'subscribed';
+		$subscriber['status'] = 'subscribed';
 
-			$end_point = sprintf( 'lists/%s/members/%s', $form_settings['mailchimp_list'], md5( strtolower( $subscriber['email_address'] ) ) );
+		$end_point = sprintf( 'lists/%s/members/%s', $form_settings['mailchimp_list'], md5( strtolower( $subscriber['email_address'] ) ) );
 
-			$response = $handler->post( $end_point, $subscriber, [
-				'method' => 'PUT', // Add or Update
-			] );
+		$response = $handler->post( $end_point, $subscriber, [
+			'method' => 'PUT', // Add or Update
+		] );
 
-			if ( 200 !== $response['code'] ) {
-				$ajax_handler->add_admin_error_message( Ajax_Handler::SERVER_ERROR );
-			}
-		} catch ( \Exception $exception ) {
-			$ajax_handler->add_admin_error_message( 'MailChimp ' . $exception->getMessage() );
+		if ( 200 !== $response['code'] ) {
+			throw new \Exception( Ajax_Handler::SERVER_ERROR );
 		}
 	}
 
@@ -315,5 +290,13 @@ class Mailchimp extends Integration_Base {
 			add_action( 'elementor/admin/after_create_settings/' . Settings::PAGE_ID, [ $this, 'register_admin_fields' ], 14 );
 		}
 		add_action( 'wp_ajax_' . self::OPTION_NAME_API_KEY . '_validate', [ $this, 'ajax_validate_api_token' ] );
+	}
+
+	protected function get_fields_map_control_options() {
+		return [
+			'condition' => [
+				'mailchimp_list!' => '',
+			],
+		];
 	}
 }

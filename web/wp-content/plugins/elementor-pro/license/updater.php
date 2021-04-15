@@ -53,19 +53,9 @@ class Updater {
 			return $_transient_data;
 		}
 
-		$version_info = $this->get_transient( $this->response_transient_key );
-		if ( false === $version_info ) {
-			$version_info = API::get_version();
+		$version_info = API::get_version( false /* Use Cache */ );
 
-			if ( is_wp_error( $version_info ) ) {
-				$version_info = new \stdClass();
-				$version_info->error = true;
-			}
-
-			$this->set_transient( $this->response_transient_key, $version_info );
-		}
-
-		if ( ! empty( $version_info->error ) ) {
+		if ( is_wp_error( $version_info ) ) {
 			return $_transient_data;
 		}
 
@@ -74,6 +64,12 @@ class Updater {
 
 		if ( version_compare( $wp_version, $version_info['requires'], '<' ) ) {
 			return $_transient_data;
+		}
+
+		if ( ! empty( $version_info['elementor_requires'] ) ) {
+			if ( version_compare( ELEMENTOR_VERSION, $version_info['elementor_requires'], '<' ) ) {
+				return $_transient_data;
+			}
 		}
 
 		if ( version_compare( $this->plugin_version, $version_info['new_version'], '<' ) ) {
@@ -140,6 +136,10 @@ class Updater {
 
 		if ( empty( $api_request_transient ) ) {
 			$api_response = API::get_version();
+
+			if ( is_wp_error( $api_response ) ) {
+				return $_data;
+			}
 
 			$api_request_transient = new \stdClass();
 

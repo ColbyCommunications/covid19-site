@@ -2,7 +2,8 @@
 namespace ElementorPro\Modules\Forms\Widgets;
 
 use Elementor\Controls_Manager;
-use Elementor\Core\Schemes;
+use Elementor\Core\Kits\Documents\Tabs\Global_Colors;
+use Elementor\Core\Kits\Documents\Tabs\Global_Typography;
 use Elementor\Group_Control_Border;
 use Elementor\Group_Control_Typography;
 use Elementor\Icons_Manager;
@@ -36,7 +37,7 @@ class Form extends Form_Base {
 		return [ 'form', 'forms', 'field', 'button', 'mailchimp', 'drip', 'mailpoet', 'convertkit', 'getresponse', 'recaptcha', 'zapier', 'webhook', 'activecampaign', 'slack', 'discord', 'mailerlite' ];
 	}
 
-	protected function _register_controls() {
+	protected function register_controls() {
 		$repeater = new Repeater();
 
 		$field_types = [
@@ -259,11 +260,13 @@ class Form extends Form_Base {
 					'100' => '100%',
 					'80' => '80%',
 					'75' => '75%',
+					'70' => '70%',
 					'66' => '66%',
 					'60' => '60%',
 					'50' => '50%',
 					'40' => '40%',
 					'33' => '33%',
+					'30' => '30%',
 					'25' => '25%',
 					'20' => '20%',
 				],
@@ -584,11 +587,13 @@ class Form extends Form_Base {
 					'100' => '100%',
 					'80' => '80%',
 					'75' => '75%',
+					'70' => '70%',
 					'66' => '66%',
 					'60' => '60%',
 					'50' => '50%',
 					'40' => '40%',
 					'33' => '33%',
+					'30' => '30%',
 					'25' => '25%',
 					'20' => '20%',
 				],
@@ -761,9 +766,9 @@ class Form extends Form_Base {
 				'options' => $actions_options,
 				'render_type' => 'none',
 				'label_block' => true,
-				'default' => [
+				'default' => apply_filters( 'elementor_pro/forms/default_submit_actions', [
 					'email',
-				],
+				] ),
 				'description' => __( 'Add actions that will be performed after a visitor submits the form (e.g. send an email notification). Choosing an action will add its setting below.', 'elementor-pro' ),
 			]
 		);
@@ -1037,9 +1042,8 @@ class Form extends Form_Base {
 				'selectors' => [
 					'{{WRAPPER}} .elementor-field-group > label, {{WRAPPER}} .elementor-field-subgroup label' => 'color: {{VALUE}};',
 				],
-				'scheme' => [
-					'type' => Schemes\Color::get_type(),
-					'value' => Schemes\Color::COLOR_3,
+				'global' => [
+					'default' => Global_Colors::COLOR_TEXT,
 				],
 			]
 		);
@@ -1064,7 +1068,9 @@ class Form extends Form_Base {
 			[
 				'name' => 'label_typography',
 				'selector' => '{{WRAPPER}} .elementor-field-group > label',
-				'scheme' => Schemes\Typography::TYPOGRAPHY_3,
+				'global' => [
+					'default' => Global_Typography::TYPOGRAPHY_TEXT,
+				],
 			]
 		);
 
@@ -1105,9 +1111,8 @@ class Form extends Form_Base {
 				'selectors' => [
 					'{{WRAPPER}} .elementor-field-type-html' => 'color: {{VALUE}};',
 				],
-				'scheme' => [
-					'type' => Schemes\Color::get_type(),
-					'value' => Schemes\Color::COLOR_3,
+				'global' => [
+					'default' => Global_Colors::COLOR_TEXT,
 				],
 			]
 		);
@@ -1117,7 +1122,9 @@ class Form extends Form_Base {
 			[
 				'name' => 'html_typography',
 				'selector' => '{{WRAPPER}} .elementor-field-type-html',
-				'scheme' => Schemes\Typography::TYPOGRAPHY_3,
+				'global' => [
+					'default' => Global_Typography::TYPOGRAPHY_TEXT,
+				],
 			]
 		);
 
@@ -1139,9 +1146,8 @@ class Form extends Form_Base {
 				'selectors' => [
 					'{{WRAPPER}} .elementor-field-group .elementor-field' => 'color: {{VALUE}};',
 				],
-				'scheme' => [
-					'type' => Schemes\Color::get_type(),
-					'value' => Schemes\Color::COLOR_3,
+				'global' => [
+					'default' => Global_Colors::COLOR_TEXT,
 				],
 			]
 		);
@@ -1151,7 +1157,9 @@ class Form extends Form_Base {
 			[
 				'name' => 'field_typography',
 				'selector' => '{{WRAPPER}} .elementor-field-group .elementor-field, {{WRAPPER}} .elementor-field-subgroup label',
-				'scheme' => Schemes\Typography::TYPOGRAPHY_3,
+				'global' => [
+					'default' => Global_Typography::TYPOGRAPHY_TEXT,
+				],
 			]
 		);
 
@@ -1224,7 +1232,9 @@ class Form extends Form_Base {
 			Group_Control_Typography::get_type(),
 			[
 				'name' => 'button_typography',
-				'scheme' => Schemes\Typography::TYPOGRAPHY_4,
+				'global' => [
+					'default' => Global_Typography::TYPOGRAPHY_ACCENT,
+				],
 				'selector' => '{{WRAPPER}} .elementor-button',
 			]
 		);
@@ -1261,9 +1271,8 @@ class Form extends Form_Base {
 			[
 				'label' => __( 'Background Color', 'elementor-pro' ),
 				'type' => Controls_Manager::COLOR,
-				'scheme' => [
-					'type' => Schemes\Color::get_type(),
-					'value' => Schemes\Color::COLOR_4,
+				'global' => [
+					'default' => Global_Colors::COLOR_ACCENT,
 				],
 				'selectors' => [
 					'{{WRAPPER}} .e-form__buttons__wrapper__button-next' => 'background-color: {{VALUE}};',
@@ -1315,9 +1324,8 @@ class Form extends Form_Base {
 			[
 				'label' => __( 'Background Color', 'elementor-pro' ),
 				'type' => Controls_Manager::COLOR,
-				'scheme' => [
-					'type' => Schemes\Color::get_type(),
-					'value' => Schemes\Color::COLOR_4,
+				'global' => [
+					'default' => Global_Colors::COLOR_ACCENT,
 				],
 				'selectors' => [
 					'{{WRAPPER}} .e-form__buttons__wrapper__button-previous' => 'background-color: {{VALUE}};',
@@ -1510,7 +1518,9 @@ class Form extends Form_Base {
 			Group_Control_Typography::get_type(),
 			[
 				'name' => 'message_typography',
-				'scheme' => Schemes\Typography::TYPOGRAPHY_3,
+				'global' => [
+					'default' => Global_Typography::TYPOGRAPHY_TEXT,
+				],
 				'selector' => '{{WRAPPER}} .elementor-message',
 			]
 		);
@@ -1562,7 +1572,9 @@ class Form extends Form_Base {
 			Group_Control_Typography::get_type(),
 			[
 				'name' => 'steps_typography',
-				'scheme' => Schemes\Typography::TYPOGRAPHY_4,
+				'global' => [
+					'default' => Global_Typography::TYPOGRAPHY_ACCENT,
+				],
 				'selector' => '{{WRAPPER}} .e-form__indicators__indicator, {{WRAPPER}} .e-form__indicators__indicator__label',
 				'conditions' => [
 					'terms' => [
@@ -1685,9 +1697,8 @@ class Form extends Form_Base {
 			[
 				'label' => __( 'Primary Color', 'elementor-pro' ),
 				'type' => Controls_Manager::COLOR,
-				'scheme' => [
-					'type' => Schemes\Color::get_type(),
-					'value' => Schemes\Color::COLOR_3,
+				'global' => [
+					'default' => Global_Colors::COLOR_TEXT,
 				],
 				'selectors' => [
 					'{{WRAPPER}}' => '--e-form-steps-indicator-inactive-primary-color: {{VALUE}};',
@@ -1721,9 +1732,8 @@ class Form extends Form_Base {
 			[
 				'label' => __( 'Primary Color', 'elementor-pro' ),
 				'type' => Controls_Manager::COLOR,
-				'scheme' => [
-					'type' => Schemes\Color::get_type(),
-					'value' => Schemes\Color::COLOR_4,
+				'global' => [
+					'default' => Global_Colors::COLOR_ACCENT,
 				],
 				'selectors' => [
 					'{{WRAPPER}}' => '--e-form-steps-indicator-active-primary-color: {{VALUE}};',
@@ -1757,9 +1767,8 @@ class Form extends Form_Base {
 			[
 				'label' => __( 'Primary Color', 'elementor-pro' ),
 				'type' => Controls_Manager::COLOR,
-				'scheme' => [
-					'type' => Schemes\Color::get_type(),
-					'value' => Schemes\Color::COLOR_4,
+				'global' => [
+					'default' => Global_Colors::COLOR_ACCENT,
 				],
 				'selectors' => [
 					'{{WRAPPER}}' => '--e-form-steps-indicator-completed-primary-color: {{VALUE}};',
@@ -1846,9 +1855,8 @@ class Form extends Form_Base {
 			[
 				'label' => __( 'Color', 'elementor-pro' ),
 				'type' => Controls_Manager::COLOR,
-				'scheme' => [
-					'type' => Schemes\Color::get_type(),
-					'value' => Schemes\Color::COLOR_4,
+				'global' => [
+					'default' => Global_Colors::COLOR_ACCENT,
 				],
 				'condition' => [
 					'step_type' => 'progress_bar',
@@ -1864,9 +1872,8 @@ class Form extends Form_Base {
 			[
 				'label' => __( 'Background Color', 'elementor-pro' ),
 				'type' => Controls_Manager::COLOR,
-				'scheme' => [
-					'type' => Schemes\Color::get_type(),
-					'value' => Schemes\Color::COLOR_3,
+				'global' => [
+					'default' => Global_Colors::COLOR_TEXT,
 				],
 				'condition' => [
 					'step_type' => 'progress_bar',
@@ -1943,7 +1950,9 @@ class Form extends Form_Base {
 			Group_Control_Typography::get_type(),
 			[
 				'name' => 'step_progress_bar_percentage__typography',
-				'scheme' => Schemes\Typography::TYPOGRAPHY_4,
+				'global' => [
+					'default' => Global_Typography::TYPOGRAPHY_ACCENT,
+				],
 				'selector' => '{{WRAPPER}} .e-form__indicators__indicator__progress__meter',
 				'condition' => [
 					'step_type' => 'progress_bar',
@@ -1956,9 +1965,8 @@ class Form extends Form_Base {
 			[
 				'label' => __( 'Color', 'elementor-pro' ),
 				'type' => Controls_Manager::COLOR,
-				'scheme' => [
-					'type' => Schemes\Color::get_type(),
-					'value' => Schemes\Color::COLOR_3,
+				'global' => [
+					'default' => Global_Colors::COLOR_TEXT,
 				],
 				'condition' => [
 					'step_type' => 'progress_bar',
@@ -2068,10 +2076,17 @@ class Form extends Form_Base {
 			$this->add_render_attribute( 'button', 'id', $instance['button_css_id'] );
 		}
 
+		$referer_title = trim( wp_title( '', false ) );
+
+		if ( ! $referer_title && is_home() ) {
+			$referer_title = get_option( 'blogname' );
+		}
+
 		?>
 		<form class="elementor-form" method="post" <?php echo $this->get_render_attribute_string( 'form' ); ?>>
 			<input type="hidden" name="post_id" value="<?php echo Utils::get_current_post_id(); ?>"/>
 			<input type="hidden" name="form_id" value="<?php echo $this->get_id(); ?>"/>
+			<input type="hidden" name="referer_title" value="<?php echo $referer_title; ?>" />
 
 			<?php if ( is_singular() ) {
 				// `queried_id` may be different from `post_id` on Single theme builder templates.

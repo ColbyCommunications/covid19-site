@@ -2,7 +2,7 @@
 namespace ElementorPro\Modules\Carousel\Widgets;
 
 use Elementor\Controls_Manager;
-use Elementor\Core\Schemes;
+use Elementor\Core\Kits\Documents\Tabs\Global_Typography;
 use Elementor\Embed;
 use Elementor\Group_Control_Text_Shadow;
 use Elementor\Group_Control_Typography;
@@ -60,8 +60,8 @@ class Media_Carousel extends Base {
 		$this->print_slider( $settings );
 	}
 
-	protected function _register_controls() {
-		parent::_register_controls();
+	protected function register_controls() {
+		parent::register_controls();
 
 		$this->start_controls_section(
 			'section_lightbox_style',
@@ -240,7 +240,7 @@ class Media_Carousel extends Base {
 	}
 
 	protected function get_image_link_to( $slide ) {
-		if ( $slide['video']['url'] ) {
+		if ( ! empty( $slide['video']['url'] ) ) {
 			return $slide['image']['url'];
 		}
 
@@ -569,7 +569,9 @@ class Media_Carousel extends Base {
 			Group_Control_Typography::get_type(),
 			[
 				'name' => 'caption_typography',
-				'scheme' => Schemes\Typography::TYPOGRAPHY_4,
+				'global' => [
+					'default' => Global_Typography::TYPOGRAPHY_ACCENT,
+				],
 				'selector' => '{{WRAPPER}} .elementor-carousel-image-overlay',
 				'condition' => [
 					'overlay' => 'text',

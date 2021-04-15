@@ -2,6 +2,7 @@
 namespace ElementorPro;
 
 use ElementorPro\Core\Admin\Admin;
+use ElementorPro\Core\App\App;
 use ElementorPro\Core\Connect;
 use Elementor\Core\Responsive\Files\Frontend as FrontendFile;
 use Elementor\Core\Responsive\Responsive;
@@ -51,6 +52,11 @@ class Plugin {
 	public $admin;
 
 	/**
+	 * @var App
+	 */
+	public $app;
+
+	/**
 	 * @var License\Admin
 	 */
 	public $license_admin;
@@ -60,17 +66,6 @@ class Plugin {
 		'ElementorPro\Modules\PanelPostsControl\Controls\Group_Control_Posts' => 'ElementorPro\Modules\QueryControl\Controls\Group_Control_Posts',
 		'ElementorPro\Modules\PanelPostsControl\Controls\Query' => 'ElementorPro\Modules\QueryControl\Controls\Query',
 	];
-
-	/**
-	 * @deprecated since 1.1.0 Use `ELEMENTOR_PRO_VERSION` instead
-	 *
-	 * @return string
-	 */
-	public function get_version() {
-		_deprecated_function( __METHOD__, '1.1.0' );
-
-		return ELEMENTOR_PRO_VERSION;
-	}
 
 	/**
 	 * Throw error on object clone
@@ -189,6 +184,7 @@ class Plugin {
 			'elementor-pro-frontend',
 			ELEMENTOR_PRO_URL . 'assets/js/frontend' . $suffix . '.js',
 			[
+				'elementor-pro-webpack-runtime',
 				'elementor-frontend-modules',
 				'elementor-sticky',
 			],
@@ -196,9 +192,18 @@ class Plugin {
 			true
 		);
 
+		if ( self::elementor()->experiments->is_feature_active( 'e_optimized_assets_loading' ) ) {
+			wp_enqueue_script( 'pro-elements-handlers' );
+		} else {
+			wp_enqueue_script( 'pro-preloaded-elements-handlers' );
+		}
+
 		$locale_settings = [
 			'ajaxurl' => admin_url( 'admin-ajax.php' ),
 			'nonce' => wp_create_nonce( 'elementor-pro-frontend' ),
+			'urls' => [
+				'assets' => apply_filters( 'elementor_pro/frontend/assets_url', ELEMENTOR_PRO_ASSETS_URL ),
+			],
 		];
 
 		/**
@@ -221,6 +226,34 @@ class Plugin {
 
 	public function register_frontend_scripts() {
 		$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
+
+		wp_register_script(
+			'elementor-pro-webpack-runtime',
+			ELEMENTOR_PRO_URL . 'assets/js/webpack-pro.runtime' . $suffix . '.js',
+			[],
+			ELEMENTOR_PRO_VERSION,
+			true
+		);
+
+		wp_register_script(
+			'pro-elements-handlers',
+			ELEMENTOR_PRO_URL . 'assets/js/elements-handlers' . $suffix . '.js',
+			[
+				'elementor-frontend',
+			],
+			ELEMENTOR_PRO_VERSION,
+			true
+		);
+
+		wp_register_script(
+			'pro-preloaded-elements-handlers',
+			ELEMENTOR_PRO_URL . 'assets/js/preloaded-elements-handlers' . $suffix . '.js',
+			[
+				'elementor-frontend',
+			],
+			ELEMENTOR_PRO_VERSION,
+			true
+		);
 
 		wp_register_script(
 			'smartmenus',
@@ -325,6 +358,8 @@ class Plugin {
 		$this->editor = new Editor();
 
 		$this->preview = new Preview();
+
+		$this->app = new App();
 
 		if ( is_admin() ) {
 			$this->admin = new Admin();

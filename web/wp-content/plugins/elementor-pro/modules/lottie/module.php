@@ -2,13 +2,7 @@
 
 namespace ElementorPro\Modules\Lottie;
 
-use Elementor\Controls_Manager;
-use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
-use Elementor\Element_Base;
-use Elementor\Element_Column;
-use Elementor\Element_Section;
 use ElementorPro\Base\Module_Base;
-use ElementorPro\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -18,8 +12,6 @@ class Module extends Module_Base {
 	public function __construct() {
 		parent::__construct();
 
-		// TODO: Temp addition - needs to be removed before production.
-		add_filter( 'upload_mimes', [ $this, 'support_json_import' ] );
 		add_filter( 'wp_check_filetype_and_ext', [ $this, 'handle_file_type' ], 10, 3 );
 
 		add_filter( 'elementor_pro/frontend/localize_settings', [ $this, 'localize_settings' ] );
@@ -45,13 +37,6 @@ class Module extends Module_Base {
 		return [
 			'lottie',
 		];
-	}
-
-	// TODO: Temp addition - needs to be removed before production.
-	public function support_json_import( $existing_mimes ) {
-		$existing_mimes['json'] = 'application/json';
-
-		return $existing_mimes;
 	}
 
 	// Fixing wordpress problem when `finfo_file()` returns wrong file type

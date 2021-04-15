@@ -2,8 +2,9 @@
 namespace ElementorPro\Modules\ThemeElements\Widgets;
 
 use Elementor\Controls_Manager;
-use Elementor\Core\Schemes;
+use Elementor\Core\Kits\Documents\Tabs\Global_Typography;
 use Elementor\Group_Control_Typography;
+use ElementorPro\Core\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -46,7 +47,7 @@ class Breadcrumbs extends Base {
 		return $breadcrumbs_enabled;
 	}
 
-	protected function _register_controls() {
+	protected function register_controls() {
 		$this->start_controls_section(
 			'section_breadcrumbs_content',
 			[
@@ -128,7 +129,9 @@ class Breadcrumbs extends Base {
 			[
 				'name' => 'typography',
 				'selector' => '{{WRAPPER}}',
-				'scheme' => Schemes\Typography::TYPOGRAPHY_2,
+				'global' => [
+					'default' => Global_Typography::TYPOGRAPHY_SECONDARY,
+				],
 			]
 		);
 
@@ -195,7 +198,7 @@ class Breadcrumbs extends Base {
 			$html_tag = 'p';
 		}
 
-		return $html_tag;
+		return Utils::validate_html_tag( $html_tag );
 	}
 
 	protected function render() {
