@@ -3,7 +3,7 @@
     "description": "Configuration project for the some-site.colby.edu site",
     "type": "project",
     "require": {
-        "johnpbloch/wordpress-core-installer": "^1.0",
+        "johnpbloch/wordpress-core-installer": "^2.0",
         "johnpbloch/wordpress-core": "^5.1.1",
         "wpackagist-theme/twentyseventeen": "^2.1",
         "wpackagist-plugin/classic-editor": "^1.4",
@@ -16,7 +16,7 @@
         "wpackagist-plugin/duplicate-post": "^3.2.4",
         "wpackagist-plugin/wordpress-seo": "^14.0",
         "wpackagist-plugin/wordpress-importer": "^0.7",
-        "wpackagist-plugin/cloudflare": "^3.4.1",
+        "wpackagist-plugin/cloudflare": "^4.5.1",
         "devgeniem/wp-redis-object-cache-dropin": "^1.6",
         "wpackagist-plugin/public-post-preview": "^2.9.1",
         "wpackagist-plugin/siteimprove": "1.2.0",
