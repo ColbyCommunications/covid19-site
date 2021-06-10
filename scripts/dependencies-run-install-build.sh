@@ -29,16 +29,18 @@ done
 
 printf "Sage Themes... \n"
 NPM_THEME_DIRS=`ls web/wp-content/themes/colby-*/resources/assets/scripts/@(main.js)` # Saves it to a variable
+
+
 for NPMTHEMEDIR in $NPM_THEME_DIRS; do
-  NPMTHEMEDIR=`dirname $NPMTHEMEDIR`
-  # NPMTHEMEDIR_PRUNED=${NPMTHEMEDIR:0:$((${#NPMTHEMEDIR}-3))}
-  cd $NPMTHEMEDIR
-  printf "Installing Composer dependencies for ${NPMTHEMEDIR_PRUNED}... \n"
+  IFS='/' read -ra THEME_PATH <<< "$NPMTHEMEDIR"
+  #NPMTHEMEDIR_PRUNED=${NPMTHEMEDIR:0:$((${#NPMTHEMEDIR}-3))}
+  cd "${THEME_PATH[0]}/${THEME_PATH[1]}/${THEME_PATH[2]}/${THEME_PATH[3]}"
+  printf "Installing Composer dependencies for ${THEME_PATH[0]}/${THEME_PATH[1]}/${THEME_PATH[2]}/${THEME_PATH[3]}... \n"
   composer install
   composer dump-autoload
-  printf "Installing NPM dependencies for ${NPMTHEMEDIR_PRUNED}... \n"
+  printf "Installing NPM dependencies for ${THEME_PATH[0]}/${THEME_PATH[1]}/${THEME_PATH[2]}/${THEME_PATH[3]}... \n"
   npm install
-  printf "Running build for ${NPMTHEMEDIR_PRUNED}... \n"
+  printf "Running build for ${THEME_PATH[0]}/${THEME_PATH[1]}/${THEME_PATH[2]}/${THEME_PATH[3]}... \n"
   npm run build:production
   cd -
 done
