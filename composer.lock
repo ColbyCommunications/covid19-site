@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "6e8b10ee4235f9da0a0f219d16380586",
+    "content-hash": "8ff6b1f930595004f8c32d7f374259f0",
     "packages": [
         {
             "name": "composer/ca-bundle",
@@ -4800,15 +4800,15 @@
         },
         {
             "name": "wpackagist-plugin/elementor",
-            "version": "2.9.14",
+            "version": "3.4.4",
             "source": {
                 "type": "svn",
                 "url": "https://plugins.svn.wordpress.org/elementor/",
-                "reference": "tags/2.9.14"
+                "reference": "tags/3.4.4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://downloads.wordpress.org/plugin/elementor.2.9.14.zip"
+                "url": "https://downloads.wordpress.org/plugin/elementor.3.4.4.zip"
             },
             "require": {
                 "composer/installers": "~1.0 || ~2.0"
