@@ -40,6 +40,7 @@
 # Ignore themes and plugins installed via Composer.
 /wordpress/wp-content/plugins/*
 !/wordpress/wp-content/plugins/README.md
+!/wordpress/wp-content/plugins/elementor-pro
 /wordpress/wp-content/themes/*
 !/wordpress/wp-content/themes/README.md
 
