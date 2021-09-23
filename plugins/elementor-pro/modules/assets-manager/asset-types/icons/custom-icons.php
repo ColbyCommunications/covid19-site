@@ -233,7 +233,7 @@ class Custom_Icons extends  Assets_Base {
 
 
 		$unzip_result = false;
-		die(var_dump($to));
+		die(! empty( $valid_entries ));
 		if ( ! empty( $valid_entries ) ) {
 			$unzip_result = $zip->extractTo( $to, $valid_entries );
 		}
