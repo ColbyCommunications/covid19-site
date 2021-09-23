@@ -74,5 +74,5 @@ mounts:
         source_path: "uploads"
 
 variables:
-	php:
-		zlib.output_compression: 1
+    php:
+	    zlib.output_compression: 1
