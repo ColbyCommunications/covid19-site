@@ -216,6 +216,7 @@ class Custom_Icons extends  Assets_Base {
 		// phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
 		for ( $i = 0; $i < $zip->numFiles; $i++ ) {
 			$zipped_file_name = $zip->getNameIndex( $i );
+			die(var_dump(pathinfo( $zipped_file_name, PATHINFO_EXTENSION )));
 			$dirname = pathinfo( $zipped_file_name, PATHINFO_DIRNAME );
 
 			// Skip the OS X-created __MACOSX directory.
