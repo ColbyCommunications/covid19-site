@@ -260,7 +260,8 @@ class Custom_Icons extends  Assets_Base {
 			return $unzipped;
 		}
 
-		die(var_dump($filesystem));
+		var_dump($extract_to);
+		die(var_dump($filesystem->dirlist( $extract_to )));
 
 		// Find the right folder.
 		$source_files = array_keys( $filesystem->dirlist( $extract_to ) );
