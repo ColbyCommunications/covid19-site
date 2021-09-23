@@ -75,4 +75,5 @@ mounts:
 
 variables:
     php:
-	    zlib.output_compression: 1
+        zlib.output_compression: 1
+
