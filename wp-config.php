@@ -41,6 +41,8 @@ if ($config->isValidPlatform()) {
 		define( 'DB_CHARSET', 'utf8' );
 		define( 'DB_COLLATE', '' );
 
+		define( 'WP_TEMP_DIR', '/wordpress/wp-content/uploads/tmp/');
+
 		// Check whether a route is defined for this application in the Platform.sh
 		// routes. Use it as the site hostname if so (it is not ideal to trust HTTP_HOST).
 		if ($config->routes()) {
