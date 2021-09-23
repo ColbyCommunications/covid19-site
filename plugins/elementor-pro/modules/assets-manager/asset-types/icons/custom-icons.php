@@ -210,7 +210,7 @@ class Custom_Icons extends  Assets_Base {
 		$zip = new \ZipArchive();
 
 		$zip->open( $file );
-		die(var_dump($zip->numFiles));
+
 		$valid_entries = [];
 
 		// phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
