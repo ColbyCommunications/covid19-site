@@ -231,7 +231,6 @@ class Custom_Icons extends  Assets_Base {
 			}
 		}
 
-		die(var_dump($valid_entries));
 
 		$unzip_result = false;
 
