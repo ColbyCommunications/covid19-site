@@ -8,7 +8,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Utils {
-
 	public static function get_public_post_types( $args = [] ) {
 		$post_type_args = [
 			// Default is the value $public.
@@ -210,20 +209,11 @@ class Utils {
 		return $title;
 	}
 
-	/**
-	 * @deprecated 2.0.0 Use `Utils::get_page_title()` instead
-	 */
-	public static function get_the_archive_title( $include_context = true ) {
-		_deprecated_function( __METHOD__, '2.0.0', __CLASS__ . '::get_page_title()' );
-
-		return self::get_page_title();
-	}
-
 	public static function set_global_authordata() {
 		global $authordata;
 		if ( ! isset( $authordata->ID ) ) {
 			$post = get_post();
-			$authordata = get_userdata( $post->post_author ); // WPCS: override ok.
+			$authordata = get_userdata( $post->post_author ); // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
 		}
 	}
 
@@ -305,5 +295,37 @@ class Utils {
 		}
 
 		return $path;
+	}
+
+	/**
+	 * Validate an HTML tag against a safe allowed list.
+	 *
+	 * TODO: Remove, use core.
+	 *
+	 * @param string $tag
+	 *
+	 * @return string
+	 */
+	public static function validate_html_tag( $tag ) {
+		static $allowed_html_wrapper_tags = [
+			'article',
+			'aside',
+			'div',
+			'footer',
+			'h1',
+			'h2',
+			'h3',
+			'h4',
+			'h5',
+			'h6',
+			'header',
+			'main',
+			'nav',
+			'p',
+			'section',
+			'span',
+		];
+
+		return in_array( strtolower( $tag ), $allowed_html_wrapper_tags ) ? $tag : 'div';
 	}
 }

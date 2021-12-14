@@ -1,6 +1,7 @@
 <?php
 namespace ElementorPro\Modules\AssetsManager\AssetTypes\Fonts;
 
+use Elementor\Core\Files\Assets\Files_Upload_Handler;
 use Elementor\Core\Files\CSS\Base;
 use ElementorPro\Modules\AssetsManager\Classes;
 use ElementorPro\Modules\AssetsManager\AssetTypes\Fonts_Manager;
@@ -197,7 +198,7 @@ class Custom_Fonts extends Classes\Font_Base {
 		 */
 		$svg_handler = Plugin::elementor()->assets_manager->get_asset( 'svg-handler' );
 
-		if ( $svg_handler::svg_sanitizer_can_run() && ! $svg_handler->sanitize_svg( $file['tmp_name'] ) ) {
+		if ( Files_Upload_Handler::file_sanitizer_can_run() && ! $svg_handler->sanitize_svg( $file['tmp_name'] ) ) {
 			$file['error'] = __( 'Invalid SVG Format, file not uploaded for security reasons', 'elementor-pro' );
 		}
 
@@ -342,7 +343,7 @@ class Custom_Fonts extends Classes\Font_Base {
 			return;
 		}
 
-		printf( '<style>%s</style><span style="font-family: \'%s\';">%s</span>', $font_face, get_the_title( $post_id ), $this->font_preview_phrase );
+		printf( '<style>%s</style><span style="font-family: \'%s\';">%s</span>', $font_face, esc_html( get_the_title( $post_id ) ), $this->font_preview_phrase );
 	}
 
 	public function get_font_family_type( $post_id, $post_title ) {
@@ -438,9 +439,24 @@ class Custom_Fonts extends Classes\Font_Base {
 		return isset( $descriptions[ $file_type ] ) ? $descriptions[ $file_type ] : '';
 	}
 
+	private function replace_urls( $rows_affected, $from, $to ) {
+		global $wpdb;
+
+		$rows_affected = $wpdb->query(
+			"UPDATE {$wpdb->postmeta} " .
+			$wpdb->prepare( 'SET `meta_value` = REPLACE(`meta_value`, %s, %s) ', $from, $to ) .
+			'WHERE `meta_key` = \'' . self::FONT_FACE_META_KEY . '\''
+		);
+
+		return $rows_affected;
+	}
+
 	protected function actions() {
 		parent::actions();
 
+		add_filter( 'elementor/tools/replace-urls', function( $rows_affected, $from, $to ) {
+			return $this->replace_urls( $rows_affected, $from, $to );
+		}, 10, 3 );
 		add_filter( 'wp_check_filetype_and_ext', [ $this, 'filter_fix_wp_check_filetype_and_ext' ], 10, 4 );
 		add_filter( 'wp_handle_upload_prefilter', [ $this, 'wp_handle_upload_prefilter' ] );
 		add_filter( 'upload_mimes', [ $this, 'upload_mimes' ] );

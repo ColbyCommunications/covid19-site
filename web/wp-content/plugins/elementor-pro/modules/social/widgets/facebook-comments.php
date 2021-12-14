@@ -28,7 +28,7 @@ class Facebook_Comments extends Base_Widget {
 		return [ 'facebook', 'comments', 'embed' ];
 	}
 
-	protected function _register_controls() {
+	protected function register_controls() {
 		$this->start_controls_section(
 			'section_content',
 			[
@@ -127,6 +127,7 @@ class Facebook_Comments extends Base_Widget {
 		$attributes = [
 			'class' => 'elementor-facebook-widget fb-comments',
 			'data-href' => $permalink,
+			'data-width' => '100%',
 			'data-numposts' => $settings['comments_number'],
 			'data-order-by' => $settings['order_by'],
 			// The style prevent's the `widget.handleEmptyWidget` to set it as an empty widget
@@ -139,4 +140,8 @@ class Facebook_Comments extends Base_Widget {
 	}
 
 	public function render_plain_content() {}
+
+	public function get_group_name() {
+		return 'social';
+	}
 }

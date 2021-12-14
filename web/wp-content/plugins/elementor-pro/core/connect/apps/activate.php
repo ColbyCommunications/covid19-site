@@ -3,6 +3,7 @@ namespace ElementorPro\Core\Connect\Apps;
 
 use Elementor\Core\Common\Modules\Connect\Apps\Common_App;
 use ElementorPro\License;
+use ElementorPro\License\API;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -19,16 +20,6 @@ class Activate extends Common_App {
 
 	protected function after_connect() {
 		$this->action_activate_license();
-	}
-
-	public function render_admin_widget() {
-		parent::render_admin_widget();
-
-		$license = License\Admin::get_license_key();
-
-		$status = $license ? 'Exist' : 'Missing';
-
-		echo sprintf( '<p>License Key: <strong>%s</strong></p>', $status );
 	}
 
 	/**
@@ -116,5 +107,34 @@ class Activate extends Common_App {
 
 		$this->redirect_to_admin_page( License\Admin::get_url() );
 		die;
+	}
+
+	public function action_reset() {
+		if ( current_user_can( 'manage_options' ) ) {
+			delete_option( 'elementor_pro_license_key' );
+			delete_transient( 'elementor_pro_license_data' );
+		}
+
+		$this->redirect_to_admin_page();
+	}
+
+	protected function get_popup_success_event_data() {
+		return [
+			'templates_access_level' => API::get_library_access_level( 'template' ),
+			'kits_access_level' => API::get_library_access_level( 'kit' ),
+		];
+	}
+
+	protected function get_app_info() {
+		return [
+			'license_data' => [
+				'label' => 'License Data',
+				'value' => get_option( '_elementor_pro_license_data' ),
+			],
+			'license_key' => [
+				'label' => 'License Key',
+				'value' => get_option( 'elementor_pro_license_key' ),
+			],
+		];
 	}
 }

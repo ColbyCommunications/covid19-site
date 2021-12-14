@@ -4,6 +4,7 @@ namespace ElementorPro\Modules\CustomAttributes;
 use Elementor\Controls_Stack;
 use Elementor\Controls_Manager;
 use Elementor\Element_Base;
+use Elementor\Utils;
 use ElementorPro\Base\Module_Base;
 use ElementorPro\Plugin;
 
@@ -27,7 +28,7 @@ class Module extends Module_Base {
 		static $black_list = null;
 
 		if ( null === $black_list ) {
-			$black_list = [ 'id', 'class', 'data-id', 'data-settings', 'data-element_type', 'data-widget_type', 'data-model-cid', 'onload', 'onclick', 'onfocus', 'onblur', 'onchange', 'onresize', 'onmouseover', 'onmouseout', 'onkeydown', 'onkeyup', 'onerror' ];
+			$black_list = [ 'id', 'class', 'data-id', 'data-settings', 'data-element_type', 'data-widget_type', 'data-model-cid' ];
 
 			/**
 			 * Elementor attributes black list.
@@ -106,20 +107,13 @@ class Module extends Module_Base {
 		$settings = $element->get_settings_for_display();
 
 		if ( ! empty( $settings['_attributes'] ) ) {
-			$attributes = explode( "\n", $settings['_attributes'] );
+			$attributes = Utils::parse_custom_attributes( $settings['_attributes'], "\n" );
 
 			$black_list = $this->get_black_list_attributes();
 
-			foreach ( $attributes as $attribute ) {
-				if ( ! empty( $attribute ) ) {
-					$attr = explode( '|', $attribute, 2 );
-					if ( ! isset( $attr[1] ) ) {
-						$attr[1] = '';
-					}
-
-					if ( ! in_array( strtolower( $attr[0] ), $black_list ) ) {
-						$element->add_render_attribute( '_wrapper', trim( $attr[0] ), trim( $attr[1] ) );
-					}
+			foreach ( $attributes as $attribute => $value ) {
+				if ( ! in_array( $attribute, $black_list, true ) ) {
+					$element->add_render_attribute( '_wrapper', $attribute, $value );
 				}
 			}
 		}

@@ -1,10 +1,12 @@
 <?php
 namespace ElementorPro\Modules\Posts\Widgets;
 
-use Elementor\Core\Schemes;
+use Elementor\Core\Kits\Documents\Tabs\Global_Colors;
+use Elementor\Core\Kits\Documents\Tabs\Global_Typography;
 use Elementor\Group_Control_Image_Size;
 use Elementor\Group_Control_Typography;
 use ElementorPro\Base\Base_Widget;
+use ElementorPro\Core\Utils;
 use ElementorPro\Modules\QueryControl\Module as Module_Query;
 use ElementorPro\Modules\QueryControl\Controls\Group_Control_Related;
 use Elementor\Controls_Manager;
@@ -46,7 +48,7 @@ class Portfolio extends Base_Widget {
 	}
 
 	public function on_import( $element ) {
-		if ( ! get_post_type_object( $element['settings']['posts_post_type'] ) ) {
+		if ( isset( $element['settings']['posts_post_type'] ) && ! get_post_type_object( $element['settings']['posts_post_type'] ) ) {
 			$element['settings']['posts_post_type'] = 'post';
 		}
 
@@ -57,7 +59,7 @@ class Portfolio extends Base_Widget {
 		return $this->_query;
 	}
 
-	protected function _register_controls() {
+	protected function register_controls() {
 		$this->register_query_section_controls();
 	}
 
@@ -265,11 +267,7 @@ class Portfolio extends Base_Widget {
 				'label' => __( 'Item Gap', 'elementor-pro' ),
 				'type' => Controls_Manager::SLIDER,
 				'selectors' => [
-					'{{WRAPPER}} .elementor-grid' => 'grid-row-gap: {{SIZE}}{{UNIT}}; grid-column-gap: {{SIZE}}{{UNIT}}',
-					'.elementor-msie {{WRAPPER}} .elementor-portfolio' => 'margin: 0 -{{SIZE}}px',
-					'(desktop).elementor-msie {{WRAPPER}} .elementor-portfolio-item' => 'width: calc( 100% / {{columns.SIZE}} ); border: {{SIZE}}px solid transparent',
-					'(tablet).elementor-msie {{WRAPPER}} .elementor-portfolio-item' => 'width: calc( 100% / {{columns_tablet.SIZE}} ); border: {{SIZE}}px solid transparent',
-					'(mobile).elementor-msie {{WRAPPER}} .elementor-portfolio-item' => 'width: calc( 100% / {{columns_mobile.SIZE}} ); border: {{SIZE}}px solid transparent',
+					'{{WRAPPER}}' => '--grid-row-gap: {{SIZE}}{{UNIT}}; --grid-column-gap: {{SIZE}}{{UNIT}};',
 				],
 				'frontend_available' => true,
 				'classes' => 'elementor-hidden',
@@ -288,9 +286,7 @@ class Portfolio extends Base_Widget {
 					],
 				],
 				'selectors' => [
-					'{{WRAPPER}} .elementor-posts-container' => 'grid-column-gap: {{SIZE}}{{UNIT}}',
-					'.elementor-msie {{WRAPPER}} .elementor-portfolio' => 'margin: 0 -{{SIZE}}px',
-					'.elementor-msie {{WRAPPER}} .elementor-portfolio-item' => 'border-style: solid; border-color: transparent; border-right-width: calc({{SIZE}}px / 2); border-left-width: calc({{SIZE}}px / 2)',
+					'{{WRAPPER}}' => ' --grid-column-gap: {{SIZE}}{{UNIT}}',
 				],
 			]
 		);
@@ -308,8 +304,7 @@ class Portfolio extends Base_Widget {
 				],
 				'frontend_available' => true,
 				'selectors' => [
-					'{{WRAPPER}} .elementor-posts-container' => 'grid-row-gap: {{SIZE}}{{UNIT}}',
-					'.elementor-msie {{WRAPPER}} .elementor-portfolio-item' => 'border-bottom-width: {{SIZE}}px',
+					'{{WRAPPER}}' => '--grid-row-gap: {{SIZE}}{{UNIT}}',
 				],
 			]
 		);
@@ -341,9 +336,8 @@ class Portfolio extends Base_Widget {
 			[
 				'label' => __( 'Background Color', 'elementor-pro' ),
 				'type' => Controls_Manager::COLOR,
-				'scheme' => [
-					'type' => Schemes\Color::get_type(),
-					'value' => Schemes\Color::COLOR_4,
+				'global' => [
+					'default' => Global_Colors::COLOR_ACCENT,
 				],
 				'selectors' => [
 					'{{WRAPPER}} a .elementor-portfolio-item__overlay' => 'background-color: {{VALUE}};',
@@ -370,7 +364,9 @@ class Portfolio extends Base_Widget {
 			Group_Control_Typography::get_type(),
 			[
 				'name' => 'typography_title',
-				'scheme' => Schemes\Typography::TYPOGRAPHY_1,
+				'global' => [
+					'default' => Global_Typography::TYPOGRAPHY_PRIMARY,
+				],
 				'selector' => '{{WRAPPER}} .elementor-portfolio-item__title',
 				'condition' => [
 					'show_title' => 'yes',
@@ -396,9 +392,8 @@ class Portfolio extends Base_Widget {
 			[
 				'label' => __( 'Color', 'elementor-pro' ),
 				'type' => Controls_Manager::COLOR,
-				'scheme' => [
-					'type' => Schemes\Color::get_type(),
-					'value' => Schemes\Color::COLOR_3,
+				'global' => [
+					'default' => Global_Colors::COLOR_TEXT,
 				],
 				'selectors' => [
 					'{{WRAPPER}} .elementor-portfolio__filter' => 'color: {{VALUE}}',
@@ -411,9 +406,8 @@ class Portfolio extends Base_Widget {
 			[
 				'label' => __( 'Active Color', 'elementor-pro' ),
 				'type' => Controls_Manager::COLOR,
-				'scheme' => [
-					'type' => Schemes\Color::get_type(),
-					'value' => Schemes\Color::COLOR_1,
+				'global' => [
+					'default' => Global_Colors::COLOR_PRIMARY,
 				],
 				'selectors' => [
 					'{{WRAPPER}} .elementor-portfolio__filter.elementor-active' => 'color: {{VALUE}};',
@@ -425,7 +419,9 @@ class Portfolio extends Base_Widget {
 			Group_Control_Typography::get_type(),
 			[
 				'name' => 'typography_filter',
-				'scheme' => Schemes\Typography::TYPOGRAPHY_1,
+				'global' => [
+					'default' => Global_Typography::TYPOGRAPHY_PRIMARY,
+				],
 				'selector' => '{{WRAPPER}} .elementor-portfolio__filter',
 			]
 		);
@@ -594,7 +590,7 @@ class Portfolio extends Base_Widget {
 			return;
 		}
 
-		$tag = $this->get_settings( 'title_tag' );
+		$tag = Utils::validate_html_tag( $this->get_settings( 'title_tag' ) );
 		?>
 		<<?php echo $tag; ?> class="elementor-portfolio-item__title">
 		<?php the_title(); ?>
@@ -689,4 +685,7 @@ class Portfolio extends Base_Widget {
 
 	public function render_plain_content() {}
 
+	public function get_group_name() {
+		return 'posts';
+	}
 }

@@ -18,6 +18,9 @@ curl -sS https://platform.sh/cli/installer | php
 # create a symlink to our actual file in the root of mu-plugins
 ./scripts/setup-mu-plugins.sh
 
+# fix mu-plugin symlinks for irregular plugins
+./scripts/symlink.sh /app/web/wp-content/mu-plugins/wordpress-seo/wp-seo.php /app/web/wp-content/mu-plugins/wp-seo.php
+
 ################################
 ###          NODE           ###
 ###############################
