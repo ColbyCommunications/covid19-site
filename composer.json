@@ -36,6 +36,10 @@
     "repositories": [
         {
             "type": "git",
+            "url": "https://github.com/ColbyCommunications/colby-base-theme"
+        },
+        {
+            "type": "git",
             "url": "https://github.com/ColbyCommunications/colby-groups"
         },
         {
@@ -47,7 +51,8 @@
         "wordpress-install-dir": "web/wp",
         "installer-paths": {
             "web/wp-content/mu-plugins/{$name}": [
-                "type:wordpress-muplugin"
+                "type:wordpress-muplugin",
+                "wpackagist-plugin/wordpress-seo"
             ],
             "web/wp-content/plugins/{$name}": [
                 "type:wordpress-plugin"
