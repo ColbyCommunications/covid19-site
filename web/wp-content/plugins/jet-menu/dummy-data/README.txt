@@ -45,7 +45,7 @@ __________________________
 - JetElements plugin;
 - create products with WooCommerce.
 
-Keep in mind, that the style of the modules containing WooCommerce products is dependent on the themeâ€™s style settings.
+Keep in mind, that the style of the modules containing WooCommerce products is dependent on the theme’s style settings.
  
 __________________________
  

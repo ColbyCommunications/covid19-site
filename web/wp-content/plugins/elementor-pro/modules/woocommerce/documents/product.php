@@ -2,14 +2,14 @@
 namespace ElementorPro\Modules\Woocommerce\Documents;
 
 use Elementor\Controls_Manager;
-use ElementorPro\Modules\ThemeBuilder\Documents\Single;
+use ElementorPro\Modules\ThemeBuilder\Documents\Single_Base;
 use ElementorPro\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
-class Product extends Single {
+class Product extends Single_Base {
 
 	public static function get_properties() {
 		$properties = parent::get_properties();
@@ -20,12 +20,30 @@ class Product extends Single {
 		return $properties;
 	}
 
-	public function get_name() {
+	protected static function get_site_editor_type() {
 		return 'product';
 	}
 
 	public static function get_title() {
 		return __( 'Single Product', 'elementor-pro' );
+	}
+
+	public static function get_plural_title() {
+		return __( 'Single Products', 'elementor-pro' );
+	}
+
+	protected static function get_site_editor_icon() {
+		return 'eicon-single-product';
+	}
+
+	protected static function get_site_editor_tooltip_data() {
+		return [
+			'title' => __( 'What is a Single Product Template?', 'elementor-pro' ),
+			'content' => __( 'A single product template allows you to easily design the layout and style of WooCommerce single product pages, and apply that template to various conditions that you assign.', 'elementor-pro' ),
+			'tip' => __( 'You can create multiple single product templates, and assign each to different types of products, enabling a custom design for each group of similar products.', 'elementor-pro' ),
+			'docs' => 'https://go.elementor.com/app-theme-builder-product',
+			'video_url' => 'https://www.youtube.com/embed/PjhoB1RWkBM',
+		];
 	}
 
 	public static function get_editor_panel_config() {
@@ -107,7 +125,7 @@ class Product extends Single {
 
 	public function print_content() {
 		if ( post_password_required() ) {
-			echo get_the_password_form(); // WPCS: XSS ok.
+			echo get_the_password_form();
 			return;
 		}
 
@@ -140,8 +158,8 @@ class Product extends Single {
 		return $categories;
 	}
 
-	protected function _register_controls() {
-		parent::_register_controls();
+	protected function register_controls() {
+		parent::register_controls();
 
 		$this->update_control(
 			'preview_type',

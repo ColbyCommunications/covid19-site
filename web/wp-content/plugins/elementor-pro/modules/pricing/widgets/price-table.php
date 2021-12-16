@@ -2,13 +2,16 @@
 namespace ElementorPro\Modules\Pricing\Widgets;
 
 use Elementor\Controls_Manager;
-use Elementor\Core\Schemes;
+use Elementor\Core\Kits\Documents\Tabs\Global_Colors;
+use Elementor\Core\Kits\Documents\Tabs\Global_Typography;
+use Elementor\Group_Control_Background;
 use Elementor\Group_Control_Border;
 use Elementor\Group_Control_Box_Shadow;
 use Elementor\Group_Control_Typography;
 use Elementor\Icons_Manager;
 use Elementor\Repeater;
 use ElementorPro\Base\Base_Widget;
+use ElementorPro\Core\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -32,7 +35,7 @@ class Price_Table extends Base_Widget {
 		return [ 'pricing', 'table', 'product', 'image', 'plan', 'button' ];
 	}
 
-	protected function _register_controls() {
+	protected function register_controls() {
 		$this->start_controls_section(
 			'section_header',
 			[
@@ -46,6 +49,9 @@ class Price_Table extends Base_Widget {
 				'label' => __( 'Title', 'elementor-pro' ),
 				'type' => Controls_Manager::TEXT,
 				'default' => __( 'Enter your title', 'elementor-pro' ),
+				'dynamic' => [
+					'active' => true,
+				],
 			]
 		);
 
@@ -55,13 +61,16 @@ class Price_Table extends Base_Widget {
 				'label' => __( 'Description', 'elementor-pro' ),
 				'type' => Controls_Manager::TEXT,
 				'default' => __( 'Enter your description', 'elementor-pro' ),
+				'dynamic' => [
+					'active' => true,
+				],
 			]
 		);
 
 		$this->add_control(
 			'heading_tag',
 			[
-				'label' => __( 'Heading Tag', 'elementor-pro' ),
+				'label' => __( 'Title HTML Tag', 'elementor-pro' ),
 				'type' => Controls_Manager::SELECT,
 				'options' => [
 					'h2' => 'H2',
@@ -90,23 +99,23 @@ class Price_Table extends Base_Widget {
 				'type' => Controls_Manager::SELECT,
 				'options' => [
 					'' => __( 'None', 'elementor-pro' ),
-					'dollar' => '&#36; ' . _x( 'Dollar', 'Currency Symbol', 'elementor-pro' ),
-					'euro' => '&#128; ' . _x( 'Euro', 'Currency Symbol', 'elementor-pro' ),
-					'baht' => '&#3647; ' . _x( 'Baht', 'Currency Symbol', 'elementor-pro' ),
-					'franc' => '&#8355; ' . _x( 'Franc', 'Currency Symbol', 'elementor-pro' ),
-					'guilder' => '&fnof; ' . _x( 'Guilder', 'Currency Symbol', 'elementor-pro' ),
-					'krona' => 'kr ' . _x( 'Krona', 'Currency Symbol', 'elementor-pro' ),
-					'lira' => '&#8356; ' . _x( 'Lira', 'Currency Symbol', 'elementor-pro' ),
-					'peseta' => '&#8359 ' . _x( 'Peseta', 'Currency Symbol', 'elementor-pro' ),
-					'peso' => '&#8369; ' . _x( 'Peso', 'Currency Symbol', 'elementor-pro' ),
-					'pound' => '&#163; ' . _x( 'Pound Sterling', 'Currency Symbol', 'elementor-pro' ),
-					'real' => 'R$ ' . _x( 'Real', 'Currency Symbol', 'elementor-pro' ),
-					'ruble' => '&#8381; ' . _x( 'Ruble', 'Currency Symbol', 'elementor-pro' ),
-					'rupee' => '&#8360; ' . _x( 'Rupee', 'Currency Symbol', 'elementor-pro' ),
-					'indian_rupee' => '&#8377; ' . _x( 'Rupee (Indian)', 'Currency Symbol', 'elementor-pro' ),
-					'shekel' => '&#8362; ' . _x( 'Shekel', 'Currency Symbol', 'elementor-pro' ),
-					'yen' => '&#165; ' . _x( 'Yen/Yuan', 'Currency Symbol', 'elementor-pro' ),
-					'won' => '&#8361; ' . _x( 'Won', 'Currency Symbol', 'elementor-pro' ),
+					'dollar' => '&#36; ' . _x( 'Dollar', 'Currency', 'elementor-pro' ),
+					'euro' => '&#128; ' . _x( 'Euro', 'Currency', 'elementor-pro' ),
+					'baht' => '&#3647; ' . _x( 'Baht', 'Currency', 'elementor-pro' ),
+					'franc' => '&#8355; ' . _x( 'Franc', 'Currency', 'elementor-pro' ),
+					'guilder' => '&fnof; ' . _x( 'Guilder', 'Currency', 'elementor-pro' ),
+					'krona' => 'kr ' . _x( 'Krona', 'Currency', 'elementor-pro' ),
+					'lira' => '&#8356; ' . _x( 'Lira', 'Currency', 'elementor-pro' ),
+					'peseta' => '&#8359 ' . _x( 'Peseta', 'Currency', 'elementor-pro' ),
+					'peso' => '&#8369; ' . _x( 'Peso', 'Currency', 'elementor-pro' ),
+					'pound' => '&#163; ' . _x( 'Pound Sterling', 'Currency', 'elementor-pro' ),
+					'real' => 'R$ ' . _x( 'Real', 'Currency', 'elementor-pro' ),
+					'ruble' => '&#8381; ' . _x( 'Ruble', 'Currency', 'elementor-pro' ),
+					'rupee' => '&#8360; ' . _x( 'Rupee', 'Currency', 'elementor-pro' ),
+					'indian_rupee' => '&#8377; ' . _x( 'Rupee (Indian)', 'Currency', 'elementor-pro' ),
+					'shekel' => '&#8362; ' . _x( 'Shekel', 'Currency', 'elementor-pro' ),
+					'yen' => '&#165; ' . _x( 'Yen/Yuan', 'Currency', 'elementor-pro' ),
+					'won' => '&#8361; ' . _x( 'Won', 'Currency', 'elementor-pro' ),
 					'custom' => __( 'Custom', 'elementor-pro' ),
 				],
 				'default' => 'dollar',
@@ -268,6 +277,9 @@ class Price_Table extends Base_Widget {
 				'label' => __( 'Button Text', 'elementor-pro' ),
 				'type' => Controls_Manager::TEXT,
 				'default' => __( 'Click Here', 'elementor-pro' ),
+				'dynamic' => [
+					'active' => true,
+				],
 			]
 		);
 
@@ -293,6 +305,9 @@ class Price_Table extends Base_Widget {
 				'type' => Controls_Manager::TEXTAREA,
 				'default' => __( 'This is text element', 'elementor-pro' ),
 				'rows' => 3,
+				'dynamic' => [
+					'active' => true,
+				],
 			]
 		);
 
@@ -323,6 +338,9 @@ class Price_Table extends Base_Widget {
 				'default' => __( 'Popular', 'elementor-pro' ),
 				'condition' => [
 					'show_ribbon' => 'yes',
+				],
+				'dynamic' => [
+					'active' => true,
 				],
 			]
 		);
@@ -364,9 +382,8 @@ class Price_Table extends Base_Widget {
 			[
 				'label' => __( 'Background Color', 'elementor-pro' ),
 				'type' => Controls_Manager::COLOR,
-				'scheme' => [
-					'type' => Schemes\Color::get_type(),
-					'value' => Schemes\Color::COLOR_2,
+				'global' => [
+					'default' => Global_Colors::COLOR_SECONDARY,
 				],
 				'selectors' => [
 					'{{WRAPPER}} .elementor-price-table__header' => 'background-color: {{VALUE}}',
@@ -411,7 +428,9 @@ class Price_Table extends Base_Widget {
 			[
 				'name' => 'heading_typography',
 				'selector' => '{{WRAPPER}} .elementor-price-table__heading',
-				'scheme' => Schemes\Typography::TYPOGRAPHY_1,
+				'global' => [
+					'default' => Global_Typography::TYPOGRAPHY_PRIMARY,
+				],
 			]
 		);
 
@@ -440,7 +459,9 @@ class Price_Table extends Base_Widget {
 			[
 				'name' => 'sub_heading_typography',
 				'selector' => '{{WRAPPER}} .elementor-price-table__subheading',
-				'scheme' => Schemes\Typography::TYPOGRAPHY_2,
+				'global' => [
+					'default' => Global_Typography::TYPOGRAPHY_SECONDARY,
+				],
 			]
 		);
 
@@ -495,7 +516,9 @@ class Price_Table extends Base_Widget {
 			[
 				'name' => 'price_typography',
 				'selector' => '{{WRAPPER}} .elementor-price-table__price',
-				'scheme' => Schemes\Typography::TYPOGRAPHY_1,
+				'global' => [
+					'default' => Global_Typography::TYPOGRAPHY_PRIMARY,
+				],
 			]
 		);
 
@@ -523,7 +546,7 @@ class Price_Table extends Base_Widget {
 					],
 				],
 				'selectors' => [
-					'{{WRAPPER}} .elementor-price-table__currency' => 'font-size: calc({{SIZE}}em/100)',
+					'{{WRAPPER}} .elementor-price-table__price > .elementor-price-table__currency' => 'font-size: calc({{SIZE}}em/100)',
 				],
 				'condition' => [
 					'currency_symbol!' => '',
@@ -659,9 +682,8 @@ class Price_Table extends Base_Widget {
 			[
 				'label' => __( 'Color', 'elementor-pro' ),
 				'type' => Controls_Manager::COLOR,
-				'scheme' => [
-					'type' => Schemes\Color::get_type(),
-					'value' => Schemes\Color::COLOR_2,
+				'global' => [
+					'default' => Global_Colors::COLOR_SECONDARY,
 				],
 				'selectors' => [
 					'{{WRAPPER}} .elementor-price-table__original-price' => 'color: {{VALUE}}',
@@ -678,7 +700,9 @@ class Price_Table extends Base_Widget {
 			[
 				'name' => 'original_price_typography',
 				'selector' => '{{WRAPPER}} .elementor-price-table__original-price',
-				'scheme' => Schemes\Typography::TYPOGRAPHY_1,
+				'global' => [
+					'default' => Global_Typography::TYPOGRAPHY_PRIMARY,
+				],
 				'condition' => [
 					'sale' => 'yes',
 					'original_price!' => '',
@@ -738,9 +762,8 @@ class Price_Table extends Base_Widget {
 			[
 				'label' => __( 'Color', 'elementor-pro' ),
 				'type' => Controls_Manager::COLOR,
-				'scheme' => [
-					'type' => Schemes\Color::get_type(),
-					'value' => Schemes\Color::COLOR_2,
+				'global' => [
+					'default' => Global_Colors::COLOR_SECONDARY,
 				],
 				'selectors' => [
 					'{{WRAPPER}} .elementor-price-table__period' => 'color: {{VALUE}}',
@@ -756,7 +779,9 @@ class Price_Table extends Base_Widget {
 			[
 				'name' => 'period_typography',
 				'selector' => '{{WRAPPER}} .elementor-price-table__period',
-				'scheme' => Schemes\Typography::TYPOGRAPHY_2,
+				'global' => [
+					'default' => Global_Typography::TYPOGRAPHY_SECONDARY,
+				],
 				'condition' => [
 					'period!' => '',
 				],
@@ -820,9 +845,8 @@ class Price_Table extends Base_Widget {
 			[
 				'label' => __( 'Color', 'elementor-pro' ),
 				'type' => Controls_Manager::COLOR,
-				'scheme' => [
-					'type' => Schemes\Color::get_type(),
-					'value' => Schemes\Color::COLOR_3,
+				'global' => [
+					'default' => Global_Colors::COLOR_TEXT,
 				],
 				'separator' => 'before',
 				'selectors' => [
@@ -836,7 +860,9 @@ class Price_Table extends Base_Widget {
 			[
 				'name' => 'features_list_typography',
 				'selector' => '{{WRAPPER}} .elementor-price-table__features-list li',
-				'scheme' => Schemes\Typography::TYPOGRAPHY_3,
+				'global' => [
+					'default' => Global_Typography::TYPOGRAPHY_TEXT,
+				],
 			]
 		);
 
@@ -919,9 +945,8 @@ class Price_Table extends Base_Widget {
 				'label' => __( 'Color', 'elementor-pro' ),
 				'type' => Controls_Manager::COLOR,
 				'default' => '#ddd',
-				'scheme' => [
-					'type' => Schemes\Color::get_type(),
-					'value' => Schemes\Color::COLOR_3,
+				'global' => [
+					'default' => Global_Colors::COLOR_TEXT,
 				],
 				'condition' => [
 					'list_divider' => 'yes',
@@ -1087,22 +1112,29 @@ class Price_Table extends Base_Widget {
 			Group_Control_Typography::get_type(),
 			[
 				'name' => 'button_typography',
-				'scheme' => Schemes\Typography::TYPOGRAPHY_4,
+				'global' => [
+					'default' => Global_Typography::TYPOGRAPHY_ACCENT,
+				],
 				'selector' => '{{WRAPPER}} .elementor-price-table__button',
 			]
 		);
 
-		$this->add_control(
-			'button_background_color',
+		$this->add_group_control(
+			Group_Control_Background::get_type(),
 			[
-				'label' => __( 'Background Color', 'elementor-pro' ),
-				'type' => Controls_Manager::COLOR,
-				'scheme' => [
-					'type' => Schemes\Color::get_type(),
-					'value' => Schemes\Color::COLOR_4,
-				],
-				'selectors' => [
-					'{{WRAPPER}} .elementor-price-table__button' => 'background-color: {{VALUE}};',
+				'name' => 'button_background',
+				'types' => [ 'classic', 'gradient' ],
+				'exclude' => [ 'image' ],
+				'selector' => '{{WRAPPER}} .elementor-price-table__button',
+				'fields_options' => [
+					'background' => [
+						'default' => 'classic',
+					],
+					'color' => [
+						'global' => [
+							'default' => Global_Colors::COLOR_ACCENT,
+						],
+					],
 				],
 			]
 		);
@@ -1162,13 +1194,17 @@ class Price_Table extends Base_Widget {
 			]
 		);
 
-		$this->add_control(
-			'button_background_hover_color',
+		$this->add_group_control(
+			Group_Control_Background::get_type(),
 			[
-				'label' => __( 'Background Color', 'elementor-pro' ),
-				'type' => Controls_Manager::COLOR,
-				'selectors' => [
-					'{{WRAPPER}} .elementor-price-table__button:hover' => 'background-color: {{VALUE}};',
+				'name' => 'button_background_hover',
+				'types' => [ 'classic', 'gradient' ],
+				'exclude' => [ 'image' ],
+				'selector' => '{{WRAPPER}} .elementor-price-table__button:hover',
+				'fields_options' => [
+					'background' => [
+						'default' => 'classic',
+					],
 				],
 			]
 		);
@@ -1213,9 +1249,8 @@ class Price_Table extends Base_Widget {
 			[
 				'label' => __( 'Color', 'elementor-pro' ),
 				'type' => Controls_Manager::COLOR,
-				'scheme' => [
-					'type' => Schemes\Color::get_type(),
-					'value' => Schemes\Color::COLOR_3,
+				'global' => [
+					'default' => Global_Colors::COLOR_TEXT,
 				],
 				'selectors' => [
 					'{{WRAPPER}} .elementor-price-table__additional_info' => 'color: {{VALUE}}',
@@ -1231,7 +1266,9 @@ class Price_Table extends Base_Widget {
 			[
 				'name' => 'additional_info_typography',
 				'selector' => '{{WRAPPER}} .elementor-price-table__additional_info',
-				'scheme' => Schemes\Typography::TYPOGRAPHY_3,
+				'global' => [
+					'default' => Global_Typography::TYPOGRAPHY_TEXT,
+				],
 				'condition' => [
 					'footer_additional_info!' => '',
 				],
@@ -1279,9 +1316,8 @@ class Price_Table extends Base_Widget {
 			[
 				'label' => __( 'Background Color', 'elementor-pro' ),
 				'type' => Controls_Manager::COLOR,
-				'scheme' => [
-					'type' => Schemes\Color::get_type(),
-					'value' => Schemes\Color::COLOR_4,
+				'global' => [
+					'default' => Global_Colors::COLOR_ACCENT,
 				],
 				'selectors' => [
 					'{{WRAPPER}} .elementor-price-table__ribbon-inner' => 'background-color: {{VALUE}}',
@@ -1326,7 +1362,9 @@ class Price_Table extends Base_Widget {
 			[
 				'name' => 'ribbon_typography',
 				'selector' => '{{WRAPPER}} .elementor-price-table__ribbon-inner',
-				'scheme' => Schemes\Typography::TYPOGRAPHY_4,
+				'global' => [
+					'default' => Global_Typography::TYPOGRAPHY_ACCENT,
+				],
 			]
 		);
 
@@ -1345,7 +1383,7 @@ class Price_Table extends Base_Widget {
 		$currency_position = $this->get_settings( 'currency_position' );
 		$location_setting = ! empty( $currency_position ) ? $currency_position : 'before';
 		if ( ! empty( $symbol ) && $location === $location_setting ) {
-			echo '<span class="elementor-price-table__currency elementor-currency--' . $location . '">' . $symbol . '</span>';
+			echo '<span class="elementor-price-table__currency">' . $symbol . '</span>';
 		}
 	}
 
@@ -1421,7 +1459,7 @@ class Price_Table extends Base_Widget {
 
 		$period_position = $settings['period_position'];
 		$period_element = '<span ' . $this->get_render_attribute_string( 'period' ) . '>' . $settings['period'] . '</span>';
-		$heading_tag = $settings['heading_tag'];
+		$heading_tag = Utils::validate_html_tag( $settings['heading_tag'] );
 
 		$migration_allowed = Icons_Manager::is_migration_allowed();
 		?>
@@ -1441,7 +1479,13 @@ class Price_Table extends Base_Widget {
 
 			<div class="elementor-price-table__price">
 				<?php if ( 'yes' === $settings['sale'] && ! empty( $settings['original_price'] ) ) : ?>
-					<div class="elementor-price-table__original-price elementor-typo-excluded"><?php echo $symbol . $settings['original_price']; ?></div>
+					<div class="elementor-price-table__original-price elementor-typo-excluded">
+						<?php
+						$this->render_currency_symbol( $symbol, 'before' );
+						echo $settings['original_price'];
+						$this->render_currency_symbol( $symbol, 'after' );
+						?>
+					</div>
 				<?php endif; ?>
 				<?php $this->render_currency_symbol( $symbol, 'before' ); ?>
 				<?php if ( ! empty( $intpart ) || 0 <= $intpart ) : ?>
@@ -1607,7 +1651,8 @@ class Price_Table extends Base_Widget {
 			<# if ( settings.heading || settings.sub_heading ) { #>
 				<div class="elementor-price-table__header">
 					<# if ( settings.heading ) { #>
-						<{{ settings.heading_tag }} {{{ view.getRenderAttributeString( 'heading' ) }}}>{{{ settings.heading }}}</{{ settings.heading_tag }}>
+						<# var headingTag = elementorPro.validateHTMLTag( settings.heading_tag ) #>
+						<{{ headingTag }} {{{ view.getRenderAttributeString( 'heading' ) }}}>{{{ settings.heading }}}</{{ headingTag }}>
 					<# } #>
 					<# if ( settings.sub_heading ) { #>
 						<span {{{ view.getRenderAttributeString( 'sub_heading' ) }}}>{{{ settings.sub_heading }}}</span>
@@ -1617,7 +1662,20 @@ class Price_Table extends Base_Widget {
 
 			<div class="elementor-price-table__price">
 				<# if ( settings.sale && settings.original_price ) { #>
-					<div class="elementor-price-table__original-price elementor-typo-excluded">{{{ symbol + settings.original_price }}}</div>
+					<div class="elementor-price-table__original-price elementor-typo-excluded">
+						<# if ( ! _.isEmpty( symbol ) && ( 'before' == settings.currency_position || _.isEmpty( settings.currency_position ) ) ) { #>
+							<span class="elementor-price-table__currency">{{{ symbol }}}</span>{{{ settings.original_price }}}
+						<# } #>
+						<#
+						/* The duplicate usage of the original price setting in the "if blocks" is to avoid whitespace between the number and the symbol. */
+						if ( _.isEmpty( symbol ) ) {
+						#>
+							{{{ settings.original_price }}}
+						<# } #>
+						<# if ( ! _.isEmpty( symbol ) && 'after' == settings.currency_position ) { #>
+						{{{ settings.original_price }}}<span class="elementor-price-table__currency">{{{ symbol }}}</span>
+						<# } #>
+					</div>
 				<# } #>
 
 				<# if ( ! _.isEmpty( symbol ) && ( 'before' == settings.currency_position || _.isEmpty( settings.currency_position ) ) ) { #>
@@ -1696,5 +1754,9 @@ class Price_Table extends Base_Widget {
 			</div>
 		<# } #>
 		<?php
+	}
+
+	public function get_group_name() {
+		return 'pricing';
 	}
 }

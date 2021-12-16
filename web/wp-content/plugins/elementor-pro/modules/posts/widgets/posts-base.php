@@ -1,7 +1,7 @@
 <?php
 namespace ElementorPro\Modules\Posts\Widgets;
 
-use Elementor\Core\Schemes;
+use Elementor\Core\Kits\Documents\Tabs\Global_Typography;
 use Elementor\Group_Control_Typography;
 use ElementorPro\Base\Base_Widget;
 use Elementor\Controls_Manager;
@@ -160,7 +160,9 @@ abstract class Posts_Base extends Base_Widget {
 			[
 				'name' => 'pagination_typography',
 				'selector' => '{{WRAPPER}} .elementor-pagination',
-				'scheme' => Schemes\Typography::TYPOGRAPHY_2,
+				'global' => [
+					'default' => Global_Typography::TYPOGRAPHY_SECONDARY,
+				],
 			]
 		);
 
@@ -261,6 +263,23 @@ abstract class Posts_Base extends Base_Widget {
 			]
 		);
 
+		$this->add_responsive_control(
+			'pagination_spacing_top',
+			[
+				'label' => __( 'Spacing', 'elementor-pro' ),
+				'type' => Controls_Manager::SLIDER,
+				'range' => [
+					'px' => [
+						'min' => 0,
+						'max' => 100,
+					],
+				],
+				'selectors' => [
+					'{{WRAPPER}} .elementor-pagination' => 'margin-top: {{SIZE}}{{UNIT}}',
+				],
+			]
+		);
+
 		$this->end_controls_section();
 	}
 
@@ -341,7 +360,7 @@ abstract class Posts_Base extends Base_Widget {
 		return $return;
 	}
 
-	protected function _register_controls() {
+	protected function register_controls() {
 		$this->start_controls_section(
 			'section_layout',
 			[

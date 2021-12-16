@@ -12,12 +12,25 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 abstract class Theme_Page_Document extends Theme_Document {
 
+	/**
+	 * Document sub type meta key.
+	 */
+	const REMOTE_CATEGORY_META_KEY = '_elementor_template_sub_type';
+
 	public function get_css_wrapper_selector() {
 		return 'body.elementor-page-' . $this->get_main_id();
 	}
 
-	protected function _register_controls() {
-		parent::_register_controls();
+	public static function get_properties() {
+		$properties = parent::get_properties();
+
+		$properties['support_wp_page_templates'] = true;
+
+		return $properties;
+	}
+
+	protected function register_controls() {
+		parent::register_controls();
 
 		$this->start_injection( [
 			'of' => 'post_status',
@@ -100,7 +113,7 @@ abstract class Theme_Page_Document extends Theme_Document {
 
 		if ( $this instanceof Archive && ( is_archive() || is_search() || is_home() || $is_archive_template ) ) {
 			$add_body_class = true;
-		} elseif ( $this instanceof Single && ( is_singular() || is_404() ) && ! $is_archive_template ) {
+		} elseif ( $this instanceof Single_Base && ( is_singular() || is_404() ) && ! $is_archive_template ) {
 			$add_body_class = true;
 		}
 

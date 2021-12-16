@@ -2,11 +2,13 @@
 namespace ElementorPro\Modules\ThemeElements\Widgets;
 
 use Elementor\Controls_Manager;
-use Elementor\Core\Schemes;
+use Elementor\Core\Kits\Documents\Tabs\Global_Colors;
+use Elementor\Core\Kits\Documents\Tabs\Global_Typography;
 use ElementorPro\Modules\QueryControl\Module as Query_Module;
 use Elementor\Repeater;
 use ElementorPro\Core\Utils;
 use Elementor\Group_Control_Typography;
+use ElementorPro\Core\Utils as Pro_Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -399,9 +401,8 @@ class Sitemap extends Base {
 				'selectors' => [
 					'{{WRAPPER}} .elementor-sitemap-title' => 'color: {{VALUE}};',
 				],
-				'scheme' => [
-					'type' => Schemes\Color::get_type(),
-					'value' => Schemes\Color::COLOR_1,
+				'global' => [
+					'default' => Global_Colors::COLOR_PRIMARY,
 				],
 			]
 		);
@@ -411,7 +412,9 @@ class Sitemap extends Base {
 			[
 				'name' => 'sitemap_title_typography',
 				'selector' => '{{WRAPPER}} .elementor-sitemap-title',
-				'scheme' => Schemes\Typography::TYPOGRAPHY_1,
+				'global' => [
+					'default' => Global_Typography::TYPOGRAPHY_PRIMARY,
+				],
 			]
 		);
 
@@ -433,9 +436,8 @@ class Sitemap extends Base {
 				'selectors' => [
 					'{{WRAPPER}} .elementor-sitemap-item, {{WRAPPER}} span.elementor-sitemap-list, {{WRAPPER}} .elementor-sitemap-item a' => 'color: {{VALUE}};',
 				],
-				'scheme' => [
-					'type' => Schemes\Color::get_type(),
-					'value' => Schemes\Color::COLOR_3,
+				'global' => [
+					'default' => Global_Colors::COLOR_TEXT,
 				],
 			]
 		);
@@ -445,7 +447,9 @@ class Sitemap extends Base {
 			[
 				'name' => 'sitemap_list_item_typography',
 				'selector' => '{{WRAPPER}} .elementor-sitemap-item, {{WRAPPER}} span.elementor-sitemap-list, {{WRAPPER}} .elementor-sitemap-item a',
-				'scheme' => Schemes\Typography::TYPOGRAPHY_3,
+				'global' => [
+					'default' => Global_Typography::TYPOGRAPHY_TEXT,
+				],
 			]
 		);
 
@@ -467,9 +471,8 @@ class Sitemap extends Base {
 				'selectors' => [
 					'{{WRAPPER}} .elementor-sitemap-item' => 'color: {{VALUE}};',
 				],
-				'scheme' => [
-					'type' => Schemes\Color::get_type(),
-					'value' => Schemes\Color::COLOR_3,
+				'global' => [
+					'default' => Global_Colors::COLOR_TEXT,
 				],
 			]
 		);
@@ -507,7 +510,7 @@ class Sitemap extends Base {
 		$this->end_controls_section();
 	}
 
-	protected function _register_controls() {
+	protected function register_controls() {
 		$this->register_sitemap_tab();
 		$this->register_style_tab();
 	}
@@ -613,7 +616,7 @@ class Sitemap extends Base {
 			$items_html .= $this->sitemap_html_post_types( $item_type, $hierarchical, $max_depth, $query_args );
 		}
 
-		$title = empty( $title ) ? '' : sprintf( '<%s %s>%s</%1$s>', $title_tag, $this->get_render_attribute_string( $title_tag . $item_type ), $title );
+		$title = empty( $title ) ? '' : sprintf( '<%s %s>%s</%1$s>', Pro_Utils::validate_html_tag( $title_tag ), $this->get_render_attribute_string( $title_tag . $item_type ), $title );
 
 		$html = sprintf( '<div %s>%s', $this->get_render_attribute_string( 'section' . $item_type ), $title );
 		if ( empty( $items_html ) ) {

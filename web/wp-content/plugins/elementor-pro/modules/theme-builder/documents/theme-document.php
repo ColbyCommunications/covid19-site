@@ -2,11 +2,14 @@
 namespace ElementorPro\Modules\ThemeBuilder\Documents;
 
 use Elementor\Controls_Manager;
+use Elementor\Core\App\Modules\ImportExport\Module as Import_Export_Module;
 use Elementor\Modules\Library\Documents\Library_Document;
+use Elementor\TemplateLibrary\Source_Local;
 use Elementor\Utils;
 use ElementorPro\Modules\QueryControl\Module as QueryModule;
 use ElementorPro\Modules\ThemeBuilder\Module;
 use ElementorPro\Plugin;
+use ElementorPro\Core\Utils as Pro_Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -19,10 +22,124 @@ abstract class Theme_Document extends Library_Document {
 	public static function get_properties() {
 		$properties = parent::get_properties();
 
-		$properties['admin_tab_group'] = 'theme';
+		$properties['admin_tab_group'] = Module::ADMIN_LIBRARY_TAB_GROUP;
 		$properties['support_kit'] = true;
+		$properties['support_site_editor'] = true;
+		$properties['support_conditions'] = true;
 
 		return $properties;
+	}
+
+	/**
+	 * Get document type for site editor with backwards compatibility.
+	 *
+	 * A temp function that checks if current document has it's own static method `get_site_editor_type`
+	 * Otherwise get the type from the non-static method `get_name`.
+	 *
+	 * @return mixed|string
+	 * @throws \ReflectionException
+	 */
+	protected static function get_site_editor_type_bc() {
+		static $types = [];
+
+		$class_name = static::get_class_full_name();
+
+		$reflection = new \ReflectionClass( $class_name );
+		$method = $reflection->getMethod( 'get_site_editor_type' );
+
+		// It's own method, use it.
+		if ( $class_name === $method->class ) {
+			return static::get_site_editor_type();
+		}
+
+		// _deprecated_function( 'get_name', '3.0.0', 'get_site_editor_type' );
+
+		// Fallback, get from class instance name (with caching).
+		if ( isset( $types[ $class_name ] ) ) {
+			return $types[ $class_name ];
+		}
+
+		$instance = new static();
+
+		$types[ $class_name ] = $instance->get_name();
+
+		return $types[ $class_name ];
+	}
+
+	protected static function get_site_editor_route() {
+		return '/site-editor/templates/' . static::get_site_editor_type_bc();
+	}
+
+	protected static function get_site_editor_icon() {
+		return 'eicon eicon-custom';
+	}
+
+	protected static function get_site_editor_layout() {
+		return 'grid';
+	}
+
+	protected static function get_site_editor_thumbnail_url() {
+		return ELEMENTOR_ASSETS_URL . 'images/app/site-editor/' . static::get_site_editor_type_bc() . '.svg';
+	}
+
+	public static function get_site_editor_config() {
+		return [
+			'type' => static::get_site_editor_type_bc(),
+			'icon' => static::get_site_editor_icon(),
+			'title' => static::get_title(),
+			'page_title' => static::get_title(),
+			'page_layout' => static::get_site_editor_layout(),
+
+			// Todo: Remove. Core plugin should use `urls.route`.
+			'url' => static::get_site_editor_route(),
+
+			'urls' => [
+				'route' => static::get_site_editor_route(),
+				'create' => static::get_create_url(),
+				'thumbnail' => static::get_site_editor_thumbnail_url(),
+			],
+			'tooltip_data' => static::get_site_editor_tooltip_data(),
+		];
+	}
+
+	public static function get_editor_panel_config() {
+		$panel_config = parent::get_editor_panel_config();
+		$document_config = static::get_properties();
+
+		if ( true === $document_config['support_site_editor'] ) {
+			$panel_config['messages']['publish_notification'] = __( 'Congrats! Your Site Part is Live', 'elementor-pro' );
+		}
+
+		return $panel_config;
+	}
+
+	protected function get_have_a_look_url() {
+		$document_config = static::get_properties();
+
+		if ( true === $document_config['support_site_editor'] ) {
+			return '';
+		}
+
+		return parent::get_have_a_look_url();
+	}
+
+	public static function get_create_url() {
+		$base_create_url = Utils::get_create_new_post_url( Source_Local::CPT );
+
+		return add_query_arg( [ 'template_type' => static::get_site_editor_type_bc() ], $base_create_url );
+	}
+
+	protected static function get_site_editor_tooltip_data() {
+		return [
+			'title' => '',
+			'content' => '',
+			'tip' => '',
+			'video_url' => '',
+		];
+	}
+
+	public function get_name() {
+		return static::get_site_editor_type();
 	}
 
 	public function get_location_label() {
@@ -122,8 +239,69 @@ abstract class Theme_Document extends Library_Document {
 
 	}
 
-	protected function _register_controls() {
-		parent::_register_controls();
+	public function get_export_summary() {
+		$summary = parent::get_export_summary();
+
+		$summary['location'] = $this->get_location();
+
+		$theme_builder = Plugin::instance()->modules_manager->get_modules( 'theme-builder' );
+
+		$conditions = $theme_builder->get_conditions_manager()->get_document_conditions( $this );
+
+		foreach ( $conditions as $condition ) {
+			if ( 'include' === $condition['type'] && ! $condition['sub_id'] ) {
+				$summary['conditions'][] = $condition;
+
+				break;
+			}
+		}
+
+		return $summary;
+	}
+
+	public function import( array $data ) {
+		parent::import( $data );
+
+		/** @var Module $theme_builder */
+		$theme_builder = Plugin::instance()->modules_manager->get_modules( 'theme-builder' );
+
+		$condition = $data['import_settings']['conditions'][0];
+
+		$condition = rtrim( implode( '/', $condition ), '/' );
+
+		$conflicts = $theme_builder->get_conditions_manager()->get_conditions_conflicts_by_location( $condition, $this->get_location() );
+
+		if ( $conflicts ) {
+			/** @var Import_Export_Module $import_export_module */
+			$import_export_module = Plugin::elementor()->app->get_component( 'import-export' );
+
+			$override_conditions = $import_export_module->import->get_settings( 'overrideConditions' );
+
+			if ( ! $override_conditions || ! in_array( $data['id'], $override_conditions, true ) ) {
+				return;
+			}
+
+			foreach ( $conflicts as $template ) {
+				/** @var Theme_Document $template_document */
+				$template_document = Plugin::elementor()->documents->get( $template['template_id'] );
+
+				$template_conditions = $theme_builder->get_conditions_manager()->get_document_conditions( $template_document );
+
+				foreach ( $template_conditions as $index => $template_condition ) {
+					if ( ! $template_conditions['sub_id'] && ! $template_conditions['sub_name'] ) {
+						unset( $template_conditions[ $index ] );
+					}
+				}
+
+				$theme_builder->get_conditions_manager()->save_conditions( $template_document->get_main_id(), $template_conditions );
+			}
+		}
+
+		$theme_builder->get_conditions_manager()->save_conditions( $this->get_main_id(), $data['import_settings']['conditions'] );
+	}
+
+	protected function register_controls() {
+		parent::register_controls();
 
 		$this->start_controls_section(
 			'preview_settings',
@@ -247,7 +425,7 @@ abstract class Theme_Document extends Library_Document {
 
 		// Only proceed if the inheriting document has optional wrapper HTML tags to replace 'div'
 		if ( $has_wrapper_tags ) {
-			$wrapper_tag = $settings['content_wrapper_html_tag'];
+			$wrapper_tag = Pro_Utils::validate_html_tag( $settings['content_wrapper_html_tag'] );
 		}
 
 		if ( ! $elements_data ) {
@@ -255,10 +433,8 @@ abstract class Theme_Document extends Library_Document {
 		}
 		?>
 		<<?php echo $wrapper_tag; ?> <?php echo Utils::render_html_attributes( $this->get_container_attributes() ); ?>>
-		<div class="elementor-inner">
-			<div class="elementor-section-wrap">
-				<?php $this->print_elements( $elements_data ); ?>
-			</div>
+		<div class="elementor-section-wrap">
+			<?php $this->print_elements( $elements_data ); ?>
 		</div>
 		</<?php echo $wrapper_tag; ?>>
 		<?php
@@ -503,5 +679,13 @@ abstract class Theme_Document extends Library_Document {
 		}
 
 		return $value;
+	}
+
+	public function get_initial_config() {
+		$config = parent::get_initial_config();
+
+		$config['support_site_editor'] = static::get_property( 'support_site_editor' );
+
+		return $config;
 	}
 }

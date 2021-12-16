@@ -3,23 +3,29 @@
     "description": "Configuration project for the some-site.colby.edu site",
     "type": "project",
     "require": {
-        "johnpbloch/wordpress-core-installer": "^1.0",
+        "johnpbloch/wordpress-core-installer": "^2.0",
         "johnpbloch/wordpress-core": "^5.1.1",
         "wpackagist-theme/twentyseventeen": "^2.1",
         "wpackagist-plugin/classic-editor": "^1.4",
-        "wpackagist-plugin/elementor": "^2.9.0",
+        "wpackagist-plugin/elementor": "^3.1.4",
         "colbycommunications/colby-groups": "dev-wp4-test",
         "wpackagist-plugin/capability-manager-enhanced": "1.9",
         "wpackagist-plugin/tablepress": "^1.10",
         "wpackagist-theme/hello-elementor": "^2.2.2",
         "wpackagist-plugin/header-footer": "^3.1.3",
         "wpackagist-plugin/duplicate-post": "^3.2.4",
-        "wpackagist-plugin/wordpress-seo": "^14.0",
-        "wpackagist-plugin/wordpress-importer": "^0.7",
-        "wpackagist-plugin/cloudflare": "^3.4.1",
+        "wpackagist-plugin/wordpress-seo": "^13.3",
+        "wpackagist-plugin/cloudflare": "^4.5.1",
         "devgeniem/wp-redis-object-cache-dropin": "^1.6",
+        "wpackagist-plugin/cache-control": "^2.2.3",
+        "colbycommunications/colby-base-theme": "dev-master",
         "wpackagist-plugin/public-post-preview": "^2.9.1",
-        "wpackagist-plugin/siteimprove": "1.2.0"
+        "wp-graphql/wp-graphql": "^0.12.1",
+        "wp-graphql/wp-graphiql": "^1.0",
+        "pristas-peter/wp-graphql-gutenberg": "^0.3.4",
+        "wpackagist-plugin/wp-saml-auth": "^1.1.0",
+        "wpackagist-plugin/siteimprove": "1.2.0",
+        "wpackagist-plugin/query-monitor": "^3.7.1"
     },
     "authors": [
         {
@@ -28,6 +34,10 @@
         }
     ],
     "repositories": [
+        {
+            "type": "git",
+            "url": "https://github.com/ColbyCommunications/colby-base-theme"
+        },
         {
             "type": "git",
             "url": "https://github.com/ColbyCommunications/colby-groups"
@@ -41,7 +51,8 @@
         "wordpress-install-dir": "web/wp",
         "installer-paths": {
             "web/wp-content/mu-plugins/{$name}": [
-                "type:wordpress-muplugin"
+                "type:wordpress-muplugin",
+                "wpackagist-plugin/wordpress-seo"
             ],
             "web/wp-content/plugins/{$name}": [
                 "type:wordpress-plugin"

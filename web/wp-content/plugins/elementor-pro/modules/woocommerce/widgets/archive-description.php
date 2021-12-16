@@ -32,7 +32,7 @@ class Archive_Description extends Base_Widget {
 		];
 	}
 
-	protected function _register_controls() {
+	protected function register_controls() {
 
 		$this->start_controls_section(
 			'section_product_description_style',
@@ -86,7 +86,7 @@ class Archive_Description extends Base_Widget {
 				'label' => __( 'Text Color', 'elementor-pro' ),
 				'type' => Controls_Manager::COLOR,
 				'selectors' => [
-					'.woocommerce {{WRAPPER}} .woocommerce-product-details__short-description' => 'color: {{VALUE}}',
+					'.woocommerce {{WRAPPER}} .term-description' => 'color: {{VALUE}}',
 				],
 			]
 		);

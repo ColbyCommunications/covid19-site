@@ -1,8 +1,9 @@
 <?php
 namespace ElementorPro\Modules\ThemeBuilder;
 
+use Elementor\Core\Admin\Admin_Notices;
+use Elementor\Core\App\App;
 use Elementor\Core\Base\Document;
-use Elementor\Elements_Manager;
 use Elementor\TemplateLibrary\Source_Local;
 use ElementorPro\Base\Module_Base;
 use ElementorPro\Core\Utils;
@@ -16,6 +17,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Module extends Module_Base {
+
+	const ADMIN_LIBRARY_TAB_GROUP = 'theme';
 
 	public static function is_preview() {
 		return Plugin::elementor()->preview->is_preview_mode() || is_preview();
@@ -117,6 +120,8 @@ class Module extends Module_Base {
 				'conditions_description' => __( 'Set the conditions that determine where your %s is used throughout your site.', 'elementor-pro' ) . '<br>' . __( 'For example, choose \'Entire Site\' to display the template across your site.', 'elementor-pro' ),
 				'conditions_publish_screen_description' => __( 'Apply current template to these pages.', 'elementor-pro' ),
 				'save_and_close' => __( 'Save & Close', 'elementor-pro' ),
+				'open_site_editor' => __( 'Open Site Editor', 'elementor-pro' ),
+				'view_live_site' => __( 'View Live Site', 'elementor-pro' ),
 			],
 		] );
 
@@ -167,6 +172,10 @@ class Module extends Module_Base {
 
 			if ( $instance instanceof Theme_Document && 'section' !== $type ) {
 				$types[ $type ] .= $instance->get_location_label();
+			}
+
+			if ( Single::class === $document_type ) {
+				unset( $types[ $type ] );
 			}
 		}
 
@@ -227,14 +236,7 @@ class Module extends Module_Base {
 						$doc_type = Plugin::elementor()->documents->get_document_type( $post_type );
 						$doc_class = new $doc_type();
 
-						// New: Core >=2.7.0
-						$is_base_page = class_exists( '\Elementor\Core\DocumentTypes\PageBase' ) && $doc_class instanceof \Elementor\Core\DocumentTypes\PageBase;
-
-						// Old: Core < 2.7.0. TODO: Remove on 2.7.0.
-						if ( ! $is_base_page ) {
-							$doc_name = $doc_class->get_name();
-							$is_base_page = in_array( $doc_name, [ 'post', 'page', 'wp-post', 'wp-page' ] );
-						}
+						$is_base_page = $doc_class instanceof \Elementor\Core\DocumentTypes\PageBase;
 
 						if ( $is_base_page ) {
 							$post_type_object = get_post_type_object( $post_type );
@@ -258,6 +260,19 @@ class Module extends Module_Base {
 			// For column type (Supported/Unsupported) & for `print_location_field`.
 			$this->get_locations_manager()->register_locations();
 		}
+	}
+
+	/**
+	 * An hack to hide the app menu on before render without remove the app page from system.
+	 *
+	 * @param $menu
+	 *
+	 * @return mixed
+	 */
+	public function hide_admin_app_submenu( $menu ) {
+		remove_submenu_page( Source_Local::ADMIN_MENU_SLUG, App::PAGE_ID );
+
+		return $menu;
 	}
 
 	public function admin_columns_content( $column_name, $post_id ) {
@@ -290,13 +305,6 @@ class Module extends Module_Base {
 	}
 
 	public function add_finder_items( array $categories ) {
-		$categories['general']['items']['theme-builder'] = [
-			'title' => __( 'Theme Builder', 'elementor-pro' ),
-			'icon' => 'library-save',
-			'url' => $this->get_admin_templates_url(),
-			'keywords' => [ 'template', 'header', 'footer', 'single', 'archive', 'search', '404', 'library' ],
-		];
-
 		$categories['create']['items']['theme-template'] = [
 			'title' => __( 'Add New Theme Template', 'elementor-pro' ),
 			'icon' => 'plus-circle-o',
@@ -319,6 +327,32 @@ class Module extends Module_Base {
 		add_submenu_page( Source_Local::ADMIN_MENU_SLUG, '', __( 'Theme Builder', 'elementor-pro' ), 'publish_posts', $this->get_admin_templates_url( true ) );
 	}
 
+	public function print_new_theme_builder_promotion( $views ) {
+		/** @var Source_Local $source */
+		$source = Plugin::elementor()->templates_manager->get_source( 'local' );
+
+		$current_tab_group = $source->get_current_tab_group();
+
+		if ( self::ADMIN_LIBRARY_TAB_GROUP === $current_tab_group ) {
+			/**
+			 * @var Admin_Notices $admin_notices
+			 */
+			$admin_notices = Plugin::elementor()->admin->get_component( 'admin-notices' );
+
+			$admin_notices->print_admin_notice( [
+				'title' => __( 'Meet the New Theme Builder: More Intuitive and Visual Than Ever', 'elementor-pro' ),
+				'description' => __( 'With the new Theme Builder you can visually manage every part of your site intuitively, making the task of designing a complete website that much easier', 'elementor-pro' ),
+				'button' => [
+					'text' => __( 'Try it Now', 'elementor-pro' ),
+					'class' => 'elementor-button elementor-button-success',
+					'url' => Plugin::elementor()->app->get_settings( 'menu_url' ),
+				],
+			] );
+		}
+
+		return $views;
+	}
+
 	private function get_admin_templates_url( $relative = false ) {
 		$base_url = Source_Local::ADMIN_MENU_SLUG;
 
@@ -326,7 +360,32 @@ class Module extends Module_Base {
 			$base_url = admin_url( $base_url );
 		}
 
-		return add_query_arg( 'tabs_group', 'theme', $base_url );
+		return add_query_arg( 'tabs_group', self::ADMIN_LIBRARY_TAB_GROUP, $base_url );
+	}
+
+	private function add_conflicts_to_import_result( array $result ) {
+		$manifest_data = $result['manifest'];
+
+		if ( empty( $manifest_data['templates'] ) ) {
+			return $result;
+		}
+
+		foreach ( $manifest_data['templates'] as $template_id => $template ) {
+			if ( empty( $template['conditions'] ) ) {
+				continue;
+			}
+
+			foreach ( $template['conditions'] as $condition ) {
+				$condition = rtrim( implode( '/', $condition ), '/' );
+				$conflicts = $this->get_conditions_manager()->get_conditions_conflicts_by_location( $condition, $template['location'] );
+
+				if ( $conflicts ) {
+					$result['conflicts'][ $template_id ] = $conflicts;
+				}
+			}
+		}
+
+		return $result;
 	}
 
 	public function __construct() {
@@ -349,11 +408,16 @@ class Module extends Module_Base {
 
 		// Admin
 		add_action( 'admin_head', [ $this, 'admin_head' ] );
-		add_action( 'admin_menu', [ $this, 'admin_menu' ] );
+		add_action( 'admin_menu', [ $this, 'admin_menu' ], 22 /* After core promotion menu */ );
+		add_filter( 'add_menu_classes', [ $this, 'hide_admin_app_submenu' ], 9 /* Before core submenu fixes */ );
 		add_action( 'manage_' . Source_Local::CPT . '_posts_custom_column', [ $this, 'admin_columns_content' ], 10, 2 );
 		add_action( 'elementor/template-library/create_new_dialog_fields', [ $this, 'print_location_field' ] );
 		add_action( 'elementor/template-library/create_new_dialog_fields', [ $this, 'print_post_type_field' ] );
 		add_filter( 'elementor/template-library/create_new_dialog_types', [ $this, 'create_new_dialog_types' ] );
+		add_filter( 'views_edit-' . Source_Local::CPT, [ $this, 'print_new_theme_builder_promotion' ], 9 );
+		add_filter( 'elementor/import/stage_1/result', function( array $result ) {
+			return $this->add_conflicts_to_import_result( $result );
+		} );
 
 		// Common
 		add_filter( 'elementor/finder/categories', [ $this, 'add_finder_items' ] );

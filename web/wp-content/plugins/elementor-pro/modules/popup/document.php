@@ -31,12 +31,17 @@ class Document extends Theme_Section_Document {
 		$properties['admin_tab_group'] = 'popup';
 		$properties['location'] = 'popup';
 		$properties['support_kit'] = true;
+		$properties['support_site_editor'] = false;
 
 		return $properties;
 	}
 
 	public static function get_title() {
 		return __( 'Popup', 'elementor-pro' );
+	}
+
+	public static function get_plural_title() {
+		return __( 'Popups', 'elementor-pro' );
 	}
 
 	public function get_display_settings() {
@@ -122,7 +127,26 @@ class Document extends Theme_Section_Document {
 		return $settings;
 	}
 
-	protected function _register_controls() {
+	public function get_export_data() {
+		$data = parent::get_export_data();
+
+		$display_settings = $this->get_display_settings();
+
+		$data['display_settings'] = [
+			'triggers' => $display_settings['triggers']->get_frontend_settings(),
+			'timing' => $display_settings['timing']->get_frontend_settings(),
+		];
+
+		return $data;
+	}
+
+	public function import( array $data ) {
+		parent::import( $data );
+
+		$this->save_display_settings_data( $data['display_settings'] );
+	}
+
+	protected function register_controls() {
 		$this->start_controls_section(
 			'popup_layout',
 			[
@@ -386,7 +410,7 @@ class Document extends Theme_Section_Document {
 
 		$this->end_controls_section();
 
-		parent::_register_controls();
+		parent::register_controls();
 
 		$this->start_controls_section(
 			'section_page_style',

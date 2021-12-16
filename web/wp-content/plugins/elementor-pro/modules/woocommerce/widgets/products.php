@@ -103,7 +103,7 @@ class Products extends Products_Base {
 		$this->end_controls_section();
 	}
 
-	protected function _register_controls() {
+	protected function register_controls() {
 		$this->start_controls_section(
 			'section_content',
 			[
@@ -202,7 +202,7 @@ class Products extends Products_Base {
 
 		$this->register_query_controls();
 
-		parent::_register_controls();
+		parent::register_controls();
 	}
 
 	protected function get_shortcode_object( $settings ) {
@@ -222,7 +222,7 @@ class Products extends Products_Base {
 
 		// For Products_Renderer.
 		if ( ! isset( $GLOBALS['post'] ) ) {
-			$GLOBALS['post'] = null; // WPCS: override ok.
+			$GLOBALS['post'] = null; // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
 		}
 
 		$settings = $this->get_settings();

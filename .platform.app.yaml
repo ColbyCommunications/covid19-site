@@ -5,7 +5,7 @@
 name: app
 
 # The runtime the application uses.
-type: "php:7.2"
+type: "php:7.4"
 
 # Configuration of the build of the application.
 build:
@@ -24,8 +24,12 @@ disk: !include project/platform/disk.yaml
 
 # The mounts that will be performed when the package is deployed.
 mounts:
-    "/web/wp-content/uploads": "shared:files/uploads"
-    "/web/wp-content/cache": "shared:files/cache"
+  "/web/wp-content/uploads": "shared:files/uploads"
+  "/web/wp-content/cache": "shared:files/cache"
+  "/web/wp-content/okta": "shared:files/plugins/okta"
+  "/web/.well-known/pki-validation":
+    source: local
+    source_path: web
 
 # The configuration of app when it is exposed to the web.
 web:
