@@ -33,9 +33,9 @@ if ( ! class_exists( 'Jet_Search_Integration' ) ) {
 		 * @return void
 		 */
 		public function init() {
-			add_action( 'elementor/init',                         array( $this, 'register_category' ) );
-			add_action( 'elementor/widgets/widgets_registered',   array( $this, 'register_widgets' ), 10 );
-			add_action( 'elementor/controls/controls_registered', array( $this, 'add_controls' ), 10 );
+			add_action( 'elementor/elements/categories_registered', array( $this, 'register_category' ) );
+			add_action( 'elementor/widgets/widgets_registered',     array( $this, 'register_widgets' ), 10 );
+			add_action( 'elementor/controls/controls_registered',   array( $this, 'add_controls' ), 10 );
 		}
 
 		/**
@@ -43,8 +43,7 @@ if ( ! class_exists( 'Jet_Search_Integration' ) ) {
 		 *
 		 * @return void
 		 */
-		public function register_category() {
-			$elements_manager = jet_search()->elementor()->elements_manager;
+		public function register_category( $elements_manager ) {
 			$cherry_cat       = 'cherry';
 
 			$elements_manager->add_category(

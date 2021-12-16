@@ -91,6 +91,11 @@
 
 			// Typing function
 			function typing( $selector ) {
+
+				if ( !$selector.length ) {
+					return;
+				}
+
 				var typingCounter    = 0,
 					$typedItem       = $selector.closest( '.jet-text-ticker__item-typed' ),
 					typingText       = $selector.data( 'typing-text' ),
@@ -351,12 +356,11 @@
 
 			var $this       = $( this ),
 				$wrapper    = $this.closest( '.jet-smart-listing-wrap' ),
-				$arrowsWrap = $this.closest( '.jet-smart-listing__arrows' ),
 				currentPage = parseInt( $wrapper.data( 'page' ), 10 ),
 				newPage     = 1,
 				currentTerm = parseInt( $wrapper.data( 'term' ), 10 ),
 				direction   = $this.data( 'dir' ),
-				scrollTop   = $arrowsWrap.data(  'scroll-top' );
+				scrollTop   = $wrapper.data(  'scroll-top' );
 
 			if ( $this.hasClass( 'jet-arrow-disabled' ) ) {
 				return;
@@ -388,6 +392,7 @@
 			}
 
 			$wrapper.addClass( 'jet-processing' );
+			console.log(settings);
 
 			$.ajax({
 				url: settings.ajaxurl,
@@ -401,7 +406,7 @@
 			}).done( function( response ) {
 
 				var $arrows = $wrapper.find( '.jet-smart-listing__arrows' );
-
+				console.log(response);
 				$wrapper
 					.removeClass( 'jet-processing' )
 					.find( '.jet-smart-listing' )

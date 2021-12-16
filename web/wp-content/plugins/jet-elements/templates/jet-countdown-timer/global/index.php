@@ -35,10 +35,10 @@ if ( ! $is_edit_mode && ! empty( $settings['expire_redirect_url']['url'] ) ) {
 ?>
 
 <div <?php $this->print_render_attribute_string( 'countdown' ); ?>>
-	<?php $this->__glob_inc_if( '00-days', array( 'show_days' ) ); ?>
-	<?php $this->__glob_inc_if( '01-hours', array( 'show_hours' ) ); ?>
-	<?php $this->__glob_inc_if( '02-minutes', array( 'show_min' ) ); ?>
-	<?php $this->__glob_inc_if( '03-seconds', array( 'show_sec' ) ); ?>
+	<?php $this->_glob_inc_if( '00-days', array( 'show_days' ) ); ?>
+	<?php $this->_glob_inc_if( '01-hours', array( 'show_hours' ) ); ?>
+	<?php $this->_glob_inc_if( '02-minutes', array( 'show_min' ) ); ?>
+	<?php $this->_glob_inc_if( '03-seconds', array( 'show_sec' ) ); ?>
 </div>
 
-<?php $this->__html( 'message_after_expire', '<div class="jet-countdown-timer-message">%s</div>' );
+<?php $this->_html( 'message_after_expire', '<div class="jet-countdown-timer-message">%s</div>' );

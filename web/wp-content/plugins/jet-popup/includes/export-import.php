@@ -220,7 +220,7 @@ if ( ! class_exists( 'Jet_Export_Import' ) ) {
 				);
 			}
 
-			wp_redirect( jet_popup()->elementor()->documents->get( $template_id )->get_edit_url() );
+			wp_redirect( jet_popup()->elementor()->documents->get( $popup_id )->get_edit_url() );
 			die();
 		}
 
@@ -269,6 +269,7 @@ if ( ! class_exists( 'Jet_Export_Import' ) ) {
 		 * @return [type] [description]
 		 */
 		public function create_from_library_preset() {
+
 			if ( ! current_user_can( 'edit_posts' ) ) {
 				wp_die(
 					esc_html__( 'You don\'t have permissions to do this', 'jet-popup' ),
@@ -436,7 +437,7 @@ if ( ! class_exists( 'Jet_Export_Import' ) ) {
 		 */
 		public function get_preset_remote_request( $preset_id ) {
 
-			$preset_end_point = apply_filters( 'jet-popup/preset-endpoint', 'https://jetpopup.zemez.io/wp-json/croco/v1/preset/' );
+			$preset_end_point = apply_filters( 'jet-popup/preset-endpoint', 'https://crocoblock.com/interactive-popups/wp-json/croco/v1/preset/' );
 
 			$url = $preset_end_point . $preset_id;
 
@@ -535,10 +536,9 @@ if ( ! class_exists( 'Jet_Export_Import' ) ) {
 				<form id="jet-popup-import-form" method="post" action="<?php echo $import_action ?>" enctype="multipart/form-data">
 					<fieldset id="jet-popup-import-form-inputs">
 						<input type="file" class="file-button" name="file" accept=".json,application/json,.zip,application/octet-stream,application/zip,application/x-zip,application/x-zip-compressed" required>
-						<input type="submit" class="button button-primary" value="<?php echo esc_attr__( 'Import Now', 'jet-popup' ); ?>">
+						<input type="submit" class="button" value="<?php echo esc_attr__( 'Import Now', 'jet-popup' ); ?>">
 					</fieldset>
 				</form>
-				<a id="jet-popup-create-trigger" href="#" class="page-title-action"><?php echo __( 'Popup Layout', 'jet-popup' ); ?></a>
 				<form  id="jet-popup-create-form" class="jet-popup-create-form" method="POST" action="<?php echo $crate_action; ?>" >
 					<h3 class="jet-popup-create-form__title"><?php
 						esc_html_e( 'Select Layout Preset', 'jet-popup' );
@@ -563,7 +563,7 @@ if ( ! class_exists( 'Jet_Export_Import' ) ) {
 						}
 					?></div>
 					<div class="jet-popup-create-form__actions">
-						<button type="submit" id="jet_popup_type_submit" class="button button-primary"><?php
+						<button type="submit" id="jet_popup_type_submit" class="button"><?php
 							esc_html_e( 'Create Popup', 'jet-popup' );
 						?></button>
 					</div>

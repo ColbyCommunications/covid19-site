@@ -28,3 +28,27 @@
 		}
 	}
 }
+
+.rtl {
+	.jet-elements-text-align-control {
+		.elementor-choices {
+			flex-direction: row-reverse;
+
+			.elementor-choices-label {
+				&:nth-child(2) {
+					border-left: 1px solid #d5dadf;
+					border-radius: 3px 0 0 3px;
+
+					@media (prefers-color-scheme: dark) {
+						border-color: #64666a;
+					}
+				}
+
+				&:last-child {
+					border-left: none;
+					border-radius: 0 3px 3px 0;
+				}
+			}
+		}
+	}
+}

@@ -63,8 +63,7 @@ if ( ! class_exists( 'Jet_Search_Ajax_Handlers' ) ) {
 			add_action( 'pre_get_posts', array( $this, 'set_search_query' ) );
 
 			// Search in custom fields
-			add_filter( 'posts_join',  array( $this, 'cf_search_join' ) );
-			add_filter( 'posts_where', array( $this, 'cf_search_where' ) );
+			add_filter( 'posts_clauses', array( $this, 'cf_search_clauses' ), 99 );
 
 			if ( defined( 'DOING_AJAX' ) && DOING_AJAX ) {
 				add_action( "wp_ajax_{$this->action}",        array( $this, 'get_search_results' ) );
@@ -72,6 +71,12 @@ if ( ! class_exists( 'Jet_Search_Ajax_Handlers' ) ) {
 
 				add_action( 'wp_ajax_jet_search_get_query_control_options', array( $this, 'get_query_control_options' ) );
 			}
+
+			// Set Jet Smart Filters extra props
+			add_filter( 'jet-smart-filters/filters/localized-data', array( $this, 'set_jet_smart_filters_extra_props' ) );
+
+			// Set JetEngine extra props
+			add_filter( 'jet-engine/listing/grid/posts-query-args', array( $this, 'set_jet_engine_extra_props' ), 10, 3 );
 		}
 
 		/**
@@ -90,15 +95,76 @@ if ( ! class_exists( 'Jet_Search_Ajax_Handlers' ) ) {
 		 * @param object $query
 		 */
 		public function set_search_query( $query ) {
-			if ( ! is_admin() && $query->is_search && ! empty( $_GET['jet_ajax_search_settings'] ) ) {
-				$form_settings = stripcslashes( $_GET['jet_ajax_search_settings'] );
+
+			if ( ! is_admin() && is_search() && $query->is_main_query() ) {
+
+				$form_settings = $this->get_form_settings();
+
+				if ( ! empty( $form_settings ) ) {
+					$this->set_query_settings( $form_settings );
+
+					$query->query_vars = array_merge( $query->query_vars, $this->search_query );
+				}
+			}
+		}
+
+		/**
+		* Set Jet Smart Filters extra props.
+		*/
+		public function set_jet_smart_filters_extra_props( $data ) {
+
+			if ( ! is_search() ) {
+				return $data;
+			}
+
+			$settings = $this->get_form_settings();
+
+			if ( ! empty( $settings ) ) {
+				$data['extra_props']['jet_ajax_search_settings'] = json_encode( $settings );
+			}
+
+			return $data;
+		}
+
+		/**
+		 * Set JetEngine extra props.
+		 */
+		public function set_jet_engine_extra_props( $args, $render, $settings ) {
+
+			$is_archive_template = isset( $settings['is_archive_template'] ) && 'yes' === $settings['is_archive_template'];
+
+			if ( ! is_search() || ! $is_archive_template ) {
+				return $args;
+			}
+
+			$settings = $this->get_form_settings();
+
+			if ( ! empty( $settings ) ) {
+				$args['jet_ajax_search_settings'] = $settings;
+			}
+
+			return $args;
+		}
+
+		/**
+		 * Get form settings on the search result page.
+		 *
+		 * @return array
+		 */
+		public function get_form_settings() {
+
+			$form_settings = array();
+
+			if ( ! empty( $_REQUEST['jet_ajax_search_settings'] ) ) {
+				$form_settings = $_REQUEST['jet_ajax_search_settings'];
+				$form_settings = stripcslashes( $form_settings );
 				$form_settings = json_decode( $form_settings );
 				$form_settings = get_object_vars( $form_settings );
-
-				$this->set_query_settings( $form_settings );
-
-				$query->query_vars = array_merge( $query->query_vars, $this->search_query );
+			} elseif ( ! empty( $_REQUEST['query']['jet_ajax_search_settings'] ) ) {
+				$form_settings = $_REQUEST['query']['jet_ajax_search_settings'];
 			}
+
+			return $form_settings;
 		}
 
 		/**
@@ -180,19 +246,22 @@ if ( ! class_exists( 'Jet_Search_Ajax_Handlers' ) ) {
 			$response['post_count']         = $data['post_count'];
 			$response['results_navigation'] = $this->get_results_navigation( $data );
 
+			$link_target_attr = ( isset( $data['show_result_new_tab'] ) && 'yes' === $data['show_result_new_tab'] ) ? '_blank' : '';
+
 			foreach ( $search->posts as $key => $post ) {
 
 				$response['posts'][ $key ] = array(
-					'title'          => $post->post_title,
-					'before_title'   => Jet_Search_Template_Functions::get_meta_fields( $data, $post, 'title_related', 'jet-search-title-fields', array( 'before' ) ),
-					'after_title'    => Jet_Search_Template_Functions::get_meta_fields( $data, $post, 'title_related', 'jet-search-title-fields', array( 'after' ) ),
-					'content'        => Jet_Search_Template_Functions::get_post_content( $data, $post ),
-					'before_content' => Jet_Search_Template_Functions::get_meta_fields( $data, $post, 'content_related', 'jet-search-content-fields', array( 'before' ) ),
-					'after_content'  => Jet_Search_Template_Functions::get_meta_fields( $data, $post, 'content_related', 'jet-search-content-fields', array( 'after' ) ),
-					'thumbnail'      => Jet_Search_Template_Functions::get_post_thumbnail( $data, $post ),
-					'link'           => esc_url( get_permalink( $post->ID ) ),
-					'price'          => Jet_Search_Template_Functions::get_product_price( $data, $post ),
-					'rating'         => Jet_Search_Template_Functions::get_product_rating( $data, $post ),
+					'title'            => $post->post_title,
+					'before_title'     => Jet_Search_Template_Functions::get_meta_fields( $data, $post, 'title_related', 'jet-search-title-fields', array( 'before' ) ),
+					'after_title'      => Jet_Search_Template_Functions::get_meta_fields( $data, $post, 'title_related', 'jet-search-title-fields', array( 'after' ) ),
+					'content'          => Jet_Search_Template_Functions::get_post_content( $data, $post ),
+					'before_content'   => Jet_Search_Template_Functions::get_meta_fields( $data, $post, 'content_related', 'jet-search-content-fields', array( 'before' ) ),
+					'after_content'    => Jet_Search_Template_Functions::get_meta_fields( $data, $post, 'content_related', 'jet-search-content-fields', array( 'after' ) ),
+					'thumbnail'        => Jet_Search_Template_Functions::get_post_thumbnail( $data, $post ),
+					'link'             => esc_url( get_permalink( $post->ID ) ),
+					'link_target_attr' => $link_target_attr,
+					'price'            => Jet_Search_Template_Functions::get_product_price( $data, $post ),
+					'rating'           => Jet_Search_Template_Functions::get_product_rating( $data, $post ),
 				);
 
 				$custom_post_data = apply_filters( 'jet-search/ajax-search/custom-post-data', array(), $data, $post );
@@ -222,6 +291,16 @@ if ( ! class_exists( 'Jet_Search_Ajax_Handlers' ) ) {
 				$this->search_query['orderby']       = $args['results_order_by'];
 				$this->search_query['tax_query']     = array( 'relation' => 'AND' );
 				$this->search_query['sentence']      = isset( $args['sentence'] ) ? filter_var( $args['sentence'], FILTER_VALIDATE_BOOLEAN ) : false;
+				$this->search_query['post_status']   = 'publish';
+
+				if ( class_exists( 'Polylang' ) || class_exists( 'Polylang_Pro' ) ) {
+					$lang = get_locale();
+
+					if ( strlen( $lang ) > 0 ) {
+						$lang = explode( '_', $lang )[0];
+						$this->search_query['lang'] = $lang;
+					}
+				}
 
 				// Include specific terms
 				if ( ! empty( $args['category__in'] ) ) {
@@ -284,7 +363,7 @@ if ( ! class_exists( 'Jet_Search_Ajax_Handlers' ) ) {
 
 				// Current Query
 				if ( ! empty( $args['current_query'] ) ) {
-					$this->search_query = array_merge( $this->search_query, $args['current_query'] );
+					$this->search_query = array_merge( $this->search_query, (array) $args['current_query'] );
 				}
 			}
 		}
@@ -432,23 +511,6 @@ if ( ! class_exists( 'Jet_Search_Ajax_Handlers' ) ) {
 		}
 
 		/**
-		 * Is ajax search request
-		 *
-		 * @since  2.0.0
-		 * @return bool
-		 */
-		public function is_ajax_search_request() {
-
-			if ( ( isset( $_GET['action'] ) && $this->action === $_GET['action'] && ! empty( $_GET['data'] ) )
-				|| ( is_search() && ! empty( $_GET['jet_ajax_search_settings'] ) )
-			) {
-				return true;
-			}
-
-			return false;
-		}
-
-		/**
 		 * Get custom fields keys for search
 		 *
 		 * @since  2.0.0
@@ -456,14 +518,11 @@ if ( ! class_exists( 'Jet_Search_Ajax_Handlers' ) ) {
 		 */
 		public function get_cf_search_keys() {
 
-			$cf_source = false;
-
-			if ( ! empty( $_GET['data']['custom_fields_source'] ) ) {
+			if ( isset( $_GET['action'] ) && $this->action === $_GET['action'] && ! empty( $_GET['data']['custom_fields_source'] ) ) {
 				$cf_source = $_GET['data']['custom_fields_source'];
 
-			} elseif ( ! empty( $_GET['jet_ajax_search_settings'] ) ) {
-				$settings  = stripcslashes( $_GET['jet_ajax_search_settings'] );
-				$settings  = json_decode( $settings, true );
+			} else {
+				$settings  = $this->get_form_settings();
 				$cf_source = ! empty( $settings['custom_fields_source'] ) ? $settings['custom_fields_source'] : false;
 			}
 
@@ -471,61 +530,42 @@ if ( ! class_exists( 'Jet_Search_Ajax_Handlers' ) ) {
 				return false;
 			}
 
-			$cf_keys = explode( ',', str_replace( ' ', '', $cf_source ) );
-
-			return $cf_keys;
+			return explode( ',', str_replace( ' ', '', $cf_source ) );
 		}
 
 		/**
-		 * Modify the JOIN clause of the query.
+		 * Modify the WHERE and JOIN clauses of the query.
 		 *
-		 * @since  2.0.0
-		 * @param  string $join
-		 * @return string
+		 * @param  array $args
+		 * @return array
 		 */
-		public function cf_search_join( $join ) {
+		public function cf_search_clauses( $args ) {
 
-			if ( ! $this->is_ajax_search_request() || ! $this->get_cf_search_keys() ) {
-				return $join;
+			$cf_keys = $this->get_cf_search_keys();
+
+			if ( ! $cf_keys ) {
+				return $args;
 			}
 
 			global $wpdb;
 
-			$join .= " LEFT JOIN {$wpdb->postmeta} {$this->postmeta_table_alias} ON {$wpdb->posts}.ID = {$this->postmeta_table_alias}.post_id ";
+			// Modify the JOIN clause.
+			$args['join'] .= " LEFT JOIN {$wpdb->postmeta} {$this->postmeta_table_alias} ON {$wpdb->posts}.ID = {$this->postmeta_table_alias}.post_id ";
 
-			return $join;
-		}
-
-		/**
-		 * Modify the WHERE clause of the query.
-		 *
-		 * @since  2.0.0
-		 * @param  string $where
-		 * @return string
-		 */
-		public function cf_search_where( $where ) {
-
-			if ( ! $this->is_ajax_search_request() || ! $this->get_cf_search_keys() ) {
-				return $where;
-			}
-
-			global $wpdb;
-
+			// Modify the WHERE clause.
 			$cf_where = '';
-			$cf_keys  = $this->get_cf_search_keys();
-
-			$or_op = '';
+			$or_op    = '';
 
 			foreach ( $cf_keys as $cf_key ) {
 				$cf_where .= "{$or_op}({$this->postmeta_table_alias}.meta_key = '{$cf_key}' AND {$this->postmeta_table_alias}.meta_value LIKE $1)";
 				$or_op = ' OR ';
 			}
 
-			$where = preg_replace(
+			$args['where'] = preg_replace(
 				"/\(\s*{$wpdb->posts}.post_content\s+LIKE\s*(\'[^\']+\')\s*\)/",
-				"({$wpdb->posts}.post_content LIKE $1) OR {$cf_where}", $where );
+				"({$wpdb->posts}.post_content LIKE $1) OR {$cf_where}", $args['where'] );
 
-			return $where;
+			return $args;
 		}
 
 		/**

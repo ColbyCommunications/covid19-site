@@ -60,7 +60,10 @@ class Elementor_Template extends Base {
 
 		$template_data = get_transient( $transient_key );
 
-		if ( !empty( $template_data ) && !$dev ) {
+		$template_cache = jet_menu()->settings_manager->options_manager->get_option( 'use-template-cache', 'true' );
+		$template_cache = filter_var( $template_cache, FILTER_VALIDATE_BOOLEAN ) ? true : false;
+
+		if ( ! empty( $template_data ) && ! $dev && $template_cache ) {
 			return rest_ensure_response( $template_data );
 		}
 
@@ -78,6 +81,8 @@ class Elementor_Template extends Base {
 		}
 
 		$plugin->frontend->register_scripts();
+
+		do_action( 'jet_plugins/frontend/register_scripts' );
 
 		$content .= $plugin->frontend->get_builder_content_for_display( $template_id, true );
 
@@ -117,6 +122,14 @@ class Elementor_Template extends Base {
 		$google_fonts = $post_meta['fonts'];
 
 		$google_fonts = array_unique( $google_fonts );
+
+		if ( empty( $google_fonts ) ) {
+			return false;
+		}
+
+		$google_fonts = array_filter( $google_fonts, function( $font ) {
+			return jet_menu()->settings_manager->options_manager->fonts_loader->is_google_font( $font );
+		} );
 
 		if ( empty( $google_fonts ) ) {
 			return false;

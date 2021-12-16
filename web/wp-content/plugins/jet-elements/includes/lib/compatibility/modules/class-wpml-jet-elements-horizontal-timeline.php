@@ -16,7 +16,7 @@ class WPML_Jet_Elements_Horizontal_Timeline extends WPML_Elementor_Module_With_I
 	 * @return array
 	 */
 	public function get_fields() {
-		return array( 'item_title', 'item_meta', 'item_desc', 'item_point_text' );
+		return array( 'item_title', 'item_meta', 'item_desc', 'item_point_text', 'item_btn_text', 'item_btn_url' => array( 'url' ) );
 	}
 
 	/**
@@ -38,6 +38,12 @@ class WPML_Jet_Elements_Horizontal_Timeline extends WPML_Elementor_Module_With_I
 			case 'item_point_text':
 				return esc_html__( 'Jet Horizontal Timeline: Item Point Text', 'jet-elements' );
 
+			case 'item_btn_text':
+				return esc_html__( 'Jet Horizontal Timeline: Item Button Text', 'jet-elements' );
+
+			case 'url':
+				return esc_html__( 'Jet Horizontal Timeline: Item Button Link', 'jet-elements' );
+
 			default:
 				return '';
 		}
@@ -51,16 +57,16 @@ class WPML_Jet_Elements_Horizontal_Timeline extends WPML_Elementor_Module_With_I
 	protected function get_editor_type( $field ) {
 		switch( $field ) {
 			case 'item_title':
-				return 'LINE';
-
 			case 'item_meta':
+			case 'item_point_text':
+			case 'item_btn_text':
 				return 'LINE';
 
 			case 'item_desc':
 				return 'AREA';
 
-			case 'item_point_text':
-				return 'LINE';
+			case 'url':
+				return 'LINK';
 
 			default:
 				return '';

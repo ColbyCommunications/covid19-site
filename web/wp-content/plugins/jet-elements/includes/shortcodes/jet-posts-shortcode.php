@@ -46,17 +46,17 @@ class Jet_Posts_Shortcode extends Jet_Elements_Shortcode_Base {
 				),
 			),
 			'columns' => array(
-				'type'       => 'select',
-				'responsive' => true,
-				'label'      => esc_html__( 'Columns', 'jet-elements' ),
-				'default'    => 3,
-				'options'    => $columns,
-			),
-			'columns_tablet' => array(
-				'default' => 2,
-			),
-			'columns_mobile' => array(
-				'default' => 1,
+				'type'               => 'select',
+				'responsive'         => true,
+				'label'              => esc_html__( 'Columns', 'jet-elements' ),
+				'default'            => 3,
+				'options'            => $columns,
+				'frontend_available' => true,
+				'render_type'        => 'template',
+				'selectors'   => array(
+					'{{WRAPPER}} .jet-posts__item' => 'max-width: calc( 100% / {{VALUE}} );flex: 0 0 calc( 100% / {{VALUE}} ); -webkit-box-flex: 0;
+					-ms-flex: 0 0 calc( 100% / {{VALUE}} );',
+				),
 			),
 			'equal_height_cols' => array(
 				'label'        => esc_html__( 'Equal Columns Height', 'jet-elements' ),
@@ -406,6 +406,17 @@ class Jet_Posts_Shortcode extends Jet_Elements_Shortcode_Base {
 					'show_meta' => array( 'yes' ),
 				),
 			),
+			'show_mod_date' => array(
+				'type'         => 'switcher',
+				'label'        => esc_html__( 'Show Posts Modified Date', 'jet-elements' ),
+				'label_on'     => esc_html__( 'Yes', 'jet-elements' ),
+				'label_off'    => esc_html__( 'No', 'jet-elements' ),
+				'return_value' => 'yes',
+				'default'      => '',
+				'condition' => array(
+					'show_meta' => array( 'yes' ),
+				),
+			),
 			'show_comments' => array(
 				'type'         => 'switcher',
 				'label'        => esc_html__( 'Show Posts Comments', 'jet-elements' ),
@@ -436,7 +447,7 @@ class Jet_Posts_Shortcode extends Jet_Elements_Shortcode_Base {
 			'more_icon' => array(
 				'type'        => 'icon',
 				'label'       => esc_html__( 'Read More Button Icon', 'jet-elements' ),
-				'label_block' => true,
+				'label_block' => false,
 				'skin'        => 'inline',
 				'condition'   => array(
 					'show_more' => array( 'yes' ),

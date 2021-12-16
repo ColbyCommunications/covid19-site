@@ -4,9 +4,8 @@
  */
 $settings = $this->get_settings_for_display();
 $perPage = $settings['per_page'];
-$cover_icon = ! empty( $settings['cover_icon'] ) ? sprintf( '<i class="%s"></i>', $settings['cover_icon'] ) : '';
 $is_more_button = $settings['view_more_button'];
-$is_lightbox = 'lightbox' == $this->__loop_item( array( 'item_image_link' ) ) ? true : false;
+$is_lightbox = 'lightbox' == $this->_loop_item( array( 'item_image_link' ) ) ? true : false;
 
 $item_instance = 'item-instance-' . $this->item_counter;
 
@@ -32,8 +31,8 @@ $this->add_render_attribute( $link_instance, 'class', array(
 ) );
 
 $link_href = $is_lightbox
-	? $this->__loop_item( array( 'item_image', 'url' ) )
-	: $this->__loop_item( array( 'item_button_url', 'url' ) );
+	? $this->_loop_item( array( 'item_image', 'url' ) )
+	: $this->_loop_item( array( 'item_button_url', 'url' ) );
 
 $this->add_render_attribute( $link_instance, 'href', $link_href );
 
@@ -46,7 +45,7 @@ if ( $is_lightbox ) {
 	<div class="jet-portfolio__inner">
 		<a <?php echo $this->get_render_attribute_string( $link_instance ); ?>>
 			<div class="jet-portfolio__image">
-				<?php echo $this->__loop_image_item(); ?>
+				<?php echo $this->_loop_image_item(); ?>
 				<div class="jet-portfolio__image-loader"><span></span></div>
 				<div class="jet-portfolio__cover"><?php echo $cover_icon; ?></div>
 			</div>

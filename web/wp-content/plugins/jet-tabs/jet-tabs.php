@@ -3,13 +3,16 @@
  * Plugin Name: JetTabs For Elementor
  * Plugin URI:  https://crocoblock.com/plugins/jettabs/
  * Description: JetTabs - Tabs and Accordions for Elementor Page Builder
- * Version:     2.1.4
+ * Version:     2.1.14
  * Author:      Crocoblock
  * Author URI:  https://crocoblock.com/
  * Text Domain: jet-tabs
  * License:     GPL-2.0+
  * License URI: http://www.gnu.org/licenses/gpl-2.0.txt
  * Domain Path: /languages
+ *
+ * Elementor tested up to: 3.2
+ * Elementor Pro tested up to: 3.3
  */
 
 // If this file is called directly, abort.
@@ -39,7 +42,7 @@ if ( ! class_exists( 'Jet_Tabs' ) ) {
 		 *
 		 * @var string
 		 */
-		private $version = '2.1.4';
+		private $version = '2.1.14';
 
 		/**
 		 * Holder for base plugin path
@@ -107,6 +110,7 @@ if ( ! class_exists( 'Jet_Tabs' ) ) {
 					$this->plugin_path( 'includes/modules/vue-ui/cherry-x-vue-ui.php' ),
 					$this->plugin_path( 'includes/modules/db-updater/cx-db-updater.php' ),
 					$this->plugin_path( 'includes/modules/jet-dashboard/jet-dashboard.php' ),
+					$this->plugin_path( 'includes/modules/jet-elementor-extension/jet-elementor-extension.php' ),
 				)
 			);
 		}
@@ -132,6 +136,13 @@ if ( ! class_exists( 'Jet_Tabs' ) ) {
 						'slug'    => 'jet-tabs',
 						'file'    => 'jet-tabs/jet-tabs.php',
 						'version' => $this->get_version(),
+						'plugin_links' => array(
+							array(
+								'label'  => esc_html__( 'Go to settings', 'jet-tricks' ),
+								'url'    => add_query_arg( array( 'page' => 'jet-dashboard-settings-page', 'subpage' => 'jet-tabs-general-settings' ), admin_url( 'admin.php' ) ),
+								'target' => '_self',
+							),
+						),
 					),
 				) );
 			}
@@ -178,6 +189,9 @@ if ( ! class_exists( 'Jet_Tabs' ) ) {
 			new \Jet_Tabs\Rest_Api();
 
 			if ( is_admin() ) {
+
+				//Init Rest Api
+				new \Jet_Tabs\Settings();
 
 				// Init DB upgrader
 				require $this->plugin_path( 'includes/db-upgrader.php' );
@@ -236,6 +250,7 @@ if ( ! class_exists( 'Jet_Tabs' ) ) {
 		 */
 		public function load_files() {
 			require $this->plugin_path( 'includes/settings.php' );
+			require $this->plugin_path( 'includes/settings/manager.php' );
 			require $this->plugin_path( 'includes/assets.php' );
 			require $this->plugin_path( 'includes/integration.php' );
 			require $this->plugin_path( 'includes/rest-api/rest-api.php' );

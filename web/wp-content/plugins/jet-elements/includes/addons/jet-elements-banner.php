@@ -12,8 +12,8 @@ use Elementor\Group_Control_Border;
 use Elementor\Group_Control_Box_Shadow;
 use Elementor\Group_Control_Typography;
 use Elementor\Repeater;
-use Elementor\Scheme_Color;
-use Elementor\Scheme_Typography;
+use Elementor\Core\Schemes\Color as Scheme_Color;
+use Elementor\Core\Schemes\Typography as Scheme_Typography;
 use Elementor\Widget_Base;
 use Elementor\Utils;
 use Elementor\Modules\DynamicTags\Module as TagsModule;
@@ -185,7 +185,7 @@ class Jet_Elements_Banner extends Jet_Elements_Base {
 			)
 		);
 
-		$this->__start_controls_section(
+		$this->_start_controls_section(
 			'section_banner_item_style',
 			array(
 				'label'      => esc_html__( 'General', 'jet-elements' ),
@@ -194,7 +194,7 @@ class Jet_Elements_Banner extends Jet_Elements_Base {
 			)
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'banner_container_heading',
 			array(
 				'label'     => esc_html__( 'Container', 'jet-elements' ),
@@ -203,7 +203,7 @@ class Jet_Elements_Banner extends Jet_Elements_Base {
 			100
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'banner_padding',
 			array(
 				'label'      => __( 'Padding', 'jet-elements' ),
@@ -216,7 +216,7 @@ class Jet_Elements_Banner extends Jet_Elements_Base {
 			100
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'banner_margin',
 			array(
 				'label'      => __( 'Margin', 'jet-elements' ),
@@ -229,7 +229,7 @@ class Jet_Elements_Banner extends Jet_Elements_Base {
 			100
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Border::get_type(),
 			array(
 				'name'        => 'banner_border',
@@ -240,7 +240,7 @@ class Jet_Elements_Banner extends Jet_Elements_Base {
 			100
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'banner_border_radius',
 			array(
 				'label'      => esc_html__( 'Border Radius', 'jet-elements' ),
@@ -253,7 +253,7 @@ class Jet_Elements_Banner extends Jet_Elements_Base {
 			100
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Box_Shadow::get_type(),
 			array(
 				'name'     => 'banner_shadow',
@@ -262,7 +262,7 @@ class Jet_Elements_Banner extends Jet_Elements_Base {
 			100
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'banner_overlay_heading',
 			array(
 				'label'     => esc_html__( 'Overlay', 'jet-elements' ),
@@ -272,16 +272,16 @@ class Jet_Elements_Banner extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__start_controls_tabs( 'tabs_background' );
+		$this->_start_controls_tabs( 'tabs_background' );
 
-		$this->__start_controls_tab(
+		$this->_start_controls_tab(
 			'tab_background_normal',
 			array(
 				'label' => esc_html__( 'Normal', 'jet-elements' ),
 			)
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'items_content_color',
 			array(
 				'label'     => esc_html__( 'Additional Elements Color', 'jet-elements' ),
@@ -305,7 +305,7 @@ class Jet_Elements_Banner extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Background::get_type(),
 			array(
 				'name'     => 'background',
@@ -314,7 +314,7 @@ class Jet_Elements_Banner extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'normal_opacity',
 			array(
 				'label'   => esc_html__( 'Opacity', 'jet-elements' ),
@@ -330,16 +330,16 @@ class Jet_Elements_Banner extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__end_controls_tab();
+		$this->_end_controls_tab();
 
-		$this->__start_controls_tab(
+		$this->_start_controls_tab(
 			'tab_background_hover',
 			array(
 				'label' => esc_html__( 'Hover', 'jet-elements' ),
 			)
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'items_content_hover_color',
 			array(
 				'label'     => esc_html__( 'Additional Elements Color', 'jet-elements' ),
@@ -363,7 +363,7 @@ class Jet_Elements_Banner extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Background::get_type(),
 			array(
 				'name'     => 'background_hover',
@@ -372,7 +372,7 @@ class Jet_Elements_Banner extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'hover_opacity',
 			array(
 				'label'   => esc_html__( 'Opacity', 'jet-elements' ),
@@ -388,11 +388,11 @@ class Jet_Elements_Banner extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__end_controls_tab();
+		$this->_end_controls_tab();
 
-		$this->__end_controls_tabs();
+		$this->_end_controls_tabs();
 
-		$this->__add_control(
+		$this->_add_control(
 			'banner_order_heading',
 			array(
 				'label'     => esc_html__( 'Order', 'jet-elements' ),
@@ -402,7 +402,7 @@ class Jet_Elements_Banner extends Jet_Elements_Base {
 			100
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'banner_title_order',
 			array(
 				'label'   => esc_html__( 'Title Order', 'jet-elements' ),
@@ -418,7 +418,7 @@ class Jet_Elements_Banner extends Jet_Elements_Base {
 			100
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'banner_text_order',
 			array(
 				'label'   => esc_html__( 'Description Order', 'jet-elements' ),
@@ -434,9 +434,9 @@ class Jet_Elements_Banner extends Jet_Elements_Base {
 			100
 		);
 
-		$this->__end_controls_section();
+		$this->_end_controls_section();
 
-		$this->__start_controls_section(
+		$this->_start_controls_section(
 			'section_banner_title_style',
 			array(
 				'label'      => esc_html__( 'Title', 'jet-elements' ),
@@ -446,7 +446,7 @@ class Jet_Elements_Banner extends Jet_Elements_Base {
 		);
 
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'title_alignment',
 			array(
 				'label'   => esc_html__( 'Alignment', 'jet-elements' ),
@@ -469,11 +469,12 @@ class Jet_Elements_Banner extends Jet_Elements_Base {
 				'selectors'  => array(
 					'{{WRAPPER}} ' . $css_scheme['banner_title'] => 'text-align: {{VALUE}};',
 				),
+				'classes' => 'jet-elements-text-align-control',
 			),
 			25
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'banner_title_color',
 			array(
 				'label'     => esc_html__( 'Title Color', 'jet-elements' ),
@@ -485,7 +486,7 @@ class Jet_Elements_Banner extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Typography::get_type(),
 			array(
 				'name'     => 'banner_title_typography',
@@ -495,7 +496,7 @@ class Jet_Elements_Banner extends Jet_Elements_Base {
 			50
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'title_margin',
 			array(
 				'label'      => esc_html__( 'Margin', 'jet-elements' ),
@@ -508,9 +509,9 @@ class Jet_Elements_Banner extends Jet_Elements_Base {
 			50
 		);
 
-		$this->__end_controls_section();
+		$this->_end_controls_section();
 
-		$this->__start_controls_section(
+		$this->_start_controls_section(
 			'section_banner_text_style',
 			array(
 				'label'      => esc_html__( 'Description', 'jet-elements' ),
@@ -519,7 +520,7 @@ class Jet_Elements_Banner extends Jet_Elements_Base {
 			)
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'text_alignment',
 			array(
 				'label'   => esc_html__( 'Alignment', 'jet-elements' ),
@@ -542,11 +543,12 @@ class Jet_Elements_Banner extends Jet_Elements_Base {
 				'selectors'  => array(
 					'{{WRAPPER}} ' . $css_scheme['banner_text'] => 'text-align: {{VALUE}};',
 				),
+				'classes' => 'jet-elements-text-align-control',
 			),
 			25
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'banner_text_color',
 			array(
 				'label'     => esc_html__( 'Description Color', 'jet-elements' ),
@@ -558,7 +560,7 @@ class Jet_Elements_Banner extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Typography::get_type(),
 			array(
 				'name'     => 'banner_text_typography',
@@ -568,7 +570,7 @@ class Jet_Elements_Banner extends Jet_Elements_Base {
 			50
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'text_margin',
 			array(
 				'label'      => esc_html__( 'Margin', 'jet-elements' ),
@@ -581,20 +583,20 @@ class Jet_Elements_Banner extends Jet_Elements_Base {
 			50
 		);
 
-		$this->__end_controls_section();
+		$this->_end_controls_section();
 
 	}
 
 	protected function render() {
 
-		$this->__context = 'render';
+		$this->_context = 'render';
 
-		$this->__open_wrap();
-		include $this->__get_global_template( 'index' );
-		$this->__close_wrap();
+		$this->_open_wrap();
+		include $this->_get_global_template( 'index' );
+		$this->_close_wrap();
 	}
 
-	public function __get_banner_image() {
+	public function _get_banner_image() {
 
 		$image = $this->get_settings_for_display( 'banner_image' );
 

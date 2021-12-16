@@ -12,8 +12,8 @@ use Elementor\Group_Control_Border;
 use Elementor\Group_Control_Box_Shadow;
 use Elementor\Group_Control_Typography;
 use Elementor\Repeater;
-use Elementor\Scheme_Color;
-use Elementor\Scheme_Typography;
+use Elementor\Core\Schemes\Color as Scheme_Color;
+use Elementor\Core\Schemes\Typography as Scheme_Typography;
 use Elementor\Widget_Base;
 use Elementor\Utils;
 use Elementor\Modules\DynamicTags\Module as TagsModule;
@@ -75,23 +75,74 @@ class Jet_Elements_Advanced_Map extends Jet_Elements_Base {
 					'raw'  => sprintf(
 						esc_html__( 'Please set Google maps API key before using this widget. You can create own API key  %1$s. Paste created key on %2$s', 'jet-elements' ),
 						'<a target="_blank" href="https://developers.google.com/maps/documentation/javascript/get-api-key">' . esc_html__( 'here', 'jet-elements' ) . '</a>',
-						'<a target="_blank" href="' . jet_elements_settings()->get_settings_page_link() . '">' . esc_html__( 'settings page', 'jet-elements' ) . '</a>'
+						'<a target="_blank" href="' . jet_elements_settings()->get_settings_page_link( 'integrations' ) . '">' . esc_html__( 'settings page', 'jet-elements' ) . '</a>'
 					)
 				)
 			);
 		}
 
-		$default_address = esc_html__( 'London Eye, London, United Kingdom', 'jet-elements' );
+		$default_address      = esc_html__( 'London Eye, London, United Kingdom', 'jet-elements' );
+		$default_lat_long     = '51.503399;-0.119519';
+		$default_dms_lat_long = "51° 30' 12.2364\" N;0° 7' 10.2684\" W";
+
+		$this->add_control(
+			'map_center_type',
+			array(
+				'label'   => esc_html__( 'Map center type', 'jet-elements' ),
+				'type'    => Controls_Manager::SELECT,
+				'default' => '1',
+				'options' => array(
+					'0' => esc_html__( 'Coordinates', 'jet-elements' ),
+					'1' => esc_html__( 'Address', 'jet-elements' ),
+					'2' => esc_html__( 'DMS Format of Coordinates', 'jet-elements' ),
+				),
+			)
+		);
+
+		$this->add_control(
+			'map_center_lat_lng',
+			array(
+				'label'       => esc_html__( 'Map Center Coordinates', 'jet-elements' ),
+				'description' => esc_html__( 'To get an address from latitude and longitude coordinates from one meta field, combine coordinates names with the ";" sign. For example lat;lng. Where latitude always goes first. The latitude value range is from -90 to 90. The longitude value outside range is from -180 to 180.', 'jet-elements' ),
+				'type'        => Controls_Manager::TEXT,
+				'placeholder' => $default_lat_long,
+				'default'     => $default_lat_long,
+				'label_block' => true,
+				'dynamic'     => array( 'active' => true ),
+				'condition'   => array(
+					'map_center_type' => '0',
+				),
+			)
+		);
+
+		$this->add_control(
+			'map_center_dms',
+			array(
+				'label'       => esc_html__( 'DMS Coordinates', 'jet-elements' ),
+				'description' => esc_html__( 'To get an address from latitude and longitude coordinates of dms format from one meta field, combine coordinates names with the ";" sign. For example: 51° 30\' 12.2364" N;0° 7\' 10.2684" W. Where latitude always goes first.', 'jet-elements' ),
+				'type'        => Controls_Manager::TEXT,
+				'placeholder' => $default_dms_lat_long,
+				'default'     => $default_dms_lat_long,
+				'label_block' => true,
+				'dynamic'     => array( 'active' => true ),
+				'condition'   => array(
+					'map_center_type' => '2',
+				),
+			)
+		);
 
 		$this->add_control(
 			'map_center',
 			array(
-				'label'       => esc_html__( 'Map Center', 'jet-elements' ),
+				'label'       => esc_html__( 'Map Center Address', 'jet-elements' ),
 				'type'        => Controls_Manager::TEXT,
 				'placeholder' => $default_address,
 				'default'     => $default_address,
 				'label_block' => true,
 				'dynamic'     => array( 'active' => true ),
+				'condition'   => array(
+					'map_center_type' => '1',
+				),
 			)
 		);
 
@@ -259,6 +310,52 @@ class Jet_Elements_Advanced_Map extends Jet_Elements_Base {
 		$repeater = new Repeater();
 
 		$repeater->add_control(
+			'pin_address_type',
+			array(
+				'label'   => esc_html__( 'Pin Address Type', 'jet-elements' ),
+				'type'    => Controls_Manager::SELECT,
+				'default' => '1',
+				'options' => array(
+					'0' => esc_html__( 'Coordinates', 'jet-elements' ),
+					'1' => esc_html__( 'Address', 'jet-elements' ),
+					'2' => esc_html__( 'DMS Format of Coordinates', 'jet-elements' ),
+				),
+			)
+		);
+
+		$repeater->add_control(
+			'pin_address_lat_lng',
+			array(
+				'label'       => esc_html__( 'Pin Address Coordinates', 'jet-elements' ),
+				'description' => esc_html__( 'To get Pin Address from latitude and longitude coordinates from one meta field, combine coordinates names with the ";" sign. For example: lat;lng. Where latitude always goes first. The latitude value range is from -90 to 90. The longitude value outside range is from -180 to 180.', 'jet-elements' ),
+				'type'        => Controls_Manager::TEXT,
+				'placeholder' => $default_lat_long,
+				'default'     => $default_lat_long,
+				'label_block' => true,
+				'dynamic'     => array( 'active' => true ),
+				'condition'   => array(
+					'pin_address_type' => '0',
+				),
+			)
+		);
+
+		$repeater->add_control(
+			'dms_pin_address_lat_lng',
+			array(
+				'label'       => esc_html__( 'Pin Address Coordinates', 'jet-elements' ),
+				'description' => esc_html__( 'To get Pin Address from latitude and longitude coordinates of dms format from one meta field, combine coordinates names with the ";" sign. For example: 51° 30\' 12.2364" N;0° 7\' 10.2684" W. Where latitude always goes first.', 'jet-elements' ),
+				'type'        => Controls_Manager::TEXT,
+				'placeholder' => $default_dms_lat_long,
+				'default'     => $default_dms_lat_long,
+				'label_block' => true,
+				'dynamic'     => array( 'active' => true ),
+				'condition'   => array(
+					'pin_address_type' => '2',
+				),
+			)
+		);
+
+		$repeater->add_control(
 			'pin_address',
 			array(
 				'label'       => esc_html__( 'Pin Address', 'jet-elements' ),
@@ -266,6 +363,9 @@ class Jet_Elements_Advanced_Map extends Jet_Elements_Base {
 				'default'     => $default_address,
 				'label_block' => true,
 				'dynamic'     => array( 'active' => true ),
+				'condition'   => array(
+					'pin_address_type' => '1',
+				),
 			)
 		);
 
@@ -273,17 +373,112 @@ class Jet_Elements_Advanced_Map extends Jet_Elements_Base {
 			'pin_desc',
 			array(
 				'label'   => esc_html__( 'Pin Description', 'jet-elements' ),
-				'type'    => Controls_Manager::TEXTAREA,
+				'type'    => Controls_Manager::WYSIWYG,
 				'default' => $default_address,
 				'dynamic' => array( 'active' => true ),
 			)
 		);
 
 		$repeater->add_control(
+			'pin_link_title',
+			array(
+				'label'   => esc_html__( 'Link Text', 'jet-elements' ),
+				'type'    => Controls_Manager::TEXT,
+				'dynamic' => array(
+					'active' => true,
+				),
+				'default'     => '',
+				'placeholder' => esc_html__( 'View more', 'jet-elements' ),
+			)
+		);
+
+		$repeater->add_control(
+			'pin_link',
+			array(
+				'label' => esc_html__( 'Link', 'jet-elements' ),
+				'type' => Controls_Manager::URL,
+				'dynamic' => array(
+					'active' => true,
+				),
+				'placeholder' => esc_html__( 'https://your-link.com', 'jet-elements' ),
+				'default' => array(
+					'url' => '#',
+				),
+				'condition'   => array(
+					'pin_link_title!' => '',
+				),
+			)
+		);
+
+		$repeater->add_control(
 			'pin_image',
 			array(
-				'label'   => esc_html__( 'Pin Icon', 'jet-elements' ),
-				'type'    => Controls_Manager::MEDIA,
+				'label' => esc_html__( 'Pin Icon', 'jet-elements' ),
+				'type'  => Controls_Manager::MEDIA,
+			)
+		);
+
+		$repeater->add_control(
+			'pin_custom_size',
+			array(
+				'label'        => esc_html__( 'Pin Icon Custom Size', 'jet-elements' ),
+				'type'         => Controls_Manager::SWITCHER,
+				'label_on'     => esc_html__( 'Yes', 'jet-elements' ),
+				'label_off'    => esc_html__( 'No', 'jet-elements' ),
+				'return_value' => 'true',
+				'default'      => false,
+				'condition'    => array(
+					'pin_image[url]!' => '',
+				),
+			)
+		);
+
+		$repeater->add_control(
+			'pin_icon_width',
+			array(
+				'label'      => esc_html__( 'Width', 'jet-elements' ),
+				'type'       => Controls_Manager::SLIDER,
+				'size_units' => array( 'px' ),
+				'default'    => array(
+					'unit' => 'px',
+					'size' => 60,
+				),
+				'range'      => array(
+					'px' => array(
+						'min'  => 1,
+						'max'  => 200,
+						'step' => 1,
+					),
+				),
+				'condition'   => array(
+					'pin_custom_size' => 'true',
+					'pin_image[url]!' => '',
+				),
+			)
+		);
+
+		$repeater->add_control(
+			'pin_icon_height',
+			array(
+				'label'      => esc_html__( 'Height', 'jet-elements' ),
+				'type'       => Controls_Manager::SLIDER,
+				'size_units' => array( 'px' ),
+				'default'    => array(
+					'unit' => 'px',
+					'size' => 60,
+				),
+				'range'      => array(
+					'px' => array(
+						'min' => 1,
+						'max' => 200,
+						'step' => 1,
+					),
+				),
+				'condition'   => array(
+					'pin_custom_size' => 'true',
+					'pin_image[url]!' => '',
+				),
+				'separator' => 'after',
 			)
 		);
 
@@ -303,21 +498,155 @@ class Jet_Elements_Advanced_Map extends Jet_Elements_Base {
 		$this->add_control(
 			'pins',
 			array(
-				'type'        => Controls_Manager::REPEATER,
-				'fields'      => array_values( $repeater->get_controls() ),
-				'default'     => array(
+				'type'    => Controls_Manager::REPEATER,
+				'fields'  => $repeater->get_controls(),
+				'default' => array(
 					array(
-						'pin_address' => $default_address,
-						'pin_desc'    => $default_address,
-						'pin_state'   => 'visible',
+						'pin_address'         => $default_address,
+						'pin_address_lat_lng' => $default_lat_long,
+						'pin_desc'            => $default_address,
+						'pin_state'           => 'visible',
 					),
 				),
-				'title_field' => '{{{ pin_address }}}',
+				'title_field' => '<# if ( "1" === pin_address_type ){ #> {{{ pin_address }}} <# } else if ( "0" === pin_address_type) { #> {{{ pin_address_lat_lng }}} <# } else if ( "2" === pin_address_type) { #> {{{ dms_pin_address_lat_lng }}} <# } #>',
 			)
 		);
 
 		$this->end_controls_section();
 
+		/**
+		 * Style Section
+		 */
+
+		$this->start_controls_section(
+			'section_pin_style',
+			array(
+				'label'      => esc_html__( 'Pin', 'jet-elements' ),
+				'tab'        => Controls_Manager::TAB_STYLE,
+				'show_label' => false,
+			)
+		);
+
+		$this->add_control(
+			'pin_link_width',
+			array(
+				'label'      => esc_html__( 'Pin Width', 'jet-elements' ),
+				'type'       => Controls_Manager::SLIDER,
+				'size_units' => array( 'px' ),
+				'range'      => array(
+					'px' => array(
+						'min' => 1,
+						'max' => 400,
+					),
+				),
+				'selectors' => array(
+					'{{WRAPPER}} .gm-style .gm-style-iw-c' => 'width: {{SIZE}}{{UNIT}}; max-width: {{SIZE}}{{UNIT}};',
+				),
+				'dynamic'   => array( 'active' => true ),
+			)
+		);
+
+		$this->add_control(
+			'pin_link_styles',
+			array(
+				'label'     => esc_html__( 'Link Styles', 'jet-elements' ),
+				'type'      => Controls_Manager::HEADING,
+				'separator' => 'before',
+			)
+		);
+
+		$this->add_group_control(
+			Group_Control_Typography::get_type(),
+			array(
+				'name'     => 'pin_link_typography',
+				'scheme'   => Scheme_Typography::TYPOGRAPHY_4,
+				'selector' => '{{WRAPPER}} .jet-map-pin__link',
+			)
+		);
+
+		$this->add_responsive_control(
+			'pin_link_margin',
+			array(
+				'label'      => esc_html__( 'Margin', 'jet-elements' ),
+				'type'       => Controls_Manager::DIMENSIONS,
+				'size_units' => array( 'px', '%' ),
+				'selectors'  => array(
+					'{{WRAPPER}} .jet-map-pin__wrapper' => 'margin: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+				),
+			)
+		);
+
+		$this->add_control(
+			'pin_link_alignment',
+			array(
+				'label'   => esc_html__( 'Alignment', 'jet-elements' ),
+				'type'    => Controls_Manager::CHOOSE,
+				'default' => 'center',
+				'options' => array(
+					'left' => array(
+						'title' => esc_html__( 'Left', 'jet-elements' ),
+						'icon'  => ! is_rtl() ? 'eicon-text-align-left' : 'eicon-text-align-right',
+					),
+					'center' => array(
+						'title' => esc_html__( 'Center', 'jet-elements' ),
+						'icon'  => 'eicon-text-align-center',
+					),
+					'right' => array(
+						'title' => esc_html__( 'Right', 'jet-elements' ),
+						'icon'  => ! is_rtl() ? 'eicon-text-align-right' : 'eicon-text-align-left',
+					),
+				),
+				'selectors'  => array(
+					'{{WRAPPER}} .jet-map-pin__wrapper' => 'text-align: {{VALUE}};',
+				),
+			)
+		);
+
+		$this->start_controls_tabs( 'tabs_pin_link_style' );
+
+		$this->start_controls_tab(
+			'tab_pin_link__normal',
+			array(
+				'label' => esc_html__( 'Normal', 'jet-elements' ),
+			)
+		);
+
+		$this->add_control(
+			'pin_link_color',
+			array(
+				'label'     => esc_html__( 'Text Color', 'jet-elements' ),
+				'type'      => Controls_Manager::COLOR,
+				'selectors' => array(
+					'{{WRAPPER}} .jet-map-pin__link' => 'color: {{VALUE}}',
+				),
+			)
+		);
+
+		$this->end_controls_tab();
+
+		$this->start_controls_tab(
+			'tab_pin_link_hover',
+			array(
+				'label' => esc_html__( 'Hover', 'jet-elements' ),
+			)
+		);
+
+		$this->add_control(
+			'pin_link_hover_color',
+			array(
+				'label'     => esc_html__( 'Text Color', 'jet-elements' ),
+				'type'      => Controls_Manager::COLOR,
+				'selectors' => array(
+					'{{WRAPPER}} .jet-map-pin__link:hover' => 'color: {{VALUE}}',
+				),
+			)
+		);
+
+		$this->end_controls_tab();
+
+		$this->end_controls_tabs();
+
+		$this->end_controls_section();
 	}
 
 	/**
@@ -416,9 +745,9 @@ class Jet_Elements_Advanced_Map extends Jet_Elements_Base {
 	}
 
 	/**
-	 * Get lcation coordinates by entered address and store into metadata.
+	 * Get location coordinates by entered address and store into metadata.
 	 *
-	 * @return void
+	 * @return array|void
 	 */
 	public function get_location_coord( $location ) {
 
@@ -482,14 +811,76 @@ class Jet_Elements_Advanced_Map extends Jet_Elements_Base {
 
 		$settings = $this->get_settings_for_display();
 
-		if ( empty( $settings['map_center'] ) ) {
-			return;
-		}
+		$map_center_type = isset( $settings['map_center_type'] ) ? $settings['map_center_type'] : '1';
 
-		$coordinates = $this->get_location_coord( $settings['map_center'] );
+		if ( $map_center_type === '1' ) {
 
-		if ( ! $coordinates ) {
-			return;
+			if ( empty( $settings['map_center'] ) ) {
+				return;
+			}
+
+			$coordinates = $this->get_location_coord( $settings['map_center'] );
+
+			if ( ! $coordinates ) {
+				return;
+			}
+		} else if ( $map_center_type === '0' ) {
+
+			if ( empty( $settings['map_center_lat_lng'] ) ) {
+				$message = esc_html__( 'Location not found', 'jet-elements' );
+
+				echo $this->get_map_message( $message );
+				return;
+			}
+
+			$lat_lng = explode( ';', $settings['map_center_lat_lng'] );
+
+			if ( isset( $lat_lng[0] ) && $lat_lng[0] !== '' && !ctype_space( $lat_lng[0] ) && isset( $lat_lng[1] ) && $lat_lng[1] !== '' && !ctype_space( $lat_lng[1] ) ) {
+				$lat = floatval( str_replace( ',', '.', preg_replace('/\s+/', '', $lat_lng[0] ) ) );
+				$lng = floatval( str_replace( ',', '.', preg_replace('/\s+/', '', $lat_lng[1] ) ) );
+
+				if ( $lat > 90 || $lat < -90 ) {
+					$message = esc_html__( 'Map Center latitude value outside range from -90 to 90', 'jet-elements' );
+
+					echo $this->get_map_message( $message );
+					return;
+				}
+
+				if ( $lng > 180 || $lng < -180 ) {
+					$message = esc_html__( 'Map Center longitude value outside range from -180 to 180', 'jet-elements' );
+
+					echo $this->get_map_message( $message );
+					return;
+				}
+
+				$coordinates = array( 'lat' => $lat, 'lng' => $lng );
+			} else {
+				$message = esc_html__( 'Location not found', 'jet-elements' );
+
+				echo $this->get_map_message( $message );
+				return;
+			}
+		} else {
+
+			if ( empty( $settings['map_center_dms'] ) ) {
+				$message = esc_html__( 'Location not found', 'jet-elements' );
+
+				echo $this->get_map_message( $message );
+				return;
+			}
+
+			$dms_lat_lng = explode( ';', $settings['map_center_dms'] );
+
+			if ( isset( $dms_lat_lng[0] ) && $dms_lat_lng[0] !== '' && !ctype_space( $dms_lat_lng[0] ) && isset( $dms_lat_lng[1] ) && $dms_lat_lng[1] !== '' && !ctype_space( $dms_lat_lng[1] ) ) {
+				$dec_lat     = floatval( preg_replace('/\s+/', '', $this->dms_to_dec( $dms_lat_lng[0] ) ) );
+				$dec_lng     = floatval( preg_replace('/\s+/', '', $this->dms_to_dec( $dms_lat_lng[1] ) ) );
+				$coordinates = array( 'lat' => $dec_lat, 'lng' => $dec_lng );
+			} else {
+				$message = esc_html__( 'Location not found', 'jet-elements' );
+
+				echo $this->get_map_message( $message );
+				return;
+			}
 		}
 
 		$scroll_ctrl     = isset( $settings['scrollwheel'] ) ? $settings['scrollwheel'] : '';
@@ -527,18 +918,84 @@ class Jet_Elements_Advanced_Map extends Jet_Elements_Base {
 
 			foreach ( $settings['pins'] as $pin ) {
 
-				if ( empty( $pin['pin_address'] ) ) {
-					continue;
+				$pin_address_type = isset( $pin['pin_address_type'] ) ? $pin['pin_address_type'] : '1';
+
+				if ( $pin_address_type === '1' ) {
+
+					if ( empty( $pin['pin_address'] ) ) {
+						continue;
+					}
+
+					$position = $this->get_location_coord( $pin['pin_address'] );
+				} else if ( $pin_address_type === '0' ) {
+
+					if ( empty( $pin['pin_address_lat_lng'] ) ) {
+						continue;
+					}
+
+					$pos_lat_lng = explode( ';', $pin['pin_address_lat_lng'] );
+
+					if ( isset( $pos_lat_lng[0] ) && $pos_lat_lng[0] !== '' && !ctype_space( $pos_lat_lng[0] ) && isset( $pos_lat_lng[1] ) && $pos_lat_lng[1] !== '' && !ctype_space( $pos_lat_lng[1] ) ) {
+						$pos_lat  = floatval( str_replace( ',', '.', preg_replace('/\s+/', '', $pos_lat_lng[0] ) ) );
+						$pos_lng  = floatval( str_replace( ',', '.', preg_replace('/\s+/', '', $pos_lat_lng[1] ) ) );
+						$position = array( 'lat' => $pos_lat, 'lng' => $pos_lng );
+
+						if ( $pos_lat > 90 || $pos_lat < -90 ) {
+							$message = esc_html__( 'Pin address latitude value outside range from -90 to 90', 'jet-elements' );
+
+							echo $this->get_map_message( $message );
+							return;
+						}
+
+						if ( $pos_lng > 180 || $pos_lng < -180 ) {
+							$message = esc_html__( 'Pin address longitude value outside range from -180 to 180', 'jet-elements' );
+
+							echo $this->get_map_message( $message );
+							return;
+						}
+					} else {
+						$message = esc_html__( 'Pin location not found', 'jet-elements' );
+
+						echo $this->get_map_message( $message );
+						return;
+					}
+				} else {
+
+					if ( empty( $pin['dms_pin_address_lat_lng'] ) ) {
+						continue;
+					}
+
+					$pos_dms_lat_lng = explode( ';', $pin['dms_pin_address_lat_lng'] );
+
+					if ( isset( $pos_dms_lat_lng[0] ) && $pos_dms_lat_lng[0] !== '' && !ctype_space( $pos_dms_lat_lng[0] ) && isset( $pos_dms_lat_lng[1] ) && $pos_dms_lat_lng[1] !== '' && !ctype_space( $pos_dms_lat_lng[1] ) ) {
+						$pos_dms_lat  = floatval( str_replace( ',', '.', preg_replace('/\s+/', '', $this->dms_to_dec( $pos_dms_lat_lng[0] ) ) ) );
+						$pos_dms_lng  = floatval( str_replace( ',', '.', preg_replace('/\s+/', '', $this->dms_to_dec( $pos_dms_lat_lng[1] ) ) ) );
+						$position     = array( 'lat' => $pos_dms_lat, 'lng' => $pos_dms_lng );
+					} else {
+						$message = esc_html__( 'Pin location not found', 'jet-elements' );
+						echo $this->get_map_message( $message );
+						return;
+					}
 				}
 
 				$current = array(
-					'position' => $this->get_location_coord( $pin['pin_address'] ),
+					'position' => $position,
 					'desc'     => $pin['pin_desc'],
 					'state'    => $pin['pin_state'],
 				);
 
 				if ( ! empty( $pin['pin_image']['url'] ) ) {
 					$current['image'] = esc_url( $pin['pin_image']['url'] );
+
+					if ( 'true' === $pin['pin_custom_size'] && ! empty( $pin['pin_icon_width']['size'] ) && ! empty( $pin['pin_icon_height']['size'] ) ) {
+						$current['image_width']  = $pin['pin_icon_width']['size'];
+						$current['image_height'] = $pin['pin_icon_height']['size'];
+					}
+				}
+
+				if ( ! empty ( $pin['pin_link_title'] ) && ! empty( $pin['pin_link'] ) ) {
+					$current['link_title'] = $pin['pin_link_title'];
+					$current['link']       = $pin['pin_link'];
 				}
 
 				$pins[] = $current;
@@ -553,6 +1010,32 @@ class Jet_Elements_Advanced_Map extends Jet_Elements_Base {
 			$this->get_render_attribute_string( 'map-data' ),
 			$this->get_render_attribute_string( 'map-pins' )
 		);
+	}
+
+	/**
+	 * Convert a coordinate in dms to dec
+	 *
+	 * @param string $dms coordinate
+	 * @return float
+	 */
+	public function dms_to_dec( $dms ) {
+		$dms     = stripslashes( $dms );
+		$neg     = ( preg_match( '/[SWO]/i', $dms ) == 0 ) ? 1 : - 1;
+		$dms     = preg_replace( '/(^\s?-)|(\s?[NSEWO]\s?)/i', '', $dms );
+		$pattern = "/(\\d*\\.?\\d+)(?:[°ºd: ]+)(\\d*\\.?\\d+)*(?:['m′: ])*(\\d*\\.?\\d+)*[\"s″ ]?/i";
+		$parts   = preg_split( $pattern, $dms, 0, PREG_SPLIT_NO_EMPTY | PREG_SPLIT_DELIM_CAPTURE );
+
+		if ( ! $parts ) {
+			return;
+		}
+
+		// parts: 0 = degree, 1 = minutes, 2 = seconds
+		$d   = isset( $parts[0] ) ? (float) $parts[0] : 0;
+		$m   = isset( $parts[1] ) ? (float) $parts[1] : 0;
+		$s   = isset( $parts[2] ) ? (float) $parts[2] : 0;
+		$dec = ( $d + ( $m / 60 ) + ( $s / 3600 ) ) * $neg;
+
+		return $dec;
 	}
 
 	/**

@@ -16,7 +16,7 @@ class WPML_Jet_Elements_Pricing_Table extends WPML_Elementor_Module_With_Items {
 	 * @return array
 	 */
 	public function get_fields() {
-		return array( 'item_text' );
+		return array( 'item_text', 'item_tooltip' );
 	}
 
 	/**
@@ -28,6 +28,9 @@ class WPML_Jet_Elements_Pricing_Table extends WPML_Elementor_Module_With_Items {
 		switch( $field ) {
 			case 'item_text':
 				return esc_html__( 'Jet Pricing Table: Features Item Text', 'jet-elements' );
+
+			case 'item_tooltip':
+				return esc_html__( 'Jet Pricing Table: Features Item Tooltip', 'jet-elements' );
 
 			default:
 				return '';
@@ -43,6 +46,9 @@ class WPML_Jet_Elements_Pricing_Table extends WPML_Elementor_Module_With_Items {
 		switch( $field ) {
 			case 'item_text':
 				return 'LINE';
+
+			case 'item_tooltip':
+				return 'AREA';
 
 			default:
 				return '';

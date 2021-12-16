@@ -1,11 +1,7 @@
 <cx-vui-switcher
 	name="<?php echo $args['name'] . '-box-shadow-switch'; ?>"
 	label="<?php echo sprintf( esc_html__( '%s box shadow settings', 'jet-menu' ), $args['label'] ); ?>"
-	description="<?php
-		echo sprintf( esc_html__( 'Read more %1$s', 'jet-menu' ),
-			htmlspecialchars( "<a href='https://developer.mozilla.org/en-US/docs/Web/CSS/box-shadow' target='_blank'>box shadow</a>", ENT_QUOTES )
-		);
-	?>"
+	description="<?php echo esc_html__( 'Read more about', 'jet-menu' ); ?> <a href='https://developer.mozilla.org/en-US/docs/Web/CSS/box-shadow' target='_blank'>box shadow</a>"
 	:wrapper-css="[ 'equalwidth' ]"
 	return-true="true"
 	return-false="false"

@@ -46,17 +46,19 @@
 				return false;
 			}
 
-			var particlesId = 'jet-tricks-particles-instance-' + sectionId,
+			var particlesId   = 'jet-tricks-particles-instance-' + sectionId,
 				particlesJson = JSON.parse( settings.particles_json );
 
 			$scope.prepend( '<div id="' + particlesId + '" class="jet-tricks-particles-section__instance"></div>' );
 
-			particlesJS( particlesId, particlesJson );
+			tsParticles.load( particlesId, particlesJson );
 
 		},
 
 		elementorColumn: function( $scope ) {
 			var $target  = $scope,
+				$parentSection = $scope.closest( '.elementor-section' ),
+				isLegacyModeActive = !!$target.find( '> .elementor-column-wrap' ).length,
 				$window  = $( window ),
 				columnId = $target.data( 'id' ),
 				editMode = Boolean( elementor.isEditMode() ),
@@ -65,9 +67,10 @@
 				stickyInstanceOptions = {
 					topSpacing: 50,
 					bottomSpacing: 50,
-					containerSelector: '.elementor-row',
-					innerWrapperSelector: '.elementor-column-wrap',
-				};
+					containerSelector: isLegacyModeActive ? '.elementor-row' : '.elementor-container',
+					innerWrapperSelector: isLegacyModeActive ? '.elementor-column-wrap' : '.elementor-widget-wrap',
+				},
+				$observerTarget = $target.find('.elementor-element');
 
 			if ( ! editMode ) {
 				settings = $target.data( 'jet-settings' );
@@ -79,10 +82,52 @@
 						stickyInstanceOptions.topSpacing = settings['topSpacing'];
 						stickyInstanceOptions.bottomSpacing = settings['bottomSpacing'];
 
-						$target.data( 'stickyColumnInit', true );
-						stickyInstance = new StickySidebar( $target[0], stickyInstanceOptions );
+						imagesLoaded( $parentSection, function() {
+							$target.data( 'stickyColumnInit', true );
+							stickyInstance = new StickySidebar( $target[0], stickyInstanceOptions );
+						} );
+
+						var targetMutation = $target[0],
+							config         = { attributes: true, childList: true, subtree: true };
+
+						var callbackMutation = function( mutationsList, observer ) {
+							for( var mutation of mutationsList ) {
+								if ( 'attributes' === mutation.type ) {
+									$target[0].style.height = 'auto';
+								}
+							}
+						};
+
+						var observer = new MutationObserver( callbackMutation );
+						observer.observe( targetMutation, config );
 
 						$window.on( 'resize.JetTricksStickyColumn orientationchange.JetTricksStickyColumn', JetTricksTools.debounce( 50, resizeDebounce ) );
+
+						MutationObserver = window.MutationObserver || window.WebKitMutationObserver;
+
+						var observer = new MutationObserver( function( mutations ) {
+							if ( stickyInstance ) {
+								mutations.forEach( function(mutation){
+									if (mutation.attributeName === 'class') {
+										setTimeout( function() {
+											stickyInstance.destroy();
+											stickyInstance = new StickySidebar( $target[0], stickyInstanceOptions );
+										}, 100 );
+									} else {
+										stickyInstance.destroy();
+										stickyInstance = new StickySidebar( $target[0], stickyInstanceOptions );
+									}
+								} )
+							}
+						} );
+
+						$observerTarget.each( function(){
+							observer.observe( $( this )[0], {
+								subtree: true,
+								childList: true,
+								attributes: true
+							} );
+						} )
 					}
 				}
 			} else {
@@ -142,6 +187,44 @@
 
 		},
 
+		getElementorElementSettings: function( $scope ) {
+
+			if ( window.elementorFrontend && window.elementorFrontend.isEditMode() && $scope.hasClass( 'elementor-element-edit-mode' ) ) {
+				return JetTricks.getEditorElementSettings( $scope );
+			}
+
+			return $scope.data( 'settings' ) || {};
+		},
+
+		getEditorElementSettings: function( $scope ) {
+			var modelCID = $scope.data( 'model-cid' ),
+				elementData;
+
+			if ( ! modelCID ) {
+				return {};
+			}
+
+			if ( ! elementor.hasOwnProperty( 'config' ) ) {
+				return {};
+			}
+
+			if ( ! elementor.config.hasOwnProperty( 'elements' ) ) {
+				return {};
+			}
+
+			if ( ! elementor.config.elements.hasOwnProperty( 'data' ) ) {
+				return {};
+			}
+
+			elementData = elementor.config.elements.data[ modelCID ];
+
+			if ( ! elementData ) {
+				return {};
+			}
+
+			return elementData.toJSON();
+		},
+
 		widgetViewMore: function( $scope ) {
 			var $target         = $scope.find( '.jet-view-more' ),
 				instance        = null,
@@ -152,26 +235,101 @@
 		},
 
 		widgetUnfold: function( $scope ) {
-			var $target          = $scope.find( '.jet-unfold' ),
-				$body            = $( 'body' ),
-				$button          = $( '.jet-unfold__button', $target ),
-				$mask            = $( '.jet-unfold__mask', $target ),
-				$content         = $( '.jet-unfold__content', $target ),
-				settings         = $target.data( 'settings' ),
-				maskHeight       = +settings['height']['size'] || 100,
-				maskTabletHeight = +settings['heightTablet']['size'] || maskHeight,
-				maskMobileHeight = +settings['heightMobile']['size'] || maskHeight,
-				separatorHeight  = +settings['separatorHeight']['size'] || 20,
-				unfoldDuration   = settings['unfoldDuration'],
-				foldDuration     = settings['unfoldDuration'],
-				unfoldEasing     = settings['unfoldEasing'],
-				foldEasing       = settings['foldEasing'];
+			var $target                = $scope.find( '.jet-unfold' ),
+				$button                = $( '.jet-unfold__button', $target ),
+				$mask                  = $( '.jet-unfold__mask', $target ),
+				$content               = $( '.jet-unfold__content', $target ),
+				$contentInner          = $( '.jet-unfold__content-inner', $target),
+				$trigger               = $( '.jet-unfold__trigger', $target),
+				$separator             = $( '.jet-unfold__separator', $target ),
+				settings               = $.extend( {}, $target.data( 'settings' ), JetTricks.getElementorElementSettings( $scope ) ),
+				maskBreakpointsHeights = [],
+				prevBreakpoint         = '',
+				unfoldDuration         = settings['unfoldDuration'] || settings['unfold_duration'],
+				foldDuration           = settings['foldDuration'] || settings['fold_duration'],
+				unfoldEasing           = settings['unfoldEasing'] || settings['unfold_easing'],
+				foldEasing             = settings['foldEasing'] || settings['fold_easing'],
+				maskHeightAdv          = 20,
+				heightCalc             = '',
+				autoHide               = settings['autoHide'] || false,
+				autoHideTime           = settings['autoHideTime'] && 0 != settings['autoHideTime']['size'] ? settings['autoHideTime']['size'] : 5,
+				hideOutsideClick       = settings['hideOutsideClick'] || false,
+				autoHideTrigger,
+				activeBreakpoints      = elementor.config.responsive.activeBreakpoints;
 
-			if ( ! $target.hasClass( 'jet-unfold-state' ) ) {
-				$mask.css( {
-					'height': maskHeight
-				} );
+			maskBreakpointsHeights['desktop']    = [];
+			maskBreakpointsHeights['widescreen'] = [];
+
+			maskBreakpointsHeights['desktop']['maskHeight'] = '' != settings['mask_height']['size'] ? settings['mask_height']['size'] : 50;
+
+			prevBreakpoint = 'desktop';
+
+			Object.keys(  activeBreakpoints ).reverse().forEach(  function( breakpointName ) {
+
+				if ( 'widescreen' === breakpointName ) {
+					maskBreakpointsHeights['widescreen']['maskHeight'] = '' != settings['mask_height_widescreen']['size'] ? settings['mask_height_widescreen']['size'] : maskBreakpointsHeights['desktop']['maskHeight'];
+				} else {
+					maskBreakpointsHeights[breakpointName] = [];
+
+					maskBreakpointsHeights[breakpointName]['maskHeight'] = '' != settings['mask_height_' + breakpointName]['size'] ? settings['mask_height_' + breakpointName]['size'] : maskBreakpointsHeights[prevBreakpoint]['maskHeight'];
+
+					prevBreakpoint = breakpointName;
+				}
+			} );
+
+			onLoaded();
+
+			if ( 'true' === hideOutsideClick ) {
+				$( document ).on( 'click', function( event ) {
+					let container = $target;
+					if ( !container.is( event.target ) && 0 === container.has( event.target ).length && $target.hasClass( 'jet-unfold-state' ) ) {
+						$button.trigger( 'click' );
+					}
+				} )
 			}
+
+			$target.one('transitionend webkitTransitionEnd oTransitionEnd', onLoaded );
+
+			function onLoaded() {
+				var deviceHeight = getDeviceHeight();
+
+				heightCalc = deviceHeight + maskHeightAdv;
+
+				if ( heightCalc < $contentInner.height() ) {
+
+					if ( ! $target.hasClass( 'jet-unfold-state' ) ) {
+						$separator.css( {
+							'opacity': '1'
+						} );
+					}
+
+					if ( ! $target.hasClass( 'jet-unfold-state' ) ) {
+						$mask.css( {
+							'height': deviceHeight
+						} );
+					} else {
+						$mask.css( {
+							'height': $contentInner.outerHeight()
+						} );
+					}
+					$trigger.css( 'display', 'flex' );
+				} else {
+					$trigger.hide();
+					$mask.css( {
+						'height': '100%'
+					} );
+					$content.css( {
+						'max-height': 'none'
+					} );
+					$separator.css( {
+						'opacity': '0'
+					} );
+				}
+			}
+
+			$( window ).on( 'resize.jetWidgetUnfold orientationchange.jetWidgetUnfold', JetTricksTools.debounce( 50, function(){
+				onLoaded();
+			} ) );
 
 			$button.on( 'click.jetUnfold', function() {
 				var $this         = $( this ),
@@ -181,11 +339,15 @@
 					$buttonIcon   = $( '.jet-unfold__button-icon', $this ),
 					unfoldIcon    = $this.data( 'unfold-icon' ),
 					foldIcon      = $this.data( 'fold-icon' ),
-					contentHeight = $content.outerHeight(),
+					contentHeight = $contentInner.outerHeight(),
 					deviceHeight  = getDeviceHeight();
 
 				if ( ! $target.hasClass( 'jet-unfold-state' ) ) {
 					$target.addClass( 'jet-unfold-state' );
+
+					$separator.css( {
+						'opacity': '0'
+					} );
 
 					$buttonIcon.html( foldIcon );
 					$buttonText.html( foldText );
@@ -194,10 +356,26 @@
 						targets: $mask[0],
 						height: contentHeight,
 						duration: unfoldDuration['size'],
-						easing: unfoldEasing
+						easing: unfoldEasing,
+						complete: function( anim ) {
+							// Recalculate listing masonry.
+							$( document ).trigger( 'jet-engine/listing/recalculate-masonry' );
+						}
 					} );
+
+					if ( 'true' === autoHide ) {
+						autoHideTrigger = setTimeout( function() {
+							$button.trigger( 'click' );
+						}, autoHideTime * 1000 );
+					}
 				} else {
+					clearTimeout( autoHideTrigger );
+
 					$target.removeClass( 'jet-unfold-state' );
+
+					$separator.css( {
+						'opacity': '1'
+					} );
 
 					$buttonIcon.html( unfoldIcon );
 					$buttonText.html( unfoldText );
@@ -206,47 +384,25 @@
 						targets: $mask[0],
 						height: deviceHeight,
 						duration: foldDuration['size'],
-						easing: foldEasing
+						easing: foldEasing,
+						complete: function( anim ) {
+							if ( 'true' === settings['foldScrolling'] ) {
+								$( 'html, body' ).animate( {
+									scrollTop: $target.offset().top
+								}, 300 );
+							}
+
+							// Recalculate listing masonry.
+							$( document ).trigger( 'jet-engine/listing/recalculate-masonry' );
+						}
 					} );
 				}
 			} );
 
-			$( window ).on( 'resize.jetWidgetUnfold orientationchange.jetWidgetUnfold', JetTricksTools.debounce( 50, function(){
-
-				var deviceHeight  = getDeviceHeight(),
-					contentHeight = $content.outerHeight();
-
-				if ( ! $target.hasClass( 'jet-unfold-state' ) ) {
-					$mask.css( {
-						'height': deviceHeight
-					} );
-				} else {
-					$mask.css( {
-						'height': contentHeight
-					} );
-				}
-
-			} ) );
-
 			function getDeviceHeight() {
-				var $deviceMode  = elementor.getCurrentDeviceMode(),
-					deviceHeight = maskHeight;
+				var deviceMode = elementor.getCurrentDeviceMode();
 
-				switch ( $deviceMode ) {
-					case 'desktop':
-						deviceHeight = maskHeight;
-						break;
-
-					case 'tablet':
-						deviceHeight = maskTabletHeight;
-						break;
-
-					case 'mobile':
-						deviceHeight = maskMobileHeight;
-						break;
-				}
-
-				return deviceHeight;
+				return maskBreakpointsHeights[deviceMode]['maskHeight'];
 			}
 		},
 
@@ -265,7 +421,8 @@
 				var $this          = $( this ),
 					horizontal     = $this.data( 'horizontal-position' ),
 					vertical       = $this.data( 'vertical-position' ),
-					itemSelector   = $this[0];
+					itemSelector   = $this[0],
+					options        = {};
 
 				$this.css( {
 					'left': horizontal + '%',
@@ -276,35 +433,38 @@
 					itemSelector._tippy.destroy();
 				}
 
-				tippy( [ itemSelector ], {
-					arrow: settings['tooltipArrow'],
-					arrowType: settings['tooltipArrowType'],
-					arrowTransform: settings['tooltipArrowSize'],
-					duration: [ settings['tooltipShowDuration']['size'], settings['tooltipHideDuration']['size'] ],
-					distance: settings['tooltipDistance']['size'],
+				options = {
+					arrow: settings['tooltipArrow'] ? true : false,
 					placement: settings['tooltipPlacement'],
 					trigger: settings['tooltipTrigger'],
-					animation: settings['tooltipAnimation'],
-					flipBehavior: 'clockwise',
-					appendTo: itemSelector,
+					appendTo: $target[0],
 					hideOnClick: 'manual' !== settings['tooltipTrigger'],
+					maxWidth: 'none',
+					allowHTML: true,
+					popperOptions: {
+						strategy: 'fixed',
+					},
 					onShow() {
 						$( itemSelector ).addClass( itemActiveClass );
 					},
 					onHidden() {
 						$( itemSelector ).removeClass( itemActiveClass );
 					}
-				} );
+				}
+
+				if ( 'manual' != settings['tooltipTrigger'] ) {
+					options['duration']  = [ settings['tooltipShowDuration']['size'], settings['tooltipHideDuration']['size'] ];
+					options['animation'] = settings['tooltipAnimation'];
+					options['delay']     = settings['tooltipDelay'];
+				}
+
+				tippy( [ itemSelector ], options );
 
 				if ( 'manual' === settings['tooltipTrigger'] && itemSelector._tippy ) {
 					itemSelector._tippy.show();
 				}
 
 				if ( settings['tooltipShowOnInit'] && itemSelector._tippy ) {
-					itemSelector._tippy.show();
-				}
-
-				if ( editMode && itemSelector._tippy ) {
 					itemSelector._tippy.show();
 				}
 
@@ -432,10 +592,14 @@
 				'tooltip': widgetData['jet_tricks_widget_tooltip'] || 'false',
 				'tooltipDescription': widgetData['jet_tricks_widget_tooltip_description'] || 'Lorem Ipsum',
 				'tooltipPlacement': widgetData['jet_tricks_widget_tooltip_placement'] || 'top',
+				'tooltipArrow': 'true' === widgetData['jet_tricks_widget_tooltip_arrow'] ? true : false,
 				'xOffset': widgetData['jet_tricks_widget_tooltip_x_offset'] || 0,
 				'yOffset': widgetData['jet_tricks_widget_tooltip_y_offset'] || 0,
 				'tooltipAnimation': widgetData['jet_tricks_widget_tooltip_animation'] || 'shift-toward',
-				'zIndex': widgetData['jet_tricks_widget_tooltip_z_index'] || '999'
+				'tooltipTrigger': widgetData['jet_tricks_widget_tooltip_trigger'] || 'mouseenter',
+				'customSelector': widgetData['jet_tricks_widget_tooltip_custom_selector'] || '',
+				'zIndex': widgetData['jet_tricks_widget_tooltip_z_index'] || '999',
+				'delay': widgetData['jet_tricks_widget_tooltip_delay'] || '0'
 			}
 		}
 	}
@@ -653,6 +817,7 @@
 			tooltipSelector = widgetSelector,
 			settings        = {},
 			editMode        = Boolean( elementor.isEditMode() ),
+			delay,
 			tooltipEvent    = editMode ? 'click' : 'mouseenter';
 
 		/**
@@ -698,18 +863,24 @@
 				$scope.append( template );
 			}
 
-			var tippyInstance = tippy(
+			tippy(
 				[ tooltipSelector ],
 				{
-					html: $( '#jet-tricks-tooltip-content-' + widgetId )[0],
+					content: $scope.find( '.jet-tooltip-widget__content' )[0].innerHTML,
+					allowHTML: true,
 					appendTo: widgetSelector,
-					arrow: true,
+					arrow: settings['tooltipArrow'] ? true : false,
 					placement: settings['tooltipPlacement'],
-					flipBehavior: 'clockwise',
-					trigger: tooltipEvent,
-					offset: settings['xOffset'] + ', ' + settings['yOffset'],
+					offset: [ settings['xOffset'], settings['yOffset'] ],
 					animation: settings['tooltipAnimation'],
-					zIndex: settings['zIndex']
+					trigger: settings['tooltipTrigger'],
+					interactive: true,
+					zIndex: settings['zIndex'],
+					maxWidth: 'none',
+					delay: settings['delay']['size'] ? settings['delay']['size'] : 0,
+					popperOptions: {
+						strategy: 'fixed',
+					},
 				}
 			);
 

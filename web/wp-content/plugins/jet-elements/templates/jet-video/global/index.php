@@ -49,5 +49,5 @@ if ( $settings['lightbox'] ) {
 		echo $video_html;
 	}
 
-	include $this->__get_global_template( 'overlay' );
+	include $this->_get_global_template( 'overlay' );
 ?></div>

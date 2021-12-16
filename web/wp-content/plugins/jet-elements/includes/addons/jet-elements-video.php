@@ -12,8 +12,8 @@ use Elementor\Group_Control_Border;
 use Elementor\Group_Control_Box_Shadow;
 use Elementor\Group_Control_Typography;
 use Elementor\Repeater;
-use Elementor\Scheme_Color;
-use Elementor\Scheme_Typography;
+use Elementor\Core\Schemes\Color as Scheme_Color;
+use Elementor\Core\Schemes\Typography as Scheme_Typography;
 use Elementor\Widget_Base;
 use Elementor\Modules\DynamicTags\Module as TagsModule;
 
@@ -125,7 +125,7 @@ class Jet_Elements_Video extends Jet_Elements_Base {
 				'label_block' => true,
 				'type'        => Controls_Manager::TEXT,
 				'placeholder' => esc_html__( 'Enter your URL', 'jet-elements' ),
-				'default'     => 'https://www.youtube.com/watch?v=KQ_tqgnvJdQ&list=PLdaVCVrkty71kPjyLIW8qBl93jP8tgoLJ',
+				'default'     => 'https://www.youtube.com/watch?v=CJO0u_HrWE8',
 				'condition' => array(
 					'video_type' => 'youtube',
 				),
@@ -177,6 +177,63 @@ class Jet_Elements_Video extends Jet_Elements_Base {
 		);
 
 		$this->add_control(
+			'video_source',
+			array(
+				'label'   => esc_html__( 'Video Source', 'jet-elements' ),
+				'type'    => Controls_Manager::SELECT,
+				'default' => 'self',
+				'options' => array(
+					'self'     => esc_html__( 'Media library', 'jet-elements' ),
+					'external' => esc_html__( 'External', 'jet-elements' ),
+				),
+				'condition' => array(
+					'video_type' => 'self_hosted',
+				),
+			)
+		);
+
+		$this->add_control(
+			'self_hosted_url',
+			array(
+				'label' => esc_html__( 'URL', 'jet-elements' ),
+				'type'  => Controls_Manager::MEDIA,
+				'media_type' => 'video',
+				'condition' => array(
+					'video_type'   => 'self_hosted',
+					'video_source' => 'self',
+				),
+				'dynamic' => array(
+					'active' => true,
+					'categories' => array(
+						TagsModule::POST_META_CATEGORY,
+						TagsModule::MEDIA_CATEGORY,
+					),
+				),
+			)
+		);
+
+		$this->add_control(
+			'external_url',
+			array(
+				'label'       => esc_html__( 'URL', 'jet-elements' ),
+				'label_block' => true,
+				'type'        => Controls_Manager::TEXT,
+				'placeholder' => esc_html__( 'Enter your URL', 'jet-elements' ),
+				'condition' => array(
+					'video_type'   => 'self_hosted',
+					'video_source' => 'external',
+				),
+				'dynamic' => array(
+					'active' => true,
+					'categories' => array(
+						TagsModule::POST_META_CATEGORY,
+						TagsModule::URL_CATEGORY,
+					),
+				),
+			)
+		);
+
+		$this->add_control(
 			'mejs_player_desc',
 			array(
 				'type' => Controls_Manager::RAW_HTML,
@@ -185,25 +242,6 @@ class Jet_Elements_Video extends Jet_Elements_Base {
 				'condition' => array(
 					'video_type'         => 'self_hosted',
 					'self_hosted_player' => 'mejs',
-				),
-			)
-		);
-
-		$this->add_control(
-			'self_hosted_url',
-			array(
-				'label'      => esc_html__( 'Self Hosted URL', 'jet-elements' ),
-				'type'       => Controls_Manager::MEDIA,
-				'media_type' => 'video',
-				'condition' => array(
-					'video_type' => 'self_hosted',
-				),
-				'dynamic' => array(
-					'active' => true,
-					'categories' => array(
-						TagsModule::POST_META_CATEGORY,
-						TagsModule::MEDIA_CATEGORY,
-					),
 				),
 			)
 		);
@@ -501,7 +539,7 @@ class Jet_Elements_Video extends Jet_Elements_Base {
 					),
 					'image' => array(
 						'title' => esc_html__( 'Image', 'jet-elements' ),
-						'icon'  => 'fa fa-picture-o',
+						'icon'  => 'fa fa-image',
 					)
 				),
 				'condition' => array(
@@ -510,7 +548,7 @@ class Jet_Elements_Video extends Jet_Elements_Base {
 			)
 		);
 
-		$this->__add_advanced_icon_control(
+		$this->_add_advanced_icon_control(
 			'play_button_icon',
 			array(
 				'label'   => esc_html__( 'Icon', 'jet-elements' ),
@@ -541,7 +579,7 @@ class Jet_Elements_Video extends Jet_Elements_Base {
 
 		$this->end_controls_section();
 
-		$this->__start_controls_section(
+		$this->_start_controls_section(
 			'section_video_style',
 			array(
 				'label' => esc_html__( 'Video', 'jet-elements' ),
@@ -549,7 +587,7 @@ class Jet_Elements_Video extends Jet_Elements_Base {
 			)
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'width',
 			array(
 				'label' => esc_html__( 'Width', 'jet-elements' ),
@@ -569,7 +607,7 @@ class Jet_Elements_Video extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'align',
 			array(
 				'label'   => esc_html__( 'Alignment', 'jet-elements' ),
@@ -600,7 +638,7 @@ class Jet_Elements_Video extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'video_bg_color',
 			array(
 				'label' => esc_html__( 'Background Color', 'jet-elements' ),
@@ -612,7 +650,7 @@ class Jet_Elements_Video extends Jet_Elements_Base {
 			50
 		);
 		
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Border::get_type(),
 			array(
 				'name'     => 'video_border',
@@ -621,7 +659,7 @@ class Jet_Elements_Video extends Jet_Elements_Base {
 			75
 		);
 		
-		$this->__add_control(
+		$this->_add_control(
 			'video_border_radius',
 			array(
 				'label'      => esc_html__( 'Border Radius', 'jet-elements' ),
@@ -634,7 +672,7 @@ class Jet_Elements_Video extends Jet_Elements_Base {
 			75
 		);
 		
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Box_Shadow::get_type(),
 			array(
 				'name'     => 'video_box_shadow',
@@ -643,7 +681,7 @@ class Jet_Elements_Video extends Jet_Elements_Base {
 			100
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Css_Filter::get_type(),
 			array(
 				'name'     => 'video_css_filters',
@@ -652,9 +690,9 @@ class Jet_Elements_Video extends Jet_Elements_Base {
 			100
 		);
 
-		$this->__end_controls_section();
+		$this->_end_controls_section();
 		
-		$this->__start_controls_section(
+		$this->_start_controls_section(
 			'section_lightbox_style',
 			array(
 				'label'     => esc_html__( 'Lightbox', 'jet-elements' ),
@@ -666,7 +704,7 @@ class Jet_Elements_Video extends Jet_Elements_Base {
 			50
 		);
 		
-		$this->__add_control(
+		$this->_add_control(
 			'lightbox_content_width',
 			array(
 				'label'     => esc_html__( 'Content Width, %', 'jet-elements' ),
@@ -686,7 +724,7 @@ class Jet_Elements_Video extends Jet_Elements_Base {
 			50
 		);
 		
-		$this->__add_control(
+		$this->_add_control(
 			'lightbox_content_animation',
 			array(
 				'label'       => esc_html__( 'Animation', 'jet-elements' ),
@@ -696,7 +734,7 @@ class Jet_Elements_Video extends Jet_Elements_Base {
 			50
 		);
 		
-		$this->__add_control(
+		$this->_add_control(
 			'lightbox_bg_color',
 			array(
 				'label'     => esc_html__( 'Background Color', 'jet-elements' ),
@@ -708,7 +746,7 @@ class Jet_Elements_Video extends Jet_Elements_Base {
 			50
 		);
 		
-		$this->__add_control(
+		$this->_add_control(
 			'lightbox_close_button_color',
 			array(
 				'label'     => esc_html__( 'Close Button Color', 'jet-elements' ),
@@ -720,7 +758,7 @@ class Jet_Elements_Video extends Jet_Elements_Base {
 			50
 		);
 		
-		$this->__add_control(
+		$this->_add_control(
 			'lightbox_close_button_color_hover',
 			array(
 				'label'     => esc_html__( 'Close Button Hover Color', 'jet-elements' ),
@@ -732,9 +770,9 @@ class Jet_Elements_Video extends Jet_Elements_Base {
 			50
 		);
 		
-		$this->__end_controls_section( 50 );
+		$this->_end_controls_section( 50 );
 
-		$this->__start_controls_section(
+		$this->_start_controls_section(
 			'section_play_button_style',
 			array(
 				'label' => esc_html__( 'Play Button', 'jet-elements' ),
@@ -745,7 +783,7 @@ class Jet_Elements_Video extends Jet_Elements_Base {
 			)
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'play_button_size',
 			array(
 				'label' => esc_html__( 'Icon/Image Size', 'jet-elements' ),
@@ -763,7 +801,7 @@ class Jet_Elements_Video extends Jet_Elements_Base {
 			50
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'play_button_image_border_radius',
 			array(
 				'label'      => esc_html__( 'Image Border Radius', 'jet-elements' ),
@@ -779,15 +817,15 @@ class Jet_Elements_Video extends Jet_Elements_Base {
 			75
 		);
 
-		$this->__start_controls_tabs( 'play_button_tabs' );
+		$this->_start_controls_tabs( 'play_button_tabs' );
 
-		$this->__start_controls_tab( 'play_button_normal_tab',
+		$this->_start_controls_tab( 'play_button_normal_tab',
 			array(
 				'label' => esc_html__( 'Normal', 'jet-elements' ),
 			)
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'play_button_color',
 			array(
 				'label' => esc_html__( 'Color', 'jet-elements' ),
@@ -799,7 +837,7 @@ class Jet_Elements_Video extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Background::get_type(),
 			array(
 				'name'     => 'play_button_background',
@@ -808,7 +846,7 @@ class Jet_Elements_Video extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Box_Shadow::get_type(),
 			array(
 				'name'     => 'play_button_box_shadow',
@@ -817,15 +855,15 @@ class Jet_Elements_Video extends Jet_Elements_Base {
 			100
 		);
 
-		$this->__end_controls_tab();
+		$this->_end_controls_tab();
 
-		$this->__start_controls_tab( 'play_button_hover_tab',
+		$this->_start_controls_tab( 'play_button_hover_tab',
 			array(
 				'label' => esc_html__( 'Hover', 'jet-elements' ),
 			)
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'play_button_color_hover',
 			array(
 				'label' => esc_html__( 'Color', 'jet-elements' ),
@@ -837,7 +875,7 @@ class Jet_Elements_Video extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Background::get_type(),
 			array(
 				'name'     => 'play_button_background_hover',
@@ -846,7 +884,7 @@ class Jet_Elements_Video extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'play_button_border_color_hover',
 			array(
 				'label' => esc_html__( 'Border Color', 'jet-elements' ),
@@ -861,7 +899,7 @@ class Jet_Elements_Video extends Jet_Elements_Base {
 			75
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Box_Shadow::get_type(),
 			array(
 				'name'     => 'play_button_box_shadow_hover',
@@ -870,7 +908,7 @@ class Jet_Elements_Video extends Jet_Elements_Base {
 			100
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'play_button_hover_animation',
 			array(
 				'label' => esc_html__( 'Hover Animation', 'jet-elements' ),
@@ -879,11 +917,11 @@ class Jet_Elements_Video extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__end_controls_tab();
+		$this->_end_controls_tab();
 
-		$this->__end_controls_tabs();
+		$this->_end_controls_tabs();
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'play_button_padding',
 			array(
 				'label'      => esc_html__( 'Padding', 'jet-elements' ),
@@ -897,7 +935,7 @@ class Jet_Elements_Video extends Jet_Elements_Base {
 			50
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'play_button_margin',
 			array(
 				'label'      => esc_html__( 'Margin', 'jet-elements' ),
@@ -910,7 +948,7 @@ class Jet_Elements_Video extends Jet_Elements_Base {
 			50
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Border::get_type(),
 			array(
 				'name'     => 'play_button_border',
@@ -919,7 +957,7 @@ class Jet_Elements_Video extends Jet_Elements_Base {
 			75
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'play_button_border_radius',
 			array(
 				'label'      => esc_html__( 'Border Radius', 'jet-elements' ),
@@ -932,12 +970,12 @@ class Jet_Elements_Video extends Jet_Elements_Base {
 			75
 		);
 
-		$this->__end_controls_section();
+		$this->_end_controls_section();
 
 		/**
 		 * `Player Controls` Style Section
 		 */
-		$this->__start_controls_section(
+		$this->_start_controls_section(
 			'section_controls_style',
 			array(
 				'label' => esc_html__( 'Player Controls Container', 'jet-elements' ),
@@ -950,7 +988,7 @@ class Jet_Elements_Video extends Jet_Elements_Base {
 			)
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'controls_padding',
 			array(
 				'label'      => esc_html__( 'Padding', 'jet-elements' ),
@@ -963,7 +1001,7 @@ class Jet_Elements_Video extends Jet_Elements_Base {
 			25
 		);
 		
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Background::get_type(),
 			array(
 				'name'     => 'controls_background',
@@ -972,7 +1010,7 @@ class Jet_Elements_Video extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Border::get_type(),
 			array(
 				'name'     => 'controls_border',
@@ -981,12 +1019,12 @@ class Jet_Elements_Video extends Jet_Elements_Base {
 			75
 		);
 
-		$this->__end_controls_section();
+		$this->_end_controls_section();
 
 		/**
 		 * `Player Play-Pause Button and Time` Style Section
 		 */
-		$this->__start_controls_section(
+		$this->_start_controls_section(
 			'section_play_button_and_time_style',
 			array(
 				'label' => esc_html__( 'Player Play-Pause Button and Time', 'jet-elements' ),
@@ -999,7 +1037,7 @@ class Jet_Elements_Video extends Jet_Elements_Base {
 			)
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'play_pause_button_heading',
 			array(
 				'label' => esc_html__( 'Play-Pause Button', 'jet-elements' ),
@@ -1008,7 +1046,7 @@ class Jet_Elements_Video extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'play_pause_button_font_size',
 			array(
 				'label' => esc_html__( 'Font size', 'jet-elements' ),
@@ -1027,16 +1065,16 @@ class Jet_Elements_Video extends Jet_Elements_Base {
 			50
 		);
 
-		$this->__start_controls_tabs( 'play_pause_button_style' );
+		$this->_start_controls_tabs( 'play_pause_button_style' );
 
-		$this->__start_controls_tab(
+		$this->_start_controls_tab(
 			'play_pause_button_normal_style',
 			array(
 				'label' => esc_html__( 'Normal', 'jet-elements' ),
 			)
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'play_pause_button_color',
 			array(
 				'label' => esc_html__( 'Color', 'jet-elements' ),
@@ -1048,7 +1086,7 @@ class Jet_Elements_Video extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'play_pause_button_bg_color',
 			array(
 				'label' => esc_html__( 'Background color', 'jet-elements' ),
@@ -1060,16 +1098,16 @@ class Jet_Elements_Video extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__end_controls_tab();
+		$this->_end_controls_tab();
 
-		$this->__start_controls_tab(
+		$this->_start_controls_tab(
 			'play_pause_button_hover_style',
 			array(
 				'label' => esc_html__( 'Hover', 'jet-elements' ),
 			)
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'play_pause_button_hover_color',
 			array(
 				'label' => esc_html__( 'Color', 'jet-elements' ),
@@ -1081,7 +1119,7 @@ class Jet_Elements_Video extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'play_pause_button_hover_bg_color',
 			array(
 				'label' => esc_html__( 'Background color', 'jet-elements' ),
@@ -1093,7 +1131,7 @@ class Jet_Elements_Video extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'play_pause_button_hover_border_color',
 			array(
 				'label' => esc_html__( 'Border Color', 'jet-elements' ),
@@ -1108,11 +1146,11 @@ class Jet_Elements_Video extends Jet_Elements_Base {
 			75
 		);
 
-		$this->__end_controls_tab();
+		$this->_end_controls_tab();
 
-		$this->__end_controls_tabs();
+		$this->_end_controls_tabs();
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'play_pause_button_padding',
 			array(
 				'label'      => esc_html__( 'Padding', 'jet-elements' ),
@@ -1126,7 +1164,7 @@ class Jet_Elements_Video extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'play_pause_button_margin',
 			array(
 				'label'      => esc_html__( 'Margin', 'jet-elements' ),
@@ -1139,7 +1177,7 @@ class Jet_Elements_Video extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'play_pause_button_border_radius',
 			array(
 				'label'      => esc_html__( 'Border Radius', 'jet-elements' ),
@@ -1152,7 +1190,7 @@ class Jet_Elements_Video extends Jet_Elements_Base {
 			75
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Border::get_type(),
 			array(
 				'name'     => 'play_pause_button_border',
@@ -1161,7 +1199,7 @@ class Jet_Elements_Video extends Jet_Elements_Base {
 			75
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Box_Shadow::get_type(),
 			array(
 				'name'     => 'play_pause_button_box_shadow',
@@ -1170,7 +1208,7 @@ class Jet_Elements_Video extends Jet_Elements_Base {
 			100
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'time_heading',
 			array(
 				'label'     => esc_html__( 'Time', 'jet-elements' ),
@@ -1180,7 +1218,7 @@ class Jet_Elements_Video extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Typography::get_type(),
 			array(
 				'name'     => 'time_typography',
@@ -1189,7 +1227,7 @@ class Jet_Elements_Video extends Jet_Elements_Base {
 			50
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'time_color',
 			array(
 				'label' => esc_html__( 'Color', 'jet-elements' ),
@@ -1201,7 +1239,7 @@ class Jet_Elements_Video extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'current_time_margin',
 			array(
 				'label'      => esc_html__( 'Current Time Margin', 'jet-elements' ),
@@ -1214,7 +1252,7 @@ class Jet_Elements_Video extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'duration_time_margin',
 			array(
 				'label'      => esc_html__( 'Duration Time Margin', 'jet-elements' ),
@@ -1227,12 +1265,12 @@ class Jet_Elements_Video extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__end_controls_section();
+		$this->_end_controls_section();
 
 		/**
 		 * `Player Progress` Style Section
 		 */
-		$this->__start_controls_section(
+		$this->_start_controls_section(
 			'section_progress_style',
 			array(
 				'label' => esc_html__( 'Player Progress', 'jet-elements' ),
@@ -1245,7 +1283,7 @@ class Jet_Elements_Video extends Jet_Elements_Base {
 			)
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'total_progress_heading',
 			array(
 				'label'     => esc_html__( 'Total Progress Bar', 'jet-elements' ),
@@ -1254,7 +1292,7 @@ class Jet_Elements_Video extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'total_progress_height',
 			array(
 				'label' => esc_html__( 'Height', 'jet-elements' ),
@@ -1272,7 +1310,7 @@ class Jet_Elements_Video extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Background::get_type(),
 			array(
 				'name'     => 'total_progress_background',
@@ -1281,7 +1319,7 @@ class Jet_Elements_Video extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Border::get_type(),
 			array(
 				'name'     => 'total_progress_border',
@@ -1290,7 +1328,7 @@ class Jet_Elements_Video extends Jet_Elements_Base {
 			75
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'total_progress_border_radius',
 			array(
 				'label'      => esc_html__( 'Border Radius', 'jet-elements' ),
@@ -1303,7 +1341,7 @@ class Jet_Elements_Video extends Jet_Elements_Base {
 			75
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'rail_progress_margin',
 			array(
 				'label'      => esc_html__( 'Margin', 'jet-elements' ),
@@ -1316,7 +1354,7 @@ class Jet_Elements_Video extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'current_progress_heading',
 			array(
 				'label'     => esc_html__( 'Current Progress Bar', 'jet-elements' ),
@@ -1326,7 +1364,7 @@ class Jet_Elements_Video extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Background::get_type(),
 			array(
 				'name'     => 'current_progress_background',
@@ -1335,7 +1373,7 @@ class Jet_Elements_Video extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'current_progress_border_radius',
 			array(
 				'label'      => esc_html__( 'Border Radius', 'jet-elements' ),
@@ -1348,12 +1386,12 @@ class Jet_Elements_Video extends Jet_Elements_Base {
 			75
 		);
 
-		$this->__end_controls_section();
+		$this->_end_controls_section();
 
 		/**
 		 * `Player Volume` Style Section
 		 */
-		$this->__start_controls_section(
+		$this->_start_controls_section(
 			'section_volume_style',
 			array(
 				'label' => esc_html__( 'Player Volume', 'jet-elements' ),
@@ -1366,7 +1404,7 @@ class Jet_Elements_Video extends Jet_Elements_Base {
 			)
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'volume_button_style_heading',
 			array(
 				'label' => esc_html__( 'Volume Button', 'jet-elements' ),
@@ -1375,7 +1413,7 @@ class Jet_Elements_Video extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'volume_button_font_size',
 			array(
 				'label' => esc_html__( 'Font size', 'jet-elements' ),
@@ -1394,16 +1432,16 @@ class Jet_Elements_Video extends Jet_Elements_Base {
 			50
 		);
 
-		$this->__start_controls_tabs( 'volume_button_style' );
+		$this->_start_controls_tabs( 'volume_button_style' );
 
-		$this->__start_controls_tab(
+		$this->_start_controls_tab(
 			'volume_button_normal_style',
 			array(
 				'label' => esc_html__( 'Normal', 'jet-elements' ),
 			)
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'volume_button_color',
 			array(
 				'label' => esc_html__( 'Color', 'jet-elements' ),
@@ -1415,7 +1453,7 @@ class Jet_Elements_Video extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'volume_button_bg_color',
 			array(
 				'label' => esc_html__( 'Background color', 'jet-elements' ),
@@ -1427,16 +1465,16 @@ class Jet_Elements_Video extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__end_controls_tab();
+		$this->_end_controls_tab();
 
-		$this->__start_controls_tab(
+		$this->_start_controls_tab(
 			'volume_button_hover_style',
 			array(
 				'label' => esc_html__( 'Hover', 'jet-elements' ),
 			)
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'volume_button_hover_color',
 			array(
 				'label' => esc_html__( 'Color', 'jet-elements' ),
@@ -1448,7 +1486,7 @@ class Jet_Elements_Video extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'volume_button_hover_bg_color',
 			array(
 				'label' => esc_html__( 'Background color', 'jet-elements' ),
@@ -1460,7 +1498,7 @@ class Jet_Elements_Video extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'volume_button_hover_border_color',
 			array(
 				'label' => esc_html__( 'Border Color', 'jet-elements' ),
@@ -1475,11 +1513,11 @@ class Jet_Elements_Video extends Jet_Elements_Base {
 			75
 		);
 
-		$this->__end_controls_tab();
+		$this->_end_controls_tab();
 
-		$this->__end_controls_tabs();
+		$this->_end_controls_tabs();
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'volume_button_padding',
 			array(
 				'label'      => esc_html__( 'Padding', 'jet-elements' ),
@@ -1493,7 +1531,7 @@ class Jet_Elements_Video extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'volume_button_margin',
 			array(
 				'label'      => esc_html__( 'Margin', 'jet-elements' ),
@@ -1506,7 +1544,7 @@ class Jet_Elements_Video extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'volume_button_border_radius',
 			array(
 				'label'      => esc_html__( 'Border Radius', 'jet-elements' ),
@@ -1519,7 +1557,7 @@ class Jet_Elements_Video extends Jet_Elements_Base {
 			75
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Border::get_type(),
 			array(
 				'name'     => 'volume_button_border',
@@ -1528,7 +1566,7 @@ class Jet_Elements_Video extends Jet_Elements_Base {
 			75
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Box_Shadow::get_type(),
 			array(
 				'name'     => 'volume_button_box_shadow',
@@ -1537,7 +1575,7 @@ class Jet_Elements_Video extends Jet_Elements_Base {
 			100
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'volume_slider_style_heading',
 			array(
 				'label' => esc_html__( 'Volume Slider', 'jet-elements' ),
@@ -1547,7 +1585,7 @@ class Jet_Elements_Video extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'volume_slider_margin',
 			array(
 				'label'      => esc_html__( 'Margin', 'jet-elements' ),
@@ -1560,7 +1598,7 @@ class Jet_Elements_Video extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'total_volume_bar_style_heading',
 			array(
 				'label' => esc_html__( 'Total Volume Bar', 'jet-elements' ),
@@ -1570,7 +1608,7 @@ class Jet_Elements_Video extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'total_volume_hor_width',
 			array(
 				'label' => esc_html__( 'Width', 'jet-elements' ),
@@ -1588,7 +1626,7 @@ class Jet_Elements_Video extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'total_volume_hor_height',
 			array(
 				'label' => esc_html__( 'Height', 'jet-elements' ),
@@ -1606,7 +1644,7 @@ class Jet_Elements_Video extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Background::get_type(),
 			array(
 				'name'     => 'total_volume_background',
@@ -1615,7 +1653,7 @@ class Jet_Elements_Video extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Border::get_type(),
 			array(
 				'name'     => 'total_volume_border',
@@ -1624,7 +1662,7 @@ class Jet_Elements_Video extends Jet_Elements_Base {
 			75
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'total_volume_border_radius',
 			array(
 				'label'      => esc_html__( 'Border Radius', 'jet-elements' ),
@@ -1637,7 +1675,7 @@ class Jet_Elements_Video extends Jet_Elements_Base {
 			75
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'current_volume_heading',
 			array(
 				'label'     => esc_html__( 'Current Volume Bar', 'jet-elements' ),
@@ -1647,7 +1685,7 @@ class Jet_Elements_Video extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Background::get_type(),
 			array(
 				'name'     => 'current_volume_background',
@@ -1656,7 +1694,7 @@ class Jet_Elements_Video extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'current_volume_border_radius',
 			array(
 				'label'      => esc_html__( 'Border Radius', 'jet-elements' ),
@@ -1669,12 +1707,12 @@ class Jet_Elements_Video extends Jet_Elements_Base {
 			75
 		);
 
-		$this->__end_controls_section();
+		$this->_end_controls_section();
 
 		/**
 		 * `Player Fullscreen` Style Section
 		 */
-		$this->__start_controls_section(
+		$this->_start_controls_section(
 			'section_fullscreen_button_style',
 			array(
 				'label' => esc_html__( 'Player Fullscreen Button', 'jet-elements' ),
@@ -1687,7 +1725,7 @@ class Jet_Elements_Video extends Jet_Elements_Base {
 			)
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'fullscreen_button_font_size',
 			array(
 				'label' => esc_html__( 'Font size', 'jet-elements' ),
@@ -1706,16 +1744,16 @@ class Jet_Elements_Video extends Jet_Elements_Base {
 			50
 		);
 
-		$this->__start_controls_tabs( 'fullscreen_button_style' );
+		$this->_start_controls_tabs( 'fullscreen_button_style' );
 
-		$this->__start_controls_tab(
+		$this->_start_controls_tab(
 			'fullscreen_button_normal_style',
 			array(
 				'label' => esc_html__( 'Normal', 'jet-elements' ),
 			)
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'fullscreen_button_color',
 			array(
 				'label' => esc_html__( 'Color', 'jet-elements' ),
@@ -1727,16 +1765,16 @@ class Jet_Elements_Video extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__end_controls_tab();
+		$this->_end_controls_tab();
 
-		$this->__start_controls_tab(
+		$this->_start_controls_tab(
 			'fullscreen_button_hover_style',
 			array(
 				'label' => esc_html__( 'Hover', 'jet-elements' ),
 			)
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'fullscreen_button_hover_color',
 			array(
 				'label' => esc_html__( 'Color', 'jet-elements' ),
@@ -1748,11 +1786,11 @@ class Jet_Elements_Video extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__end_controls_tab();
+		$this->_end_controls_tab();
 
-		$this->__end_controls_tabs();
+		$this->_end_controls_tabs();
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'fullscreen_button_margin',
 			array(
 				'label'      => esc_html__( 'Margin', 'jet-elements' ),
@@ -1766,13 +1804,13 @@ class Jet_Elements_Video extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__end_controls_section();
+		$this->_end_controls_section();
 	}
 
 	protected function render() {
-		$this->__open_wrap();
-		include $this->__get_global_template( 'index' );
-		$this->__close_wrap();
+		$this->_open_wrap();
+		include $this->_get_global_template( 'index' );
+		$this->_close_wrap();
 	}
 
 	public function get_video_url() {
@@ -1780,7 +1818,11 @@ class Jet_Elements_Video extends Jet_Elements_Base {
 		$video_url = '';
 
 		if ( 'self_hosted' === $settings['video_type'] ) {
-			$video_url = is_array( $settings['self_hosted_url'] ) ? $settings['self_hosted_url']['url'] : $settings['self_hosted_url'];
+			if ( 'self' === $settings['video_source'] ) {
+				$video_url = is_array( $settings['self_hosted_url'] ) ? $settings['self_hosted_url']['url'] : $settings['self_hosted_url'];
+			} else {
+				$video_url = $settings['external_url'];
+			}
 
 			if ( is_numeric( $video_url ) ) {
 				$video_url = wp_get_attachment_url( $video_url );

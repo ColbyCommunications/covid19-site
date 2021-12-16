@@ -62,6 +62,16 @@
 			margin-left: 10px;
 			margin-right: 0;
 			order: 3;
+
+			.rtl & {
+				order: 0;
+			}
+		}
+
+		&.jet-toggle-icon-position-left {
+			.rtl & {
+				order: 1;
+			}
 		}
 
 		.icon-active {
@@ -90,6 +100,7 @@
 		font-weight: 600;
 		color: #7a7a7a;
 		user-select: none;
+		margin: 0;
 	}
 
 	&__content {

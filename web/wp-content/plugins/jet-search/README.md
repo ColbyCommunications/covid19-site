@@ -4,6 +4,42 @@ The best tool for adding complex search functionality to pages built with Elemen
 
 # ChangeLog
 
+## [2.1.14](https://github.com/ZemezLab/jet-search/releases/tag/2.1.14) - 30.07.2021
+* Fixed: compatibility with JetMenu on search result page
+
+## [2.1.13](https://github.com/ZemezLab/jet-search/releases/tag/2.1.13) - 27.07.2021
+* Added: better compatibility with JetSmartFilters
+* Added: better compatibility with JetEngine
+* Added: better compatibility with Polylang
+* Fixed: showing search result on products search result page
+
+## [2.1.12](https://github.com/ZemezLab/jet-search/releases/tag/2.1.12) - 17.06.2021
+* Fixed: prevent php notice
+
+## [2.1.11](https://github.com/ZemezLab/jet-search/releases/tag/2.1.11) - 28.04.2021
+* Fixed: prevent php notice
+
+## [2.1.10](https://github.com/ZemezLab/jet-search/releases/tag/2.1.10) - 22.04.2021
+* Added: better compatibility with JetEngine
+* Added: Elementor compatibility tag
+* Added: [Crocoblock/suggestions#1611](https://github.com/Crocoblock/suggestions/issues/1611)
+* Added: multiple improvements
+* Updated: JetDashboard Module to v2.0.8
+* Fixed: Various issue
+
+## [2.1.9](https://github.com/ZemezLab/jet-search/releases/tag/2.1.9) - 13.11.2020
+* Added: multiple improvements
+* Updated: JetDashboard Module to v2.0.4
+* Fixed: init session
+
+## [2.1.8](https://github.com/ZemezLab/jet-search/releases/tag/2.1.8) - 01.09.2020
+* Added: better compatibility with JetSmartFilters on the search result page
+
+## [2.1.7](https://github.com/ZemezLab/jet-search/releases/tag/2.1.7) - 27.07.2020
+* Added: multiple improvements
+* Update: JetDashboard Module to v1.1.0
+* Fixed: search by the current query
+
 ## [2.1.6](https://github.com/ZemezLab/jet-search/releases/tag/2.1.6) - 13.05.2020
 * Added: `jet-search/get-locate-template` filter hook
 * Added: multiple improvements and bug fixes

@@ -3,7 +3,7 @@
  * Plugin Name: JetThemeCore
  * Plugin URI:  https://crocoblock.com/plugins/jetthemecore/
  * Description: Most powerful plugin created to make building websites super easy
- * Version:     1.1.23
+ * Version:     1.2.2
  * Author:      Crocoblock
  * Author URI:  https://crocoblock.com/
  * Text Domain: jet-theme-core
@@ -57,7 +57,7 @@ if ( ! class_exists( 'Jet_Theme_Core' ) ) {
 		 *
 		 * @var string
 		 */
-		private $version = '1.1.23';
+		private $version = '1.2.2';
 
 		/**
 		 * Holder for base plugin path
@@ -91,6 +91,12 @@ if ( ! class_exists( 'Jet_Theme_Core' ) ) {
 		 * @var [type]
 		 */
 		public $settings;
+
+		/**
+		 * [$settings_manager description]
+		 * @var [type]
+		 */
+		public $settings_manager;
 
 		/**
 		 * [$dashboard description]
@@ -202,13 +208,15 @@ if ( ! class_exists( 'Jet_Theme_Core' ) ) {
 
 			new Jet_Theme_Core_Elementor_Integration();
 
+			//Init Rest Api
+			new \Jet_Theme_Core\Rest_Api();
+
 			if ( is_admin() ) {
 
 				$this->dashboard         = new Jet_Theme_Core_Dashboard();
 				$this->templates_manager = new Jet_Theme_Core_Templates_Manager();
 
-				// Init Jet Theme Core Dashboard Module Manager
-				//new \Jet_Theme_Core_Dashboard\Manager();
+				new \Jet_Theme_Core\Settings();
 
 				new Jet_Theme_Core_Ajax_Handlers();
 			}
@@ -237,6 +245,35 @@ if ( ! class_exists( 'Jet_Theme_Core' ) ) {
 						'slug'    => 'jet-theme-core',
 						'file'    => 'jet-theme-core/jet-theme-core.php',
 						'version' => $this->get_version(),
+						'plugin_links' => array(
+							array(
+								'label'  => esc_html__( 'Theme Builder', 'jet-theme-core' ),
+								'url'    => add_query_arg( array( 'post_type' => 'jet-theme-core' ), admin_url( 'edit.php' ) ),
+								'target' => '_self',
+							),
+							array(
+								'label'  => esc_html__( 'Kava Theme', 'jet-theme-core' ),
+								'url'    => add_query_arg(
+									array(
+										'page'    => 'jet-dashboard-settings-page',
+										'subpage' => 'jet-theme-core-general-settings'
+									),
+									admin_url( 'admin.php' )
+								),
+								'target' => '_self',
+							),
+							array(
+								'label'  => esc_html__( 'Settings', 'jet-theme-core' ),
+								'url'    => add_query_arg(
+									array(
+										'page'    => 'jet-dashboard-settings-page',
+										'subpage' => 'jet-theme-core-general-settings'
+									),
+									admin_url( 'admin.php' )
+								),
+								'target' => '_self',
+							),
+						),
 					),
 				) );
 			}
@@ -262,9 +299,11 @@ if ( ! class_exists( 'Jet_Theme_Core' ) ) {
 			// Global
 			require $this->plugin_path( 'includes/assets.php' );
 			require $this->plugin_path( 'includes/settings.php' );
+			require $this->plugin_path( 'includes/settings/manager.php' );
 			require $this->plugin_path( 'includes/config.php' );
 			require $this->plugin_path( 'includes/api.php' );
 			require $this->plugin_path( 'includes/ajax-handlers.php' );
+			require $this->plugin_path( 'includes/rest-api/rest-api.php' );
 			require $this->plugin_path( 'includes/elementor-integration.php' );
 			require $this->plugin_path( 'includes/utils.php' );
 			require $this->plugin_path( 'includes/locations.php' );
@@ -272,10 +311,6 @@ if ( ! class_exists( 'Jet_Theme_Core' ) ) {
 
 			// Dashboard
 			require $this->plugin_path( 'includes/dashboard/manager.php' );
-
-			// Jet Dashboard Module Manager
-			//require $this->plugin_path( 'includes/jet-dashboard-pages/manager.php' );
-			//require $this->plugin_path( 'includes/jet-dashboard-pages/modules/jet-theme-core/module.php' );
 
 			// Templates
 			require $this->plugin_path( 'includes/templates/post-type.php' );

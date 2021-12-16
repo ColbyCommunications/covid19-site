@@ -14,5 +14,5 @@ $this->add_render_attribute( 'main-container', 'data-type', $settings['progress_
 
 ?>
 <div <?php echo $this->get_render_attribute_string( 'main-container' ); ?>>
-	<?php include $this->__get_type_template( $settings['progress_type'] ); ?>
+	<?php include $this->_get_type_template( $settings['progress_type'] ); ?>
 </div>

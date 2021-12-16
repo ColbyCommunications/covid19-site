@@ -96,7 +96,7 @@
 		}
 
 		.jet-weather-icon {
-			margin-right: 5px;
+			@include margin-end(5px);
 		}
 	}
 

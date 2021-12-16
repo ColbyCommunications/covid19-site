@@ -12,8 +12,7 @@ use Elementor\Group_Control_Border;
 use Elementor\Group_Control_Box_Shadow;
 use Elementor\Group_Control_Typography;
 use Elementor\Repeater;
-use Elementor\Scheme_Color;
-use Elementor\Scheme_Typography;
+use Elementor\Core\Schemes\Typography as Scheme_Typography;
 use Elementor\Widget_Base;
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
@@ -71,7 +70,18 @@ class Jet_Search_Ajax_Search_Widget extends Jet_Search_Widget_Base {
 	 * @return array
 	 */
 	public function get_style_depends() {
-		return array( 'elementor-icons-fa-solid' );
+
+		if ( isset( $_GET['elementor-preview'] ) && 'wp_enqueue_scripts' === current_filter() ) {
+			return array( 'elementor-icons-fa-solid', 'jquery-chosen' );
+		}
+
+		$depends = array( 'elementor-icons-fa-solid' );
+
+		if ( 'yes' === $this->get_settings( 'show_search_category_list' ) ) {
+			$depends[] = 'jquery-chosen';
+		}
+
+		return $depends;
 	}
 
 	/**
@@ -82,13 +92,13 @@ class Jet_Search_Ajax_Search_Widget extends Jet_Search_Widget_Base {
 	public function get_script_depends() {
 
 		if ( isset( $_GET['elementor-preview'] ) && 'wp_enqueue_scripts' === current_filter() ) {
-			return array( 'jquery-chosen', 'imagesloaded', 'jet-search' );
+			return array( 'jquery-chosen', 'imagesloaded' );
 		}
 
-		$depends = array( 'imagesloaded', 'jet-search' );
+		$depends = array( 'imagesloaded' );
 
 		if ( 'yes' === $this->get_settings( 'show_search_category_list' ) ) {
-			array_unshift ( $depends, 'jquery-chosen' );
+			$depends[] = 'jquery-chosen';
 		}
 
 		return $depends;
@@ -653,6 +663,15 @@ class Jet_Search_Ajax_Search_Widget extends Jet_Search_Widget_Base {
 				'condition' => array(
 					'show_full_results' => 'yes',
 				),
+			)
+		);
+
+		$this->add_control(
+			'show_result_new_tab',
+			array(
+				'label'   => esc_html__( 'Open Results In New Tab', 'jet-search' ),
+				'type'    => Controls_Manager::SWITCHER,
+				'default' => '',
 			)
 		);
 
@@ -2450,6 +2469,7 @@ class Jet_Search_Ajax_Search_Widget extends Jet_Search_Widget_Base {
 				'selectors' => array(
 					'{{WRAPPER}} ' . $css_scheme['results_item_link'] => 'text-align: {{VALUE}};',
 				),
+				'classes' => 'jet-search-text-align-control',
 			)
 		);
 
@@ -3710,6 +3730,7 @@ class Jet_Search_Ajax_Search_Widget extends Jet_Search_Widget_Base {
 				'selectors' => array(
 					'{{WRAPPER}} ' . $css_scheme['message'] => 'text-align: {{VALUE}};',
 				),
+				'classes' => 'jet-search-text-align-control',
 			)
 		);
 
@@ -3855,7 +3876,7 @@ class Jet_Search_Ajax_Search_Widget extends Jet_Search_Widget_Base {
 			array(
 				'label'       => esc_html__( 'Meta Fields List', 'jet-search' ),
 				'type'        => Controls_Manager::REPEATER,
-				'fields'      => array_values( $repeater->get_controls() ),
+				'fields'      => $repeater->get_controls(),
 				'default'     => array(
 					array(
 						'meta_label' => esc_html__( 'Label', 'jet-search' ),
@@ -4052,6 +4073,7 @@ class Jet_Search_Ajax_Search_Widget extends Jet_Search_Widget_Base {
 				'selectors' => array(
 					'{{WRAPPER}} .' . $base => 'text-align: {{VALUE}};',
 				),
+				'classes' => 'jet-search-text-align-control',
 			)
 		);
 
@@ -4101,6 +4123,7 @@ class Jet_Search_Ajax_Search_Widget extends Jet_Search_Widget_Base {
 			'post_content_length',
 			'show_product_price',
 			'show_product_rating',
+			'show_result_new_tab',
 
 			// Navigations
 			'bullet_pagination',

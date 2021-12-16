@@ -57,10 +57,18 @@ if ( ! class_exists( 'Jet_Tricks_Assets' ) ) {
 		public function register_scripts() {
 
 			wp_register_script(
-				'jet-tricks-tippy',
-				jet_tricks()->plugin_url( 'assets/js/lib/tippy/tippy.all.min.js' ),
+				'jet-tricks-popperjs',
+				jet_tricks()->plugin_url( 'assets/js/lib/tippy/popperjs.js' ),
 				array(),
 				'2.5.2',
+				true
+			);
+
+			wp_register_script(
+				'jet-tricks-tippy-bundle',
+				jet_tricks()->plugin_url( 'assets/js/lib/tippy/tippy-bundle.js' ),
+				array( 'jet-tricks-popperjs' ),
+				'6.3.1',
 				true
 			);
 
@@ -74,10 +82,10 @@ if ( ! class_exists( 'Jet_Tricks_Assets' ) ) {
 			);
 
 			wp_register_script(
-				'jet-tricks-particle-js',
-				jet_tricks()->plugin_url( 'assets/js/lib/particles-js/particles.min.js' ),
+				'jet-tricks-ts-particles',
+				jet_tricks()->plugin_url( 'assets/js/lib/ts-particles/tsparticles.min.js' ),
 				array(),
-				'2.0.0',
+				'1.18.11',
 				true
 			);
 		}
@@ -106,10 +114,18 @@ if ( ! class_exists( 'Jet_Tricks_Assets' ) ) {
 		 */
 		public function enqueue_scripts() {
 
+			$avaliable_extensions = jet_tricks_settings()->get( 'avaliable_extensions', jet_tricks_settings()->default_avaliable_extensions );
+
+			$frontend_deps = array ( 'jquery', 'elementor-frontend' );
+
+			if ( filter_var( $avaliable_extensions[ 'widget_tooltip' ], FILTER_VALIDATE_BOOLEAN ) ) {
+				$frontend_deps[] = 'jet-tricks-tippy-bundle';
+			}
+
 			wp_enqueue_script(
 				'jet-tricks-frontend',
 				jet_tricks()->plugin_url( 'assets/js/jet-tricks-frontend.js' ),
-				array( 'jquery', 'elementor-frontend' ),
+				$frontend_deps,
 				jet_tricks()->get_version(),
 				true
 			);
@@ -129,6 +145,13 @@ if ( ! class_exists( 'Jet_Tricks_Assets' ) ) {
 			wp_enqueue_style(
 				'jet-tricks-icons-font',
 				jet_tricks()->plugin_url( 'assets/css/jet-tricks-icons.css' ),
+				array(),
+				jet_tricks()->get_version()
+			);
+
+			wp_enqueue_style(
+				'jet-tricks-editor',
+				jet_tricks()->plugin_url( 'assets/css/jet-tricks-editor.css' ),
 				array(),
 				jet_tricks()->get_version()
 			);

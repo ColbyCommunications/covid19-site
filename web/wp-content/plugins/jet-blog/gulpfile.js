@@ -131,10 +131,10 @@ gulp.task( 'jet-blog-js-minify', function() {
 
 //watch
 gulp.task('watch', () => {
-	gulp.watch('./assets/scss/**', ['jet-blog', 'jet-blog-editor', 'jet-blog-rtl', 'jet-blog-icons']);
-	gulp.watch('./assets/scss/admin.scss', ['jet-blog-admin']);
+	gulp.watch('./assets/scss/**', gulp.series( ...['jet-blog', 'jet-blog-editor', 'jet-blog-rtl', 'jet-blog-icons'] ) );
+	gulp.watch('./assets/scss/admin.scss', gulp.series( ...['jet-blog-admin'] ) );
 
-	gulp.watch( './assets/js/jet-blog.js', ['jet-blog-js-minify'] );
+	gulp.watch( './assets/js/jet-blog.js', gulp.series( ...['jet-blog-js-minify'] ) );
 });
 
 gulp.task( 'checktextdomain', () => {

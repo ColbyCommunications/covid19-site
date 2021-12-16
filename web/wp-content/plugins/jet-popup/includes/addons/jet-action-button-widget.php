@@ -6,8 +6,8 @@ use Elementor\Group_Control_Border;
 use Elementor\Group_Control_Box_Shadow;
 use Elementor\Group_Control_Typography;
 use Elementor\Repeater;
-use Elementor\Scheme_Color;
-use Elementor\Scheme_Typography;
+use Elementor\Core\Schemes\Color as Scheme_Color;
+use Elementor\Core\Schemes\Typography as Scheme_Typography;
 use Elementor\Widget_Base;
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
@@ -142,7 +142,7 @@ class Jet_Action_Button_Widget extends Jet_Popup_Base {
 			)
 		);
 
-		$this->add_control(
+		$this->add_advanced_icon_control(
 			'button_icon',
 			array(
 				'label'       => esc_html__( 'Icon', 'jet-popup' ),
@@ -235,10 +235,6 @@ class Jet_Action_Button_Widget extends Jet_Popup_Base {
 			array(
 				'label' => esc_html__( 'Background Color', 'jet-popup' ),
 				'type' => Controls_Manager::COLOR,
-				'scheme' => array(
-					'type'  => Scheme_Color::get_type(),
-					'value' => Scheme_Color::COLOR_1,
-				),
 				'selectors' => array(
 					'{{WRAPPER}} ' . $css_scheme['instance'] => 'background-color: {{VALUE}}',
 				),
@@ -408,11 +404,14 @@ class Jet_Action_Button_Widget extends Jet_Popup_Base {
 				$this->add_render_attribute( 'instance', 'rel', 'nofollow' );
 			}
 		}
+
+		$icon_html = $this->_get_icon( 'button_icon', '<div class="jet-popup-action-button__icon">%s</div>' );
+
 		?>
 		<div class="jet-popup-action-button">
 			<a <?php echo $this->get_render_attribute_string( 'instance' ); ?>><?php
 				if ( filter_var( $use_icon, FILTER_VALIDATE_BOOLEAN ) ) {
-					echo sprintf( '<i class="jet-popup-action-button__icon %s"></i>', $button_icon );
+					echo $icon_html;
 				}
 				echo sprintf( '<span class="jet-popup-action-button__text">%s</span>', $button_text );?>
 			</a>

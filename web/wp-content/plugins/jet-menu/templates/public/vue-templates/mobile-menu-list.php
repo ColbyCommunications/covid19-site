@@ -1,13 +1,13 @@
 <div
 	class="jet-mobile-menu__list"
+	role="navigation"
 >
-	<div class="jet-mobile-menu__items">
-		<mobilemenuitem
-			v-for="item in childrenObject"
+	<ul class="jet-mobile-menu__items">
+		<mobile-menu-item
+			v-for="(item, index) in childrenObject"
 			:key="item.id"
 			:item-data-object="item"
 			:depth="depth"
-			:menu-options="menuOptions"
-		></mobilemenuitem>
-	</div>
+		></mobile-menu-item>
+	</ul>
 </div>

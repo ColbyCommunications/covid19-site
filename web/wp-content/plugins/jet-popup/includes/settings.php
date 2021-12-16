@@ -59,10 +59,6 @@ if ( ! class_exists( 'Jet_Popup_Settings' ) ) {
 
 			add_action( 'admin_menu', [ $this, 'register_page' ], 91 );
 
-			add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin_settings_assets' ), 11 );
-
-			add_action( 'admin_footer', [ $this, 'render_vue_template' ] );
-
 			add_action( 'wp_ajax_jet_popup_save_settings', [ $this, 'save_settings' ] );
 
 			add_action( 'wp_ajax_get_mailchimp_user_data', [ $this, 'get_mailchimp_user_data' ] );
@@ -70,8 +66,6 @@ if ( ! class_exists( 'Jet_Popup_Settings' ) ) {
 			add_action( 'wp_ajax_get_mailchimp_lists', [ $this, 'get_mailchimp_lists' ] );
 
 			add_action( 'wp_ajax_get_mailchimp_list_merge_fields', [ $this, 'get_mailchimp_list_merge_fields' ] );
-
-			$this->generate_localize_data();
 		}
 
 		/**
@@ -79,39 +73,29 @@ if ( ! class_exists( 'Jet_Popup_Settings' ) ) {
 		 * @return [type] [description]
 		 */
 		public function get_settings_page_url() {
-			return admin_url( 'admin.php?&page=' . $this->key );
+			return add_query_arg(
+				array(
+					'page' => 'jet-dashboard-settings-page',
+					'subpage' => 'jet-popup-integrations'
+				),
+				admin_url( 'admin.php' )
+			);
 		}
 
 		/**
 		 * [generate_localize_data description]
 		 * @return [type] [description]
 		 */
-		public function generate_localize_data() {
+		public function get_settings_page_config() {
 
 			$mailchimp_api_data = get_option( $this->key . '_mailchimp', [] );
 
-			$this->localize_data = [
+			return [
 				'settings' => [
 					'apikey' => $this->get( 'apikey', '' ),
 				],
 				'mailchimpApiData'  => $mailchimp_api_data,
 			];
-		}
-
-		/**
-		 * [get description]
-		 * @param  [type]  $setting [description]
-		 * @param  boolean $default [description]
-		 * @return [type]           [description]
-		 */
-		public function get( $setting, $default = false ) {
-
-			if ( null === $this->settings ) {
-				$this->settings = get_option( $this->key, [] );
-			}
-
-			return isset( $this->settings[ $setting ] ) ? $this->settings[ $setting ] : $default;
-
 		}
 
 		/**
@@ -121,94 +105,18 @@ if ( ! class_exists( 'Jet_Popup_Settings' ) ) {
 		 */
 		public function register_page() {
 			add_submenu_page(
-				'jet-dashboard',
-				__( 'JetPopup Settings', 'jet-popup' ),
-				__( 'JetPopup Settings', 'jet-popup' ),
+				'edit.php?post_type=jet-popup',
+				__( 'Settings', 'jet-popup' ),
+				__( 'Settings', 'jet-popup' ),
 				'manage_options',
-				$this->key,
-				[ $this, 'settings_page_render'],
-				60
+				add_query_arg(
+					array(
+						'page' => 'jet-dashboard-settings-page',
+						'subpage' => 'jet-popup-integrations'
+					),
+					admin_url( 'admin.php' )
+				)
 			);
-		}
-
-		/**
-		 * [settings_page_render description]
-		 * @return [type] [description]
-		 */
-		public function settings_page_render() {
-			$crate_action = add_query_arg(
-				array(
-					'action' => 'jet_popup_save_settings',
-				),
-				esc_url( admin_url( 'admin.php' ) )
-			);
-
-			require jet_popup()->plugin_path( 'templates/vue-templates/settings-page.php' );
-		}
-
-		/**
-		 * [enqueue_admin_settings_assets description]
-		 * @return [type] [description]
-		 */
-		public function enqueue_admin_settings_assets() {
-			$screen = get_current_screen();
-
-			if ( isset( $_REQUEST['page'] ) && $this->key === $_REQUEST['page'] ) {
-
-				$module_data = jet_popup()->module_loader->get_included_module_data( 'cherry-x-vue-ui.php' );
-				$ui          = new CX_Vue_UI( $module_data );
-
-				$ui->enqueue_assets();
-
-				wp_enqueue_style(
-					'jet-popup-admin',
-					jet_popup()->plugin_url( 'assets/css/jet-popup-admin.css' ),
-					[],
-					jet_popup()->get_version()
-				);
-
-				wp_enqueue_script(
-					'jet-popup-admin',
-					jet_popup()->plugin_url( 'assets/js/jet-popup-admin.js' ),
-					[
-						'jquery',
-						'cx-vue-ui',
-					],
-					jet_popup()->get_version(),
-					true
-				);
-
-				$localize_data = apply_filters( 'jet-popup/admin/settings-page/localized-data', $this->localize_data );
-
-				wp_localize_script(
-					'jet-popup-admin',
-					'jetPopupAdminData',
-					$localize_data
-				);
-			}
-		}
-
-		/**
-		 * [render_vue_template description]
-		 * @return [type] [description]
-		 */
-		public function render_vue_template() {
-
-			$vue_templates = [
-				'settings-form',
-				'mailchimp-list-item',
-			];
-
-			foreach ( glob( jet_popup()->plugin_path( 'templates/vue-templates/' ) . '*.php' ) as $file ) {
-				$path_info = pathinfo( $file );
-				$template_name = $path_info['filename'];
-
-				if ( in_array( $template_name, $vue_templates ) ) {?>
-					<script type="text/x-template" id="<?php echo $template_name; ?>-template"><?php
-						require $file; ?>
-					</script><?php
-				}
-			}
 		}
 
 		/**
@@ -240,6 +148,22 @@ if ( ! class_exists( 'Jet_Popup_Settings' ) ) {
 				'title' => __( 'Success', 'jet-popup' ),
 				'desc'  => __( 'Settings have been saved!', 'jet-popup' ),
 			] );
+		}
+
+		/**
+		 * [get description]
+		 * @param  [type]  $setting [description]
+		 * @param  boolean $default [description]
+		 * @return [type]           [description]
+		 */
+		public function get( $setting, $default = false ) {
+
+			if ( null === $this->settings ) {
+				$this->settings = get_option( $this->key, [] );
+			}
+
+			return isset( $this->settings[ $setting ] ) ? $this->settings[ $setting ] : $default;
+
 		}
 
 		/**
@@ -455,14 +379,6 @@ if ( ! class_exists( 'Jet_Popup_Settings' ) ) {
 		}
 
 		/**
-		 * [suffix description]
-		 * @return [type] [description]
-		 */
-		public function suffix() {
-			return defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
-		}
-
-		/**
 		 * Returns the instance.
 		 *
 		 * @since  1.0.0
@@ -470,10 +386,12 @@ if ( ! class_exists( 'Jet_Popup_Settings' ) ) {
 		 * @return object
 		 */
 		public static function get_instance() {
+
 			// If the single instance hasn't been set, set it now.
 			if ( null == self::$instance ) {
 				self::$instance = new self;
 			}
+
 			return self::$instance;
 		}
 	}

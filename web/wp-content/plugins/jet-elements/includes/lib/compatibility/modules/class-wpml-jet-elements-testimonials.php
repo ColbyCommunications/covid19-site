@@ -16,7 +16,7 @@ class WPML_Jet_Elements_Testimonials extends WPML_Elementor_Module_With_Items {
 	 * @return array
 	 */
 	public function get_fields() {
-		return array( 'item_title', 'item_comment', 'item_name', 'item_position', 'item_date' );
+		return array( 'item_title', 'item_comment', 'item_name', 'item_position', 'item_date', 'item_link' );
 	}
 
 	/**
@@ -40,6 +40,9 @@ class WPML_Jet_Elements_Testimonials extends WPML_Elementor_Module_With_Items {
 
 			case 'item_date':
 				return esc_html__( 'Jet Testimonials: Item Date', 'jet-elements' );
+
+			case 'item_link':
+				return esc_html__( 'Jet Testimonials: Item Link', 'jet-elements' );
 
 			default:
 				return '';
@@ -67,6 +70,9 @@ class WPML_Jet_Elements_Testimonials extends WPML_Elementor_Module_With_Items {
 
 			case 'item_date':
 				return 'LINE';
+
+			case 'item_link':
+				return 'LINK';
 
 			default:
 				return '';

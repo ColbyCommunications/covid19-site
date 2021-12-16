@@ -7,6 +7,7 @@
 
 	&-wrap {
 		position: relative;
+		word-wrap: anywhere;
 	}
 
 	// Featured Post
@@ -89,7 +90,7 @@
 	}
 	
 	&__more {
-		.elementor .elementor-inner & {
+		.elementor .elementor-widget-jet-blog-smart-listing & {
 			transition: all 200ms;
 			&-wrap {
 				display: flex;

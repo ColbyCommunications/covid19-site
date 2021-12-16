@@ -31,7 +31,7 @@ function jet_menu_betheme_fix_menu_args( $args ) {
 function jet_menu_betheme_scripts() {
 	wp_enqueue_script(
 		'jet-menu-betheme',
-		jet_menu()->get_theme_url( 'assets/js/script.js' ),
+		jet_menu()->integration_manager->get_theme_url( 'assets/js/script.js' ),
 		array( 'jquery' ),
 		jet_menu()->get_version(),
 		true

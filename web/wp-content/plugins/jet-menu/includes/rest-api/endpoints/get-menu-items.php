@@ -29,6 +29,10 @@ class Get_Menu_Items extends Base {
 				'default'    => 'false',
 				'required'   => false,
 			),
+			'lang' => array(
+				'default'    => '',
+				'required'   => false,
+			),
 		);
 	}
 
@@ -53,7 +57,9 @@ class Get_Menu_Items extends Base {
 			return rest_ensure_response( $items_data );
 		}
 
-		$menu_data = jet_menu_public_manager()->generate_menu_raw_data( $menu_id );
+		add_filter( 'wpml_ls_enable_ajax_navigation', '__return_true' );
+
+		$menu_data = jet_menu()->render_manager->generate_menu_raw_data( $menu_id );
 
 		$items_data = array(
 			'data' => $menu_data,

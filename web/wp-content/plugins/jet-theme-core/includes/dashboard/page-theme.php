@@ -143,7 +143,7 @@ if ( ! class_exists( 'Jet_Theme_Core_Dashboard_Theme' ) ) {
 			$status      = array();
 			$remote_data = $this->get_remote_data();
 
-			$slug        = $remote_data['theme_slug'];
+			$slug = $remote_data['theme_slug'];
 
 			if ( ! current_user_can( 'update_themes' ) ) {
 				$status['errorMessage'] = __( 'You are not allowed to update themes.', 'jet-theme-core' );
@@ -151,6 +151,7 @@ if ( ! class_exists( 'Jet_Theme_Core_Dashboard_Theme' ) ) {
 			}
 
 			$stylesheet = preg_replace( '/[^A-z0-9_\-]/', '', wp_unslash( $slug ) );
+
 			$status     = array(
 				'update'     => 'theme',
 				'slug'       => $stylesheet,
@@ -392,6 +393,8 @@ if ( ! class_exists( 'Jet_Theme_Core_Dashboard_Theme' ) ) {
 		public function get_remote_data() {
 
 			$theme_data = get_transient( 'jet_core_theme_data' );
+
+			$theme_data = false;
 
 			if ( ! $theme_data ) {
 				$theme_data = jet_theme_core()->api->get_info(
@@ -707,7 +710,9 @@ if ( ! class_exists( 'Jet_Theme_Core_Dashboard_Theme' ) ) {
 		public function render_page() {
 
 			$remote_data  = $this->get_remote_data();
+
 			$theme_status = $this->get_theme_status( $remote_data['theme_slug'] );
+
 			$has_update   = false;
 			$installed    = ! empty( $theme_status['version'] ) ? true : false;
 
@@ -718,6 +723,7 @@ if ( ! class_exists( 'Jet_Theme_Core_Dashboard_Theme' ) ) {
 			include jet_theme_core()->get_template( 'dashboard/theme/theme.php' );
 
 			$current_theme = wp_get_theme();
+
 			$child_status  = $this->get_child_status( $remote_data['theme_slug'] );
 
 			include jet_theme_core()->get_template( 'dashboard/theme/child-theme.php' );

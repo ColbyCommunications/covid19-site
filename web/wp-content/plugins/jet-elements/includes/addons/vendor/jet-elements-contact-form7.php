@@ -6,8 +6,8 @@ use Elementor\Group_Control_Border;
 use Elementor\Group_Control_Box_Shadow;
 use Elementor\Group_Control_Typography;
 use Elementor\Repeater;
-use Elementor\Scheme_Color;
-use Elementor\Scheme_Typography;
+use Elementor\Core\Schemes\Color as Scheme_Color;
+use Elementor\Core\Schemes\Typography as Scheme_Typography;
 use Elementor\Widget_Base;
 use Elementor\Utils;
 
@@ -71,7 +71,7 @@ class Jet_Elements_Contact_Form7 extends Jet_Elements_Base {
 
 		$this->end_controls_section();
 
-		$this->__start_controls_section(
+		$this->_start_controls_section(
 			'section_text_style',
 			array(
 				'label'      => esc_html__( 'Form Texts', 'jet-elements' ),
@@ -80,7 +80,7 @@ class Jet_Elements_Contact_Form7 extends Jet_Elements_Base {
 			)
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'text_color',
 			array(
 				'label'     => esc_html__( 'Color', 'jet-elements' ),
@@ -93,7 +93,7 @@ class Jet_Elements_Contact_Form7 extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Typography::get_type(),
 			array(
 				'name'     => 'text_typography',
@@ -102,7 +102,7 @@ class Jet_Elements_Contact_Form7 extends Jet_Elements_Base {
 			50
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'invalid_heading',
 			array(
 				'label'     => esc_html__( 'Not Valid Notices', 'jet-elements' ),
@@ -112,7 +112,7 @@ class Jet_Elements_Contact_Form7 extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'invalid_color',
 			array(
 				'label'     => esc_html__( 'Color', 'jet-elements' ),
@@ -124,7 +124,7 @@ class Jet_Elements_Contact_Form7 extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Typography::get_type(),
 			array(
 				'name'     => 'invalid_typography',
@@ -133,7 +133,7 @@ class Jet_Elements_Contact_Form7 extends Jet_Elements_Base {
 			50
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'invalid_notice_margin',
 			array(
 				'label'      => esc_html__( 'Margin', 'jet-elements' ),
@@ -146,7 +146,7 @@ class Jet_Elements_Contact_Form7 extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'invalid_notice_alignment',
 			array(
 				'label'   => esc_html__( 'Alignment', 'jet-elements' ),
@@ -173,9 +173,9 @@ class Jet_Elements_Contact_Form7 extends Jet_Elements_Base {
 			50
 		);
 
-		$this->__end_controls_section();
+		$this->_end_controls_section();
 
-		$this->__start_controls_section(
+		$this->_start_controls_section(
 			'section_inputs_style',
 			array(
 				'label'      => esc_html__( 'Controls', 'jet-elements' ),
@@ -184,7 +184,7 @@ class Jet_Elements_Contact_Form7 extends Jet_Elements_Base {
 			)
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Typography::get_type(),
 			array(
 				'name'     => 'input_typography',
@@ -193,7 +193,7 @@ class Jet_Elements_Contact_Form7 extends Jet_Elements_Base {
 			50
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'input_padding',
 			array(
 				'label'      => esc_html__( 'Padding', 'jet-elements' ),
@@ -206,7 +206,7 @@ class Jet_Elements_Contact_Form7 extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'input_margin',
 			array(
 				'label'      => esc_html__( 'Margin', 'jet-elements' ),
@@ -219,7 +219,7 @@ class Jet_Elements_Contact_Form7 extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'input_border_radius',
 			array(
 				'label'      => esc_html__( 'Border Radius', 'jet-elements' ),
@@ -232,16 +232,16 @@ class Jet_Elements_Contact_Form7 extends Jet_Elements_Base {
 			75
 		);
 
-		$this->__start_controls_tabs( 'tabs_input_style' );
+		$this->_start_controls_tabs( 'tabs_input_style' );
 
-		$this->__start_controls_tab(
+		$this->_start_controls_tab(
 			'tab_input_noraml',
 			array(
 				'label' => esc_html__( 'Normal', 'jet-elements' ),
 			)
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Background::get_type(),
 			array(
 				'name'     => 'input_background',
@@ -250,7 +250,7 @@ class Jet_Elements_Contact_Form7 extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'input_color',
 			array(
 				'label'     => esc_html__( 'Color', 'jet-elements' ),
@@ -262,7 +262,7 @@ class Jet_Elements_Contact_Form7 extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'input_placeholder_color',
 			array(
 				'label'     => esc_html__( 'Placeholder Color', 'jet-elements' ),
@@ -276,7 +276,7 @@ class Jet_Elements_Contact_Form7 extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Border::get_type(),
 			array(
 				'name'           => 'input_border',
@@ -287,7 +287,7 @@ class Jet_Elements_Contact_Form7 extends Jet_Elements_Base {
 			75
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Box_Shadow::get_type(),
 			array(
 				'name'     => 'input_box_shadow',
@@ -296,16 +296,16 @@ class Jet_Elements_Contact_Form7 extends Jet_Elements_Base {
 			100
 		);
 
-		$this->__end_controls_tab();
+		$this->_end_controls_tab();
 
-		$this->__start_controls_tab(
+		$this->_start_controls_tab(
 			'tab_input_focus',
 			array(
 				'label' => esc_html__( 'Focus', 'jet-elements' ),
 			)
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Background::get_type(),
 			array(
 				'name'     => 'input_focus_background',
@@ -314,7 +314,7 @@ class Jet_Elements_Contact_Form7 extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'input_focus_color',
 			array(
 				'label'     => esc_html__( 'Color', 'jet-elements' ),
@@ -326,7 +326,7 @@ class Jet_Elements_Contact_Form7 extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'input_placeholder_focus_color',
 			array(
 				'label'     => esc_html__( 'Placeholder Color', 'jet-elements' ),
@@ -340,7 +340,7 @@ class Jet_Elements_Contact_Form7 extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Border::get_type(),
 			array(
 				'name'           => 'input_focus_border',
@@ -351,7 +351,7 @@ class Jet_Elements_Contact_Form7 extends Jet_Elements_Base {
 			75
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Box_Shadow::get_type(),
 			array(
 				'name'     => 'input_focus_box_shadow',
@@ -360,16 +360,16 @@ class Jet_Elements_Contact_Form7 extends Jet_Elements_Base {
 			100
 		);
 
-		$this->__end_controls_tab();
+		$this->_end_controls_tab();
 
-		$this->__start_controls_tab(
+		$this->_start_controls_tab(
 			'tab_input_invalid',
 			array(
 				'label' => esc_html__( 'Not Valid', 'jet-elements' ),
 			)
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Background::get_type(),
 			array(
 				'name'     => 'input_invalid_background',
@@ -378,7 +378,7 @@ class Jet_Elements_Contact_Form7 extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'input_invalid_color',
 			array(
 				'label'     => esc_html__( 'Color', 'jet-elements' ),
@@ -390,7 +390,7 @@ class Jet_Elements_Contact_Form7 extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Border::get_type(),
 			array(
 				'name'           => 'input_invalid_border',
@@ -401,7 +401,7 @@ class Jet_Elements_Contact_Form7 extends Jet_Elements_Base {
 			75
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Box_Shadow::get_type(),
 			array(
 				'name'     => 'input_invalid_box_shadow',
@@ -410,11 +410,11 @@ class Jet_Elements_Contact_Form7 extends Jet_Elements_Base {
 			75
 		);
 
-		$this->__end_controls_tab();
+		$this->_end_controls_tab();
 
-		$this->__end_controls_tabs();
+		$this->_end_controls_tabs();
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'textarea_min_height',
 			array(
 				'label'       => esc_html__( 'Textarea Minimal Height', 'jet-elements' ),
@@ -428,9 +428,9 @@ class Jet_Elements_Contact_Form7 extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__end_controls_section();
+		$this->_end_controls_section();
 
-		$this->__start_controls_section(
+		$this->_start_controls_section(
 			'submit_style',
 			array(
 				'label'      => esc_html__( 'Submit Button', 'jet-elements' ),
@@ -439,16 +439,16 @@ class Jet_Elements_Contact_Form7 extends Jet_Elements_Base {
 			)
 		);
 
-		$this->__start_controls_tabs( 'tabs_submit_style' );
+		$this->_start_controls_tabs( 'tabs_submit_style' );
 
-		$this->__start_controls_tab(
+		$this->_start_controls_tab(
 			'submit_normal',
 			array(
 				'label' => esc_html__( 'Normal', 'jet-elements' ),
 			)
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'submit_bg',
 			array(
 				'label'       => _x( 'Background Type', 'Background Control', 'jet-elements' ),
@@ -470,7 +470,7 @@ class Jet_Elements_Contact_Form7 extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'submit_bg_color',
 			array(
 				'label'     => _x( 'Color', 'Background Control', 'jet-elements' ),
@@ -491,7 +491,7 @@ class Jet_Elements_Contact_Form7 extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'submit_bg_color_stop',
 			array(
 				'label'      => _x( 'Location', 'Background Control', 'jet-elements' ),
@@ -510,7 +510,7 @@ class Jet_Elements_Contact_Form7 extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'submit_bg_color_b',
 			array(
 				'label'       => _x( 'Second Color', 'Background Control', 'jet-elements' ),
@@ -525,7 +525,7 @@ class Jet_Elements_Contact_Form7 extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'submit_bg_color_b_stop',
 			array(
 				'label'      => _x( 'Location', 'Background Control', 'jet-elements' ),
@@ -544,7 +544,7 @@ class Jet_Elements_Contact_Form7 extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'submit_bg_gradient_type',
 			array(
 				'label'   => _x( 'Type', 'Background Control', 'jet-elements' ),
@@ -563,7 +563,7 @@ class Jet_Elements_Contact_Form7 extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'submit_bg_gradient_angle',
 			array(
 				'label'      => _x( 'Angle', 'Background Control', 'jet-elements' ),
@@ -590,7 +590,7 @@ class Jet_Elements_Contact_Form7 extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'submit_bg_gradient_position',
 			array(
 				'label'   => _x( 'Position', 'Background Control', 'jet-elements' ),
@@ -619,7 +619,7 @@ class Jet_Elements_Contact_Form7 extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'submit_color',
 			array(
 				'label' => esc_html__( 'Text Color', 'jet-elements' ),
@@ -631,7 +631,7 @@ class Jet_Elements_Contact_Form7 extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Typography::get_type(),
 			array(
 				'name'     => 'submit_typography',
@@ -641,7 +641,7 @@ class Jet_Elements_Contact_Form7 extends Jet_Elements_Base {
 			50
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'submit_padding',
 			array(
 				'label'      => esc_html__( 'Padding', 'jet-elements' ),
@@ -654,7 +654,7 @@ class Jet_Elements_Contact_Form7 extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Border::get_type(),
 			array(
 				'name'        => 'submit_border',
@@ -666,7 +666,7 @@ class Jet_Elements_Contact_Form7 extends Jet_Elements_Base {
 			75
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'submit_border_radius',
 			array(
 				'label'      => esc_html__( 'Border Radius', 'jet-elements' ),
@@ -679,7 +679,7 @@ class Jet_Elements_Contact_Form7 extends Jet_Elements_Base {
 			75
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Box_Shadow::get_type(),
 			array(
 				'name'     => 'submit_box_shadow',
@@ -687,16 +687,16 @@ class Jet_Elements_Contact_Form7 extends Jet_Elements_Base {
 			)
 		);
 
-		$this->__end_controls_tab();
+		$this->_end_controls_tab();
 
-		$this->__start_controls_tab(
+		$this->_start_controls_tab(
 			'tab_submit_hover',
 			array(
 				'label' => esc_html__( 'Hover', 'jet-elements' ),
 			)
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'submit_hover_bg',
 			array(
 				'label'       => _x( 'Background Type', 'Background Control', 'jet-elements' ),
@@ -718,7 +718,7 @@ class Jet_Elements_Contact_Form7 extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'submit_hover_bg_color',
 			array(
 				'label'     => _x( 'Color', 'Background Control', 'jet-elements' ),
@@ -739,7 +739,7 @@ class Jet_Elements_Contact_Form7 extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'submit_hover_bg_color_stop',
 			array(
 				'label'      => _x( 'Location', 'Background Control', 'jet-elements' ),
@@ -758,7 +758,7 @@ class Jet_Elements_Contact_Form7 extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'submit_hover_bg_color_b',
 			array(
 				'label'       => _x( 'Second Color', 'Background Control', 'jet-elements' ),
@@ -773,7 +773,7 @@ class Jet_Elements_Contact_Form7 extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'submit_hover_bg_color_b_stop',
 			array(
 				'label'      => _x( 'Location', 'Background Control', 'jet-elements' ),
@@ -792,7 +792,7 @@ class Jet_Elements_Contact_Form7 extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'submit_hover_bg_gradient_type',
 			array(
 				'label'   => _x( 'Type', 'Background Control', 'jet-elements' ),
@@ -811,7 +811,7 @@ class Jet_Elements_Contact_Form7 extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'submit_hover_bg_gradient_angle',
 			array(
 				'label'      => _x( 'Angle', 'Background Control', 'jet-elements' ),
@@ -838,7 +838,7 @@ class Jet_Elements_Contact_Form7 extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'submit_hover_bg_gradient_position',
 			array(
 				'label'   => _x( 'Position', 'Background Control', 'jet-elements' ),
@@ -867,7 +867,7 @@ class Jet_Elements_Contact_Form7 extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'submit_hover_color',
 			array(
 				'label' => esc_html__( 'Text Color', 'jet-elements' ),
@@ -879,7 +879,7 @@ class Jet_Elements_Contact_Form7 extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Typography::get_type(),
 			array(
 				'name' => 'submit_hover_typography',
@@ -889,7 +889,7 @@ class Jet_Elements_Contact_Form7 extends Jet_Elements_Base {
 			50
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'submit_hover_padding',
 			array(
 				'label'      => esc_html__( 'Padding', 'jet-elements' ),
@@ -902,7 +902,7 @@ class Jet_Elements_Contact_Form7 extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Border::get_type(),
 			array(
 				'name'        => 'submit_hover_border',
@@ -914,7 +914,7 @@ class Jet_Elements_Contact_Form7 extends Jet_Elements_Base {
 			75
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'submit_hover_border_radius',
 			array(
 				'label'      => esc_html__( 'Border Radius', 'jet-elements' ),
@@ -927,7 +927,7 @@ class Jet_Elements_Contact_Form7 extends Jet_Elements_Base {
 			75
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Box_Shadow::get_type(),
 			array(
 				'name'     => 'submit_hover_box_shadow',
@@ -936,16 +936,16 @@ class Jet_Elements_Contact_Form7 extends Jet_Elements_Base {
 			100
 		);
 
-		$this->__end_controls_tab();
+		$this->_end_controls_tab();
 
-		$this->__start_controls_tab(
+		$this->_start_controls_tab(
 			'tab_submit_focus',
 			array(
 				'label' => esc_html__( 'Focus', 'jet-elements' ),
 			)
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'submit_focus_bg',
 			array(
 				'label'       => _x( 'Background Type', 'Background Control', 'jet-elements' ),
@@ -967,7 +967,7 @@ class Jet_Elements_Contact_Form7 extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'submit_focus_bg_color',
 			array(
 				'label'     => _x( 'Color', 'Background Control', 'jet-elements' ),
@@ -988,7 +988,7 @@ class Jet_Elements_Contact_Form7 extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'submit_focus_bg_color_stop',
 			array(
 				'label'      => _x( 'Location', 'Background Control', 'jet-elements' ),
@@ -1007,7 +1007,7 @@ class Jet_Elements_Contact_Form7 extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'submit_focus_bg_color_b',
 			array(
 				'label'       => _x( 'Second Color', 'Background Control', 'jet-elements' ),
@@ -1022,7 +1022,7 @@ class Jet_Elements_Contact_Form7 extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'submit_focus_bg_color_b_stop',
 			array(
 				'label'      => _x( 'Location', 'Background Control', 'jet-elements' ),
@@ -1041,7 +1041,7 @@ class Jet_Elements_Contact_Form7 extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'submit_focus_bg_gradient_type',
 			array(
 				'label'   => _x( 'Type', 'Background Control', 'jet-elements' ),
@@ -1060,7 +1060,7 @@ class Jet_Elements_Contact_Form7 extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'submit_focus_bg_gradient_angle',
 			array(
 				'label'      => _x( 'Angle', 'Background Control', 'jet-elements' ),
@@ -1087,7 +1087,7 @@ class Jet_Elements_Contact_Form7 extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'submit_focus_bg_gradient_position',
 			array(
 				'label'   => _x( 'Position', 'Background Control', 'jet-elements' ),
@@ -1116,7 +1116,7 @@ class Jet_Elements_Contact_Form7 extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'submit_focus_color',
 			array(
 				'label' => esc_html__( 'Text Color', 'jet-elements' ),
@@ -1128,7 +1128,7 @@ class Jet_Elements_Contact_Form7 extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Typography::get_type(),
 			array(
 				'name' => 'submit_focus_typography',
@@ -1138,7 +1138,7 @@ class Jet_Elements_Contact_Form7 extends Jet_Elements_Base {
 			50
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'submit_focus_padding',
 			array(
 				'label'      => esc_html__( 'Padding', 'jet-elements' ),
@@ -1151,7 +1151,7 @@ class Jet_Elements_Contact_Form7 extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Border::get_type(),
 			array(
 				'name'        => 'submit_focus_border',
@@ -1163,7 +1163,7 @@ class Jet_Elements_Contact_Form7 extends Jet_Elements_Base {
 			75
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'submit_focus_border_radius',
 			array(
 				'label'      => esc_html__( 'Border Radius', 'jet-elements' ),
@@ -1176,7 +1176,7 @@ class Jet_Elements_Contact_Form7 extends Jet_Elements_Base {
 			75
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Box_Shadow::get_type(),
 			array(
 				'name'     => 'submit_focus_box_shadow',
@@ -1185,11 +1185,11 @@ class Jet_Elements_Contact_Form7 extends Jet_Elements_Base {
 			100
 		);
 
-		$this->__end_controls_tab();
+		$this->_end_controls_tab();
 
-		$this->__end_controls_tabs();
+		$this->_end_controls_tabs();
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'submit_margin',
 			array(
 				'label'      => esc_html__( 'Margin', 'jet-elements' ),
@@ -1203,7 +1203,7 @@ class Jet_Elements_Contact_Form7 extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'arrows',
 			array(
 				'label'        => esc_html__( 'Fullwidth Button', 'jet-elements' ),
@@ -1219,9 +1219,9 @@ class Jet_Elements_Contact_Form7 extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__end_controls_section();
+		$this->_end_controls_section();
 
-		$this->__start_controls_section(
+		$this->_start_controls_section(
 			'section_alerts_style',
 			array(
 				'label'      => esc_html__( 'Alerts', 'jet-elements' ),
@@ -1230,7 +1230,7 @@ class Jet_Elements_Contact_Form7 extends Jet_Elements_Base {
 			)
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Typography::get_type(),
 			array(
 				'name'     => 'alert_typography',
@@ -1239,7 +1239,7 @@ class Jet_Elements_Contact_Form7 extends Jet_Elements_Base {
 			50
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'alert_padding',
 			array(
 				'label'      => esc_html__( 'Padding', 'jet-elements' ),
@@ -1252,7 +1252,7 @@ class Jet_Elements_Contact_Form7 extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'alert_margin',
 			array(
 				'label'      => esc_html__( 'Margin', 'jet-elements' ),
@@ -1265,7 +1265,7 @@ class Jet_Elements_Contact_Form7 extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'alert_border_radius',
 			array(
 				'label'      => esc_html__( 'Border Radius', 'jet-elements' ),
@@ -1278,7 +1278,7 @@ class Jet_Elements_Contact_Form7 extends Jet_Elements_Base {
 			75
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'alert_alignment',
 			array(
 				'label'   => esc_html__( 'Alignment', 'jet-elements' ),
@@ -1305,7 +1305,7 @@ class Jet_Elements_Contact_Form7 extends Jet_Elements_Base {
 			50
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'sent_heading',
 			array(
 				'label'     => esc_html__( 'Sent Success', 'jet-elements' ),
@@ -1315,7 +1315,7 @@ class Jet_Elements_Contact_Form7 extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'sent_color',
 			array(
 				'label'     => esc_html__( 'Color', 'jet-elements' ),
@@ -1327,7 +1327,7 @@ class Jet_Elements_Contact_Form7 extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'sent_bg',
 			array(
 				'label'     => esc_html__( 'Background Color', 'jet-elements' ),
@@ -1339,7 +1339,7 @@ class Jet_Elements_Contact_Form7 extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Border::get_type(),
 			array(
 				'name'           => 'sent_border',
@@ -1350,7 +1350,7 @@ class Jet_Elements_Contact_Form7 extends Jet_Elements_Base {
 			75
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Box_Shadow::get_type(),
 			array(
 				'name'     => 'sent_box_shadow',
@@ -1359,7 +1359,7 @@ class Jet_Elements_Contact_Form7 extends Jet_Elements_Base {
 			100
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'error_heading',
 			array(
 				'label'     => esc_html__( 'Sent Error', 'jet-elements' ),
@@ -1369,7 +1369,7 @@ class Jet_Elements_Contact_Form7 extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'error_color',
 			array(
 				'label'     => esc_html__( 'Color', 'jet-elements' ),
@@ -1381,7 +1381,7 @@ class Jet_Elements_Contact_Form7 extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'error_bg',
 			array(
 				'label'     => esc_html__( 'Background Color', 'jet-elements' ),
@@ -1393,7 +1393,7 @@ class Jet_Elements_Contact_Form7 extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Border::get_type(),
 			array(
 				'name'           => 'error_border',
@@ -1404,7 +1404,7 @@ class Jet_Elements_Contact_Form7 extends Jet_Elements_Base {
 			75
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Box_Shadow::get_type(),
 			array(
 				'name'     => 'error_box_shadow',
@@ -1413,7 +1413,7 @@ class Jet_Elements_Contact_Form7 extends Jet_Elements_Base {
 			100
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'invalid_alert_heading',
 			array(
 				'label'     => esc_html__( 'Not Valid', 'jet-elements' ),
@@ -1423,7 +1423,7 @@ class Jet_Elements_Contact_Form7 extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'invalid_alert_color',
 			array(
 				'label'     => esc_html__( 'Color', 'jet-elements' ),
@@ -1435,7 +1435,7 @@ class Jet_Elements_Contact_Form7 extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'invalid_alert_bg',
 			array(
 				'label'     => esc_html__( 'Background Color', 'jet-elements' ),
@@ -1447,7 +1447,7 @@ class Jet_Elements_Contact_Form7 extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Border::get_type(),
 			array(
 				'name'           => 'invalid_alert_border',
@@ -1458,7 +1458,7 @@ class Jet_Elements_Contact_Form7 extends Jet_Elements_Base {
 			75
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Box_Shadow::get_type(),
 			array(
 				'name'     => 'invalid_alert_box_shadow',
@@ -1467,7 +1467,7 @@ class Jet_Elements_Contact_Form7 extends Jet_Elements_Base {
 			100
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'spam_heading',
 			array(
 				'label'     => esc_html__( 'Spam Blocked', 'jet-elements' ),
@@ -1477,7 +1477,7 @@ class Jet_Elements_Contact_Form7 extends Jet_Elements_Base {
 			25
 	);
 
-		$this->__add_control(
+		$this->_add_control(
 			'spam_color',
 			array(
 				'label'     => esc_html__( 'Color', 'jet-elements' ),
@@ -1489,7 +1489,7 @@ class Jet_Elements_Contact_Form7 extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'spam_bg',
 			array(
 				'label'     => esc_html__( 'Background Color', 'jet-elements' ),
@@ -1501,7 +1501,7 @@ class Jet_Elements_Contact_Form7 extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Border::get_type(),
 			array(
 				'name'           => 'spam_border',
@@ -1512,7 +1512,7 @@ class Jet_Elements_Contact_Form7 extends Jet_Elements_Base {
 			75
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Box_Shadow::get_type(),
 			array(
 				'name'     => 'spam_box_shadow',
@@ -1521,7 +1521,7 @@ class Jet_Elements_Contact_Form7 extends Jet_Elements_Base {
 			100
 		);
 
-		$this->__end_controls_section();
+		$this->_end_controls_section();
 	}
 
 	/**
@@ -1562,9 +1562,9 @@ class Jet_Elements_Contact_Form7 extends Jet_Elements_Base {
 
 		$settings = $this->get_settings();
 
-		$this->__context = 'render';
+		$this->_context = 'render';
 
-		$this->__open_wrap();
+		$this->_open_wrap();
 
 		$avaliable_forms = $this->get_availbale_forms();
 
@@ -1580,7 +1580,7 @@ class Jet_Elements_Contact_Form7 extends Jet_Elements_Base {
 			echo do_shortcode( sprintf( '[contact-form-7 id="%1$d" title="%2$s"]', $data[0], $data[1] ) );
 		}
 
-		$this->__close_wrap();
+		$this->_close_wrap();
 
 	}
 

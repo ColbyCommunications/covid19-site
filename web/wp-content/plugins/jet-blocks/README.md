@@ -4,11 +4,58 @@ Enjoy the easy-to-use widgets made for enriching headers & footers with content.
 
 # ChangeLog
 
+## [1.2.10](https://github.com/ZemezLab/jet-blocks/releases/tag/1.2.10) - 23.08.2021
+* Fixed: PHP 8 compatibility
+
+## [1.2.9](https://github.com/ZemezLab/jet-blocks/releases/tag/1.2.9) - 30.06.2021
+* Added: output validation for html tags settings
+* Added: [Crocoblock/suggestions#3049](https://github.com/Crocoblock/suggestions/issues/3049)
+* Added: [Crocoblock/suggestions#2916](https://github.com/Crocoblock/suggestions/issues/2916)
+* Fixed: compatibility the Search widget with WPML
+* Fixed: multiple issues in the Cart widget
+* Fixed: prevent php warning
+
+## [1.2.8](https://github.com/ZemezLab/jet-blocks/releases/tag/1.2.8) - 03.03.2021
+* Added: layout type for woo card widget
+* Added: JS triggers on ajax load template
+* Fixed: mini cart display in mega menu item after ajax request
+* Fixed: Elementor 3.1.2 compatibility issue
+
+## [1.2.7](https://github.com/ZemezLab/jet-blocks/releases/tag/1.2.7) - 11.12.2020
+* Added: support anchor links in the Nav Menu widget
+* Update: JetDashboard Module to v2.0.5
+* Fixed: compatibility with WP 5.6
+
+## [1.2.6](https://github.com/ZemezLab/jet-blocks/releases/tag/1.2.6) - 13.11.2020
+* Update: JetDashboard Module to v2.0.4
+* Added: an ability to customize the home link text in the Breadcrumb widget ( [#527](https://github.com/Crocoblock/suggestions/issues/527) )
+* Added: an ability to load Hamburger Panel templates via AJAX ( [#1476](https://github.com/Crocoblock/suggestions/issues/1476) )
+* Added: [Crocoblock/suggestions#319](https://github.com/Crocoblock/suggestions/issues/319)
+
+## [1.2.5](https://github.com/ZemezLab/jet-blocks/releases/tag/1.2.5) - 12.10.2020
+* Update: JetDashboard Module to v2.0.0
+* Update: minor improvements in the Breadcrumbs widget
+* Added: getting a list of templates in controls through ajax
+* Added: start elements animation handlers on opening the Hamburger panel
+
+## [1.2.4](https://github.com/ZemezLab/jet-blocks/releases/tag/1.2.4) - 17.07.2020
+* Update: JetDashboard Module to v1.0.16
+* Fixed: prevent Rest API error notice
+
+## [1.2.3](https://github.com/ZemezLab/jet-blocks/releases/tag/1.2.3) - 08.06.2020
+* Added: multiple performance improvements and bug fixes
+* Fixed: compatibility the Auth links widget and Elementor Popup actions
+
+## [1.2.2](https://github.com/ZemezLab/jet-blocks/releases/tag/1.2.2) - 02.04.2020
+* Update: JetDashboard Module to v1.0.12
+* Update: Breadcrumbs module to 1.0.2
+* Added: multiple improvements and bug fixes
+
 ## [1.2.1](https://github.com/ZemezLab/jet-blocks/releases/tag/1.2.1) - 28.01.2020
-* Update: Jet Dashboard Module to v1.0.9
+* Update: JetDashboard Module to v1.0.9
 
 ## [1.2.0](https://github.com/ZemezLab/jet-blocks/releases/tag/1.2.0) - 02.12.2019
-* Added: Jet Dashboard
+* Added: JetDashboard Module
 
 ## [1.1.14](https://github.com/ZemezLab/jet-blocks/releases/tag/1.1.14) - 29.11.2019
 * Fixed: prevent php error on update DB

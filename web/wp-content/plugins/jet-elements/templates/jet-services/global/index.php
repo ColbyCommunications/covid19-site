@@ -20,15 +20,15 @@ $classes = implode( ' ', $classes_list );
 	<div class="jet-services__inner">
 		<div class="jet-services__header">
 			<div class="jet-services__cover"><?php
-			echo $this->__generate_icon( true );
-			echo $this->__generate_title( true );
-			echo $this->__generate_description( true );
-			echo $this->__generate_action_button( true ); ?></div>
+			echo $this->_generate_icon( true );
+			echo $this->_generate_title( true );
+			echo $this->_generate_description( true );
+			echo $this->_generate_action_button( true ); ?></div>
 		</div>
 		<div class="jet-services__content"><?php
-			echo $this->__generate_icon();
-			echo $this->__generate_title();
-			echo $this->__generate_description();
-			echo $this->__generate_action_button(); ?></div>
+			echo $this->_generate_icon();
+			echo $this->_generate_title();
+			echo $this->_generate_description();
+			echo $this->_generate_action_button(); ?></div>
 	</div>
 </div>

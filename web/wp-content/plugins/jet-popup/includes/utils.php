@@ -20,6 +20,21 @@ if ( ! class_exists( 'Jet_Popup_Utils' ) ) {
 	class Jet_Popup_Utils {
 
 		/**
+		 * [get_plugin_license description]
+		 * @return [type] [description]
+		 */
+		public static function get_plugin_license() {
+
+			$license_key = \Jet_Dashboard\Utils::get_plugin_license_key( 'jet-popup/jet-popup.php' );
+
+			if ( ! empty( $license_key ) ) {
+				return true;
+			}
+
+			return false;
+		}
+
+		/**
 		 * Get post types options list
 		 *
 		 * @return array
@@ -122,6 +137,33 @@ if ( ! class_exists( 'Jet_Popup_Utils' ) ) {
 		}
 
 		/**
+		 * [is_avaliable_for_user description]
+		 * @param  [type]  $popup_roles [description]
+		 * @return boolean              [description]
+		 */
+		public static function is_avaliable_for_user( $roles ) {
+
+			if ( empty( $roles ) ) {
+				return true;
+			}
+
+			$user     = wp_get_current_user();
+			$is_guest = empty( $user->roles ) ? true : false;
+
+			if ( ! $is_guest ) {
+				$user_role = $user->roles[0];
+			} else {
+				$user_role = 'guest';
+			}
+
+			if ( in_array( $user_role, $roles ) ) {
+				return true;
+			}
+
+			return false;
+		}
+
+		/**
 		 * Returns all custom taxonomies
 		 *
 		 * @return [type] [description]
@@ -158,6 +200,12 @@ if ( ! class_exists( 'Jet_Popup_Utils' ) ) {
 
 		}
 
+		/**
+		 * [search_posts_by_type description]
+		 * @param  [type] $type  [description]
+		 * @param  [type] $query [description]
+		 * @return [type]        [description]
+		 */
 		public static function search_posts_by_type( $type, $query ) {
 
 			add_filter( 'posts_where', array( __CLASS__, 'force_search_by_title' ), 10, 2 );
@@ -208,6 +256,12 @@ if ( ! class_exists( 'Jet_Popup_Utils' ) ) {
 			return $where;
 		}
 
+		/**
+		 * [search_terms_by_tax description]
+		 * @param  [type] $tax   [description]
+		 * @param  [type] $query [description]
+		 * @return [type]        [description]
+		 */
 		public static function search_terms_by_tax( $tax, $query ) {
 
 			$terms = get_terms( array(

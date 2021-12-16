@@ -18,6 +18,7 @@ class Jet_Document_Base extends Elementor\Core\Base\Document {
 		$properties = parent::get_properties();
 
 		$properties['admin_tab_group'] = '';
+		$properties['support_kit']     = true;
 
 		return $properties;
 	}

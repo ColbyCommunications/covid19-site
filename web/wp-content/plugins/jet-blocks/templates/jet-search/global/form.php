@@ -17,4 +17,5 @@ $settings = $this->get_settings();
 	<?php if ( isset( $settings['is_product_search'] ) && 'true' === $settings['is_product_search'] ) : ?>
 		<input type="hidden" name="post_type" value="product" />
 	<?php endif; ?>
+	<?php do_action( 'wpml_add_language_form_field' ); ?>
 </form>

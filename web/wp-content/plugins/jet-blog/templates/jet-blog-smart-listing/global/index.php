@@ -2,12 +2,13 @@
 /**
  * Posts listing wrapper
  */
-$settings = $this->_get_widget_settings();
-$title    = $settings['block_title'];
-$tag      = $settings['title_tag'];
+$settings   = $this->_get_widget_settings();
+$title      = $settings['block_title'];
+$tag        = jet_blog_tools()->validate_html_tag( $settings['title_tag'] );
+$scroll_top = ! empty( $settings['scroll_top'] ) ? filter_var( $settings['scroll_top'], FILTER_VALIDATE_BOOLEAN ) : false;
 
 ?>
-<div class="jet-smart-listing-wrap" data-settings='<?php $this->_export_settings(); ?>' data-page="1" data-term="0">
+<div class="jet-smart-listing-wrap" data-settings='<?php $this->_export_settings(); ?>' data-page="1" data-term="0" data-scroll-top=<?php echo $scroll_top;?>>
 	<div class="jet-smart-listing__heading"><?php
 
 		if ( $title ) {

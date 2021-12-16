@@ -1387,5 +1387,3 @@
   };
 
 }).call(this);
-
-//# sourceMappingURL=oridomi.js.map

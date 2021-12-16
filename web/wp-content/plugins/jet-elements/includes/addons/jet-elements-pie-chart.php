@@ -12,8 +12,8 @@ use Elementor\Group_Control_Border;
 use Elementor\Group_Control_Box_Shadow;
 use Elementor\Group_Control_Typography;
 use Elementor\Repeater;
-use Elementor\Scheme_Color;
-use Elementor\Scheme_Typography;
+use Elementor\Core\Schemes\Color as Scheme_Color;
+use Elementor\Core\Schemes\Typography as Scheme_Typography;
 use Elementor\Widget_Base;
 use Elementor\Modules\DynamicTags\Module as TagsModule;
 
@@ -135,7 +135,7 @@ class Jet_Elements_Pie_Chart extends Jet_Elements_Base {
 			'chart_data',
 			array(
 				'type'    => Controls_Manager::REPEATER,
-				'fields'  => array_values( $repeater->get_controls() ),
+				'fields'  => $repeater->get_controls(),
 				'default' => array(
 					array(
 						'label' => esc_html__( 'Google', 'jet-elements' ),
@@ -386,12 +386,24 @@ class Jet_Elements_Pie_Chart extends Jet_Elements_Base {
 			)
 		);
 
+		$this->add_control(
+			'chart_tooltip_suffix',
+			array(
+				'label'     => esc_html__( 'Suffix', 'jet-elements' ),
+				'type'      => Controls_Manager::TEXT,
+				'dynamic'   => array( 'active' => true ),
+				'condition' => array(
+					'chart_tooltip_enabled' => 'true',
+				),
+			)
+		);
+
 		$this->end_controls_section();
 
 		/**
 		 * `Chart` Style Section
 		 */
-		$this->__start_controls_section(
+		$this->_start_controls_section(
 			'section_chart_style',
 			array(
 				'label' => esc_html__( 'Chart', 'jet-elements' ),
@@ -400,7 +412,7 @@ class Jet_Elements_Pie_Chart extends Jet_Elements_Base {
 			75
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'chart_border_width',
 			array(
 				'label' => esc_html__( 'Border Width', 'jet-elements' ),
@@ -415,7 +427,7 @@ class Jet_Elements_Pie_Chart extends Jet_Elements_Base {
 			75
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'chart_border_color',
 			array(
 				'label' => esc_html__( 'Border Color', 'jet-elements' ),
@@ -424,12 +436,12 @@ class Jet_Elements_Pie_Chart extends Jet_Elements_Base {
 			75
 		);
 
-		$this->__end_controls_section( 75 );
+		$this->_end_controls_section( 75 );
 
 		/**
 		 * `Title` Style Section
 		 */
-		$this->__start_controls_section(
+		$this->_start_controls_section(
 			'section_chart_title_style',
 			array(
 				'label' => esc_html__( 'Title', 'jet-elements' ),
@@ -437,7 +449,7 @@ class Jet_Elements_Pie_Chart extends Jet_Elements_Base {
 			)
 		);
 		
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Typography::get_type(),
 			array(
 				'name'     => 'chart_title_typography',
@@ -446,7 +458,7 @@ class Jet_Elements_Pie_Chart extends Jet_Elements_Base {
 			50
 		);
 		
-		$this->__add_control(
+		$this->_add_control(
 			'chart_title_color',
 			array(
 				'label' => esc_html__( 'Color', 'jet-elements' ),
@@ -458,7 +470,7 @@ class Jet_Elements_Pie_Chart extends Jet_Elements_Base {
 			25
 		);
 		
-		$this->__add_control(
+		$this->_add_control(
 			'chart_title_margin',
 			array(
 				'label'      => esc_html__( 'Margin', 'jet-elements' ),
@@ -471,7 +483,7 @@ class Jet_Elements_Pie_Chart extends Jet_Elements_Base {
 			25
 		);
 		
-		$this->__add_control(
+		$this->_add_control(
 			'chart_title_padding',
 			array(
 				'label'      => esc_html__( 'Padding', 'jet-elements' ),
@@ -484,7 +496,7 @@ class Jet_Elements_Pie_Chart extends Jet_Elements_Base {
 			75
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Text_Shadow::get_type(),
 			array(
 				'name'     => 'chart_title_text_shadow',
@@ -493,12 +505,12 @@ class Jet_Elements_Pie_Chart extends Jet_Elements_Base {
 			100
 		);
 
-		$this->__end_controls_section();
+		$this->_end_controls_section();
 
 		/**
 		 * `Legend` Style Section
 		 */
-		$this->__start_controls_section(
+		$this->_start_controls_section(
 			'section_chart_legend_style',
 			array(
 				'label' => esc_html__( 'Legend', 'jet-elements' ),
@@ -509,7 +521,7 @@ class Jet_Elements_Pie_Chart extends Jet_Elements_Base {
 			)
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'chart_legend_box_width',
 			array(
 				'label' => esc_html__( 'Box Width', 'jet-elements' ),
@@ -524,7 +536,7 @@ class Jet_Elements_Pie_Chart extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'chart_legend_font_family',
 			array(
 				'label'   => esc_html__( 'Font Family', 'jet-elements' ),
@@ -534,7 +546,7 @@ class Jet_Elements_Pie_Chart extends Jet_Elements_Base {
 			50
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'chart_legend_font_size',
 			array(
 				'label' => esc_html__( 'Font Size', 'jet-elements' ),
@@ -557,7 +569,7 @@ class Jet_Elements_Pie_Chart extends Jet_Elements_Base {
 			$typo_weight_options[ $weight ] = ucfirst( $weight );
 		}
 
-		$this->__add_control(
+		$this->_add_control(
 			'chart_legend_font_weight',
 			array(
 				'label'   => esc_html__( 'Font Weight', 'jet-elements' ),
@@ -568,7 +580,7 @@ class Jet_Elements_Pie_Chart extends Jet_Elements_Base {
 			50
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'chart_legend_font_style',
 			array(
 				'label' => esc_html__( 'Font Style', 'jet-elements' ),
@@ -584,7 +596,7 @@ class Jet_Elements_Pie_Chart extends Jet_Elements_Base {
 			50
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'chart_legend_font_color',
 			array(
 				'label' => esc_html__( 'Font Color', 'jet-elements' ),
@@ -593,12 +605,12 @@ class Jet_Elements_Pie_Chart extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__end_controls_section();
+		$this->_end_controls_section();
 
 		/**
 		 * `Tooltips` Style Section
 		 */
-		$this->__start_controls_section(
+		$this->_start_controls_section(
 			'section_chart_tooltips_style',
 			array(
 				'label' => esc_html__( 'Tooltips', 'jet-elements' ),
@@ -609,7 +621,7 @@ class Jet_Elements_Pie_Chart extends Jet_Elements_Base {
 			)
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'chart_tooltip_bg_color',
 			array(
 				'label' => esc_html__( 'Background Color', 'jet-elements' ),
@@ -618,7 +630,7 @@ class Jet_Elements_Pie_Chart extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'chart_tooltip_font_family',
 			array(
 				'label'   => esc_html__( 'Font Family', 'jet-elements' ),
@@ -628,7 +640,7 @@ class Jet_Elements_Pie_Chart extends Jet_Elements_Base {
 			50
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'chart_tooltip_font_size',
 			array(
 				'label' => esc_html__( 'Font Size', 'jet-elements' ),
@@ -643,7 +655,7 @@ class Jet_Elements_Pie_Chart extends Jet_Elements_Base {
 			50
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'chart_tooltip_font_weight',
 			array(
 				'label'   => esc_html__( 'Font Weight', 'jet-elements' ),
@@ -654,7 +666,7 @@ class Jet_Elements_Pie_Chart extends Jet_Elements_Base {
 			50
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'chart_tooltip_font_style',
 			array(
 				'label' => esc_html__( 'Font Style', 'jet-elements' ),
@@ -670,7 +682,7 @@ class Jet_Elements_Pie_Chart extends Jet_Elements_Base {
 			50
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'chart_tooltip_font_color',
 			array(
 				'label' => esc_html__( 'Font Color', 'jet-elements' ),
@@ -679,23 +691,25 @@ class Jet_Elements_Pie_Chart extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__end_controls_section();
+		$this->_end_controls_section();
 	}
 
 	/**
 	 * Render widget output on the frontend.
 	 */
 	protected function render() {
-		$this->__context = 'render';
-		$this->__open_wrap();
+		$this->_context = 'render';
+		$this->_open_wrap();
 
 		$settings     = $this->get_settings_for_display();
 		$data_chart   = $this->get_chart_data();
 		$data_options = $this->get_chart_options();
+		$data_tooltip = isset( $settings['chart_tooltip_suffix'] ) ? $settings['chart_tooltip_suffix'] : '';
 
 		$this->add_render_attribute( 'container', 'class', 'jet-pie-chart-container' );
 		$this->add_render_attribute( 'container', 'data-chart', esc_attr( json_encode( $data_chart ) ) );
 		$this->add_render_attribute( 'container', 'data-options', esc_attr( json_encode( $data_options ) ) );
+		$this->add_render_attribute( 'container', 'data-tooltip', esc_attr( $data_tooltip ) );
 
 		$this->add_render_attribute( 'canvas', 'class', 'jet-pie-chart' );
 		$this->add_render_attribute( 'canvas', 'role', 'img' );
@@ -719,7 +733,7 @@ class Jet_Elements_Pie_Chart extends Jet_Elements_Base {
 			echo $this->get_chart_title();
 		}
 
-		$this->__close_wrap();
+		$this->_close_wrap();
 	}
 
 	/**
@@ -903,6 +917,6 @@ class Jet_Elements_Pie_Chart extends Jet_Elements_Base {
 			'<div class="jet-pie-chart-title-container"><%1$s class="jet-pie-chart-title">%2$s</%1$s></div>'
 		);
 
-		return sprintf( $title_format, $settings['chart_title_size'], $settings['chart_title'] );
+		return sprintf( $title_format, jet_elements_tools()->validate_html_tag( $settings['chart_title_size'] ), $settings['chart_title'] );
 	}
 }

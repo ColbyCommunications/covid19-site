@@ -133,128 +133,156 @@
 				data: function() {
 					return ( {
 						сondition: this.rawCondition,
-						ajaxAction: false,
 						requestLoading: false,
 						requestList: [],
-						groupVisible: true,
-						subGroupVisible: false,
-						subGroupOptionsVisible: false,
 					} )
+				},
+
+				created: function() {
+
+				},
+
+				watch: {
+					'сondition.group': function( curr ) {
+
+						if ( this.subGroupAvaliable ) {
+							let subGroups     = this.$root.conditionsData[ this.сondition.group ]['sub-groups'],
+								subGroupsKeys = Object.keys( subGroups );
+
+							if ( 0 !== subGroupsKeys.length ) {
+								this.сondition.subGroup = subGroupsKeys[0];
+								this.сondition.subGroupValue = '';
+							}
+
+						}
+					},
+					'сondition.subGroup': function( curr ) {
+
+						if ( this.subGroupAvaliable ) {
+							this.сondition.subGroupValue = '';
+						}
+					}
 				},
 
 				computed: {
 
-					includeList: function() {
-						return [
-							{
-								value: 'true',
-								label: 'Include'
-							},
-							{
-								value: 'false',
-								label: 'Exclude'
-							}
-						];
+					groupVisible: function() {
+						return true;
 					},
 
-					groupList: function() {
-						var groupList = [],
-							groups    = JetPopupConditionsManager.conditionsData;
+					subGroupVisible: function() {
+						return 0 !== this.subGroupOptions.length ? true : false;
+					},
 
-						for ( var group in groups ) {
+					subGroupValueVisible: function() {
+						return this.subGroupValueControl ? true : false;
+					},
+
+					subGroupValueControl: function() {
+
+						if ( ! this.subGroupAvaliable ) {
+							return false;
+						}
+
+						let subGroupData = this.$root.conditionsData[ this.сondition.group ]['sub-groups'][ this.сondition.subGroup ];
+
+						return subGroupData.control;
+					},
+
+					subGroupItemAction: function() {
+
+						if ( ! this.subGroupAvaliable ) {
+							return false;
+						}
+
+						let subGroupData = this.$root.conditionsData[ this.сondition.group ]['sub-groups'][ this.сondition.subGroup ];
+
+						return subGroupData.action;
+					},
+
+					groupOptions: function() {
+						let groupList = [],
+							groups    = this.$root.conditionsData;
+
+						for ( let group in groups ) {
 							groupList.push( {
 								value: group,
-								label: groups[group]['label']
+								label: groups[ group ]['label']
 							} );
 						}
 
 						return groupList;
 					},
 
-					subGroupList: function() {
+					subGroupAvaliable: function() {
+						return this.$root.conditionsData[ this.сondition.group ].hasOwnProperty( 'sub-groups' );
+					},
 
-						var subGroupList = [],
-							subGroups    = JetPopupConditionsManager.conditionsData[this.сondition.group]['sub-groups'];
+					subGroupOptions: function() {
 
-						for ( var subGroup in subGroups ) {
-							subGroupList.push( {
+						let optionsList = [];
+
+						if ( ! this.subGroupAvaliable ) {
+							return optionsList;
+						}
+
+						let subGroups = this.$root.conditionsData[ this.сondition.group ]['sub-groups'];
+
+						for ( let subGroup in subGroups ) {
+							optionsList.push( {
 								value: subGroup,
-								label: subGroups[subGroup]['label']
+								label: subGroups[ subGroup ]['label']
 							} );
 						}
 
-						this.сondition.subGroup = subGroupList[0]['value'];
-
-						return subGroupList;
+						return optionsList;
 					},
 
-					subGroupOptionsList: function() {
-						return this.requestList;
+					subGroupValueOptions: function() {
+						let optionsList = [];
+
+						if ( ! this.subGroupAvaliable ) {
+							return optionsList;
+						}
+
+						if ( ! this.$root.conditionsData[ this.сondition.group ]['sub-groups'].hasOwnProperty( this.сondition.subGroup ) ) {
+							return optionsList;
+						}
+
+						let subGroupData = this.$root.conditionsData[ this.сondition.group ]['sub-groups'][ this.сondition.subGroup ];
+
+						if ( subGroupData.options ) {
+							return subGroupData.options;
+						}
+
+						if ( this.subGroupItemAction ) {
+							this.getRemoteItems();
+						}
+
+						return optionsList;
 					}
 				},
 
 				methods: {
 
-					groupChange: function( option ) {
-						this.changeConditionView();
-					},
-
-					subGroupChange: function( option ) {
-						this.changeConditionView();
-					},
-
 					deleteCondition: function() {
 						JetPopupConditionsManager.eventBus.$emit( 'removeCondition', this.id );
 					},
 
-					changeConditionView: function() {
-
-						if ( JetPopupConditionsManager.conditionsData[this.сondition.group].hasOwnProperty( 'sub-groups' ) ) {
-							this.subGroupVisible = true;
-						} else {
-							this.ajaxAction = false;
-							this.subGroupVisible = false;
-							this.subGroupOptionsVisible = false;
-							this.requestList = [];
-
-							return false;
-						}
-
-						var subGroupData = JetPopupConditionsManager.conditionsData[this.сondition.group]['sub-groups'][this.сondition.subGroup];
-
-						if ( subGroupData && subGroupData.hasOwnProperty( 'action' ) && subGroupData['action'] ) {
-							this.subGroupVisible = true;
-							this.subGroupOptionsVisible = true;
-							this.ajaxAction = subGroupData['action'];
-
-							this.getRemoteItems('');
-						} else {
-							this.ajaxAction = false;
-							this.subGroupOptionsVisible = false;
-							this.requestList = [];
-						}
-
-					},
-
-					getRemoteItems: function( query ) {
-						var vueInstance = this;
-
-						if ( ! this.ajaxAction ) {
-							return false;
-						}
-
-						var libraryPresetsUrl = ajaxurl + '?action=' + this.ajaxAction + '&q=' + query;
+					getRemoteItems: function( query = '' ) {
+						let vueInstance = this,
+							remoteUrl   = ajaxurl + '?action=' + this.subGroupItemAction + '&q=' + query;
 
 						vueInstance.requestLoading = true;
 
-						axios.get( libraryPresetsUrl ).then( function ( response ) {
-							var requestData = response.data.results,
+						axios.get( remoteUrl ).then( function ( response ) {
+							let requestData = response.data.results,
 								requestList = [];
 
 							vueInstance.requestLoading = false;
 
 							for ( var item in requestData ) {
-								var itemValue = requestData[item]['id'];
+								var itemValue = requestData[ item ]['id'];
 
 								requestList.push( {
 									value: itemValue.toString(),
@@ -264,15 +292,16 @@
 
 							vueInstance.requestList = requestList;
 
-						}).catch(function (error) {
+							vueInstance.$set(
+								vueInstance.$root.conditionsData[ vueInstance.сondition.group ]['sub-groups'][ vueInstance.сondition.subGroup ],
+								'options',
+								requestList
+							);
+						} ).catch( function( error ) {
 							vueInstance.requestLoading = false;
-						});
+						} );
 					}
 				},
-
-				created: function() {
-					this.changeConditionView();
-				}
 
 			} );
 
@@ -334,14 +363,14 @@
 											type: 'success',
 											duration: 4000,
 										} );
-										break;
+									break;
 									case 'error':
 										vueInstance.$CXNotice.add( {
 											message: data['message']['desc'],
 											type: 'error',
 											duration: 4000,
 										} );
-										break;
+									break;
 								}
 
 							}
@@ -352,7 +381,7 @@
 				created: function() {
 
 					var vueInstance     = this,
-						popupConditions = JetPopupConditionsManager.popupConditions || [];
+						popupConditions = this.$root.popupConditions || [];
 
 					popupConditions.map( function( condition ) {
 						condition['id'] = JetPopupConditionsManager.genetateUniqId();
@@ -378,7 +407,12 @@
 			var eventBus = new Vue();
 
 			JetPopupConditionsManager.conditionsManager = new Vue( {
-				el: '#jet-popup-conditions-manager'
+				el: '#jet-popup-conditions-manager',
+
+				data: {
+					conditionsData: window.jetPopupData.conditionManager.conditionsData,
+					popupConditions: window.jetPopupData.conditionManager.popupConditions,
+				}
 			} );
 		},
 

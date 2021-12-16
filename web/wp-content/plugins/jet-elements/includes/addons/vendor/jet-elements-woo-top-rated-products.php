@@ -25,11 +25,11 @@ class Jet_Elements_Woo_Top_Rated_Products extends Jet_Elements_Base {
 		return array( 'cherry' );
 	}
 
-	public function __tag() {
+	public function _tag() {
 		return 'top_rated_products';
 	}
 
-	public function __atts() {
+	public function _atts() {
 
 		return array(
 			'per_page' => array(
@@ -61,7 +61,7 @@ class Jet_Elements_Woo_Top_Rated_Products extends Jet_Elements_Base {
 			)
 		);
 
-		foreach ( $this->__atts() as $control => $data ) {
+		foreach ( $this->_atts() as $control => $data ) {
 			$this->add_control( $control, $data );
 		}
 
@@ -72,23 +72,23 @@ class Jet_Elements_Woo_Top_Rated_Products extends Jet_Elements_Base {
 
 		$settings = $this->get_settings();
 
-		$this->__context = 'render';
+		$this->_context = 'render';
 
-		$this->__open_wrap();
+		$this->_open_wrap();
 
 		$attributes = '';
 
-		foreach ( $this->__atts() as $attr => $data ) {
+		foreach ( $this->_atts() as $attr => $data ) {
 
 			$attr_val    = $settings[ $attr ];
 			$attr_val    = ! is_array( $attr_val ) ? $attr_val : implode( ',', $attr_val );
 			$attributes .= sprintf( ' %1$s="%2$s"', $attr, $attr_val );
 		}
 
-		$shortcode = sprintf( '[%s %s]', $this->__tag(), $attributes );
+		$shortcode = sprintf( '[%s %s]', $this->_tag(), $attributes );
 		echo do_shortcode( $shortcode );
 
-		$this->__close_wrap();
+		$this->_close_wrap();
 
 	}
 

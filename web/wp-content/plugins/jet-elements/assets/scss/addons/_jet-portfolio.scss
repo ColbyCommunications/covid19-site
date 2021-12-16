@@ -78,8 +78,6 @@
 		align-self: stretch;
 		position: relative;
 		transform-origin: 50% 50%;
-		//transform: translateZ(0);
-
 	}
 
 	&__link {
@@ -167,7 +165,7 @@
 		bottom: 0;
 		transform: translateZ(0);
 
-		i {
+		.jet-elements-icon {
 			display: flex;
 			flex-flow: column nowrap;
 			justify-content: center;
@@ -290,7 +288,7 @@
 				opacity: 0;
 				transition: opacity 0.4s ease;
 
-				i {
+				.jet-elements-icon {
 					transform: scale(0.5);
 					opacity: 0;
 					transition: all 0.3s ease 0.1s;
@@ -301,7 +299,7 @@
 				.jet-portfolio__cover {
 					opacity: 1;
 
-					i {
+					.jet-elements-icon {
 						transform: scale(1);
 						opacity: 1;
 					}
@@ -317,7 +315,7 @@
 				opacity: 0;
 				transition: opacity 0.4s ease;
 
-				i {
+				.jet-elements-icon {
 					transform: scale(0.5);
 					opacity: 0;
 					transition: all 0.3s ease 0.1s;
@@ -328,7 +326,7 @@
 				.jet-portfolio__cover {
 					opacity: 1;
 
-					i {
+					.jet-elements-icon {
 						transform: scale(1);
 						opacity: 1;
 					}
@@ -352,6 +350,7 @@
 				z-index: 1;
 				opacity: 0;
 				transition: opacity 0.4s ease;
+				pointer-events: none;
 			}
 
 			.jet-portfolio__content-inner {

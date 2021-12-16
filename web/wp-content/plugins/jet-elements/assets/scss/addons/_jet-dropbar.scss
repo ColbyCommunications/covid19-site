@@ -11,7 +11,9 @@
 		width: 100%;
 		max-width: 100%;
 
+		white-space: normal;
 		border: 1px none;
+		overflow: hidden;
 
 		&-text {
 			flex-grow: 1;
@@ -19,15 +21,15 @@
 		}
 
 		&-icon--before:not(:only-child) {
-			body:not(.rtl) & {
-				margin-right: 5px;
-			}
+			@include margin-end(5px);
 		}
 
 		&-icon--after:not(:only-child) {
-			body:not(.rtl) & {
-				margin-left: 5px;
-			}
+			@include margin-start(5px);
+		}
+
+		img {
+			margin: 0 auto;
 		}
 	}
 

@@ -3,13 +3,16 @@
  * Plugin Name: JetElements For Elementor
  * Plugin URI:  https://crocoblock.com/plugins/jetelements/
  * Description: Brand new addon for Elementor Page builder. It provides the set of modules to create different kinds of content, adds custom modules to your website and applies attractive styles in the matter of several clicks!
- * Version:     2.2.14
+ * Version:     2.6.1
  * Author:      Crocoblock
  * Author URI:  https://crocoblock.com/
  * Text Domain: jet-elements
  * License:     GPL-2.0+
  * License URI: http://www.gnu.org/licenses/gpl-2.0.txt
  * Domain Path: /languages
+ *
+ * Elementor tested up to: 3.2
+ * Elementor Pro tested up to: 3.2
  *
  * @package jet-elements
  * @author  Zemez
@@ -62,7 +65,7 @@ if ( ! class_exists( 'Jet_Elements' ) ) {
 		 *
 		 * @var string
 		 */
-		private $version = '2.2.14';
+		private $version = '2.6.1';
 
 		/**
 		 * Framework component
@@ -112,6 +115,7 @@ if ( ! class_exists( 'Jet_Elements' ) ) {
 					$this->plugin_path( 'includes/modules/vue-ui/cherry-x-vue-ui.php' ),
 					$this->plugin_path( 'includes/modules/db-updater/cx-db-updater.php' ),
 					$this->plugin_path( 'includes/modules/jet-dashboard/jet-dashboard.php' ),
+					$this->plugin_path( 'includes/modules/jet-elementor-extension/jet-elementor-extension.php' ),
 				)
 			);
 		}
@@ -146,17 +150,16 @@ if ( ! class_exists( 'Jet_Elements' ) ) {
 			jet_elements_templates_manager()->init();
 			jet_elements_compatibility()->init();
 			jet_elements_ext_section()->init();
-
 			jet_family_column_orientation_ext()->init();
 
 			//Init Rest Api
 			new \Jet_Elements\Rest_Api();
 
 			if ( is_admin() ) {
-
+				//Init Settings Manager
+				new \Jet_Elements\Settings();
 				// include DB upgrader
 				require $this->plugin_path( 'includes/class-jet-elements-db-upgrader.php' );
-
 				// Init DB upgrader
 				new Jet_Elements_DB_Upgrader();
 			}
@@ -182,6 +185,13 @@ if ( ! class_exists( 'Jet_Elements' ) ) {
 						'slug'    => 'jet-elements',
 						'file'    => 'jet-elements/jet-elements.php',
 						'version' => $this->get_version(),
+						'plugin_links' => array(
+							array(
+								'label'  => esc_html__( 'Go to settings', 'jet-elements' ),
+								'url'    => add_query_arg( array( 'page' => 'jet-dashboard-settings-page', 'subpage' => 'jet-elements-general-settings' ), admin_url( 'admin.php' ) ),
+								'target' => '_self',
+							),
+						),
 					),
 				) );
 			}
@@ -268,6 +278,7 @@ if ( ! class_exists( 'Jet_Elements' ) ) {
 			require $this->plugin_path( 'includes/class-jet-elements-integration.php' );
 			require $this->plugin_path( 'includes/class-jet-elements-shortcodes.php' );
 			require $this->plugin_path( 'includes/class-jet-elements-settings.php' );
+			require $this->plugin_path( 'includes/settings/manager.php' );
 			require $this->plugin_path( 'includes/class-jet-elements-svg-manager.php' );
 			require $this->plugin_path( 'includes/class-jet-elements-ajax-handlers.php' );
 			require $this->plugin_path( 'includes/template-library/class-jet-elements-templates-manager.php' );

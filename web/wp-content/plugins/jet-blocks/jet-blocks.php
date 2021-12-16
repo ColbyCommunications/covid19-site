@@ -3,13 +3,16 @@
  * Plugin Name: JetBlocks For Elementor
  * Plugin URI:  https://crocoblock.com/plugins/jetblocks/
  * Description: The basic utilitary widgets for implementing additional functionality to headers, footers and special sections built with Elementor
- * Version:     1.2.1
+ * Version:     1.2.10
  * Author:      Crocoblock
  * Author URI:  https://crocoblock.com/
  * Text Domain: jet-blocks
  * License:     GPL-2.0+
  * License URI: http://www.gnu.org/licenses/gpl-2.0.txt
  * Domain Path: /languages
+ *
+ * Elementor tested up to: 3.2
+ * Elementor Pro tested up to: 3.3
  */
 
 // If this file is called directly, abort.
@@ -39,7 +42,7 @@ if ( ! class_exists( 'Jet_Blocks' ) ) {
 		 *
 		 * @var string
 		 */
-		private $version = '1.2.1';
+		private $version = '1.2.10';
 
 		/**
 		 * Holder for base plugin URL
@@ -109,6 +112,7 @@ if ( ! class_exists( 'Jet_Blocks' ) ) {
 					$this->plugin_path( 'includes/modules/vue-ui/cherry-x-vue-ui.php' ),
 					$this->plugin_path( 'includes/modules/breadcrumbs/cherry-x-breadcrumbs.php' ),
 					$this->plugin_path( 'includes/modules/jet-dashboard/jet-dashboard.php' ),
+					$this->plugin_path( 'includes/modules/jet-elementor-extension/jet-elementor-extension.php' ),
 				)
 			);
 		}
@@ -144,6 +148,11 @@ if ( ! class_exists( 'Jet_Blocks' ) ) {
 
 			//Init Rest Api
 			new \Jet_Blocks\Rest_Api();
+
+			if ( is_admin() ) {
+				//Init Settings Manager
+				new \Jet_Blocks\Settings();
+			}
 		}
 
 		/**
@@ -167,6 +176,13 @@ if ( ! class_exists( 'Jet_Blocks' ) ) {
 						'slug'    => 'jet-blocks',
 						'file'    => 'jet-blocks/jet-blocks.php',
 						'version' => $this->get_version(),
+						'plugin_links' => array(
+							array(
+								'label'  => esc_html__( 'Go to settings', 'jet-blocks' ),
+								'url'    => add_query_arg( array( 'page' => 'jet-dashboard-settings-page', 'subpage' => 'jet-blocks-general-settings' ), admin_url( 'admin.php' ) ),
+								'target' => '_self',
+							),
+						),
 					),
 				) );
 			}
@@ -253,6 +269,7 @@ if ( ! class_exists( 'Jet_Blocks' ) ) {
 			require $this->plugin_path( 'includes/class-jet-blocks-handlers.php' );
 			require $this->plugin_path( 'includes/class-jet-blocks-ext-elements.php' );
 			require $this->plugin_path( 'includes/class-jet-blocks-compatibility.php' );
+			require $this->plugin_path( 'includes/settings/manager.php' );
 
 			require $this->plugin_path( 'includes/rest-api/rest-api.php' );
 			require $this->plugin_path( 'includes/rest-api/endpoints/base.php' );

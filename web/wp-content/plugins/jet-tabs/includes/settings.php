@@ -64,10 +64,6 @@ if ( ! class_exists( 'Jet_Tabs_Settings' ) ) {
 		 */
 		public function init() {
 
-			add_action( 'admin_enqueue_scripts', array( $this, 'admin_enqueue_scripts' ), 0 );
-
-			add_action( 'admin_menu', array( $this, 'register_page' ), 99 );
-
 			foreach ( glob( jet_tabs()->plugin_path( 'includes/addons/' ) . '*.php' ) as $file ) {
 				$data = get_file_data( $file, array( 'class'=>'Class', 'name' => 'Name', 'slug'=>'Slug' ) );
 
@@ -123,7 +119,7 @@ if ( ! class_exists( 'Jet_Tabs_Settings' ) ) {
 		 * [generate_frontend_config_data description]
 		 * @return [type] [description]
 		 */
-		public function generate_frontend_config_data() {
+		public function get_frontend_config_data() {
 
 			$default_active_widgets = [];
 
@@ -141,10 +137,10 @@ if ( ! class_exists( 'Jet_Tabs_Settings' ) ) {
 
 			$rest_api_url = apply_filters( 'jet-tabs/rest/frontend/url', get_rest_url() );
 
-			$this->settings_page_config = [
+			return [
 				'messages' => [
-					'saveSuccess' => esc_html__( 'Saved', 'jet-elements' ),
-					'saveError'   => esc_html__( 'Error', 'jet-elements' ),
+					'saveSuccess' => esc_html__( 'Saved', 'jet-tabs' ),
+					'saveError'   => esc_html__( 'Error', 'jet-tabs' ),
 				],
 				'settingsApiUrl' => $rest_api_url . 'jet-tabs-api/v1/plugin-settings',
 				'settingsData' => [
@@ -179,72 +175,6 @@ if ( ! class_exists( 'Jet_Tabs_Settings' ) ) {
 					],
 				],
 			];
-		}
-
-		/**
-		 * Initialize page builder module if required
-		 *
-		 * @return void
-		 */
-		public function admin_enqueue_scripts() {
-
-			if ( isset( $_REQUEST['page'] ) && $this->key === $_REQUEST['page'] ) {
-
-				$module_data = jet_tabs()->module_loader->get_included_module_data( 'cherry-x-vue-ui.php' );
-				$ui          = new CX_Vue_UI( $module_data );
-
-				$ui->enqueue_assets();
-
-				$this->generate_frontend_config_data();
-
-				wp_enqueue_style(
-					'jet-tabs-admin-css',
-					jet_tabs()->plugin_url( 'assets/css/jet-tabs-admin.css' ),
-					false,
-					jet_tabs()->get_version()
-				);
-
-				wp_enqueue_script(
-					'jet-tabs-admin-script',
-					jet_tabs()->plugin_url( 'assets/js/jet-tabs-admin.js' ),
-					array( 'cx-vue-ui' ),
-					jet_tabs()->get_version(),
-					true
-				);
-
-				wp_localize_script(
-					'jet-tabs-admin-script',
-					'JetTabsSettingsPageConfig',
-					apply_filters( 'jet-tabs/admin/settings-page-config', $this->settings_page_config )
-				);
-			}
-		}
-
-		/**
-		 * Register add/edit page
-		 *
-		 * @return void
-		 */
-		public function register_page() {
-
-			add_submenu_page(
-				'jet-dashboard',
-				esc_html__( 'JetTabs Settings', 'jet-tabs' ),
-				esc_html__( 'JetTabs Settings', 'jet-tabs' ),
-				'manage_options',
-				$this->key,
-				array( $this, 'render_page' )
-			);
-
-		}
-
-		/**
-		 * Render settings page
-		 *
-		 * @return void
-		 */
-		public function render_page() {
-			include jet_tabs()->get_template( 'admin-templates/settings-page.php' );
 		}
 
 		/**

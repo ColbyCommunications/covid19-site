@@ -56,6 +56,9 @@ if ( ! class_exists( 'Jet_Tabs_DB_Upgrader' ) ) {
 						'2.1.4' => array(
 							array( $this, 'update_db_1_1_8' ),
 						),
+						'2.1.5' => array(
+							array( $this, 'update_db_1_1_8' ),
+						),
 					),
 					'labels'    => array(
 						'start_update' => esc_html__( 'Start Update', 'jet-tabs' ),
@@ -81,6 +84,7 @@ if ( ! class_exists( 'Jet_Tabs_DB_Upgrader' ) ) {
 				jet_tabs()->elementor()->files_manager->clear_cache();
 			}
 		}
+
 	}
 
 }

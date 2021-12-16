@@ -25,7 +25,7 @@ class Rest_Api {
 	 * [$api_namespace description]
 	 * @var string
 	 */
-	public $api_namespace = '/jet-blocks-api/v1';
+	public $api_namespace = 'jet-blocks-api/v1';
 
 	/**
 	 * [$_endpoints description]
@@ -65,7 +65,7 @@ class Rest_Api {
 		$this->register_endpoint( new Endpoints\Elementor_Template() );
 		$this->register_endpoint( new Endpoints\Plugin_Settings() );
 
-		do_action( 'jet-tricks/rest/init-endpoints', $this );
+		do_action( 'jet-blocks/rest/init-endpoints', $this );
 
 	}
 

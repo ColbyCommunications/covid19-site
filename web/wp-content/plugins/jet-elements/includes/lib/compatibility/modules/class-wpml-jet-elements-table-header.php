@@ -27,7 +27,7 @@ class WPML_Jet_Elements_Table_Header extends WPML_Elementor_Module_With_Items {
 	protected function get_title( $field ) {
 		switch( $field ) {
 			case 'cell_text':
-				return esc_html__( 'Jet Table Header: Cell Text', 'jet-elements' );
+				return esc_html__( 'Jet Table Header: Column Text', 'jet-elements' );
 
 			default:
 				return '';

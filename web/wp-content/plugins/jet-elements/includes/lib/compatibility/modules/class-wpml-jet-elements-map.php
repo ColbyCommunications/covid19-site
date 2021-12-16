@@ -16,7 +16,7 @@ class WPML_Jet_Elements_Map extends WPML_Elementor_Module_With_Items {
 	 * @return array
 	 */
 	public function get_fields() {
-		return array( 'pin_address', 'pin_desc' );
+		return array( 'pin_address', 'pin_desc', 'pin_link_title', 'pin_link' => array( 'url' ) );
 	}
 
 	/**
@@ -31,6 +31,12 @@ class WPML_Jet_Elements_Map extends WPML_Elementor_Module_With_Items {
 
 			case 'pin_desc':
 				return esc_html__( 'Jet Map: Pin Description', 'jet-elements' );
+
+			case 'pin_link_title':
+				return esc_html__( 'Jet Map: Link Text', 'jet-elements' );
+
+			case 'url':
+				return esc_html__( 'Jet Map: Link', 'jet-elements' );
 
 			default:
 				return '';
@@ -49,6 +55,12 @@ class WPML_Jet_Elements_Map extends WPML_Elementor_Module_With_Items {
 
 			case 'pin_desc':
 				return 'AREA';
+
+			case 'pin_link_title':
+				return 'LINE';
+
+			case 'url':
+				return 'LINK';
 
 			default:
 				return '';

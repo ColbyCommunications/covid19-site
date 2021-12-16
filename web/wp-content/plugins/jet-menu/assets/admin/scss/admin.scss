@@ -5,9 +5,12 @@ $text_color:          #96989a;
 $actions_color:       #495157;
 $actions_height:      40px;
 
-.jet-menu-item-trigger {
+@mixin label {
+	display: flex;
+	justify-content: flex-start;
+	align-items: center;
+	gap: 2px;
 	padding: 4px 8px;
-	margin-left: 8px;
 	position: relative;
 	text-decoration: none;
 	border: 1px solid #0071a1;
@@ -17,12 +20,54 @@ $actions_height:      40px;
 	font-size: 13px;
 	line-height: normal;
 	color: #0071a1;
-	background: #f3f5f6;
-	cursor: pointer;
+	background: transparent;
+
+	.dashicons {
+
+	}
+}
+
+.jet-menu-item-settings {
+	display: flex;
+	flex-wrap: nowrap;
+	justify-content: flex-start;
+	align-items: center;
+	gap: 9px;
+	position: absolute;
+	left: 424px;
+	top: 7px;
+
+	.rtl & {
+		left: auto;
+		right: 424px;
+	}
+}
+
+.jet-menu-item-settings__trigger {
+	@include label;
 	visibility: hidden;
+	cursor: pointer;
 
 	.menu-item:hover & {
 		visibility: visible;
+	}
+}
+
+.jet-menu-item-settings__info {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
+	align-items: center;
+	gap: 4px;
+
+	&-label {
+		@include label;
+		color: #46B450;
+		border-color: #46B450;
+	}
+
+	&:empty {
+		display: none;
 	}
 }
 
@@ -69,6 +114,42 @@ $actions_height:      40px;
 	}
 }
 
+.jet-menu-settings-page {
+
+	&__presets-manager {
+		display: flex;
+		justify-content: flex-start;
+		column-gap: 10px;
+	}
+
+	.cx-vui-tabs {
+		&.cx-vui-tabs--layout-horizontal {
+			.cx-vui-tabs__nav {
+				padding: 0 11px;
+
+				.cx-vui-tabs__nav-item {
+					padding: 9px 18px;
+					font-weight: 400;
+					border-style: solid;
+					border-color: white;
+					border-width: 2px 0 0 0;
+					border-radius: 0;
+
+
+					&--active {
+						border-color: #007CBA;
+						background-color: #E9F0FD;
+					}
+				}
+			}
+
+			.cx-vui-tabs__content {
+				padding: 18px 11px;
+				border-color: #e9f0fd;
+			}
+		}
+	}
+}
 
 #jet-menu-options-page {
 	visibility: hidden;
@@ -99,7 +180,6 @@ $actions_height:      40px;
 }
 
 .cx-vui-component--group {
-
 	.cx-vui-component {
 		padding: 15px 30px;
 		border-top: none !important;
@@ -107,14 +187,10 @@ $actions_height:      40px;
 }
 
 .cx-vui-component--container {
-
-
 	&.cx-vui-component {
 		padding: 0;
 	}
 }
-
-
 
 .cx-vui-component {
 
@@ -133,26 +209,6 @@ $actions_height:      40px;
 
 		.cx-vui-component__label {
 			margin-bottom: 20px;
-		}
-
-		.cx-vui-tabs--layout-horizontal {
-
-			.cx-vui-tabs__nav {
-				margin-bottom: -1px;
-				background-color: transparent;
-
-				.cx-vui-tabs__nav-item {
-					white-space: nowrap;
-
-					&--active {
-						border-top: 1px solid #dcdcdd !important;
-					}
-				}
-			}
-
-			.cx-vui-tabs__content {
-				border-left: none;
-			}
 		}
 	}
 

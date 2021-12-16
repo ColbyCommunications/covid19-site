@@ -41,13 +41,23 @@ if ( ! class_exists( 'Jet_Tricks_Integration' ) ) {
 		 */
 		public function init() {
 
-			add_action( 'elementor/init', array( $this, 'register_category' ) );
+			add_action( 'elementor/elements/categories_registered', array( $this, 'register_category' ) );
 
 			add_action( 'elementor/widgets/widgets_registered', array( $this, 'register_addons' ), 10 );
 
 			add_action( 'elementor/controls/controls_registered', array( $this, 'add_controls' ), 10 );
 
 			add_action( 'wp_ajax_elementor_render_widget', array( $this, 'set_elementor_ajax' ), 10, -1 );
+
+			// Init Jet Elementor Extension module
+			$ext_module_data = jet_tricks()->module_loader->get_included_module_data( 'jet-elementor-extension.php' );
+
+			Jet_Elementor_Extension\Module::get_instance(
+				array(
+					'path' => $ext_module_data['path'],
+					'url'  => $ext_module_data['url'],
+				)
+			);
 
 		}
 
@@ -177,9 +187,8 @@ if ( ! class_exists( 'Jet_Tricks_Integration' ) ) {
 		 *
 		 * @return void
 		 */
-		public function register_category() {
+		public function register_category( $elements_manager ) {
 
-			$elements_manager = Elementor\Plugin::instance()->elements_manager;
 			$cherry_cat       = 'cherry';
 
 			$elements_manager->add_category(

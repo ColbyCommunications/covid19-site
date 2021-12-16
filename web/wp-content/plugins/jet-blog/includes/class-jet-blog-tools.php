@@ -19,7 +19,7 @@ if ( ! class_exists( 'Jet_Blog_Tools' ) ) {
 		 * A reference to an instance of this class.
 		 *
 		 * @since 1.0.0
-		 * @var   object
+		 * @var   Jet_Blog_Tools
 		 */
 		private static $instance = null;
 
@@ -530,11 +530,34 @@ if ( ! class_exists( 'Jet_Blog_Tools' ) ) {
 			return isset( $fa5_arrows_map[ $arrow ] ) ? $fa5_arrows_map[ $arrow ] : $arrow;
 		}
 
+		public function validate_html_tag( $tag ) {
+			$allowed_tags = array(
+				'article',
+				'aside',
+				'div',
+				'footer',
+				'h1',
+				'h2',
+				'h3',
+				'h4',
+				'h5',
+				'h6',
+				'header',
+				'main',
+				'nav',
+				'p',
+				'section',
+				'span',
+			);
+
+			return in_array( strtolower( $tag ), $allowed_tags ) ? $tag : 'div';
+		}
+
 		/**
 		 * Returns the instance.
 		 *
 		 * @since  1.0.0
-		 * @return object
+		 * @return Jet_Blog_Tools
 		 */
 		public static function get_instance( $shortcodes = array() ) {
 
@@ -551,7 +574,7 @@ if ( ! class_exists( 'Jet_Blog_Tools' ) ) {
 /**
  * Returns instance of Jet_Blog_Tools
  *
- * @return object
+ * @return Jet_Blog_Tools
  */
 function jet_blog_tools() {
 	return Jet_Blog_Tools::get_instance();

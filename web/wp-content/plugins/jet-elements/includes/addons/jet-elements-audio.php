@@ -12,8 +12,8 @@ use Elementor\Group_Control_Border;
 use Elementor\Group_Control_Box_Shadow;
 use Elementor\Group_Control_Typography;
 use Elementor\Repeater;
-use Elementor\Scheme_Color;
-use Elementor\Scheme_Typography;
+use Elementor\Core\Schemes\Color as Scheme_Color;
+use Elementor\Core\Schemes\Typography as Scheme_Typography;
 use Elementor\Widget_Base;
 use Elementor\Modules\DynamicTags\Module as TagsModule;
 
@@ -42,11 +42,23 @@ class Jet_Elements_Audio extends Jet_Elements_Base {
 	}
 
 	public function get_script_depends() {
-		return array( 'mediaelement' );
+		if ( isset( $_GET['elementor-preview'] ) && 'wp_enqueue_scripts' === current_filter() ) {
+			return array( 'mediaelement', 'mejs-speed' );
+		} else if ( 'yes' === $this->get_settings( 'speed' ) ){
+			return array( 'mediaelement', 'mejs-speed' );
+		} else {
+			return array( 'mediaelement' );
+		}
 	}
 
 	public function get_style_depends() {
-		return array( 'mediaelement' );
+		if ( isset( $_GET['elementor-preview'] ) ) {
+			return array( 'mediaelement', 'mejs-speed-css', 'elementor-icons-fa-solid' );
+		} else if ( 'yes' === $this->get_settings( 'speed' ) ){
+			return array( 'mediaelement', 'mejs-speed-css', 'elementor-icons-fa-solid' );
+		} else {
+			return array( 'mediaelement', 'elementor-icons-fa-solid' );
+		}
 	}
 
 	protected function _register_controls() {
@@ -70,6 +82,11 @@ class Jet_Elements_Audio extends Jet_Elements_Base {
 				'current_volume_vert' => '.jet-audio .mejs-volume-current',
 				'volume_slider_vert'  => '.jet-audio .mejs-volume-slider',
 				'volume_handle_vert'  => '.jet-audio .mejs-volume-handle',
+				'speed_btn_wrap'      => '.jet-audio .mejs-speed-button',
+				'speed_btn'           => '.jet-audio .mejs-speed-button button',
+				'speed_selector'      => '.jet-audio .mejs-speed-selector',
+				'speed_selector_item' => '.jet-audio .mejs-speed-selector-list-item',
+				'speed_selector_label' => '.jet-audio .mejs-speed-selector-label',
 			)
 		);
 
@@ -189,6 +206,15 @@ class Jet_Elements_Audio extends Jet_Elements_Base {
 		);
 
 		$this->add_control(
+			'speed',
+			array(
+				'label'   => esc_html__( 'Playback rate', 'jet-elements' ),
+				'type'    => Controls_Manager::SWITCHER,
+				'default' => '',
+			)
+		);
+
+		$this->add_control(
 			'current',
 			array(
 				'label'   => esc_html__( 'Current Time', 'jet-elements' ),
@@ -290,7 +316,7 @@ class Jet_Elements_Audio extends Jet_Elements_Base {
 		/**
 		 * `General` Style Section
 		 */
-		$this->__start_controls_section(
+		$this->_start_controls_section(
 			'section_general_style',
 			array(
 				'label' => esc_html__( 'General', 'jet-elements' ),
@@ -298,7 +324,7 @@ class Jet_Elements_Audio extends Jet_Elements_Base {
 			)
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'width',
 			array(
 				'label' => esc_html__( 'Width', 'jet-elements' ),
@@ -317,7 +343,7 @@ class Jet_Elements_Audio extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'align',
 			array(
 				'label'   => esc_html__( 'Alignment', 'jet-elements' ),
@@ -338,22 +364,23 @@ class Jet_Elements_Audio extends Jet_Elements_Base {
 				),
 				'selectors_dictionary' => array(
 					'left'   => 'justify-content: flex-start;',
-					'center' => 'justify-content: flex-center;',
+					'center' => 'justify-content: center;',
 					'right'  => 'justify-content: flex-end;',
 				),
 				'selectors' => array(
 					'{{WRAPPER}}' => '{{VALUE}}',
 				),
+				'classes' => 'jet-elements-arrows-align-control',
 			),
 			25
 		);
 
-		$this->__end_controls_section();
+		$this->_end_controls_section();
 
 		/**
 		 * `Play-Pause Button and Time` Style Section
 		 */
-		$this->__start_controls_section(
+		$this->_start_controls_section(
 			'section_play_button_and_time_style',
 			array(
 				'label' => esc_html__( 'Play-Pause Button and Time', 'jet-elements' ),
@@ -361,7 +388,7 @@ class Jet_Elements_Audio extends Jet_Elements_Base {
 			)
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'play_pause_button_heading',
 			array(
 				'label' => esc_html__( 'Play-Pause Button', 'jet-elements' ),
@@ -370,7 +397,7 @@ class Jet_Elements_Audio extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'play_pause_button_font_size',
 			array(
 				'label' => esc_html__( 'Font size', 'jet-elements' ),
@@ -389,16 +416,16 @@ class Jet_Elements_Audio extends Jet_Elements_Base {
 			50
 		);
 
-		$this->__start_controls_tabs( 'play_pause_button_style' );
+		$this->_start_controls_tabs( 'play_pause_button_style' );
 		
-		$this->__start_controls_tab(
+		$this->_start_controls_tab(
 			'play_pause_button_normal_style',
 			array(
 				'label' => esc_html__( 'Normal', 'jet-elements' ),
 			)
 		);
 		
-		$this->__add_control(
+		$this->_add_control(
 			'play_pause_button_color',
 			array(
 				'label' => esc_html__( 'Color', 'jet-elements' ),
@@ -410,7 +437,7 @@ class Jet_Elements_Audio extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'play_pause_button_bg_color',
 			array(
 				'label' => esc_html__( 'Background color', 'jet-elements' ),
@@ -422,16 +449,16 @@ class Jet_Elements_Audio extends Jet_Elements_Base {
 			25
 		);
 		
-		$this->__end_controls_tab();
+		$this->_end_controls_tab();
 
-		$this->__start_controls_tab(
+		$this->_start_controls_tab(
 			'play_pause_button_hover_style',
 			array(
 				'label' => esc_html__( 'Hover', 'jet-elements' ),
 			)
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'play_pause_button_hover_color',
 			array(
 				'label' => esc_html__( 'Color', 'jet-elements' ),
@@ -443,7 +470,7 @@ class Jet_Elements_Audio extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'play_pause_button_hover_bg_color',
 			array(
 				'label' => esc_html__( 'Background color', 'jet-elements' ),
@@ -455,7 +482,7 @@ class Jet_Elements_Audio extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'play_pause_button_hover_border_color',
 			array(
 				'label' => esc_html__( 'Border Color', 'jet-elements' ),
@@ -470,11 +497,11 @@ class Jet_Elements_Audio extends Jet_Elements_Base {
 			75
 		);
 
-		$this->__end_controls_tab();
+		$this->_end_controls_tab();
 		
-		$this->__end_controls_tabs();
+		$this->_end_controls_tabs();
 		
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'play_pause_button_padding',
 			array(
 				'label'      => esc_html__( 'Padding', 'jet-elements' ),
@@ -488,7 +515,7 @@ class Jet_Elements_Audio extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'play_pause_button_margin',
 			array(
 				'label'      => esc_html__( 'Margin', 'jet-elements' ),
@@ -501,7 +528,7 @@ class Jet_Elements_Audio extends Jet_Elements_Base {
 			25
 		);
 		
-		$this->__add_control(
+		$this->_add_control(
 			'play_pause_button_border_radius',
 			array(
 				'label'      => esc_html__( 'Border Radius', 'jet-elements' ),
@@ -514,7 +541,7 @@ class Jet_Elements_Audio extends Jet_Elements_Base {
 			75
 		);
 		
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Border::get_type(),
 			array(
 				'name'     => 'play_pause_button_border',
@@ -523,7 +550,7 @@ class Jet_Elements_Audio extends Jet_Elements_Base {
 			75
 		);
 		
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Box_Shadow::get_type(),
 			array(
 				'name'     => 'play_pause_button_box_shadow',
@@ -532,7 +559,7 @@ class Jet_Elements_Audio extends Jet_Elements_Base {
 			100
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'time_heading',
 			array(
 				'label'     => esc_html__( 'Time', 'jet-elements' ),
@@ -542,7 +569,7 @@ class Jet_Elements_Audio extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Typography::get_type(),
 			array(
 				'name'     => 'time_typography',
@@ -551,7 +578,7 @@ class Jet_Elements_Audio extends Jet_Elements_Base {
 			50
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'time_color',
 			array(
 				'label' => esc_html__( 'Color', 'jet-elements' ),
@@ -563,7 +590,7 @@ class Jet_Elements_Audio extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'current_time_margin',
 			array(
 				'label'      => esc_html__( 'Current Time Margin', 'jet-elements' ),
@@ -576,7 +603,7 @@ class Jet_Elements_Audio extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'duration_time_margin',
 			array(
 				'label'      => esc_html__( 'Duration Time Margin', 'jet-elements' ),
@@ -589,9 +616,9 @@ class Jet_Elements_Audio extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__end_controls_section();
+		$this->_end_controls_section();
 
-		$this->__start_controls_section(
+		$this->_start_controls_section(
 			'section_progress_style',
 			array(
 				'label' => esc_html__( 'Progress', 'jet-elements' ),
@@ -602,7 +629,7 @@ class Jet_Elements_Audio extends Jet_Elements_Base {
 			)
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'total_progress_heading',
 			array(
 				'label'     => esc_html__( 'Total Progress Bar', 'jet-elements' ),
@@ -614,7 +641,7 @@ class Jet_Elements_Audio extends Jet_Elements_Base {
 			25
 		);
 		
-		$this->__add_control(
+		$this->_add_control(
 			'total_progress_height',
 			array(
 				'label' => esc_html__( 'Height', 'jet-elements' ),
@@ -635,7 +662,7 @@ class Jet_Elements_Audio extends Jet_Elements_Base {
 			25
 		);
 		
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Background::get_type(),
 			array(
 				'name'     => 'total_progress_background',
@@ -647,7 +674,7 @@ class Jet_Elements_Audio extends Jet_Elements_Base {
 			25
 		);
 		
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Border::get_type(),
 			array(
 				'name'     => 'total_progress_border',
@@ -659,7 +686,7 @@ class Jet_Elements_Audio extends Jet_Elements_Base {
 			75
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'total_progress_border_radius',
 			array(
 				'label'      => esc_html__( 'Border Radius', 'jet-elements' ),
@@ -675,7 +702,7 @@ class Jet_Elements_Audio extends Jet_Elements_Base {
 			75
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'rail_progress_margin',
 			array(
 				'label'      => esc_html__( 'Margin', 'jet-elements' ),
@@ -691,7 +718,7 @@ class Jet_Elements_Audio extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'current_progress_heading',
 			array(
 				'label'     => esc_html__( 'Current Progress Bar', 'jet-elements' ),
@@ -704,7 +731,7 @@ class Jet_Elements_Audio extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Background::get_type(),
 			array(
 				'name'     => 'current_progress_background',
@@ -716,7 +743,7 @@ class Jet_Elements_Audio extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'current_progress_border_radius',
 			array(
 				'label'      => esc_html__( 'Border Radius', 'jet-elements' ),
@@ -732,12 +759,12 @@ class Jet_Elements_Audio extends Jet_Elements_Base {
 			75
 		);
 
-		$this->__end_controls_section();
+		$this->_end_controls_section();
 
 		/**
 		 * `Volume` Style Section
 		 */
-		$this->__start_controls_section(
+		$this->_start_controls_section(
 			'section_volume_style',
 			array(
 				'label' => esc_html__( 'Volume', 'jet-elements' ),
@@ -748,7 +775,7 @@ class Jet_Elements_Audio extends Jet_Elements_Base {
 			)
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'volume_button_style_heading',
 			array(
 				'label' => esc_html__( 'Volume Button', 'jet-elements' ),
@@ -760,7 +787,7 @@ class Jet_Elements_Audio extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'volume_button_font_size',
 			array(
 				'label' => esc_html__( 'Font size', 'jet-elements' ),
@@ -782,9 +809,9 @@ class Jet_Elements_Audio extends Jet_Elements_Base {
 			50
 		);
 
-		$this->__start_controls_tabs( 'volume_button_style' );
+		$this->_start_controls_tabs( 'volume_button_style' );
 
-		$this->__start_controls_tab(
+		$this->_start_controls_tab(
 			'volume_button_normal_style',
 			array(
 				'label' => esc_html__( 'Normal', 'jet-elements' ),
@@ -794,7 +821,7 @@ class Jet_Elements_Audio extends Jet_Elements_Base {
 			)
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'volume_button_color',
 			array(
 				'label' => esc_html__( 'Color', 'jet-elements' ),
@@ -809,7 +836,7 @@ class Jet_Elements_Audio extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'volume_button_bg_color',
 			array(
 				'label' => esc_html__( 'Background color', 'jet-elements' ),
@@ -824,9 +851,9 @@ class Jet_Elements_Audio extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__end_controls_tab();
+		$this->_end_controls_tab();
 
-		$this->__start_controls_tab(
+		$this->_start_controls_tab(
 			'volume_button_hover_style',
 			array(
 				'label' => esc_html__( 'Hover', 'jet-elements' ),
@@ -836,7 +863,7 @@ class Jet_Elements_Audio extends Jet_Elements_Base {
 			)
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'volume_button_hover_color',
 			array(
 				'label' => esc_html__( 'Color', 'jet-elements' ),
@@ -851,7 +878,7 @@ class Jet_Elements_Audio extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'volume_button_hover_bg_color',
 			array(
 				'label' => esc_html__( 'Background color', 'jet-elements' ),
@@ -866,7 +893,7 @@ class Jet_Elements_Audio extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'volume_button_hover_border_color',
 			array(
 				'label' => esc_html__( 'Border Color', 'jet-elements' ),
@@ -882,11 +909,11 @@ class Jet_Elements_Audio extends Jet_Elements_Base {
 			75
 		);
 
-		$this->__end_controls_tab();
+		$this->_end_controls_tab();
 
-		$this->__end_controls_tabs();
+		$this->_end_controls_tabs();
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'volume_button_padding',
 			array(
 				'label'      => esc_html__( 'Padding', 'jet-elements' ),
@@ -903,7 +930,7 @@ class Jet_Elements_Audio extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'volume_button_margin',
 			array(
 				'label'      => esc_html__( 'Margin', 'jet-elements' ),
@@ -919,7 +946,7 @@ class Jet_Elements_Audio extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'volume_button_border_radius',
 			array(
 				'label'      => esc_html__( 'Border Radius', 'jet-elements' ),
@@ -935,7 +962,7 @@ class Jet_Elements_Audio extends Jet_Elements_Base {
 			75
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Border::get_type(),
 			array(
 				'name'     => 'volume_button_border',
@@ -947,7 +974,7 @@ class Jet_Elements_Audio extends Jet_Elements_Base {
 			75
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Box_Shadow::get_type(),
 			array(
 				'name'     => 'volume_button_box_shadow',
@@ -959,7 +986,7 @@ class Jet_Elements_Audio extends Jet_Elements_Base {
 			100
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'volume_slider_style_heading',
 			array(
 				'label' => esc_html__( 'Volume Slider', 'jet-elements' ),
@@ -973,7 +1000,7 @@ class Jet_Elements_Audio extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'volume_slider_bg_color',
 			array(
 				'label' => esc_html__( 'Background color', 'jet-elements' ),
@@ -990,7 +1017,7 @@ class Jet_Elements_Audio extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'volume_slider_margin',
 			array(
 				'label'      => esc_html__( 'Margin', 'jet-elements' ),
@@ -1008,7 +1035,7 @@ class Jet_Elements_Audio extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'total_volume_bar_style_heading',
 			array(
 				'label' => esc_html__( 'Total Volume Bar', 'jet-elements' ),
@@ -1022,7 +1049,7 @@ class Jet_Elements_Audio extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'total_volume_hor_width',
 			array(
 				'label' => esc_html__( 'Width', 'jet-elements' ),
@@ -1045,7 +1072,7 @@ class Jet_Elements_Audio extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'total_volume_hor_height',
 			array(
 				'label' => esc_html__( 'Height', 'jet-elements' ),
@@ -1068,7 +1095,7 @@ class Jet_Elements_Audio extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Background::get_type(),
 			array(
 				'name'     => 'total_volume_background',
@@ -1081,7 +1108,7 @@ class Jet_Elements_Audio extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Border::get_type(),
 			array(
 				'name'     => 'total_volume_border',
@@ -1095,7 +1122,7 @@ class Jet_Elements_Audio extends Jet_Elements_Base {
 			75
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'total_volume_border_radius',
 			array(
 				'label'      => esc_html__( 'Border Radius', 'jet-elements' ),
@@ -1113,7 +1140,7 @@ class Jet_Elements_Audio extends Jet_Elements_Base {
 			75
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'current_volume_heading',
 			array(
 				'label'     => esc_html__( 'Current Volume Bar', 'jet-elements' ),
@@ -1127,7 +1154,7 @@ class Jet_Elements_Audio extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Background::get_type(),
 			array(
 				'name'     => 'current_volume_background',
@@ -1140,7 +1167,7 @@ class Jet_Elements_Audio extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'current_volume_border_radius',
 			array(
 				'label'      => esc_html__( 'Border Radius', 'jet-elements' ),
@@ -1158,7 +1185,7 @@ class Jet_Elements_Audio extends Jet_Elements_Base {
 			75
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'volume_handle_style_heading',
 			array(
 				'label' => esc_html__( 'Volume Handle', 'jet-elements' ),
@@ -1173,7 +1200,7 @@ class Jet_Elements_Audio extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'volume_handle_bg_color',
 			array(
 				'label' => esc_html__( 'Background color', 'jet-elements' ),
@@ -1190,7 +1217,281 @@ class Jet_Elements_Audio extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__end_controls_section();
+		$this->_end_controls_section();
+
+		/**
+		 * `Playback rate` Style Section
+		 */
+		$this->_start_controls_section(
+			'section_playback_rate_style',
+			array(
+				'label' => esc_html__( 'Playback rate', 'jet-elements' ),
+				'tab'   => Controls_Manager::TAB_STYLE,
+				'condition' => array(
+					'speed' => 'yes',
+				),
+			)
+		);
+
+		$this->_add_control(
+			'playback_rate_btn',
+			array(
+				'label' => esc_html__( 'Playback Rate Button', 'jet-elements' ),
+				'type'  => Controls_Manager::HEADING,
+				'condition' => array(
+					'speed' => 'yes',
+				),
+			),
+			25
+		);
+
+		$this->_add_group_control(
+			Group_Control_Typography::get_type(),
+			array(
+				'name'     => 'playback_rate_btn_typography',
+				'selector' => '{{WRAPPER}} ' . $css_scheme['speed_btn'],
+				'condition' => array(
+					'speed' => 'yes',
+				),
+			),
+			50
+		);
+
+		$this->_add_control(
+			'playback_rate_btn_color',
+			array(
+				'label' => esc_html__( 'Color', 'jet-elements' ),
+				'type'  => Controls_Manager::COLOR,
+				'selectors' => array(
+					'{{WRAPPER}} ' . $css_scheme['speed_btn'] => 'color: {{VALUE}};',
+				),
+				'condition' => array(
+					'speed' => 'yes',
+				),
+			),
+			25
+		);
+
+		$this->_add_responsive_control(
+			'playback_rate_btn_margin',
+			array(
+				'label'      => esc_html__( 'Margin', 'jet-elements' ),
+				'type'       => Controls_Manager::DIMENSIONS,
+				'size_units' => array( 'px', '%' ),
+				'selectors'  => array(
+					'{{WRAPPER}} ' . $css_scheme['speed_btn_wrap'] => 'margin: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+				),
+				'condition' => array(
+					'speed' => 'yes',
+				),
+			),
+			25
+		);
+
+		$this->_add_control(
+			'playback_rate_list',
+			array(
+				'label' => esc_html__( 'Playback Rate Selector List', 'jet-elements' ),
+				'type'  => Controls_Manager::HEADING,
+				'condition' => array(
+					'speed' => 'yes',
+				),
+			),
+			25
+		);
+
+		$this->_start_controls_tabs( 'playback_rate_list_style' );
+
+		$this->_start_controls_tab(
+			'playback_rate_selector_normal_style',
+			array(
+				'label' => esc_html__( 'Normal', 'jet-elements' ),
+				'condition' => array(
+					'speed' => 'yes',
+				),
+			)
+		);
+
+		$this->_add_control(
+			'playback_rate_list_label_normal_color',
+			array(
+				'label' => esc_html__( 'Color', 'jet-elements' ),
+				'type'  => Controls_Manager::COLOR,
+				'selectors' => array(
+					'{{WRAPPER}} ' . $css_scheme['speed_selector_label'] => 'color: {{VALUE}};',
+				),
+				'condition' => array(
+					'speed' => 'yes',
+				),
+			),
+			25
+		);
+
+		$this->_add_control(
+			'playback_rate_list_bg_color',
+			array(
+				'label' => esc_html__( 'Background Color', 'jet-elements' ),
+				'type'  => Controls_Manager::COLOR,
+				'selectors' => array(
+					'{{WRAPPER}} ' . $css_scheme['speed_selector'] => 'background-color: {{VALUE}};',
+				),
+				'condition' => array(
+					'speed' => 'yes',
+				),
+			),
+			25
+		);
+
+		$this->_end_controls_tab();
+
+		$this->_start_controls_tab(
+			'playback_rate_selector_hover_style',
+			array(
+				'label' => esc_html__( 'Hover', 'jet-elements' ),
+				'condition' => array(
+					'speed' => 'yes',
+				),
+			)
+		);
+
+		$this->_add_control(
+			'playback_rate_list_label_hover_color',
+			array(
+				'label' => esc_html__( 'Color', 'jet-elements' ),
+				'type'  => Controls_Manager::COLOR,
+				'selectors' => array(
+					'{{WRAPPER}} ' . $css_scheme['speed_selector_label'] . ':hover' => 'color: {{VALUE}};',
+					'{{WRAPPER}} ' . $css_scheme['speed_selector_label'] . '.mejs-speed-selected' => 'color: {{VALUE}};',
+				),
+				'condition' => array(
+					'speed' => 'yes',
+				),
+			),
+			25
+		);
+
+		$this->_add_control(
+			'playback_rate_list_label_hover_bg_color',
+			array(
+				'label' => esc_html__( 'Background Color', 'jet-elements' ),
+				'type'  => Controls_Manager::COLOR,
+				'selectors' => array(
+					'{{WRAPPER}} ' . $css_scheme['speed_selector_item'] . ':hover' => 'background-color: {{VALUE}} !important;',
+				),
+				'condition' => array(
+					'speed' => 'yes',
+				),
+			),
+			25
+		);
+
+		$this->_end_controls_tab();
+
+		$this->_end_controls_tabs();
+
+		$this->_add_responsive_control(
+			'playback_rate_list_items_gap',
+			array(
+				'label' => esc_html__( 'Items Gap', 'jet-elements' ),
+				'type'  => Controls_Manager::SLIDER,
+				'size_units' => array( 'px' ),
+				'range' => array(
+					'px' => array(
+						'min' => 1,
+						'max' => 50,
+					),
+				),
+				'selectors' => array(
+					'{{WRAPPER}} ' . $css_scheme['speed_selector_item'] . ' + *' => 'margin-top: {{SIZE}}{{UNIT}};',
+				),
+				'condition' => array(
+					'speed' => 'yes',
+				),
+				'separator' => 'before',
+			),
+			25
+		);
+
+		$this->_add_responsive_control(
+			'playback_rate_list_width',
+			array(
+				'label' => esc_html__( 'List Width', 'jet-elements' ),
+				'type'  => Controls_Manager::SLIDER,
+				'size_units' => array( 'px' ),
+				'range' => array(
+					'px' => array(
+						'min' => 1,
+						'max' => 200,
+					),
+				),
+				'selectors' => array(
+					'{{WRAPPER}} ' . $css_scheme['speed_selector'] => 'width: {{SIZE}}{{UNIT}};',
+				),
+				'condition' => array(
+					'speed' => 'yes',
+				),
+			),
+			25
+		);
+
+		$this->_add_group_control(
+			Group_Control_Typography::get_type(),
+			array(
+				'name'      => 'playback_rate_list_typography',
+				'selector'  => '{{WRAPPER}} ' . $css_scheme['speed_selector_label'],
+				'separator' => 'before',
+				'condition' => array(
+					'speed' => 'yes',
+				),
+			),
+			50
+		);
+
+		$this->_add_responsive_control(
+			'playback_rate_list_padding',
+			array(
+				'label'      => esc_html__( 'Padding', 'jet-elements' ),
+				'type'       => Controls_Manager::DIMENSIONS,
+				'size_units' => array( 'px', '%' ),
+				'selectors'  => array(
+					'{{WRAPPER}} ' . $css_scheme['speed_selector'] => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+				),
+				'condition' => array(
+					'speed' => 'yes',
+				),
+			),
+			25
+		);
+
+		$this->_add_control(
+			'playback_rate_list_radius',
+			array(
+				'label'      => esc_html__( 'Border Radius', 'jet-elements' ),
+				'type'       => Controls_Manager::DIMENSIONS,
+				'size_units' => array( 'px', '%' ),
+				'selectors'  => array(
+					'{{WRAPPER}} ' . $css_scheme['speed_selector'] => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+				),
+				'condition' => array(
+					'speed' => 'yes',
+				),
+			),
+			75
+		);
+
+		$this->_add_group_control(
+			Group_Control_Border::get_type(),
+			array(
+				'name'      => 'playback_rate_list_border',
+				'selector'  => '{{WRAPPER}} ' . $css_scheme['speed_selector'],
+				'condition' => array(
+					'speed' => 'yes',
+				),
+			),
+			75
+		);
+
+		$this->_end_controls_section();
 	}
 
 	protected function render() {
@@ -1201,10 +1502,6 @@ class Jet_Elements_Audio extends Jet_Elements_Base {
 		switch ( $audio_source ) :
 			case 'self':
 				$audio_url = is_array( $settings['self_url'] ) ? $settings['self_url']['url'] : $settings['self_url'];
-
-				if ( is_numeric( $audio_url ) ) {
-					$audio_url = wp_get_attachment_url( $audio_url );
-				}
 				break;
 
 			case 'external':
@@ -1213,12 +1510,16 @@ class Jet_Elements_Audio extends Jet_Elements_Base {
 
 		endswitch;
 
+		if ( is_numeric( $audio_url ) ) {
+			$audio_url = wp_get_attachment_url( $audio_url );
+		}
+
 		if ( empty( $audio_url ) ) {
 			return;
 		}
 
 		$controls = array( 'playpause' );
-		$available_controls = array( 'current', 'progress', 'duration', 'volume' );
+		$available_controls = array( 'current', 'progress', 'duration', 'volume', 'speed' );
 
 		foreach ( $available_controls as $control ) {
 			if ( isset( $settings[ $control ] ) && filter_var( $settings[ $control ], FILTER_VALIDATE_BOOLEAN ) ) {
@@ -1237,13 +1538,21 @@ class Jet_Elements_Audio extends Jet_Elements_Base {
 			$data_settings['startVolume'] = ( abs( $settings['start_volume']['size'] ) > 1 ) ? 1 : abs( $settings['start_volume']['size'] );
 		}
 
+		if ( isset( $settings['muted'] ) && filter_var( $settings['muted'], FILTER_VALIDATE_BOOLEAN ) ) {
+			$data_settings['muted'] = $settings['muted'];
+		}
+
+		if ( isset( $settings['volume_bar'] ) && filter_var( $settings['volume_bar'], FILTER_VALIDATE_BOOLEAN ) ) {
+			$data_settings['hasVolumeBar'] = $settings['volume_bar'];
+		}
+
 		$data_settings['hideVolumeOnTouchDevices'] = isset( $settings['hide_volume_on_touch_devices'] ) ? filter_var( $settings['hide_volume_on_touch_devices'], FILTER_VALIDATE_BOOLEAN ) : true;
 
 		$this->add_render_attribute(
 			'wrapper',
 			array(
-				'class'         => 'jet-audio',
-				'data-settings' => esc_attr( json_encode( $data_settings ) ),
+				'class'               => 'jet-audio',
+				'data-audio-settings' => esc_attr( json_encode( $data_settings ) ),
 			)
 		);
 
@@ -1270,7 +1579,7 @@ class Jet_Elements_Audio extends Jet_Elements_Base {
 			$this->add_render_attribute( 'player', 'muted', '' );
 		}
 
-		$this->__open_wrap();
+		$this->_open_wrap();
 		?>
 
 		<div <?php $this->print_render_attribute_string( 'wrapper' ); ?>>
@@ -1278,6 +1587,6 @@ class Jet_Elements_Audio extends Jet_Elements_Base {
 		</div>
 
 		<?php
-		$this->__close_wrap();
+		$this->_close_wrap();
 	}
 }

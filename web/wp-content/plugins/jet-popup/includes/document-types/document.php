@@ -15,6 +15,13 @@ class Jet_Popup_Document extends Elementor\Core\Base\Document {
 	}
 
 	/**
+	 * @return string
+	 */
+	public static function get_type() {
+		return 'jet-popup';
+	}
+
+	/**
 	 * @access public
 	 * @static
 	 */
@@ -26,6 +33,7 @@ class Jet_Popup_Document extends Elementor\Core\Base\Document {
 		$properties = parent::get_properties();
 
 		$properties['admin_tab_group'] = '';
+		$properties['support_kit']     = true;
 
 		return $properties;
 	}
@@ -39,8 +47,6 @@ class Jet_Popup_Document extends Elementor\Core\Base\Document {
 		parent::_register_controls();
 
 		$uniq_popup_id = '#' . $this->get_unique_name();
-
-		$roles = Jet_Popup_Utils::get_roles_list();
 
 		$this->start_controls_section(
 			'jet_popup_settings',
@@ -87,6 +93,7 @@ class Jet_Popup_Document extends Elementor\Core\Base\Document {
 					'scroll-trigger'   => esc_html__( 'Page Scrolled(%)', 'jet-popup' ),
 					'try-exit-trigger' => esc_html__( 'Try exit', 'jet-popup' ),
 					'on-date'          => esc_html__( 'On Date', 'jet-popup' ),
+					'on-time'          => esc_html__( 'On Time', 'jet-popup' ),
 					'custom-selector'  => esc_html__( 'Custom Selector Click', 'jet-popup' ),
 				],
 			]
@@ -151,6 +158,40 @@ class Jet_Popup_Document extends Elementor\Core\Base\Document {
 		);
 
 		$this->add_control(
+			'jet_popup_on_time_start_value',
+			[
+				'label'       => esc_html__( 'Start Time', 'jet-popup' ),
+				'type'        => Elementor\Controls_Manager::DATE_TIME,
+				'default'     => '',
+				'picker_options' => [
+					'noCalendar' => true,
+					'enableTime' => true,
+					'dateFormat' => 'H:i',
+				],
+				'condition'   => [
+					'jet_popup_open_trigger' => 'on-time',
+				],
+			]
+		);
+
+		$this->add_control(
+			'jet_popup_on_time_end_value',
+			[
+				'label'       => esc_html__( 'End Time', 'jet-popup' ),
+				'type'        => Elementor\Controls_Manager::DATE_TIME,
+				'default'     => '',
+				'picker_options' => [
+					'noCalendar' => true,
+					'enableTime' => true,
+					'dateFormat' => 'H:i',
+				],
+				'condition'   => [
+					'jet_popup_open_trigger' => 'on-time',
+				],
+			]
+		);
+
+		$this->add_control(
 			'jet_popup_custom_selector',
 			array(
 				'label'       => esc_html__( 'Custom Selector', 'jet-popup' ),
@@ -161,6 +202,18 @@ class Jet_Popup_Document extends Elementor\Core\Base\Document {
 					'jet_popup_open_trigger' => 'custom-selector',
 				),
 			)
+		);
+
+		$this->add_control(
+			'jet_popup_prevent_scrolling',
+			[
+				'label'        => esc_html__( 'Disable Page Scrolling', 'jet-popup' ),
+				'type'         => Elementor\Controls_Manager::SWITCHER,
+				'label_on'     => esc_html__( 'Yes', 'jet-popup' ),
+				'label_off'    => esc_html__( 'No', 'jet-popup' ),
+				'return_value' => 'yes',
+				'default'      => 'no',
+			]
 		);
 
 		$this->add_control(
@@ -230,31 +283,17 @@ class Jet_Popup_Document extends Elementor\Core\Base\Document {
 			]
 		);
 
-		$this->end_controls_section();
-
-		$this->start_controls_section(
-			'jet_popup_conditions',
+		$this->add_control(
+			'jet_popup_conditions_manager',
 			[
-				'label' => __( 'Display Settings', 'jet-popup' ),
-				'tab'   => Elementor\Controls_Manager::TAB_SETTINGS,
+				'label'       => esc_html__( 'Display Conditions', 'jet-popup' ),
+				'description' => esc_html__( 'Set the conditions that determine where your Popup is used throughout your site.', 'jet-popup' ),
+				'type'        => 'button',
+				'text'        => __( 'Manager', 'jet-popup' ),
+				'event'       => 'jet-popup-conditions-manager',
+				'button_type' => 'default',
 			]
 		);
-
-		jet_popup()->conditions->register_condition_button( $this );
-
-		if ( ! empty( $roles ) ) {
-			$this->add_control(
-				'jet_role_condition',
-				[
-					'label'       => __( 'Available For Roles', 'jet-popup' ),
-					'type'        => Elementor\Controls_Manager::SELECT2,
-					'label_block' => true,
-					'multiple'    => true,
-					'options'     => $roles,
-					'separator'   => 'before',
-				]
-			);
-		}
 
 		$this->end_controls_section();
 

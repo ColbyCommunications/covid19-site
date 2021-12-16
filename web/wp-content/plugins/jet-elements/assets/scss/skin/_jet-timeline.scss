@@ -56,11 +56,11 @@
 	
 	&--align-left {
 		.timeline-item__card {
-			margin-left: 10px;
+			@include margin-start(10px);
 		}
 		
 		.jet-timeline__line {
-			margin-left: 20px;
+			@include margin-start(20px);
 		}
 		
 		.timeline-item__card-arrow {
@@ -69,11 +69,11 @@
 	
 	&--align-right {
 		.timeline-item__card {
-			margin-right: 10px;
+			@include margin-end(10px);
 		}
 		
 		.jet-timeline__line {
-			margin-right: 20px;
+			@include margin-end(10px);
 		}
 		
 		.timeline-item__card-arrow {

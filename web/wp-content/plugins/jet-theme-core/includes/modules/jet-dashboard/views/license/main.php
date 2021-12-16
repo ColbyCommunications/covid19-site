@@ -1,49 +1,75 @@
-<div class="jet-dashboard-license-page">
-	<div class="ready-for-use-plugins cx-vui-panel">
-		<cx-vui-button
-			class="license-manager-button"
-			button-style="accent"
-			size="mini"
-			@click="showLicenseManager"
-		>
-			<span slot="label">License Manager</span>
-		</cx-vui-button>
-
-		<div
-			class="installed-plugins"
-			v-if="installedPluginListVisible"
-		>
-			<div class="cx-vui-subtitle">Your Installed JetPlugins</div>
-			<div class="plugin-list">
-				<plugin-item-installed
-					v-for="( pluginData, index ) in installedPluginList"
-					:key="index"
-					:plugin-data="pluginData"
-				></plugin-item-installed>
+<div
+	class="jet-dashboard-license-page"
+	:class="{ 'proccesing-state': proccesingState }"
+>
+	<div
+		class="installed-plugins jet-dashboard-page__panel"
+		v-if="installedPluginListVisible"
+	>
+		<div class="cx-vui-subtitle cx-vui-subtitle--controls">
+			<span class="cx-vui-subtitle__label"><?php _e( 'Your Installed JetPlugins', 'jet-dashboard' ); ?></span>
+			<div class="cx-vui-subtitle__buttons">
+				<cx-vui-button
+					button-style="accent"
+					size="mini"
+					:loading="checkUpdatesProcessed"
+					@click="checkPluginsUpdate"
+				>
+					<span slot="label">
+						<svg class="button-icon" width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+							<path d="M11.7085 2.29171C10.5001 1.08337 8.8418 0.333374 7.00013 0.333374C3.3168 0.333374 0.341797 3.31671 0.341797 7.00004C0.341797 10.6834 3.3168 13.6667 7.00013 13.6667C10.1085 13.6667 12.7001 11.5417 13.4418 8.66671H11.7085C11.0251 10.6084 9.17513 12 7.00013 12C4.2418 12 2.00013 9.75837 2.00013 7.00004C2.00013 4.24171 4.2418 2.00004 7.00013 2.00004C8.38346 2.00004 9.6168 2.57504 10.5168 3.48337L7.83346 6.16671H13.6668V0.333374L11.7085 2.29171Z" fill="#007CBA"/>
+						</svg>
+						<span><?php _e( 'Check For Updates', 'jet-dashboard' ); ?></span>
+					</span>
+				</cx-vui-button>
+				<cx-vui-button
+					class="license-manager-button"
+					button-style="accent"
+					size="mini"
+					@click="showLicenseManager"
+				>
+					<span slot="label">
+						<svg class="button-icon" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+							<path d="M15.4985 0H12.4897C12.4166 0 12.3487 0.0156709 12.286 0.0470127C12.2338 0.0679073 12.1867 0.104473 12.145 0.156709L5.7669 6.47209C5.62063 6.44074 5.46392 6.41463 5.29677 6.39373C5.12961 6.37284 4.96768 6.36239 4.81097 6.36239C4.16324 6.36239 3.54685 6.48776 2.9618 6.73849C2.37675 6.97878 1.85961 7.32354 1.41038 7.77277C0.961149 8.222 0.611166 8.73914 0.360431 9.32419C0.120144 9.90924 0 10.5309 0 11.189C0 11.8368 0.120144 12.4532 0.360431 13.0382C0.611166 13.6232 0.961149 14.1404 1.41038 14.5896C1.85961 15.0389 2.37675 15.3836 2.9618 15.6239C3.54685 15.8746 4.16324 16 4.81097 16C5.46915 16 6.09076 15.8746 6.67581 15.6239C7.26086 15.3836 7.778 15.0389 8.22723 14.5896C8.80183 14.015 9.19882 13.3464 9.41822 12.5837C9.64806 11.8211 9.68462 11.0375 9.52791 10.2331L10.8913 8.86974C10.9331 8.82795 10.9644 8.78093 10.9853 8.7287C11.0167 8.66601 11.0323 8.59811 11.0323 8.52498V7.02057H12.5367C12.6934 7.02057 12.8136 6.97356 12.8972 6.87953C12.9912 6.7855 13.0382 6.66536 13.0382 6.5191V5.01469H14.5426C14.6157 5.01469 14.6784 5.00424 14.7307 4.98335C14.7933 4.95201 14.8508 4.91022 14.903 4.85798L15.906 3.85504C15.9269 3.81326 15.9478 3.76624 15.9687 3.71401C15.9896 3.65132 16 3.58342 16 3.51028V0.501469C16 0.355207 15.953 0.235064 15.859 0.141038C15.7649 0.0470127 15.6448 0 15.4985 0ZM4.96768 12.7875C4.79008 12.9651 4.5968 13.0957 4.38786 13.1792C4.18936 13.2524 3.96474 13.2889 3.71401 13.2889C3.46327 13.2889 3.23343 13.2419 3.02449 13.1479C2.82599 13.0539 2.63794 12.9337 2.46033 12.7875C2.28273 12.6099 2.15214 12.4218 2.06856 12.2233C1.99543 12.0144 1.95886 11.7845 1.95886 11.5338C1.95886 11.2831 2.00588 11.0584 2.0999 10.8599C2.19393 10.651 2.31407 10.4577 2.46033 10.2801C2.7842 9.95625 3.19164 9.79432 3.68266 9.79432C4.18413 9.79432 4.5968 9.95625 4.92067 10.2801C5.09827 10.4577 5.22364 10.651 5.29677 10.8599C5.38035 11.0584 5.42214 11.2831 5.42214 11.5338C5.42214 11.7845 5.38035 12.0144 5.29677 12.2233C5.22364 12.4218 5.11394 12.6099 4.96768 12.7875Z" fill="#D3D3D3"/>
+						</svg>
+						<span><?php _e( 'License Manager', 'jet-dashboard' ); ?></span>
+					</span>
+				</cx-vui-button>
 			</div>
 		</div>
-
-		<div
-			class="avaliable-plugins"
-			v-if="avaliablePluginListVisible"
-		>
-			<div class="cx-vui-subtitle">The following plugins are also included in your license</div>
-			<div class="plugin-list">
-				<plugin-item-avaliable
-					v-for="( pluginData, index ) in avaliablePluginList"
-					:key="index"
-					:plugin-data="pluginData"
-				></plugin-item-avaliable>
-			</div>
+		<div class="plugin-list plugin-list--installed-plugins">
+			<plugin-item-installed
+				v-for="( pluginData, index ) in installedPluginList"
+				:key="index"
+				:plugin-data="pluginData"
+			></plugin-item-installed>
 		</div>
 	</div>
 
 	<div
-		class="more-plugins"
+		class="avaliable-plugins jet-dashboard-page__panel"
+		v-if="avaliablePluginListVisible"
+	>
+		<div class="cx-vui-subtitle">
+			<span class="cx-vui-subtitle__label"><?php _e( 'More included JetPlugins with your licence', 'jet-dashboard' ); ?></span>
+		</div>
+		<div class="plugin-list plugin-list--avaliable-plugins">
+			<plugin-item-avaliable
+				v-for="( pluginData, index ) in avaliablePluginList"
+				:key="index"
+				:plugin-data="pluginData"
+			></plugin-item-avaliable>
+		</div>
+	</div>
+
+	<div
+		class="more-plugins jet-dashboard-page__panel"
 		v-if="morePluginListVisible"
 	>
-		<div class="cx-vui-subtitle">Get More Plugins</div>
-		<div class="plugin-list--more-plugins">
+		<div class="cx-vui-subtitle">
+			<span class="cx-vui-subtitle__label"><?php _e( 'Get More Plugins', 'jet-dashboard' ); ?></span>
+		</div>
+		<div class="plugin-list plugin-list--more-plugins">
 			<plugin-item-more
 				v-for="( pluginData, index ) in morePluginList"
 				:key="index"
@@ -75,17 +101,17 @@
 			body-width="520px"
 		>
 			<div slot="title">
-				<div class="cx-vui-popup__header-label">JetPlugins License Deactivation</div>
+				<div class="cx-vui-popup__header-label"><?php _e( 'JetPlugins License Deactivation', 'jet-dashboard' ); ?></div>
 			</div>
 			<div slot="content">
-				<p>Your license includes several plugins within the package. License deactivation in one plugin disables it in the rest of them. You can manage it through the License Manager.</p>
+				<p><?php _e( 'Your license includes several plugins within the package. License deactivation in one plugin disables it in the rest of them. You can manage it through the License Manager.', 'jet-dashboard' ); ?></p>
 				<cx-vui-button
 					class="show-license-manager"
 					button-style="accent"
 					size="mini"
 					@click="showLicenseManager"
 				>
-					<span slot="label">License Manager</span>
+					<span slot="label"><?php _e( 'License Manager', 'jet-dashboard' ); ?></span>
 				</cx-vui-button>
 			</div>
 		</cx-vui-popup>
@@ -98,7 +124,7 @@
 			body-width="520px"
 		>
 			<div slot="title">
-				<div class="cx-vui-popup__header-label">JetPlugin’s Update</div>
+				<div class="cx-vui-popup__header-label"><?php _e( 'JetPlugin’s Update', 'jet-dashboard' ); ?></div>
 			</div>
 			<div slot="content">
 				<svg width="91" height="100" viewBox="0 0 91 100" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -109,18 +135,19 @@
 					<path d="M50.0802 80.0007C54.6798 79.9953 58.4073 76.2678 58.4134 71.6682V63.335C58.4134 62.4142 57.6665 61.668 56.7465 61.668C55.8256 61.668 55.0795 62.4142 55.0795 63.335V71.6682C55.0795 74.4292 52.8412 76.6675 50.0802 76.6675C47.3185 76.6675 45.0801 74.4292 45.0801 71.6682V63.335C45.0801 62.4142 44.334 61.668 43.4139 61.668C42.4931 61.668 41.747 62.4142 41.747 63.335V71.6682C41.7523 76.2678 45.4799 79.9953 50.0802 80.0007V80.0007Z" fill="black"/>
 					<path d="M26.1631 49.8971C26.5773 50.0528 27.0366 50.0367 27.4387 49.8529C27.8415 49.6698 28.155 49.3333 28.3091 48.9191C28.5891 48.1539 29.0095 47.4474 29.5473 46.8356C30.0409 46.2695 30.6436 45.8087 31.3196 45.4807C32.644 44.8436 34.1866 44.8436 35.511 45.4807C36.1854 45.8087 36.7873 46.2695 37.2809 46.8356C37.8188 47.4467 38.2391 48.1524 38.5191 48.9176C38.7617 49.5698 39.3842 50.0024 40.0808 50.0024C40.2799 50.0024 40.4783 49.9666 40.6652 49.8971C41.5272 49.5744 41.9644 48.6139 41.6424 47.7526C41.2183 46.6052 40.5858 45.5463 39.7771 44.6293C38.9875 43.7283 38.024 42.9959 36.9437 42.4756C34.7084 41.406 32.1084 41.406 29.8723 42.4756C28.7928 42.9951 27.8293 43.7275 27.0397 44.6293C26.2302 45.5463 25.5985 46.6052 25.1744 47.7526C25.0202 48.1676 25.0378 48.6277 25.2232 49.0297C25.4086 49.4325 25.7465 49.7445 26.1631 49.8971Z" fill="black"/>
 				</svg>
-				<p><span>Ooops!</span>Sorry, but you need to activate license to update your JetPlugin</p>
+				<p><span>Ooops!</span><?php _e( 'Sorry, but you need to activate license to update your JetPlugin', 'jet-dashboard' ); ?></p>
 				<cx-vui-button
 					class="cx-vui-button--style-accent"
 					button-style="default"
 					size="mini"
 					@click="showPopupActivation"
 				>
-					<span slot="label">Activate License</span>
+					<span slot="label"><?php _e( 'Activate License', 'jet-dashboard' ); ?></span>
 				</cx-vui-button>
 			</div>
 		</cx-vui-popup>
 	</transition>
+
 	<transition name="popup">
 		<cx-vui-popup
 			class="license-manager-popup"
@@ -128,7 +155,7 @@
 			:footer="false"
 		>
 			<div class="cx-vui-popup__header-inner" slot="title">
-				<div class="cx-vui-popup__header-label">Your Licenses</div>
+				<div class="cx-vui-popup__header-label"><?php _e( 'Your Licenses', 'jet-dashboard' ); ?></div>
 				<cx-vui-button
 					class="add-new-license"
 					button-style="accent"
@@ -137,12 +164,12 @@
 				>
 					<span slot="label">
 						<span class="dashicons dashicons-plus"></span>
-						<span>Add New License</span>
+						<span><?php _e( 'Add New License', 'jet-dashboard' ); ?></span>
 					</span>
 				</cx-vui-button>
 			</div>
 			<div class="license-manager" slot="content">
-				<p v-if="licenseList.length === 0">Add and Activate license for automatic updates, awesome support and bla bla features</p>
+				<p v-if="licenseList.length === 0"><?php _e( 'Add and Activate license for automatic updates, awesome support, useful features and more', 'jet-dashboard' ); ?></p>
 				<div
 					class="license-list"
 				>
@@ -156,6 +183,7 @@
 			</div>
 		</cx-vui-popup>
 	</transition>
+
 	<transition name="popup">
 		<cx-vui-popup
 			class="responce-data-popup"
@@ -171,33 +199,5 @@
 			></responce-info>
 		</cx-vui-popup>
 	</transition>
-	<transition name="popup">
-		<cx-vui-popup
-			class="debug-console-popup"
-			v-model="debugConsoleVisible"
-			:footer="false"
-			body-width="400px"
-		>
-			<div slot="title">
-				<div class="cx-vui-popup__header-label">Debug Console</div>
-			</div>
-			<div class="debug-console-popup__form" slot="content">
-				<cx-vui-select
-					size="fullwidth"
-					placeholder="Choose Action"
-					:prevent-wrap="true"
-					:options-list="debugActionList"
-					v-model="debugConsoleAction"
-				></cx-vui-select>
-				<cx-vui-button
-					button-style="accent"
-					size="mini"
-					:loading="debugConsoleActionProcessed"
-					@click="executeAction"
-				>
-					<span slot="label">Execute</span>
-				</cx-vui-button>
-			</div>
-		</cx-vui-popup>
-	</transition>
+
 </div>

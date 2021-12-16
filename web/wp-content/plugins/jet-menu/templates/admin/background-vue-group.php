@@ -1,11 +1,7 @@
 <cx-vui-switcher
 	name="<?php echo $args['name'] . '-switch'; ?>"
 	label="<?php echo sprintf( esc_html__( '%s background settings', 'jet-menu' ), $args['label'] ); ?>"
-	description="<?php
-		echo sprintf( esc_html__( 'Read more %1$s', 'jet-menu' ),
-			htmlspecialchars( "<a href='https://developer.mozilla.org/en-US/docs/Web/CSS/background' target='_blank'>background</a>", ENT_QUOTES )
-		);
-	?>"
+	description="<?php esc_html__( 'Read more about', 'jet-menu' ); ?> <a href='https://developer.mozilla.org/en-US/docs/Web/CSS/background' target='_blank'>background</a> "
 	:wrapper-css="[ 'equalwidth' ]"
 	return-true="true"
 	return-false="false"
@@ -91,11 +87,7 @@
 		<cx-vui-select
 			name="<?php echo $args['name'] . '-position'; ?>"
 			label="<?php echo sprintf( esc_html__( '%s background image position', 'jet-menu' ), $args['label'] ); ?>"
-			description="<?php
-				echo sprintf( esc_html__( 'Read more %1$s', 'jet-menu' ),
-					htmlspecialchars( "<a href='https://developer.mozilla.org/en-US/docs/Web/CSS/background-position' target='_blank'>background position</a>", ENT_QUOTES )
-				);
-			?>"
+			description="<?php echo esc_html__( 'Read more about', 'jet-menu' ); ?> <a href='https://developer.mozilla.org/en-US/docs/Web/CSS/background-position' target='_blank'>background position</a>"
 			:wrapper-css="[ 'equalwidth' ]"
 			size="fullwidth"
 			:options-list="pageOptions['<?php echo $args['name'] . '-position'; ?>']['options']"
@@ -106,11 +98,7 @@
 		<cx-vui-select
 			name="<?php echo $args['name'] . '-attachment'; ?>"
 			label="<?php echo sprintf( esc_html__( '%s background attachment', 'jet-menu' ), $args['label'] ); ?>"
-			description="<?php
-				echo sprintf( esc_html__( 'Read more %1$s', 'jet-menu' ),
-					htmlspecialchars( "<a href='https://developer.mozilla.org/en-US/docs/Web/CSS/background-attachment' target='_blank'>background attachment</a>", ENT_QUOTES )
-				);
-			?>"
+			description="<?php echo esc_html__( 'Read more about', 'jet-menu' ); ?> <a href='https://developer.mozilla.org/en-US/docs/Web/CSS/background-attachment' target='_blank'>background attachment</a>"
 			:wrapper-css="[ 'equalwidth' ]"
 			size="fullwidth"
 			:options-list="pageOptions['<?php echo $args['name'] . '-attachment'; ?>']['options']"
@@ -121,11 +109,7 @@
 		<cx-vui-select
 			name="<?php echo $args['name'] . '-repeat'; ?>"
 			label="<?php echo sprintf( esc_html__( '%s background repeat', 'jet-menu' ), $args['label'] ); ?>"
-			description="<?php
-				echo sprintf( esc_html__( 'Read more %1$s', 'jet-menu' ),
-					htmlspecialchars( "<a href='https://developer.mozilla.org/en-US/docs/Web/CSS/background-repeat' target='_blank'>background repeat</a>", ENT_QUOTES )
-				);
-			?>"
+			description="<?php echo esc_html__( 'Read more about', 'jet-menu' ); ?><a href='https://developer.mozilla.org/en-US/docs/Web/CSS/background-repeat' target='_blank'>background repeat</a>"
 			:wrapper-css="[ 'equalwidth' ]"
 			size="fullwidth"
 			:options-list="pageOptions['<?php echo $args['name'] . '-repeat'; ?>']['options']"
@@ -136,11 +120,7 @@
 		<cx-vui-select
 			name="<?php echo $args['name'] . '-size'; ?>"
 			label="<?php echo sprintf( esc_html__( '%s background size', 'jet-menu' ), $args['label'] ); ?>"
-			description="<?php
-				echo sprintf( esc_html__( 'Read more %1$s', 'jet-menu' ),
-					htmlspecialchars( "<a href='https://developer.mozilla.org/en-US/docs/Web/CSS/background-size' target='_blank'>background size</a>", ENT_QUOTES )
-				);
-			?>"
+			description="<?php echo esc_html__( 'Read more about', 'jet-menu' ); ?> <a href='https://developer.mozilla.org/en-US/docs/Web/CSS/background-size' target='_blank'>background size</a>"
 			:wrapper-css="[ 'equalwidth' ]"
 			size="fullwidth"
 			:options-list="pageOptions['<?php echo $args['name'] . '-size'; ?>']['options']"

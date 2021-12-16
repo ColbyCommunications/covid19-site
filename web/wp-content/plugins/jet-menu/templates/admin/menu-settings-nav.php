@@ -42,7 +42,7 @@
 
 							<cx-vui-switcher
 								name="enabled"
-								label="<?php _e( 'Mega submenu enabled', 'jet-menu' ); ?>"
+								label="<?php _e( 'Use Mega content', 'jet-menu' ); ?>"
 								:wrapper-css="[ 'equalwidth' ]"
 								return-true="true"
 								return-false="false"
@@ -51,7 +51,7 @@
 
 							<div class="cx-vui-component cx-vui-component--equalwidth">
 								<div class="cx-vui-component__meta">
-									<label class="cx-vui-component__label"><?php _e( 'Mega menu item content', 'jet-menu' ); ?></label>
+									<label class="cx-vui-component__label"><?php _e( 'Mega content', 'jet-menu' ); ?></label>
 								</div>
 								<div class="cx-vui-component__control">
 									<cx-vui-button
@@ -59,15 +59,15 @@
 										size="mini"
 										@click="openEditor"
 									>
-										<span slot="label"><?php _e( 'Edit Mega Menu Item Content', 'jet-menu' ); ?></span>
+										<span slot="label"><?php _e( 'Edit Mega content', 'jet-menu' ); ?></span>
 									</cx-vui-button>
 								</div>
 							</div>
 
 							<cx-vui-select
 								name="custom_mega_menu_position"
-								label="<?php _e( 'Mega menu position', 'jet-menu' ); ?>"
-								description="<?php _e( 'Megamenu container position relative to item. Desktop layout only.', 'jet-menu' ); ?>"
+								label="<?php _e( 'Mega content position', 'jet-menu' ); ?>"
+								description="<?php _e( 'Mega container position relative to item', 'jet-menu' ); ?>"
 								:wrapper-css="[ 'equalwidth' ]"
 								size="fullwidth"
 								:options-list="controlData['custom_mega_menu_position']['options']"
@@ -78,8 +78,8 @@
 
 							<cx-vui-input
 								name="custom_mega_menu_width"
-								label="<?php _e( 'Custom mega menu width', 'jet-menu' ); ?>"
-								description="<?php _e( 'Set custom mega menu width for this item(px). Desktop layout only.', 'jet-menu' ); ?>"
+								label="<?php _e( 'Custom mega content width', 'jet-menu' ); ?>"
+								description="<?php _e( 'Set custom mega content width for container(px).', 'jet-menu' ); ?>"
 								:wrapper-css="[ 'equalwidth' ]"
 								size="fullwidth"
 								type="number"
@@ -113,48 +113,13 @@
 					>
 						<div class="cx-vui-tabs-panel__inner" v-if="!getItemDataState">
 
-							<cx-vui-select
-								name="menu_icon_type"
-								label="<?php _e( 'Icon type', 'jet-menu' ); ?>"
-								size="fullwidth"
-								:wrapper-css="[ 'equalwidth' ]"
-								:options-list="controlData['menu_icon_type']['options']"
-								v-model="controlData['menu_icon_type']['value']"
-							>
-							</cx-vui-select>
-
-							<cx-vui-iconpicker
-								name="menu_icon"
-								label="<?php _e( 'Item icon', 'jet-menu' ); ?>"
-								icon-base="fa"
-								icon-prefix="fa-"
-								:icons="iconSet"
-								:wrapper-css="[ 'equalwidth' ]"
-								size="fullwidth"
-								v-model="controlData['menu_icon']['value']"
-								:conditions="[
-									{
-										input: controlData['menu_icon_type']['value'],
-										compare: 'equal',
-										value: 'icon',
-									}
-								]"
-							></cx-vui-iconpicker>
-
 							<cx-vui-wp-media
-								label="<?php _e( 'Item SVG', 'jet-menu' ); ?>"
+								label="<?php _e( 'SVG Icon', 'jet-menu' ); ?>"
 								name="menu_svg_id"
 								return-type="string"
 								:multiple="false"
 								:wrapper-css="[ 'equalwidth' ]"
 								v-model="controlData['menu_svg']['value']"
-								:conditions="[
-									{
-										input: controlData['menu_icon_type']['value'],
-										compare: 'equal',
-										value: 'svg',
-									}
-								]"
 							></cx-vui-wp-media>
 
 							<cx-vui-colorpicker
@@ -254,7 +219,7 @@
 
 							<cx-vui-dimensions
 								name="item_padding"
-								label="<?php _e( 'Set custom padding for this item', 'jet-menu' ); ?>"
+								label="<?php _e( 'Item custom padding', 'jet-menu' ); ?>"
 								:wrapper-css="[ 'equalwidth' ]"
 								:units="[
 									{
@@ -267,49 +232,6 @@
 								v-model="controlData['item_padding']['value']"
 							>
 							</cx-vui-dimensions>
-
-							<div class="save-control">
-								<cx-vui-button
-									button-style="accent-border"
-									size="mini"
-									@click="saveItemSettings"
-									:loading="itemSavingState"
-								>
-									<span slot="label"><?php _e( 'Save', 'jet-menu' ); ?></span>
-								</cx-vui-button>
-							</div>
-						</div>
-
-					</cx-vui-tabs-panel>
-
-					<cx-vui-tabs-panel
-						name="vertical-menu-tab"
-						label="<?php _e( 'Vertical Menu Widget', 'jet-menu' ); ?>"
-						key="vertical-menu-tab"
-						v-if="isTopItem"
-					>
-						<div class="cx-vui-tabs-panel__inner" v-if="!getItemDataState">
-							<cx-vui-input
-								name="mega_menu_width"
-								label="<?php _e( 'Custom mega menu width', 'jet-menu' ); ?>"
-								description="<?php _e( 'Set custom mega menu width for this item (px)', 'jet-menu' ); ?>"
-								:wrapper-css="[ 'equalwidth' ]"
-								size="fullwidth"
-								type="number"
-								:min="200"
-								:max="2000"
-								:step="100"
-								v-model="controlData['mega_menu_width']['value']">
-							</cx-vui-input>
-
-							<cx-vui-select
-								name="vertical_mega_menu_position"
-								label="<?php _e( 'Vertical mega menu position', 'jet-menu' ); ?>"
-								:wrapper-css="[ 'equalwidth' ]"
-								size="fullwidth"
-								:options-list="controlData['vertical_mega_menu_position']['options']"
-								v-model="controlData['vertical_mega_menu_position']['value']">
-							</cx-vui-select>
 
 							<div class="save-control">
 								<cx-vui-button

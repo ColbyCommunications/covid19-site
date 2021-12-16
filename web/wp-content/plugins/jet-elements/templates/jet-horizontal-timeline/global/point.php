@@ -3,4 +3,4 @@
  * Point item template
  */
 
-$this->__render_point_content( $item_settings );
+$this->_render_point_content( $item_settings );

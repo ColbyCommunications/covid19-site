@@ -59,9 +59,9 @@ if ( ! class_exists( 'Jet_Popup_Library' ) ) {
 		public function add_popup_library_page() {
 
 			add_submenu_page(
-				'jet-dashboard',
-				__( 'JetPopup Library', 'jet-popup' ),
-				__( 'JetPopup Library', 'jet-popup' ),
+				'edit.php?post_type=' . jet_popup()->post_type->slug(),
+				__( 'Preset Library', 'jet-popup' ),
+				__( 'Preset Library', 'jet-popup' ),
 				'edit_pages',
 				$this->key,
 				[ $this, 'library_page_render'],
@@ -81,7 +81,7 @@ if ( ! class_exists( 'Jet_Popup_Library' ) ) {
 				esc_url( admin_url( 'admin.php' ) )
 			);
 
-			require jet_popup()->plugin_path( 'templates/vue-templates/preset-page.php' );
+			require jet_popup()->plugin_path( 'templates/vue-templates/admin/preset-page.php' );
 		}
 
 		/**
@@ -116,28 +116,35 @@ if ( ! class_exists( 'Jet_Popup_Library' ) ) {
 					true
 				);
 
-				$localize_data['version'] = jet_popup()->get_version();
-				$localize_data['requiredPluginData'] = [
-					'jet-elements' => [
-						'badge' => 'https://account.crocoblock.com/free-download/images/jetlogo/jetelements.svg',
-						'link'  => 'https://crocoblock.com/plugins/jetelements/',
-					],
-					'jet-blocks'   => [
-						'badge' => 'https://account.crocoblock.com/free-download/images/jetlogo/jetblocks.svg',
-						'link'  => 'https://crocoblock.com/plugins/jetblocks/',
-					],
-					'jet-tricks'   => [
-						'badge' => 'https://account.crocoblock.com/free-download/images/jetlogo/jettricks.svg',
-						'link'  => 'https://crocoblock.com/plugins/jettricks/',
-					],
-					'cf7'          => [
-						'badge' => jet_popup()->plugin_url( 'assets/image/cf7-badge.png' ),
-						'link'  => 'https://wordpress.org/plugins/contact-form-7/',
-					],
-				];
-
-				$localize_data['libraryPresetsUrl'] = 'https://jetpopup.zemez.io/wp-json/croco/v1/presets';
-				$localize_data['libraryPresetsCategoryUrl'] = 'https://jetpopup.zemez.io/wp-json/croco/v1/presets-categories';
+				$localize_data = array(
+					'version'            => jet_popup()->get_version(),
+					'requiredPluginData' => array(
+						'jet-elements' => array(
+							'badge' => 'https://account.crocoblock.com/free-download/images/jetlogo/jetelements.svg',
+							'link'  => 'https://crocoblock.com/plugins/jetelements/',
+						),
+						'jet-blocks'   => array(
+							'badge' => 'https://account.crocoblock.com/free-download/images/jetlogo/jetblocks.svg',
+							'link'  => 'https://crocoblock.com/plugins/jetblocks/',
+						),
+						'jet-tricks'   => array(
+							'badge' => 'https://account.crocoblock.com/free-download/images/jetlogo/jettricks.svg',
+							'link'  => 'https://crocoblock.com/plugins/jettricks/',
+						),
+						'cf7'          => array(
+							'badge' => jet_popup()->plugin_url( 'assets/image/cf7-badge.png' ),
+							'link'  => 'https://wordpress.org/plugins/contact-form-7/',
+						),
+					),
+					'libraryPresetsUrl'         => 'https://crocoblock.com/interactive-popups/wp-json/croco/v1/presets',
+					'libraryPresetsCategoryUrl' => 'https://crocoblock.com/interactive-popups/wp-json/croco/v1/presets-categories',
+					'pluginActivated'           => filter_var( Jet_Popup_Utils::get_plugin_license(), FILTER_VALIDATE_BOOLEAN ) ? 'true' : 'false',
+					'createPopupLink' => add_query_arg(
+						array( 'action' => 'jet_popup_create_from_library_preset' ),
+						esc_url( admin_url( 'admin.php' ) )
+					),
+					'licenseActivationLink' => \Jet_Dashboard\Dashboard::get_instance()->get_dashboard_page_url() . '#license-manager',
+				);
 
 				$localize_data = apply_filters( 'jet-popup/admin/localized-data', $localize_data );
 
@@ -157,12 +164,11 @@ if ( ! class_exists( 'Jet_Popup_Library' ) ) {
 
 			$vue_templates = [
 				'preset-library',
-				'preset-filters',
 				'preset-list',
 				'preset-item',
 			];
 
-			foreach ( glob( jet_popup()->plugin_path( 'templates/vue-templates/' ) . '*.php' ) as $file ) {
+			foreach ( glob( jet_popup()->plugin_path( 'templates/vue-templates/admin/' ) . '*.php' ) as $file ) {
 				$path_info = pathinfo( $file );
 				$template_name = $path_info['filename'];
 

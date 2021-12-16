@@ -183,7 +183,10 @@ class Jet_Blocks_Nav_Walker extends Walker_Nav_Menu {
 		$item_output .= '<a'. $attributes .'>';
 
 		if ( in_array( 'menu-item-has-children', $item->classes ) ) {
-			$arrow_icon = isset( $args->widget_settings['dropdown_icon'] ) ? $args->widget_settings['dropdown_icon'] : 'fa fa-angle-down';
+			$top_arrow_icon = isset( $args->widget_settings['dropdown_icon'] ) ? $args->widget_settings['dropdown_icon'] : '<i class="fa fa-angle-down"></i>';
+			$sub_arrow_icon = isset( $args->widget_settings['dropdown_icon_sub'] ) ? $args->widget_settings['dropdown_icon_sub'] : '<i class="fa fa-angle-right"></i>';
+
+			$arrow_icon = ( 0 === $depth ) ? $top_arrow_icon : $sub_arrow_icon;
 
 			if ( $arrow_icon ) {
 				$title = $title . $this->get_dropdown_arrow_html( $arrow_icon );
@@ -221,11 +224,11 @@ class Jet_Blocks_Nav_Walker extends Walker_Nav_Menu {
 
 		$format = apply_filters(
 			'jet-blocks/nav-menu/dropdown-arrow-format',
-			'<i class="jet-nav-arrow %s"></i>',
+			'<div class="jet-nav-arrow">%s</div>',
 			$icon
 		);
 
-		return sprintf( $format, esc_attr( $icon ) );
+		return sprintf( $format, htmlspecialchars_decode( $icon ) );
 	}
 
 	/**

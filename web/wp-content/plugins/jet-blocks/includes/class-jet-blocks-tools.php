@@ -19,7 +19,7 @@ if ( ! class_exists( 'Jet_Blocks_Tools' ) ) {
 		 * A reference to an instance of this class.
 		 *
 		 * @since 1.0.0
-		 * @var   object
+		 * @var   Jet_Blocks_Tools
 		 */
 		private static $instance = null;
 
@@ -400,11 +400,34 @@ if ( ! class_exists( 'Jet_Blocks_Tools' ) ) {
 			return defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG;
 		}
 
+		public function validate_html_tag( $tag ) {
+			$allowed_tags = array(
+				'article',
+				'aside',
+				'div',
+				'footer',
+				'h1',
+				'h2',
+				'h3',
+				'h4',
+				'h5',
+				'h6',
+				'header',
+				'main',
+				'nav',
+				'p',
+				'section',
+				'span',
+			);
+
+			return in_array( strtolower( $tag ), $allowed_tags ) ? $tag : 'div';
+		}
+
 		/**
 		 * Returns the instance.
 		 *
 		 * @since  1.0.0
-		 * @return object
+		 * @return Jet_Blocks_Tools
 		 */
 		public static function get_instance( $shortcodes = array() ) {
 
@@ -421,7 +444,7 @@ if ( ! class_exists( 'Jet_Blocks_Tools' ) ) {
 /**
  * Returns instance of Jet_Blocks_Tools
  *
- * @return object
+ * @return Jet_Blocks_Tools
  */
 function jet_blocks_tools() {
 	return Jet_Blocks_Tools::get_instance();

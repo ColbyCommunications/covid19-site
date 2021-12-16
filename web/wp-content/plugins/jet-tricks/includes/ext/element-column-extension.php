@@ -86,6 +86,24 @@ if ( ! class_exists( 'Jet_Tricks_Elementor_Column_Extension' ) ) {
 		 */
 		public function after_column_section_layout( $obj, $args ) {
 
+			if ( \Elementor\Plugin::$instance->breakpoints && method_exists( \Elementor\Plugin::$instance->breakpoints, 'get_active_breakpoints')) {
+				$active_breakpoints = \Elementor\Plugin::$instance->breakpoints->get_active_breakpoints();
+				$breakpoints_list   = array();
+
+				foreach ($active_breakpoints as $key => $value) {
+					$breakpoints_list[$key] = $value->get_label();
+				}
+
+				$breakpoints_list['desktop'] = 'Desktop';
+				$breakpoints_list            = array_reverse($breakpoints_list);
+			} else {
+				$breakpoints_list = array(
+					'desktop' => 'Desktop',
+					'tablet'  => 'Tablet',
+					'mobile'  => 'Mobile'
+				);
+			}
+
 			$obj->start_controls_section(
 				'column_jet_tricks',
 				array(
@@ -147,11 +165,7 @@ if ( ! class_exists( 'Jet_Tricks_Elementor_Column_Extension' ) ) {
 						'desktop',
 						'tablet',
 					),
-					'options' => array(
-						'desktop' => __( 'Desktop', 'jet-tricks' ),
-						'tablet'  => __( 'Tablet', 'jet-tricks' ),
-						'mobile'  => __( 'Mobile', 'jet-tricks' ),
-					),
+					'options' => $breakpoints_list,
 					'condition' => array(
 						'jet_tricks_column_sticky' => 'true',
 					),
@@ -218,7 +232,7 @@ if ( ! class_exists( 'Jet_Tricks_Elementor_Column_Extension' ) ) {
 				wp_enqueue_script(
 					'jet-sticky-sidebar',
 					jet_tricks()->plugin_url( 'assets/js/lib/sticky-sidebar/sticky-sidebar.min.js' ),
-					array( 'jquery', 'jet-resize-sensor' ),
+					array( 'jquery', 'jet-resize-sensor', 'imagesloaded' ),
 					'3.3.1',
 					true
 				);

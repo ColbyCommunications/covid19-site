@@ -12,8 +12,8 @@ use Elementor\Group_Control_Border;
 use Elementor\Group_Control_Box_Shadow;
 use Elementor\Group_Control_Typography;
 use Elementor\Repeater;
-use Elementor\Scheme_Color;
-use Elementor\Scheme_Typography;
+use Elementor\Core\Schemes\Color as Scheme_Color;
+use Elementor\Core\Schemes\Typography as Scheme_Typography;
 use Elementor\Widget_Base;
 use Elementor\Utils;
 use Elementor\Modules\DynamicTags\Module as TagsModule;
@@ -110,12 +110,13 @@ class Jet_Elements_Slider extends Jet_Elements_Base {
 			)
 		);
 
-		$this->__add_advanced_icon_control(
+		$this->_add_advanced_icon_control(
 			'item_icon',
 			array(
 				'label'       => esc_html__( 'Icon', 'jet-elements' ),
 				'type'        => Controls_Manager::ICON,
-				'label_block' => true,
+				'label_block' => false,
+				'skin'        => 'inline',
 				'file'        => '',
 				'condition'   => array(
 					'item_content_type' => 'default',
@@ -143,6 +144,9 @@ class Jet_Elements_Slider extends Jet_Elements_Base {
 				'type'    => Controls_Manager::SELECT,
 				'options' => jet_elements_tools()->get_available_title_html_tags(),
 				'default' => 'h5',
+				'condition' => array(
+					'item_content_type' => 'default',
+				),
 			)
 		);
 
@@ -165,6 +169,9 @@ class Jet_Elements_Slider extends Jet_Elements_Base {
 				'type'    => Controls_Manager::SELECT,
 				'options' => jet_elements_tools()->get_available_title_html_tags(),
 				'default' => 'h5',
+				'condition' => array(
+					'item_content_type' => 'default',
+				),
 			)
 		);
 
@@ -176,6 +183,47 @@ class Jet_Elements_Slider extends Jet_Elements_Base {
 				'dynamic'   => array( 'active' => true ),
 				'condition' => array(
 					'item_content_type' => 'default',
+				),
+			)
+		);
+
+		$repeater->add_control(
+			'item_link',
+			array(
+				'label'        => esc_html__( 'Link on whole slide', 'jet-elements' ),
+				'type'         => Controls_Manager::SWITCHER,
+				'return_value' => 'true',
+				'default'      => 'false',
+			)
+		);
+
+		$repeater->add_control(
+			'item_link_url',
+			array(
+				'label'   => esc_html__( 'Slide Link', 'jet-elements' ),
+				'type'    => Controls_Manager::TEXT,
+				'default' => '',
+				'dynamic' => array(
+					'active' => true,
+					'categories' => array(
+						TagsModule::POST_META_CATEGORY,
+						TagsModule::URL_CATEGORY,
+					),
+				),
+				'condition' => array(
+					'item_link' => 'true',
+				),
+			)
+		);
+
+		$repeater->add_control(
+			'item_link_target',
+			array(
+				'label'        => esc_html__( 'Open link in new window', 'jet-elements' ),
+				'type'         => Controls_Manager::SWITCHER,
+				'return_value' => '_blank',
+				'condition'    => array(
+					'item_link' => 'true',
 				),
 			)
 		);
@@ -195,6 +243,7 @@ class Jet_Elements_Slider extends Jet_Elements_Base {
 				),
 				'condition' => array(
 					'item_content_type' => 'default',
+					'item_link!'        => 'true',
 				),
 			)
 		);
@@ -208,6 +257,7 @@ class Jet_Elements_Slider extends Jet_Elements_Base {
 				'condition'    => array(
 					'item_content_type'        => 'default',
 					'item_button_primary_url!' => '',
+					'item_link!'               => 'true',
 				),
 			)
 		);
@@ -221,6 +271,7 @@ class Jet_Elements_Slider extends Jet_Elements_Base {
 				'condition'    => array(
 					'item_content_type'        => 'default',
 					'item_button_primary_url!' => '',
+					'item_link!'               => 'true',
 				),
 			)
 		);
@@ -231,8 +282,10 @@ class Jet_Elements_Slider extends Jet_Elements_Base {
 				'label'     => esc_html__( 'Primary Button Text', 'jet-elements' ),
 				'type'      => Controls_Manager::TEXT,
 				'default'   => esc_html__( 'More', 'jet-elements' ),
+				'dynamic'   => array( 'active' => true ),
 				'condition' => array(
 					'item_content_type' => 'default',
+					'item_link!'        => 'true',
 				),
 			)
 		);
@@ -252,6 +305,7 @@ class Jet_Elements_Slider extends Jet_Elements_Base {
 				),
 				'condition' => array(
 					'item_content_type' => 'default',
+					'item_link!'        => 'true',
 				),
 			)
 		);
@@ -265,6 +319,7 @@ class Jet_Elements_Slider extends Jet_Elements_Base {
 				'condition'    => array(
 					'item_content_type'          => 'default',
 					'item_button_secondary_url!' => '',
+					'item_link!'                 => 'true',
 				),
 			)
 		);
@@ -278,6 +333,7 @@ class Jet_Elements_Slider extends Jet_Elements_Base {
 				'condition'    => array(
 					'item_content_type'          => 'default',
 					'item_button_secondary_url!' => '',
+					'item_link!'                 => 'true',
 				),
 			)
 		);
@@ -288,8 +344,10 @@ class Jet_Elements_Slider extends Jet_Elements_Base {
 				'label'     => esc_html__( 'Secondary Button Text', 'jet-elements' ),
 				'type'      => Controls_Manager::TEXT,
 				'default'   => esc_html__( 'More', 'jet-elements' ),
+				'dynamic'   => array( 'active' => true ),
 				'condition' => array(
 					'item_content_type' => 'default',
+					'item_link!'        => 'true',
 				),
 			)
 		);
@@ -298,13 +356,24 @@ class Jet_Elements_Slider extends Jet_Elements_Base {
 			'template_id',
 			array(
 				'label'       => esc_html__( 'Choose Template', 'jet-elements' ),
-				'label_block' => 'true',
-				'type'        => Controls_Manager::SELECT,
-				'default'     => '0',
-				'options'     => jet_elements_tools()->get_elementor_templates_options(),
+				'type'        => 'jet-query',
+				'query_type'  => 'elementor_templates',
+				'edit_button' => array(
+					'active' => true,
+					'label'  => __( 'Edit Template', 'jet-elements' ),
+				),
 				'condition'   => array(
 					'item_content_type' => 'template',
 				),
+			)
+		);
+
+		$repeater->add_control(
+			'slide_id',
+			array(
+				'label'   => esc_html__( 'Slide CSS ID', 'jet-elements' ),
+				'type'    => Controls_Manager::TEXT,
+				'dynamic' => array( 'active' => true ),
 			)
 		);
 
@@ -312,7 +381,7 @@ class Jet_Elements_Slider extends Jet_Elements_Base {
 			'item_list',
 			array(
 				'type'        => Controls_Manager::REPEATER,
-				'fields'      => array_values( $repeater->get_controls() ),
+				'fields'      => $repeater->get_controls(),
 				'default'     => array(
 					array(
 						'item_image'                 => array(
@@ -405,6 +474,11 @@ class Jet_Elements_Slider extends Jet_Elements_Base {
 					'unit' => 'px',
 					'size' => 600,
 				),
+				'selectors' => array(
+					'{{WRAPPER}} .slider-pro' => 'min-height: {{SIZE}}{{UNIT}}'
+				),
+				'frontend_available' => true,
+				'render_type'        => 'template',
 			)
 		);
 
@@ -521,12 +595,13 @@ class Jet_Elements_Slider extends Jet_Elements_Base {
 			)
 		);
 
-		$this->__add_advanced_icon_control(
+		$this->_add_advanced_icon_control(
 			'slider_navigation_icon_arrow',
 			array(
 				'label'       => esc_html__( 'Arrow Icon', 'jet-elements' ),
 				'type'        => Controls_Manager::ICON,
-				'label_block' => true,
+				'label_block' => false,
+				'skin'        => 'inline',
 				'file'        => '',
 				'default'     => 'fa fa-angle-left',
 				'fa5_default' => array(
@@ -548,6 +623,18 @@ class Jet_Elements_Slider extends Jet_Elements_Base {
 				'label_off'    => esc_html__( 'No', 'jet-elements' ),
 				'return_value' => 'true',
 				'default'      => 'false',
+			)
+		);
+
+		$this->add_control(
+			'fraction_pagination',
+			array(
+				'label'        => esc_html__( 'Use Fraction pagination?', 'jet-elements' ),
+				'type'         => Controls_Manager::SWITCHER,
+				'label_on'     => esc_html__( 'Yes', 'jet-elements' ),
+				'label_off'    => esc_html__( 'No', 'jet-elements' ),
+				'return_value' => 'true',
+				'default'      => '',
 			)
 		);
 
@@ -604,12 +691,25 @@ class Jet_Elements_Slider extends Jet_Elements_Base {
 			)
 		);
 
-		$this->__add_advanced_icon_control(
+		$this->add_control(
+			'slider_touchswipe',
+			array(
+				'label'        => esc_html__( 'Touch Swipe Effect', 'jet-elements' ),
+				'type'         => Controls_Manager::SWITCHER,
+				'label_on'     => esc_html__( 'Yes', 'jet-elements' ),
+				'label_off'    => esc_html__( 'No', 'jet-elements' ),
+				'return_value' => 'true',
+				'default'      => 'true',
+			)
+		);
+
+		$this->_add_advanced_icon_control(
 			'slider_fullscreen_icon',
 			array(
 				'label'       => esc_html__( 'FullScreen Icon', 'jet-elements' ),
 				'type'        => Controls_Manager::ICON,
-				'label_block' => true,
+				'label_block' => false,
+				'skin'        => 'inline',
 				'file'        => '',
 				'default'     => 'fa fa-arrows-alt',
 				'fa5_default' => array(
@@ -712,6 +812,8 @@ class Jet_Elements_Slider extends Jet_Elements_Base {
 				'condition' => array(
 					'thumbnails' => 'true',
 				),
+				'frontend_available' => true,
+				'render_type'        => 'template',
 			)
 		);
 
@@ -727,6 +829,8 @@ class Jet_Elements_Slider extends Jet_Elements_Base {
 				'condition' => array(
 					'thumbnails' => 'true',
 				),
+				'frontend_available' => true,
+				'render_type'        => 'template',
 			)
 		);
 
@@ -735,7 +839,7 @@ class Jet_Elements_Slider extends Jet_Elements_Base {
 		/**
 		 * General Style Section
 		 */
-		$this->__start_controls_section(
+		$this->_start_controls_section(
 			'section_slider_general_style',
 			array(
 				'label'      => esc_html__( 'General', 'jet-elements' ),
@@ -744,7 +848,7 @@ class Jet_Elements_Slider extends Jet_Elements_Base {
 			)
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'overlay_heading',
 			array(
 				'label'     => esc_html__( 'Overlay', 'jet-elements' ),
@@ -753,7 +857,7 @@ class Jet_Elements_Slider extends Jet_Elements_Base {
 			50
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Background::get_type(),
 			array(
 				'name'     => 'overlay_background',
@@ -770,7 +874,7 @@ class Jet_Elements_Slider extends Jet_Elements_Base {
 			50
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'overlay_opacity',
 			array(
 				'label'    => esc_html__( 'Opacity', 'jet-elements' ),
@@ -786,7 +890,7 @@ class Jet_Elements_Slider extends Jet_Elements_Base {
 			50
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'widget_container_heading',
 			array(
 				'label'     => esc_html__( 'Widget Container', 'jet-elements' ),
@@ -796,7 +900,7 @@ class Jet_Elements_Slider extends Jet_Elements_Base {
 			100
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'container_padding',
 			array(
 				'label'      => __( 'Padding', 'jet-elements' ),
@@ -809,7 +913,7 @@ class Jet_Elements_Slider extends Jet_Elements_Base {
 			100
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'container_margin',
 			array(
 				'label'      => __( 'Margin', 'jet-elements' ),
@@ -822,7 +926,7 @@ class Jet_Elements_Slider extends Jet_Elements_Base {
 			100
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Border::get_type(),
 			array(
 				'name'        => 'container_border',
@@ -833,20 +937,20 @@ class Jet_Elements_Slider extends Jet_Elements_Base {
 			100
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'container_border_radius',
 			array(
 				'label'      => esc_html__( 'Border Radius', 'jet-elements' ),
 				'type'       => Controls_Manager::DIMENSIONS,
 				'size_units' => array( 'px', '%' ),
 				'selectors'  => array(
-					'{{WRAPPER}} ' . $css_scheme['instance'] . ' .jet-slider__item'=> 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+					'{{WRAPPER}} ' . $css_scheme['instance'] => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}}; overflow: hidden;',
 				),
 			),
 			100
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Box_Shadow::get_type(),
 			array(
 				'name'     => 'container_shadow',
@@ -855,7 +959,7 @@ class Jet_Elements_Slider extends Jet_Elements_Base {
 			100
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'fullscreen_heading',
 			array(
 				'label'     => esc_html__( 'Fullscreen', 'jet-elements' ),
@@ -865,7 +969,7 @@ class Jet_Elements_Slider extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'fullscreen_icon_color',
 			array(
 				'label' => esc_html__( 'Icon Color', 'jet-elements' ),
@@ -878,7 +982,7 @@ class Jet_Elements_Slider extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'fullscreen_icon_bg_color',
 			array(
 				'label' => esc_html__( 'Icon Background Color', 'jet-elements' ),
@@ -890,7 +994,7 @@ class Jet_Elements_Slider extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'fullscreen_icon_font_size',
 			array(
 				'label'      => esc_html__( 'Icon Font Size', 'jet-elements' ),
@@ -912,7 +1016,7 @@ class Jet_Elements_Slider extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'fullscreen_icon_size',
 			array(
 				'label'      => esc_html__( 'Icon Box Size', 'jet-elements' ),
@@ -933,7 +1037,7 @@ class Jet_Elements_Slider extends Jet_Elements_Base {
 			50
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'fullscreen_icon_box_margin',
 			array(
 				'label'      => __( 'Margin', 'jet-elements' ),
@@ -946,7 +1050,7 @@ class Jet_Elements_Slider extends Jet_Elements_Base {
 			50
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Border::get_type(),
 			array(
 				'name'        => 'fullscreen_icon_border',
@@ -958,7 +1062,7 @@ class Jet_Elements_Slider extends Jet_Elements_Base {
 			75
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'fullscreen_icon_box_border_radius',
 			array(
 				'label'      => esc_html__( 'Border Radius', 'jet-elements' ),
@@ -971,7 +1075,7 @@ class Jet_Elements_Slider extends Jet_Elements_Base {
 			75
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Box_Shadow::get_type(),
 			array(
 				'name'     => 'fullscreen_icon_box_shadow',
@@ -980,12 +1084,12 @@ class Jet_Elements_Slider extends Jet_Elements_Base {
 			100
 		);
 
-		$this->__end_controls_section();
+		$this->_end_controls_section();
 
 		/**
 		 * Content Slider Section
 		 */
-		$this->__start_controls_section(
+		$this->_start_controls_section(
 			'section_content_slider_style',
 			array(
 				'label'      => esc_html__( 'Content Wrapper', 'jet-elements' ),
@@ -994,7 +1098,7 @@ class Jet_Elements_Slider extends Jet_Elements_Base {
 			)
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'slider_content_horizontal_alignment',
 			array(
 				'label'   => esc_html__( 'Horizontal Align', 'jet-elements' ),
@@ -1020,7 +1124,7 @@ class Jet_Elements_Slider extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'slider_content_vertical_alignment',
 			array(
 				'label'   => esc_html__( 'Vertical Align', 'jet-elements' ),
@@ -1045,7 +1149,7 @@ class Jet_Elements_Slider extends Jet_Elements_Base {
 			)
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Background::get_type(),
 			array(
 				'name'     => 'slider_content_background',
@@ -1054,7 +1158,7 @@ class Jet_Elements_Slider extends Jet_Elements_Base {
 			50
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'slider_content_padding',
 			array(
 				'label'      => esc_html__( 'Padding', 'jet-elements' ),
@@ -1067,7 +1171,7 @@ class Jet_Elements_Slider extends Jet_Elements_Base {
 			50
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'slider_content_margin',
 			array(
 				'label'      => esc_html__( 'Margin', 'jet-elements' ),
@@ -1080,7 +1184,7 @@ class Jet_Elements_Slider extends Jet_Elements_Base {
 			50
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Border::get_type(),
 			array(
 				'name'        => 'slider_content_border',
@@ -1090,7 +1194,7 @@ class Jet_Elements_Slider extends Jet_Elements_Base {
 			75
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'slider_content_border_radius',
 			array(
 				'label'      => esc_html__( 'Border Radius', 'jet-elements' ),
@@ -1103,7 +1207,7 @@ class Jet_Elements_Slider extends Jet_Elements_Base {
 			75
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Box_Shadow::get_type(),
 			array(
 				'name'     => 'slider_content_shadow',
@@ -1112,12 +1216,12 @@ class Jet_Elements_Slider extends Jet_Elements_Base {
 			100
 		);
 
-		$this->__end_controls_section();
+		$this->_end_controls_section();
 
 		/**
 		 * Icon Style Section
 		 */
-		$this->__start_controls_section(
+		$this->_start_controls_section(
 			'section_slider_icon_style',
 			array(
 				'label'      => esc_html__( 'Icon', 'jet-elements' ),
@@ -1126,7 +1230,7 @@ class Jet_Elements_Slider extends Jet_Elements_Base {
 			)
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'icon_box_alignment',
 			array(
 				'label'   => esc_html__( 'Alignment', 'jet-elements' ),
@@ -1153,7 +1257,7 @@ class Jet_Elements_Slider extends Jet_Elements_Base {
 			50
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'icon_color',
 			array(
 				'label' => esc_html__( 'Icon Color', 'jet-elements' ),
@@ -1166,7 +1270,7 @@ class Jet_Elements_Slider extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'icon_bg_color',
 			array(
 				'label' => esc_html__( 'Icon Background Color', 'jet-elements' ),
@@ -1178,7 +1282,7 @@ class Jet_Elements_Slider extends Jet_Elements_Base {
 			50
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'icon_font_size',
 			array(
 				'label'      => esc_html__( 'Icon Font Size', 'jet-elements' ),
@@ -1200,7 +1304,7 @@ class Jet_Elements_Slider extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'icon_size',
 			array(
 				'label'      => esc_html__( 'Icon Box Size', 'jet-elements' ),
@@ -1221,7 +1325,7 @@ class Jet_Elements_Slider extends Jet_Elements_Base {
 			100
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'icon_box_margin',
 			array(
 				'label'      => __( 'Margin', 'jet-elements' ),
@@ -1234,7 +1338,7 @@ class Jet_Elements_Slider extends Jet_Elements_Base {
 			50
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Border::get_type(),
 			array(
 				'name'        => 'icon_border',
@@ -1246,7 +1350,7 @@ class Jet_Elements_Slider extends Jet_Elements_Base {
 			100
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'icon_box_border_radius',
 			array(
 				'label'      => esc_html__( 'Border Radius', 'jet-elements' ),
@@ -1259,7 +1363,7 @@ class Jet_Elements_Slider extends Jet_Elements_Base {
 			100
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Box_Shadow::get_type(),
 			array(
 				'name'     => 'icon_box_shadow',
@@ -1268,12 +1372,12 @@ class Jet_Elements_Slider extends Jet_Elements_Base {
 			100
 		);
 
-		$this->__end_controls_section();
+		$this->_end_controls_section();
 
 		/**
 		 * Title Style Section
 		 */
-		$this->__start_controls_section(
+		$this->_start_controls_section(
 			'section_slider_title_style',
 			array(
 				'label'      => esc_html__( 'Title', 'jet-elements' ),
@@ -1282,7 +1386,7 @@ class Jet_Elements_Slider extends Jet_Elements_Base {
 			)
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'slider_title_alignment',
 			array(
 				'label'   => esc_html__( 'Text Alignment', 'jet-elements' ),
@@ -1305,11 +1409,12 @@ class Jet_Elements_Slider extends Jet_Elements_Base {
 				'selectors'  => array(
 					'{{WRAPPER}} ' . $css_scheme['title'] => 'text-align: {{VALUE}};',
 				),
+				'classes' => 'jet-elements-text-align-control',
 			),
 			25
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'slider_title_color',
 			array(
 				'label'  => esc_html__( 'Title Color', 'jet-elements' ),
@@ -1321,7 +1426,7 @@ class Jet_Elements_Slider extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Typography::get_type(),
 			array(
 				'name'     => 'slider_title_typography',
@@ -1331,7 +1436,7 @@ class Jet_Elements_Slider extends Jet_Elements_Base {
 			50
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'slider_title_padding',
 			array(
 				'label'      => __( 'Padding', 'jet-elements' ),
@@ -1344,7 +1449,7 @@ class Jet_Elements_Slider extends Jet_Elements_Base {
 			100
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'slider_title_margin',
 			array(
 				'label'      => __( 'Margin', 'jet-elements' ),
@@ -1357,12 +1462,12 @@ class Jet_Elements_Slider extends Jet_Elements_Base {
 			50
 		);
 
-		$this->__end_controls_section();
+		$this->_end_controls_section();
 
 		/**
 		 * SubTitle Style Section
 		 */
-		$this->__start_controls_section(
+		$this->_start_controls_section(
 			'section_slider_subtitle_style',
 			array(
 				'label'      => esc_html__( 'Subtitle', 'jet-elements' ),
@@ -1371,7 +1476,7 @@ class Jet_Elements_Slider extends Jet_Elements_Base {
 			)
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'slider_subtitle_alignment',
 			array(
 				'label'   => esc_html__( 'Text Alignment', 'jet-elements' ),
@@ -1394,11 +1499,12 @@ class Jet_Elements_Slider extends Jet_Elements_Base {
 				'selectors'  => array(
 					'{{WRAPPER}} ' . $css_scheme['subtitle'] => 'text-align: {{VALUE}};',
 				),
+				'classes' => 'jet-elements-text-align-control',
 			),
 			25
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'slider_subtitle_color',
 			array(
 				'label'  => esc_html__( 'Subtitle Color', 'jet-elements' ),
@@ -1410,7 +1516,7 @@ class Jet_Elements_Slider extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Typography::get_type(),
 			array(
 				'name'     => 'slider_subtitle_typography',
@@ -1420,7 +1526,7 @@ class Jet_Elements_Slider extends Jet_Elements_Base {
 			50
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'slider_subtitle_padding',
 			array(
 				'label'      => __( 'Padding', 'jet-elements' ),
@@ -1433,7 +1539,7 @@ class Jet_Elements_Slider extends Jet_Elements_Base {
 			100
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'slider_subtitle_margin',
 			array(
 				'label'      => __( 'Margin', 'jet-elements' ),
@@ -1446,12 +1552,12 @@ class Jet_Elements_Slider extends Jet_Elements_Base {
 			50
 		);
 
-		$this->__end_controls_section();
+		$this->_end_controls_section();
 
 		/**
 		 * Desc Style Section
 		 */
-		$this->__start_controls_section(
+		$this->_start_controls_section(
 			'section_slider_desc_style',
 			array(
 				'label'      => esc_html__( 'Description', 'jet-elements' ),
@@ -1460,7 +1566,7 @@ class Jet_Elements_Slider extends Jet_Elements_Base {
 			)
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'slider_desc_wax_width',
 			array(
 				'label' => esc_html__( 'Max Width', 'jet-elements' ),
@@ -1483,7 +1589,7 @@ class Jet_Elements_Slider extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'slider_desc_container_alignment',
 			array(
 				'label'   => esc_html__( 'Alignment', 'jet-elements' ),
@@ -1510,7 +1616,7 @@ class Jet_Elements_Slider extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'slider_desc_alignment',
 			array(
 				'label'   => esc_html__( 'Text Alignment', 'jet-elements' ),
@@ -1533,11 +1639,12 @@ class Jet_Elements_Slider extends Jet_Elements_Base {
 				'selectors'  => array(
 					'{{WRAPPER}} ' . $css_scheme['desc'] => 'text-align: {{VALUE}};',
 				),
+				'classes' => 'jet-elements-text-align-control',
 			),
 			25
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'slider_desc_color',
 			array(
 				'label'  => esc_html__( 'Description Color', 'jet-elements' ),
@@ -1549,7 +1656,7 @@ class Jet_Elements_Slider extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Typography::get_type(),
 			array(
 				'name'     => 'slider_desc_typography',
@@ -1559,7 +1666,7 @@ class Jet_Elements_Slider extends Jet_Elements_Base {
 			50
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'slider_desc_padding',
 			array(
 				'label'      => __( 'Padding', 'jet-elements' ),
@@ -1572,7 +1679,7 @@ class Jet_Elements_Slider extends Jet_Elements_Base {
 			100
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'slider_desc_margin',
 			array(
 				'label'      => __( 'Margin', 'jet-elements' ),
@@ -1585,12 +1692,12 @@ class Jet_Elements_Slider extends Jet_Elements_Base {
 			50
 		);
 
-		$this->__end_controls_section();
+		$this->_end_controls_section();
 
 		/**
 		 * Action Button #1 Style Section
 		 */
-		$this->__start_controls_section(
+		$this->_start_controls_section(
 			'section_action_button_style',
 			array(
 				'label'      => esc_html__( 'Action Button', 'jet-elements' ),
@@ -1600,7 +1707,7 @@ class Jet_Elements_Slider extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'slider_action_button_alignment',
 			array(
 				'label'   => esc_html__( 'Alignment', 'jet-elements' ),
@@ -1623,11 +1730,12 @@ class Jet_Elements_Slider extends Jet_Elements_Base {
 				'selectors'  => array(
 					'{{WRAPPER}} ' . $css_scheme['buttons_wrapper'] => 'text-align: {{VALUE}};',
 				),
+				'classes' => 'jet-elements-text-align-control',
 			),
 			25
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'section_action_primary_button_heading',
 			array(
 				'label'     => esc_html__( 'Action Button #1', 'jet-elements' ),
@@ -1637,7 +1745,7 @@ class Jet_Elements_Slider extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'primary_button_padding',
 			array(
 				'label'      => esc_html__( 'Padding', 'jet-elements' ),
@@ -1650,7 +1758,7 @@ class Jet_Elements_Slider extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'primary_button_margin',
 			array(
 				'label'      => __( 'Margin', 'jet-elements' ),
@@ -1663,16 +1771,16 @@ class Jet_Elements_Slider extends Jet_Elements_Base {
 			50
 		);
 
-		$this->__start_controls_tabs( 'tabs_primary_button_style' );
+		$this->_start_controls_tabs( 'tabs_primary_button_style' );
 
-		$this->__start_controls_tab(
+		$this->_start_controls_tab(
 			'tab_primary_button_normal',
 			array(
 				'label' => esc_html__( 'Normal', 'jet-elements' ),
 			)
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'primary_button_bg_color',
 			array(
 				'label' => esc_html__( 'Background Color', 'jet-elements' ),
@@ -1688,7 +1796,7 @@ class Jet_Elements_Slider extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'primary_button_color',
 			array(
 				'label'     => esc_html__( 'Text Color', 'jet-elements' ),
@@ -1700,7 +1808,7 @@ class Jet_Elements_Slider extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Typography::get_type(),
 			array(
 				'name'     => 'primary_button_typography',
@@ -1710,7 +1818,7 @@ class Jet_Elements_Slider extends Jet_Elements_Base {
 			50
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Border::get_type(),
 			array(
 				'name'        => 'primary_button_border',
@@ -1722,7 +1830,7 @@ class Jet_Elements_Slider extends Jet_Elements_Base {
 			50
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'primary_button_border_radius',
 			array(
 				'label'      => esc_html__( 'Border Radius', 'jet-elements' ),
@@ -1735,7 +1843,7 @@ class Jet_Elements_Slider extends Jet_Elements_Base {
 			75
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Box_Shadow::get_type(),
 			array(
 				'name'     => 'primary_button_box_shadow',
@@ -1744,16 +1852,16 @@ class Jet_Elements_Slider extends Jet_Elements_Base {
 			100
 		);
 
-		$this->__end_controls_tab();
+		$this->_end_controls_tab();
 
-		$this->__start_controls_tab(
+		$this->_start_controls_tab(
 			'tab_primary_button_hover',
 			array(
 				'label' => esc_html__( 'Hover', 'jet-elements' ),
 			)
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'primary_button_hover_bg_color',
 			array(
 				'label'     => esc_html__( 'Background Color', 'jet-elements' ),
@@ -1765,7 +1873,7 @@ class Jet_Elements_Slider extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'primary_button_hover_color',
 			array(
 				'label'     => esc_html__( 'Text Color', 'jet-elements' ),
@@ -1777,7 +1885,7 @@ class Jet_Elements_Slider extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Typography::get_type(),
 			array(
 				'name'     => 'primary_button_hover_typography',
@@ -1786,7 +1894,7 @@ class Jet_Elements_Slider extends Jet_Elements_Base {
 			50
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Border::get_type(),
 			array(
 				'name'        => 'primary_button_hover_border',
@@ -1798,7 +1906,7 @@ class Jet_Elements_Slider extends Jet_Elements_Base {
 			50
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'primary_button_hover_border_radius',
 			array(
 				'label'      => esc_html__( 'Border Radius', 'jet-elements' ),
@@ -1811,7 +1919,7 @@ class Jet_Elements_Slider extends Jet_Elements_Base {
 			75
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Box_Shadow::get_type(),
 			array(
 				'name'     => 'primary_button_hover_box_shadow',
@@ -1820,11 +1928,11 @@ class Jet_Elements_Slider extends Jet_Elements_Base {
 			100
 		);
 
-		$this->__end_controls_tab();
+		$this->_end_controls_tab();
 
-		$this->__end_controls_tabs();
+		$this->_end_controls_tabs();
 
-		$this->__add_control(
+		$this->_add_control(
 			'section_action_secondary_button_heading',
 			array(
 				'label'     => esc_html__( 'Action Button #2', 'jet-elements' ),
@@ -1834,7 +1942,7 @@ class Jet_Elements_Slider extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'secondary_button_padding',
 			array(
 				'label'      => esc_html__( 'Padding', 'jet-elements' ),
@@ -1847,7 +1955,7 @@ class Jet_Elements_Slider extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'secondary_button_margin',
 			array(
 				'label'      => __( 'Margin', 'jet-elements' ),
@@ -1860,16 +1968,16 @@ class Jet_Elements_Slider extends Jet_Elements_Base {
 			50
 		);
 
-		$this->__start_controls_tabs( 'tabs_secondary_button_style' );
+		$this->_start_controls_tabs( 'tabs_secondary_button_style' );
 
-		$this->__start_controls_tab(
+		$this->_start_controls_tab(
 			'tab_secondary_button_normal',
 			array(
 				'label' => esc_html__( 'Normal', 'jet-elements' ),
 			)
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'secondary_button_bg_color',
 			array(
 				'label' => esc_html__( 'Background Color', 'jet-elements' ),
@@ -1885,7 +1993,7 @@ class Jet_Elements_Slider extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'secondary_button_color',
 			array(
 				'label'     => esc_html__( 'Text Color', 'jet-elements' ),
@@ -1897,7 +2005,7 @@ class Jet_Elements_Slider extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Typography::get_type(),
 			array(
 				'name'     => 'secondary_button_typography',
@@ -1907,7 +2015,7 @@ class Jet_Elements_Slider extends Jet_Elements_Base {
 			50
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Border::get_type(),
 			array(
 				'name'        => 'secondary_button_border',
@@ -1919,7 +2027,7 @@ class Jet_Elements_Slider extends Jet_Elements_Base {
 			50
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'secondary_button_border_radius',
 			array(
 				'label'      => esc_html__( 'Border Radius', 'jet-elements' ),
@@ -1932,7 +2040,7 @@ class Jet_Elements_Slider extends Jet_Elements_Base {
 			75
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Box_Shadow::get_type(),
 			array(
 				'name'     => 'secondary_button_box_shadow',
@@ -1941,16 +2049,16 @@ class Jet_Elements_Slider extends Jet_Elements_Base {
 			100
 		);
 
-		$this->__end_controls_tab();
+		$this->_end_controls_tab();
 
-		$this->__start_controls_tab(
+		$this->_start_controls_tab(
 			'tab_secondary_button_hover',
 			array(
 				'label' => esc_html__( 'Hover', 'jet-elements' ),
 			)
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'secondary_button_hover_bg_color',
 			array(
 				'label'     => esc_html__( 'Background Color', 'jet-elements' ),
@@ -1962,7 +2070,7 @@ class Jet_Elements_Slider extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'secondary_button_hover_color',
 			array(
 				'label'     => esc_html__( 'Text Color', 'jet-elements' ),
@@ -1974,7 +2082,7 @@ class Jet_Elements_Slider extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Typography::get_type(),
 			array(
 				'name'     => 'secondary_button_hover_typography',
@@ -1983,7 +2091,7 @@ class Jet_Elements_Slider extends Jet_Elements_Base {
 			50
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Border::get_type(),
 			array(
 				'name'        => 'secondary_button_hover_border',
@@ -1995,7 +2103,7 @@ class Jet_Elements_Slider extends Jet_Elements_Base {
 			50
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'secondary_button_hover_border_radius',
 			array(
 				'label'      => esc_html__( 'Border Radius', 'jet-elements' ),
@@ -2008,7 +2116,7 @@ class Jet_Elements_Slider extends Jet_Elements_Base {
 			75
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Box_Shadow::get_type(),
 			array(
 				'name'     => 'secondary_button_hover_box_shadow',
@@ -2017,16 +2125,16 @@ class Jet_Elements_Slider extends Jet_Elements_Base {
 			100
 		);
 
-		$this->__end_controls_tab();
+		$this->_end_controls_tab();
 
-		$this->__end_controls_tabs();
+		$this->_end_controls_tabs();
 
-		$this->__end_controls_section();
+		$this->_end_controls_section();
 
 		/**
 		 * Navigation Style Section
 		 */
-		$this->__start_controls_section(
+		$this->_start_controls_section(
 			'section_slider_navigation_style',
 			array(
 				'label'      => esc_html__( 'Navigation', 'jet-elements' ),
@@ -2035,7 +2143,7 @@ class Jet_Elements_Slider extends Jet_Elements_Base {
 			)
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'normal_navigation_size',
 			array(
 				'label'      => esc_html__( 'Box Size', 'jet-elements' ),
@@ -2056,7 +2164,7 @@ class Jet_Elements_Slider extends Jet_Elements_Base {
 			50
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'normal_navigation_box_margin',
 			array(
 				'label'      => __( 'Margin', 'jet-elements' ),
@@ -2069,16 +2177,16 @@ class Jet_Elements_Slider extends Jet_Elements_Base {
 			100
 		);
 
-		$this->__start_controls_tabs( 'navigation_style_tabs' );
+		$this->_start_controls_tabs( 'navigation_style_tabs' );
 
-		$this->__start_controls_tab(
+		$this->_start_controls_tab(
 			'tab_normal_navigation_styles',
 			array(
 				'label' => esc_html__( 'Normal', 'jet-elements' ),
 			)
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'normal_navigation_color',
 			array(
 				'label' => esc_html__( 'Color', 'jet-elements' ),
@@ -2091,7 +2199,7 @@ class Jet_Elements_Slider extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'normal_navigation_bg_color',
 			array(
 				'label' => esc_html__( 'Background Color', 'jet-elements' ),
@@ -2103,7 +2211,7 @@ class Jet_Elements_Slider extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'normal_navigation_font_size',
 			array(
 				'label'      => esc_html__( 'Font Size', 'jet-elements' ),
@@ -2125,7 +2233,7 @@ class Jet_Elements_Slider extends Jet_Elements_Base {
 			50
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Border::get_type(),
 			array(
 				'name'        => 'normal_navigation_border',
@@ -2137,7 +2245,7 @@ class Jet_Elements_Slider extends Jet_Elements_Base {
 			50
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'normal_navigation_border_radius',
 			array(
 				'label'      => esc_html__( 'Border Radius', 'jet-elements' ),
@@ -2150,7 +2258,7 @@ class Jet_Elements_Slider extends Jet_Elements_Base {
 			50
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Box_Shadow::get_type(),
 			array(
 				'name'     => 'normal_navigation_box_shadow',
@@ -2159,16 +2267,16 @@ class Jet_Elements_Slider extends Jet_Elements_Base {
 			100
 		);
 
-		$this->__end_controls_tab();
+		$this->_end_controls_tab();
 
-		$this->__start_controls_tab(
+		$this->_start_controls_tab(
 			'tab_hover_navigation_styles',
 			array(
 				'label' => esc_html__( 'Hover', 'jet-elements' ),
 			)
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'hover_navigation_color',
 			array(
 				'label' => esc_html__( 'Color', 'jet-elements' ),
@@ -2181,7 +2289,7 @@ class Jet_Elements_Slider extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'hover_navigation_bg_color',
 			array(
 				'label' => esc_html__( 'Background Color', 'jet-elements' ),
@@ -2193,7 +2301,7 @@ class Jet_Elements_Slider extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'hover_navigation_font_size',
 			array(
 				'label'      => esc_html__( 'Font Size', 'jet-elements' ),
@@ -2215,7 +2323,7 @@ class Jet_Elements_Slider extends Jet_Elements_Base {
 			50
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Border::get_type(),
 			array(
 				'name'        => 'hover_navigation_border',
@@ -2227,7 +2335,7 @@ class Jet_Elements_Slider extends Jet_Elements_Base {
 			50
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'hover_navigation_border_radius',
 			array(
 				'label'      => esc_html__( 'Border Radius', 'jet-elements' ),
@@ -2240,7 +2348,7 @@ class Jet_Elements_Slider extends Jet_Elements_Base {
 			50
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Box_Shadow::get_type(),
 			array(
 				'name'     => 'hover_navigation_box_shadow',
@@ -2249,16 +2357,16 @@ class Jet_Elements_Slider extends Jet_Elements_Base {
 			100
 		);
 
-		$this->__end_controls_tab();
+		$this->_end_controls_tab();
 
-		$this->__end_controls_tabs();
+		$this->_end_controls_tabs();
 
-		$this->__end_controls_section();
+		$this->_end_controls_section();
 
 		/**
 		 * Pagination Style Section
 		 */
-		$this->__start_controls_section(
+		$this->_start_controls_section(
 			'section_pagination_style',
 			array(
 				'label'      => esc_html__( 'Pagination', 'jet-elements' ),
@@ -2267,7 +2375,7 @@ class Jet_Elements_Slider extends Jet_Elements_Base {
 			)
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'pagination_alignment',
 			array(
 				'label'   => esc_html__( 'Alignment', 'jet-elements' ),
@@ -2290,11 +2398,12 @@ class Jet_Elements_Slider extends Jet_Elements_Base {
 				'selectors'  => array(
 					'{{WRAPPER}} ' . $css_scheme['pagination'] => 'text-align: {{VALUE}};',
 				),
+				'classes' => 'jet-elements-text-align-control',
 			),
 			25
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'pagination_container_offset',
 			array(
 				'label'   => esc_html__( 'Pagination Container Offset', 'jet-elements' ),
@@ -2309,7 +2418,7 @@ class Jet_Elements_Slider extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'pagination_padding',
 			array(
 				'label'      => __( 'Padding', 'jet-elements' ),
@@ -2322,7 +2431,7 @@ class Jet_Elements_Slider extends Jet_Elements_Base {
 			100
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'pagination_dots_margin',
 			array(
 				'label'      => __( 'Margin', 'jet-elements' ),
@@ -2335,16 +2444,16 @@ class Jet_Elements_Slider extends Jet_Elements_Base {
 			50
 		);
 
-		$this->__start_controls_tabs( 'tabs_dots_style' );
+		$this->_start_controls_tabs( 'tabs_dots_style' );
 
-		$this->__start_controls_tab(
+		$this->_start_controls_tab(
 			'tab_pagination_normal',
 			array(
 				'label' => esc_html__( 'Normal', 'jet-elements' ),
 			)
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			\Jet_Group_Control_Box_Style::get_type(),
 			array(
 				'name'           => 'pagination_style',
@@ -2363,16 +2472,16 @@ class Jet_Elements_Slider extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__end_controls_tab();
+		$this->_end_controls_tab();
 
-		$this->__start_controls_tab(
+		$this->_start_controls_tab(
 			'tab_pagination_hover',
 			array(
 				'label' => esc_html__( 'Hover', 'jet-elements' ),
 			)
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			\Jet_Group_Control_Box_Style::get_type(),
 			array(
 				'name'           => 'pagination_style_hover',
@@ -2394,16 +2503,16 @@ class Jet_Elements_Slider extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__end_controls_tab();
+		$this->_end_controls_tab();
 
-		$this->__start_controls_tab(
+		$this->_start_controls_tab(
 			'tab_pagination_active',
 			array(
 				'label' => esc_html__( 'Active', 'jet-elements' ),
 			)
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			\Jet_Group_Control_Box_Style::get_type(),
 			array(
 				'name'           => 'pagination_style_active',
@@ -2425,16 +2534,16 @@ class Jet_Elements_Slider extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__end_controls_tab();
+		$this->_end_controls_tab();
 
-		$this->__end_controls_tabs();
+		$this->_end_controls_tabs();
 
-		$this->__end_controls_section();
+		$this->_end_controls_section();
 
 		/**
 		 * Thumbnails Style Section
 		 */
-		$this->__start_controls_section(
+		$this->_start_controls_section(
 			'section_thumbnails_style',
 			array(
 				'label'      => esc_html__( 'Thumbnails', 'jet-elements' ),
@@ -2443,7 +2552,7 @@ class Jet_Elements_Slider extends Jet_Elements_Base {
 			)
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'thumbnail_item_margin',
 			array(
 				'label'      => __( 'Margin', 'jet-elements' ),
@@ -2458,7 +2567,7 @@ class Jet_Elements_Slider extends Jet_Elements_Base {
 			50
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'thumbnails_container_offset',
 			array(
 				'label'   => esc_html__( 'Thumbnails Container Offset', 'jet-elements' ),
@@ -2473,16 +2582,16 @@ class Jet_Elements_Slider extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__start_controls_tabs( 'tabs_thumbnails_style' );
+		$this->_start_controls_tabs( 'tabs_thumbnails_style' );
 
-		$this->__start_controls_tab(
+		$this->_start_controls_tab(
 			'tab_thumbnails_normal',
 			array(
 				'label' => esc_html__( 'Normal', 'jet-elements' ),
 			)
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Background::get_type(),
 			array(
 				'name'     => 'thumbnails_normal_background',
@@ -2491,7 +2600,7 @@ class Jet_Elements_Slider extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Border::get_type(),
 			array(
 				'name'        => 'thumbnails_normal_border',
@@ -2523,16 +2632,16 @@ class Jet_Elements_Slider extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__end_controls_tab();
+		$this->_end_controls_tab();
 
-		$this->__start_controls_tab(
+		$this->_start_controls_tab(
 			'tab_thumbnails_hover',
 			array(
 				'label' => esc_html__( 'Hover', 'jet-elements' ),
 			)
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Background::get_type(),
 			array(
 				'name'     => 'thumbnails_hover_background',
@@ -2541,7 +2650,7 @@ class Jet_Elements_Slider extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Border::get_type(),
 			array(
 				'name'        => 'thumbnails_hover_border',
@@ -2573,16 +2682,16 @@ class Jet_Elements_Slider extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__end_controls_tab();
+		$this->_end_controls_tab();
 
-		$this->__start_controls_tab(
+		$this->_start_controls_tab(
 			'tab_thumbnails_active',
 			array(
 				'label' => esc_html__( 'Active', 'jet-elements' ),
 			)
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Background::get_type(),
 			array(
 				'name'     => 'thumbnails_active_background',
@@ -2591,7 +2700,7 @@ class Jet_Elements_Slider extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Border::get_type(),
 			array(
 				'name'        => 'thumbnails_active_border',
@@ -2623,11 +2732,258 @@ class Jet_Elements_Slider extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__end_controls_tab();
+		$this->_end_controls_tab();
 
-		$this->__end_controls_tabs();
+		$this->_end_controls_tabs();
 
-		$this->__end_controls_section();
+		$this->_end_controls_section();
+
+		$this->_start_controls_section(
+			'section_fraction_style',
+			array(
+				'label'      => esc_html__( 'Fraction Pagination', 'jet-elements' ),
+				'tab'        => Controls_Manager::TAB_STYLE,
+				'show_label' => false,
+				'condition'  => array(
+					'fraction_pagination' => 'true'
+				)
+			)
+		);
+
+		$this->_start_controls_tabs( 'tabs_fraction_style' );
+
+		$this->_start_controls_tab(
+			'tab_fraction_current',
+			array(
+				'label' => esc_html__( 'Current Value', 'jet-elements' ),
+			)
+		);
+
+		$this->_add_control(
+			'fraction_current_text_color',
+			array(
+				'label'     => esc_html__( 'Text Color', 'jet-elements' ),
+				'type'      => Controls_Manager::COLOR,
+				'default'   => '',
+				'selectors' => array(
+					'{{WRAPPER}} .jet-slider__fraction-pagination .current' => 'color: {{VALUE}};',
+				),
+			),
+			25
+		);
+
+		$this->_add_control(
+			'fraction_current_background_color',
+			array(
+				'label'     => esc_html__( 'Background Color', 'jet-elements' ),
+				'type'      => Controls_Manager::COLOR,
+				'default'   => '',
+				'selectors' => array(
+					'{{WRAPPER}} .jet-slider__fraction-pagination .current' => 'background-color: {{VALUE}};',
+				),
+			),
+			25
+		);
+
+		$this->_add_responsive_control(
+			'fraction_current_padding',
+			array(
+				'label'       => esc_html__( 'Padding', 'jet-elements' ),
+				'type'        => Controls_Manager::DIMENSIONS,
+				'size_units'  => array( 'px', '%' ),
+				'render_type' => 'template',
+				'selectors'   => array(
+					'{{WRAPPER}} .jet-slider__fraction-pagination .current' => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+				),
+			),
+			50
+		);
+
+		$this->_end_controls_tab();
+
+		$this->_start_controls_tab(
+			'fraction_total',
+			array(
+				'label' => esc_html__( 'Total Value', 'jet-elements' ),
+			)
+		);
+
+		$this->_add_control(
+			'fraction_total_text_color',
+			array(
+				'label'     => esc_html__( 'Text Color', 'jet-elements' ),
+				'type'      => Controls_Manager::COLOR,
+				'default'   => '',
+				'selectors' => array(
+					'{{WRAPPER}} .jet-slider__fraction-pagination .total' => 'color: {{VALUE}};',
+				),
+			),
+			25
+		);
+
+		$this->_add_control(
+			'fraction_total_background_color',
+			array(
+				'label'     => esc_html__( 'Background Color', 'jet-elements' ),
+				'type'      => Controls_Manager::COLOR,
+				'default'   => '',
+				'selectors' => array(
+					'{{WRAPPER}} .jet-slider__fraction-pagination .total' => 'background-color: {{VALUE}};',
+				),
+			),
+			25
+		);
+
+		$this->_add_control(
+			'fraction_total_border_color',
+			array(
+				'label' => esc_html__( 'Border Color', 'jet-elements' ),
+				'type' => Controls_Manager::COLOR,
+				'condition' => array(
+					'fraction_border_border!' => '',
+				),
+				'selectors' => array(
+					'{{WRAPPER}} .jet-slider .jet-slider__fraction-pagination .total' => 'border-color: {{VALUE}};',
+				),
+			),
+			50
+		);
+
+		$this->_add_responsive_control(
+			'fraction_total_padding',
+			array(
+				'label'       => esc_html__( 'Padding', 'jet-elements' ),
+				'type'        => Controls_Manager::DIMENSIONS,
+				'size_units'  => array( 'px', '%' ),
+				'render_type' => 'template',
+				'selectors'   => array(
+					'{{WRAPPER}} .jet-slider__fraction-pagination .total' => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+				),
+			),
+			50
+		);
+
+		$this->_end_controls_tab();
+
+		$this->_start_controls_tab(
+			'fraction_separator',
+			array(
+				'label' => esc_html__( 'Separator', 'jet-elements' ),
+			)
+		);
+
+		$this->_add_control(
+			'fraction_separator_color',
+			array(
+				'label' => esc_html__( 'Color', 'jet-elements' ),
+				'type' => Controls_Manager::COLOR,
+				'selectors' => array(
+					'{{WRAPPER}} .jet-slider__fraction-pagination .separator' => 'color: {{VALUE}}',
+				),
+			),
+			25
+		);
+
+		$this->_end_controls_tab();
+
+		$this->_end_controls_tabs();
+
+		$this->_add_responsive_control(
+			'fraction_alignment',
+			array(
+				'label'   => esc_html__( 'Alignment', 'jet-elements' ),
+				'type'    => Controls_Manager::CHOOSE,
+				'default' => 'center',
+				'options' => array(
+					'flex-start' => array(
+						'title' => esc_html__( 'Start', 'jet-elements' ),
+						'icon'  => ! is_rtl() ? 'eicon-h-align-left' : 'eicon-h-align-right',
+					),
+					'center' => array(
+						'title' => esc_html__( 'Center', 'jet-elements' ),
+						'icon'  => 'eicon-h-align-center',
+					),
+					'flex-end' => array(
+						'title' => esc_html__( 'End', 'jet-elements' ),
+						'icon'  => ! is_rtl() ? 'eicon-h-align-right' : 'eicon-h-align-left',
+					),
+				),
+				'separator' => 'before',
+				'selectors' => array(
+					'{{WRAPPER}} .jet-slider__fraction-pagination' => 'justify-content: {{VALUE}};',
+				),
+			),
+			25
+		);
+
+		$this->_add_group_control(
+			Group_Control_Typography::get_type(),
+			array(
+				'name'     => 'fraction_typography',
+				'scheme'   => Scheme_Typography::TYPOGRAPHY_3,
+				'separator' => 'before',
+				'selector' => '{{WRAPPER}} .jet-slider__fraction-pagination span',
+			),
+			50
+		);
+
+		$this->_add_responsive_control(
+			'fraction_gap',
+			array(
+				'label'   => esc_html__( 'Gap', 'jet-elements' ),
+				'type'    => Controls_Manager::SLIDER,
+				'default' => array(
+					'size' => 5,
+					'unit' => 'px',
+				),
+				'range' => array(
+					'px' => array(
+						'min' => 0,
+						'max' => 50,
+					),
+				),
+				'selectors' => array(
+					'{{WRAPPER}} .jet-slider__fraction-pagination .separator' => 'margin-right: {{SIZE}}{{UNIT}}; margin-left: {{SIZE}}{{UNIT}};',
+				),
+			),
+			25
+		);
+
+		$this->_add_responsive_control(
+			'fraction_margin',
+			array(
+				'label'      => esc_html__( 'Pagination Margin', 'jet-elements' ),
+				'type'       => Controls_Manager::DIMENSIONS,
+				'size_units' => array( 'px', '%' ),
+				'selectors'  => array(
+					'{{WRAPPER}} .jet-slider__fraction-pagination' => 'margin: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+				),
+			),
+			50
+		);
+
+		$this->_add_group_control(
+			Group_Control_Border::get_type(),
+			array(
+				'name' => 'fraction_border',
+				'selector' => '{{WRAPPER}} .jet-slider__fraction-pagination span:not(.separator)',
+			)
+		);
+
+		$this->_add_control(
+			'fraction_border_radius',
+			array(
+				'label' => esc_html__( 'Border Radius', 'jet-elements' ),
+				'type' => Controls_Manager::DIMENSIONS,
+				'size_units' => array( 'px', '%', 'em' ),
+				'selectors' => array(
+					'{{WRAPPER}} .jet-slider__fraction-pagination .current' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+					'{{WRAPPER}} .jet-slider__fraction-pagination .total' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+				),
+			)
+		);
+
+		$this->_end_controls_section();
 
 	}
 
@@ -2643,8 +2999,8 @@ class Jet_Elements_Slider extends Jet_Elements_Base {
 		$settings = array(
 			'sliderWidth'           => $module_settings['slider_width'],
 			'sliderHeight'          => $module_settings['slider_height'],
-			'sliderHeightTablet'    => $module_settings['slider_height_tablet'],
-			'sliderHeightMobile'    => $module_settings['slider_height_mobile'],
+			// 'sliderHeightTablet'    => $module_settings['slider_height_tablet'] || '',
+			// 'sliderHeightMobile'    => $module_settings['slider_height_mobile'] || '',
 			'sliderNavigation'      => filter_var( $module_settings['slider_navigation'], FILTER_VALIDATE_BOOLEAN ),
 			'sliderNavigationIcon'  => 'jet-slider__arrow-icon-' . $widget_id,
 			'sliderNaviOnHover'     => filter_var( $module_settings['slider_navigation_on_hover'], FILTER_VALIDATE_BOOLEAN ),
@@ -2662,12 +3018,14 @@ class Jet_Elements_Slider extends Jet_Elements_Base {
 			'imageScaleMode'        => $module_settings['slide_image_scale_mode'],
 			'thumbnails'            => filter_var( $module_settings['thumbnails'], FILTER_VALIDATE_BOOLEAN ),
 			'thumbnailWidth'        => $module_settings['thumbnail_width'],
-			'thumbnailWidthTablet'  => $module_settings['thumbnail_width_tablet'],
-			'thumbnailWidthMobile'  => $module_settings['thumbnail_width_mobile'],
+			// 'thumbnailWidthTablet'  => $module_settings['thumbnail_width_tablet'] || '',
+			// 'thumbnailWidthMobile'  => $module_settings['thumbnail_width_mobile'] || '',
 			'thumbnailHeight'       => $module_settings['thumbnail_height'],
-			'thumbnailHeightTablet' => $module_settings['thumbnail_height_tablet'],
-			'thumbnailHeightMobile' => $module_settings['thumbnail_height_mobile'],
+			// 'thumbnailHeightTablet' => $module_settings['thumbnail_height_tablet'] || '',
+			// 'thumbnailHeightMobile' => $module_settings['thumbnail_height_mobile'] || '',
 			'rightToLeft'           => is_rtl(),
+			'touchswipe'            => filter_var( $module_settings['slider_touchswipe'], FILTER_VALIDATE_BOOLEAN ),
+			'fractionPag'           => filter_var( $module_settings['fraction_pagination'], FILTER_VALIDATE_BOOLEAN ),
 		);
 
 		$settings = json_encode( $settings );
@@ -2681,8 +3039,8 @@ class Jet_Elements_Slider extends Jet_Elements_Base {
 	 * @param  string $format [description]
 	 * @return [type]         [description]
 	 */
-	protected function __loop_button_item( $keys = array(), $format = '%s' ) {
-		$item = $this->__processed_item;
+	protected function _loop_button_item( $keys = array(), $format = '%s' ) {
+		$item = $this->_processed_item;
 		$params = [];
 
 		foreach ( $keys as $key => $value ) {
@@ -2705,8 +3063,8 @@ class Jet_Elements_Slider extends Jet_Elements_Base {
 	 * [__loop_item_image_tag description]
 	 * @return [type] [description]
 	 */
-	protected function __loop_item_image_tag() {
-		$item  = $this->__processed_item;
+	protected function _loop_item_image_tag() {
+		$item  = $this->_processed_item;
 		$image = $item['item_image'];
 
 		if ( empty( $image['id'] ) && empty( $image['url'] ) ) {
@@ -2719,14 +3077,16 @@ class Jet_Elements_Slider extends Jet_Elements_Base {
 			return sprintf( $format, Utils::get_placeholder_image_src(), '' );
 		}
 
+		$image['id'] = apply_filters( 'wpml_object_id', $image['id'], 'attachment', true );
+
 		$src = Group_Control_Image_Size::get_attachment_image_src( $image['id'], 'slider_image', $this->get_settings() );
 		$alt = Control_Media::get_image_alt( $image );
 
 		return sprintf( $format, esc_url( $src ), esc_attr( $alt ) );
 	}
 
-	protected function __loop_item_image_thumb() {
-		$item  = $this->__processed_item;
+	protected function _loop_item_image_thumb() {
+		$item  = $this->_processed_item;
 		$image = $item['item_image'];
 
 		if ( empty( $image['id'] ) && empty( $image['url'] ) ) {
@@ -2739,6 +3099,8 @@ class Jet_Elements_Slider extends Jet_Elements_Base {
 			return sprintf( $format, Utils::get_placeholder_image_src(), '' );
 		}
 
+		$image['id'] = apply_filters( 'wpml_object_id', $image['id'], 'attachment', true );
+
 		$src = wp_get_attachment_image_url( $image['id'], 'thumbnail' );
 		$alt = Control_Media::get_image_alt( $image );
 
@@ -2750,15 +3112,17 @@ class Jet_Elements_Slider extends Jet_Elements_Base {
 	 *
 	 * @return string|void
 	 */
-	protected function __loop_item_template_content() {
+	protected function _loop_item_template_content() {
 
-		$template_id = $this->__processed_item['template_id'];
+		$template_id = $this->_processed_item['template_id'];
 
-		if ( '0' === $template_id ) {
+		if ( empty( $template_id ) ) {
 			return;
 		}
 
-		$content = jet_elements()->elementor()->frontend->get_builder_content_for_display( $template_id );
+		// for multi-language plugins
+		$template_id = apply_filters( 'jet-elements/widgets/template_id', $template_id, $this );
+		$content     = jet_elements()->elementor()->frontend->get_builder_content_for_display( $template_id );
 
 		if ( jet_elements()->elementor()->editor->is_edit_mode() ) {
 			$edit_url = add_query_arg(
@@ -2769,7 +3133,7 @@ class Jet_Elements_Slider extends Jet_Elements_Base {
 			);
 
 			$edit_link = sprintf(
-				'<a class="jet-elements-edit-template-link" href="%s" title="%s" target="_blank"><i class="fa fa-pencil"></i></a>',
+				'<a class="jet-elements-edit-template-link" href="%s" title="%s" target="_blank"><i class="dashicons dashicons-edit"></i></a>',
 				esc_url( $edit_url ),
 				esc_html__( 'Edit Template', 'jet-elements' )
 			);
@@ -2786,12 +3150,12 @@ class Jet_Elements_Slider extends Jet_Elements_Base {
 	 */
 	protected function render() {
 
-		$this->__context = 'render';
+		$this->_context = 'render';
 
-		$this->__open_wrap();
-		include $this->__get_global_template( 'index' );
-		$this->__close_wrap();
+		$this->_open_wrap();
+		include $this->_get_global_template( 'index' );
+		$this->_close_wrap();
 	}
 
-	protected function _content_template() {}
+	protected function content_template() {}
 }

@@ -12,8 +12,8 @@ use Elementor\Group_Control_Border;
 use Elementor\Group_Control_Box_Shadow;
 use Elementor\Group_Control_Typography;
 use Elementor\Repeater;
-use Elementor\Scheme_Color;
-use Elementor\Scheme_Typography;
+use Elementor\Core\Schemes\Color as Scheme_Color;
+use Elementor\Core\Schemes\Typography as Scheme_Typography;
 use Elementor\Widget_Base;
 use Elementor\Utils;
 
@@ -102,13 +102,35 @@ class Jet_Blocks_Nav_Menu extends Jet_Blocks_Base {
 			)
 		);
 
-		$this->add_control(
+		$this->__add_advanced_icon_control(
 			'dropdown_icon',
 			array(
-				'label'   => esc_html__( 'Dropdown Icon', 'jet-blocks' ),
-				'type'    => Controls_Manager::SELECT,
-				'default' => 'fa fa-angle-down',
-				'options' => $this->dropdown_arrow_icons_list(),
+				'label'       => esc_html__( 'Top Dropdown Icon', 'jet-blocks' ),
+				'type'        => Controls_Manager::ICON,
+				'label_block' => false,
+				'skin'        => 'inline',
+				'file'        => '',
+				'default'     => 'fa fa-angle-down',
+				'fa5_default' => array(
+					'value'   => 'fa fa-angle-down',
+					'library' => 'fa-solid',
+				),
+			)
+		);
+
+		$this->__add_advanced_icon_control(
+			'dropdown_icon_sub',
+			array(
+				'label'       => esc_html__( 'Sub Dropdown Icon', 'jet-blocks' ),
+				'type'        => Controls_Manager::ICON,
+				'label_block' => false,
+				'skin'        => 'inline',
+				'file'        => '',
+				'default'     => 'fa fa-angle-right',
+				'fa5_default' => array(
+					'value'   => 'fa fa-angle-right',
+					'library' => 'fa-solid',
+				),
 			)
 		);
 
@@ -217,8 +239,9 @@ class Jet_Blocks_Nav_Menu extends Jet_Blocks_Base {
 			'mobile_trigger_icon',
 			array(
 				'label'       => esc_html__( 'Mobile Trigger Icon', 'jet-blocks' ),
-				'label_block' => true,
+				'label_block' => false,
 				'type'        => Controls_Manager::ICON,
+				'skin'        => 'inline',
 				'default'     => 'fa fa-bars',
 				'fa5_default' => array(
 					'value'   => 'fas fa-bars',
@@ -234,8 +257,9 @@ class Jet_Blocks_Nav_Menu extends Jet_Blocks_Base {
 			'mobile_trigger_close_icon',
 			array(
 				'label'       => esc_html__( 'Mobile Trigger Close Icon', 'jet-blocks' ),
-				'label_block' => true,
+				'label_block' => false,
 				'type'        => Controls_Manager::ICON,
+				'skin'        => 'inline',
 				'default'     => 'fa fa-times',
 				'fa5_default' => array(
 					'value'   => 'fas fa-times',
@@ -251,7 +275,6 @@ class Jet_Blocks_Nav_Menu extends Jet_Blocks_Base {
 			'mobile_menu_layout',
 			array(
 				'label' => esc_html__( 'Mobile Menu Layout', 'jet-blocks' ),
-				'label_block' => true,
 				'type'  => Controls_Manager::SELECT,
 				'default' => 'default',
 				'options' => array(
@@ -629,11 +652,9 @@ class Jet_Blocks_Nav_Menu extends Jet_Blocks_Base {
 						'max' => 100,
 					),
 				),
-				'condition' => array(
-					'dropdown_icon!' => '',
-				),
 				'selectors' => array(
 					'{{WRAPPER}} .menu-item-link-top .jet-nav-arrow' => 'font-size: {{SIZE}}{{UNIT}};',
+					'{{WRAPPER}} .menu-item-link-top .jet-nav-arrow svg' => 'width: {{SIZE}}{{UNIT}};',
 				),
 			),
 			50
@@ -650,9 +671,6 @@ class Jet_Blocks_Nav_Menu extends Jet_Blocks_Base {
 						'min' => 0,
 						'max' => 20,
 					),
-				),
-				'condition' => array(
-					'dropdown_icon!' => '',
 				),
 				'selectors'  => array(
 					'{{WRAPPER}} .menu-item-link-top .jet-nav-arrow' => 'margin-left: {{SIZE}}{{UNIT}};',
@@ -1057,11 +1075,9 @@ class Jet_Blocks_Nav_Menu extends Jet_Blocks_Base {
 						'max' => 100,
 					),
 				),
-				'condition' => array(
-					'dropdown_icon!' => '',
-				),
 				'selectors' => array(
 					'{{WRAPPER}} .menu-item-link-sub .jet-nav-arrow' => 'font-size: {{SIZE}}{{UNIT}};',
+					'{{WRAPPER}} .menu-item-link-sub .jet-nav-arrow svg' => 'width: {{SIZE}}{{UNIT}};',
 				),
 			),
 			50
@@ -1078,9 +1094,6 @@ class Jet_Blocks_Nav_Menu extends Jet_Blocks_Base {
 						'min' => 0,
 						'max' => 20,
 					),
-				),
-				'condition' => array(
-					'dropdown_icon!' => '',
 				),
 				'selectors'  => array(
 					'{{WRAPPER}} .menu-item-link-sub .jet-nav-arrow' => 'margin-left: {{SIZE}}{{UNIT}};',
@@ -1580,14 +1593,18 @@ class Jet_Blocks_Nav_Menu extends Jet_Blocks_Base {
 			$menu_html = '<div ' . $this->get_render_attribute_string( 'nav-menu' ) . '>%3$s' . $close_btn . '</div>';
 		}
 
+		$top_dropdown_icon_html = $this->__get_icon( 'dropdown_icon', '%s' );
+		$sub_dropdown_icon_html = $this->__get_icon( 'dropdown_icon_sub', '%s' );
+
 		$args = array(
 			'menu'            => $settings['nav_menu'],
 			'fallback_cb'     => '',
 			'items_wrap'      => $menu_html,
 			'walker'          => new \Jet_Blocks_Nav_Walker,
 			'widget_settings' => array(
-				'dropdown_icon'   => $settings['dropdown_icon'],
-				'show_items_desc' => $settings['show_items_desc'],
+				'dropdown_icon'     => $top_dropdown_icon_html,
+				'dropdown_icon_sub' => $sub_dropdown_icon_html,
+				'show_items_desc'   => $settings['show_items_desc'],
 			),
 		);
 

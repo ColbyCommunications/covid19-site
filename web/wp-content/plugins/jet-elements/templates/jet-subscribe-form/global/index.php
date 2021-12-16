@@ -34,7 +34,7 @@ $this->add_render_attribute( 'form-input',
 $icon_html = '';
 
 if ( filter_var( $use_icon, FILTER_VALIDATE_BOOLEAN ) ) {
-	$icon_html = $this->__get_icon( 'button_icon', '<span class="jet-subscribe-form__submit-icon jet-elements-icon">%s</span>' );
+	$icon_html = $this->_get_icon( 'button_icon', '<span class="jet-subscribe-form__submit-icon jet-elements-icon">%s</span>' );
 }
 
 ?>

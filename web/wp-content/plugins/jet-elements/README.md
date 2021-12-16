@@ -3,6 +3,139 @@
 Brand new addon for Elementor Page builder. It provides the set of modules to create different kinds of content, adds custom modules to your website and applies attractive styles in the matter of several clicks!
 
 # ChangeLog
+## [2.6.1](https://github.com/ZemezLab/jet-elements/archive/2.6.1.zip) - 19.11.2021
+* Fixed: js error in the Slider widget
+
+## [2.6.0](https://github.com/ZemezLab/jet-elements/archive/2.6.0.zip) - 09.11.2021
+* Added: [Crocoblock/suggestions#3227](https://github.com/Crocoblock/suggestions/issues/3227)
+* Fixed: widgets compatibility with new breakpoints
+* Fixed: PHP 8 compatibility
+* Fixed: scratch type in the Animated Box widget
+* Fixed: minor issues
+
+## [2.5.9](https://github.com/ZemezLab/jet-elements/archive/2.5.9.zip) - 23.08.2021
+* Added: [Crocoblock/suggestions#3624](https://github.com/Crocoblock/suggestions/issues/3624)
+* Added: [Crocoblock/suggestions#3639](https://github.com/Crocoblock/suggestions/issues/3639)
+* Fixed: RTL issues
+* Fixed: WPML issues
+* Fixed: PHP 8 compatibility
+* Fixed: scratch type in the Animated Box widget
+* Fixed: typing effect in the Animated Text widget
+* Fixed: lightbox in the Portfolio widget
+* Fixed: default slider height in the Slider widget
+
+## [2.5.8](https://github.com/ZemezLab/jet-elements/archive/2.5.8.zip) - 23.06.2021
+* Added: [Crocoblock/suggestions#1748](https://github.com/Crocoblock/suggestions/issues/1748)
+* Added: [Crocoblock/suggestions#2518](https://github.com/Crocoblock/suggestions/issues/2518)
+* Added: [Crocoblock/suggestions#2523](https://github.com/Crocoblock/suggestions/issues/2523)
+* Added: [Crocoblock/suggestions#2520](https://github.com/Crocoblock/suggestions/issues/2520)
+* Added: [Crocoblock/suggestions#2672](https://github.com/Crocoblock/suggestions/issues/2672)
+* Added: [Crocoblock/suggestions#2532](https://github.com/Crocoblock/suggestions/issues/2532)
+* Added: [Crocoblock/suggestions#3076](https://github.com/Crocoblock/suggestions/issues/3076)
+* Added: [Crocoblock/suggestions#3133](https://github.com/Crocoblock/suggestions/issues/3133)
+* Fixed: use global colors in the Circle Progress widget
+* Fixed: tooltips in the Pricing Table widget
+* Fixed: actions after expire in the Countdown widget
+* Fixed: image border in the Team Member widget
+
+## [2.5.7](https://github.com/ZemezLab/jet-elements/archive/2.5.7.zip) - 28.04.2021
+* Updated: JetDashboard Module to v2.0.8
+* Fixed: compatibility with Elementor 3.2
+
+## [2.5.6](https://github.com/ZemezLab/jet-elements/archive/2.5.6.zip) - 08.04.2021
+* Added: [Crocoblock/suggestions#2519](https://github.com/Crocoblock/suggestions/issues/2519)
+* Added: [Crocoblock/suggestions#2562](https://github.com/Crocoblock/suggestions/issues/2562)
+* Added: [Crocoblock/suggestions#2433](https://github.com/Crocoblock/suggestions/issues/2433)
+* Added: [Crocoblock/suggestions#2910](https://github.com/Crocoblock/suggestions/issues/2910)
+* Added: Elementor compatibility tag
+* Added: validation the html tags settings
+* Fixed: minor issues
+
+## [2.5.5](https://github.com/ZemezLab/jet-elements/archive/2.5.5.zip) - 03.03.2021
+* Added: [Crocoblock/suggestions#2504](https://github.com/Crocoblock/suggestions/issues/2504)
+* Added: [Crocoblock/suggestions#2521](https://github.com/Crocoblock/suggestions/issues/2521)
+* Fixed: [Crocoblock/suggestions#2723](https://github.com/Crocoblock/suggestions/issues/2723)
+* Fixed: [Crocoblock/suggestions#2079](https://github.com/Crocoblock/suggestions/issues/2079)
+* Fixed: Elementor 3.1.2 compatibility issue
+
+## [2.5.4](https://github.com/ZemezLab/jet-elements/archive/2.5.4.zip) - 05.02.2021
+* Added: [Crocoblock/suggestions#2025](https://github.com/Crocoblock/suggestions/issues/2025)
+* Added: [Crocoblock/suggestions#2267](https://github.com/Crocoblock/suggestions/issues/2267)
+* Added: [Crocoblock/suggestions#2378](https://github.com/Crocoblock/suggestions/issues/2378)
+* Added: [Crocoblock/suggestions#2486](https://github.com/Crocoblock/suggestions/issues/2486)
+* Added: [Crocoblock/suggestions#2082](https://github.com/Crocoblock/suggestions/issues/2082)
+* Added: [Crocoblock/suggestions#2104](https://github.com/Crocoblock/suggestions/issues/2104)
+* Fixed: text spacing in the Animated Text widget
+* Fixed: image margin in the Testimonials widget
+
+## [2.5.3](https://github.com/ZemezLab/jet-elements/archive/2.5.3.zip) - 17.12.2020
+* Updated: JetDashboard Module to v2.0.6
+* Added: better compatibility with WPML
+* Added: better compatibility the Audio widget with Dynamic Tags
+* Added: `Link Hover Color` control in the Advanced Carousel widget
+* Added: `Content Alignment` control in the Button widget
+* Added: DMS format for coordinates in the Advanced Map widget
+* Added: [Crocoblock/suggestions#1925](https://github.com/Crocoblock/suggestions/issues/1925)
+* Fixed: minor bugs
+
+## [2.5.2](https://github.com/ZemezLab/jet-elements/archive/2.5.2.zip) - 12.11.2020
+* Updated: JetDashboard Module to v2.0.4
+
+## [2.5.1](https://github.com/ZemezLab/jet-elements/archive/2.5.1.zip) - 11.11.2020
+* Updated: JetDashboard Module to v2.0.3
+
+## [2.5.0](https://github.com/ZemezLab/jet-elements/archive/2.5.0.zip) - 10.11.2020
+* Added: new Line Chart widget
+* Added: [Crocoblock/suggestions#1321](https://github.com/Crocoblock/suggestions/issues/1321)
+* Added: [Crocoblock/suggestions#1371](https://github.com/Crocoblock/suggestions/issues/1371)
+* Updated: JetDashboard Module to v2.0.2
+
+## [2.4.1](https://github.com/ZemezLab/jet-elements/archive/2.4.1.zip) - 19.10.2020
+* Added: native lazy loading for images
+* Added: an ability to use the official Instagram Graph API for getting tagged photos in the Instagram widget
+
+## [2.4.0](https://github.com/ZemezLab/jet-elements/archive/2.4.0.zip) - 06.10.2020
+* Updated: JetDashboard Module to v2.0.0
+
+## [2.3.3](https://github.com/ZemezLab/jet-elements/archive/2.3.3.zip) - 28.08.2020
+* Fixed: compatibility with Elementor 3.0 ( Repeater issue )
+* Fixed: a fold init in the Pricing table widget
+
+## [2.3.2](https://github.com/ZemezLab/jet-elements/archive/2.3.2.zip) - 17.08.2020
+* Added: compatibility the Vertical Timeline widget with popups
+* Added: getting a list of templates in controls through ajax
+* Fixed: compatibility with Elementor Pro
+
+## [2.3.1](https://github.com/ZemezLab/jet-elements/archive/2.3.1.zip) - 28.07.2020
+* Added: [Crocoblock/suggestions#788](https://github.com/Crocoblock/suggestions/issues/788)
+* Added: [Crocoblock/suggestions#885](https://github.com/Crocoblock/suggestions/issues/885)
+* Added: [Crocoblock/suggestions#1212](https://github.com/Crocoblock/suggestions/issues/1212)
+* Added: [Crocoblock/suggestions#1240](https://github.com/Crocoblock/suggestions/issues/1240)
+* Added: [Crocoblock/suggestions#1241](https://github.com/Crocoblock/suggestions/issues/1241)
+* Added: [Crocoblock/suggestions#1258](https://github.com/Crocoblock/suggestions/issues/1258)
+* Added: tooltips in the featured list in the Pricing List widget
+* Added: an ability fold the featured list in the Pricing List widget
+
+## [2.3.0](https://github.com/ZemezLab/jet-elements/archive/2.3.0.zip) - 16.07.2020
+* Added: new Lottie widget
+* Added: elements order controls in the Pricing Table widget
+* Added: an ability to use dynamic tags in the Custom Access Token control of Instagram widget
+* Added: multiple performance improvements and bug fixes
+* Update: JetDashboard Module to v1.0.16
+
+## [2.2.17](https://github.com/ZemezLab/jet-elements/archive/2.2.17.zip) - 10.05.2020
+* Fixed: backward compatibility with deprecated methods
+
+## [2.2.16](https://github.com/ZemezLab/jet-elements/archive/2.2.16.zip) - 09.05.2020
+* Added: compatibility with deprecated methods
+
+## [2.2.15](https://github.com/ZemezLab/jet-elements/archive/2.2.15.zip) - 09.05.2020
+* Added: `Column Vertical Scrollbar` option to the Jet Advanced settings
+* Added: better compatibility with Multi-language plugins
+* Added: compatibility waypoint callbacks inside popups
+* Update: Countdown Timer js
+* Fixed: PHP 7+ compatibility
+* Fixed: Slider widget with Elementor entrance animation in template
 
 ## [2.2.14](https://github.com/ZemezLab/jet-elements/archive/2.2.14.zip) - 21.04.2020
 * Added: `Open link in new window` and `Add nofollow` controls for the social link in the Team Member widget

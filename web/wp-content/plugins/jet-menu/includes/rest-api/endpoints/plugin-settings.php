@@ -32,12 +32,12 @@ class Plugin_Settings extends Base {
 
 		$data = $request->get_params();
 
-		$current = get_option( jet_menu_option_page()->options_slug(), array() );
+		$current = get_option( jet_menu()->settings_manager->options_manager->options_slug, array() );
 
 		if ( is_wp_error( $current ) ) {
 			return rest_ensure_response( [
 				'status'  => 'error',
-				'message' => __( 'Server Error', 'jet-menu' )
+				'message' => __( 'Server Error', 'jet-menu' ),
 			] );
 		}
 
@@ -45,11 +45,11 @@ class Plugin_Settings extends Base {
 			$current[ $key ] = is_array( $value ) ? $value : esc_attr( $value );
 		}
 
-		jet_menu_option_page()->save_options( jet_menu_option_page()->options_slug(), $current );
+		jet_menu()->settings_manager->options_manager->save_options( jet_menu()->settings_manager->options_manager->options_slug, $current );
 
 		return rest_ensure_response( [
 			'status'  => 'success',
-			'message' => __( 'Settings have been saved', 'jet-menu' )
+			'message' => __( 'Settings have been saved', 'jet-menu' ),
 		] );
 	}
 }

@@ -12,8 +12,8 @@ use Elementor\Group_Control_Border;
 use Elementor\Group_Control_Box_Shadow;
 use Elementor\Group_Control_Typography;
 use Elementor\Repeater;
-use Elementor\Scheme_Color;
-use Elementor\Scheme_Typography;
+use Elementor\Core\Schemes\Color as Scheme_Color;
+use Elementor\Core\Schemes\Typography as Scheme_Typography;
 use Elementor\Widget_Base;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -87,7 +87,7 @@ class Jet_Elements_Inline_Svg extends Jet_Elements_Base {
 
 		$this->end_controls_section();
 
-		$this->__start_controls_section(
+		$this->_start_controls_section(
 			'section_svg_style',
 			array(
 				'label'      => esc_html__( 'SVG', 'jet-elements' ),
@@ -96,7 +96,7 @@ class Jet_Elements_Inline_Svg extends Jet_Elements_Base {
 			)
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'svg_custom_width',
 			array(
 				'label'        => esc_html__( 'Use Custom Width', 'jet-elements' ),
@@ -110,7 +110,7 @@ class Jet_Elements_Inline_Svg extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'svg_aspect_ratio',
 			array(
 				'label'        => esc_html__( 'Use Aspect Ratio', 'jet-elements' ),
@@ -127,7 +127,7 @@ class Jet_Elements_Inline_Svg extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'svg_width',
 			array(
 				'label'      => esc_html__( 'Width', 'jet-elements' ),
@@ -155,7 +155,7 @@ class Jet_Elements_Inline_Svg extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'svg_height',
 			array(
 				'label'      => esc_html__( 'Height', 'jet-elements' ),
@@ -185,7 +185,7 @@ class Jet_Elements_Inline_Svg extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'svg_custom_color',
 			array(
 				'label'        => esc_html__( 'Use Custom Color', 'jet-elements' ),
@@ -199,7 +199,7 @@ class Jet_Elements_Inline_Svg extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'svg_color',
 			array(
 				'label'     => esc_html__( 'Color', 'jet-elements' ),
@@ -214,7 +214,7 @@ class Jet_Elements_Inline_Svg extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'svg_hover_color',
 			array(
 				'label'     => esc_html__( 'Hover Color', 'jet-elements' ),
@@ -229,7 +229,7 @@ class Jet_Elements_Inline_Svg extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'svg_remove_inline_css',
 			array(
 				'label'        => esc_html__( 'Remove Inline CSS', 'jet-elements' ),
@@ -243,7 +243,7 @@ class Jet_Elements_Inline_Svg extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'svg_alignment',
 			array(
 				'label'     => esc_html__( 'Alignment', 'jet-elements' ),
@@ -266,11 +266,12 @@ class Jet_Elements_Inline_Svg extends Jet_Elements_Base {
 				'selectors' => array(
 					'{{WRAPPER}} ' . $css_scheme['svg-wrapper'] => 'text-align: {{VALUE}};',
 				),
+				'classes' => 'jet-elements-text-align-control',
 			),
 			25
 		);
 
-		$this->__end_controls_section();
+		$this->_end_controls_section();
 	}
 
 	public function prepare_svg( $svg, $settings ) {
@@ -292,7 +293,7 @@ class Jet_Elements_Inline_Svg extends Jet_Elements_Base {
 	}
 
 	protected function render() {
-		$this->__context = 'render';
+		$this->_context = 'render';
 		$settings        = $this->get_settings_for_display();
 		$tag             = 'div';
 		$svg             = jet_elements_tools()->get_image_by_url( $settings['svg_url']['url'], array( 'class' => 'jet-inline-svg__inner' ) );
@@ -339,11 +340,11 @@ class Jet_Elements_Inline_Svg extends Jet_Elements_Base {
 			$this->add_render_attribute( 'svg_wrap', 'class', 'jet-inline-svg--custom-color' );
 		}
 
-		$this->__open_wrap();
+		$this->_open_wrap();
 		echo '<div class="jet-inline-svg__wrapper"><' . $tag . ' ' . $this->get_render_attribute_string( 'svg_wrap' ) . '>';
 		echo $svg;
 		echo '</' . $tag . '></div>';
-		$this->__close_wrap();
+		$this->_close_wrap();
 	}
 
 }

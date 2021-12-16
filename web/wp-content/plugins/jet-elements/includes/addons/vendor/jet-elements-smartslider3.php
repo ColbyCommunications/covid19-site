@@ -184,5 +184,5 @@ class Jet_Elements_Smartslider3 extends Jet_Elements_Base {
 
 	}
 
-	protected function _content_template() {}
+	protected function content_template() {}
 }

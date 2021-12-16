@@ -12,8 +12,8 @@ use Elementor\Group_Control_Border;
 use Elementor\Group_Control_Box_Shadow;
 use Elementor\Group_Control_Typography;
 use Elementor\Repeater;
-use Elementor\Scheme_Color;
-use Elementor\Scheme_Typography;
+use Elementor\Core\Schemes\Color as Scheme_Color;
+use Elementor\Core\Schemes\Typography as Scheme_Typography;
 use Elementor\Widget_Base;
 use Elementor\Utils;
 use Elementor\Modules\DynamicTags\Module as TagsModule;
@@ -31,20 +31,6 @@ class Jet_Elements_Instagram_Gallery extends Jet_Elements_Base {
 	private $api_url = 'https://www.instagram.com/';
 
 	/**
-	 * Alternative Instagram API-server URL.
-	 *
-	 * @var string
-	 */
-	private $alt_api_url = 'https://apinsta.herokuapp.com/';
-
-	/**
-	 * Official Instagram API-server URL.
-	 *
-	 * @var string
-	 */
-	private $official_api_url = 'https://api.instagram.com/v1/';
-
-	/**
 	 * New Instagram API-server URL.
 	 *
 	 * @var string
@@ -52,11 +38,25 @@ class Jet_Elements_Instagram_Gallery extends Jet_Elements_Base {
 	private $new_api_url = 'https://graph.instagram.com/';
 
 	/**
+	 * Graph Api Url.
+	 *
+	 * @var string
+	 */
+	private $graph_api_url = 'https://graph.facebook.com/';
+
+	/**
 	 * Access token.
 	 *
 	 * @var string
 	 */
 	private $access_token = null;
+
+	/**
+	 * Business account config.
+	 *
+	 * @var array|null
+	 */
+	private $business_account_config = null;
 
 	/**
 	 * Request config
@@ -142,6 +142,55 @@ class Jet_Elements_Instagram_Gallery extends Jet_Elements_Base {
 		);
 
 		$this->add_control(
+			'use_insta_graph_api',
+			array(
+				'label'     => esc_html__( 'Use Instagram Graph API', 'jet-elements' ),
+				'type'      => Controls_Manager::SWITCHER,
+				'default'   => '',
+				'condition' => array(
+					'endpoint' => 'hashtag',
+				),
+			)
+		);
+
+		$business_account_config = $this->get_business_account_config();
+
+		if ( empty( $business_account_config['token'] ) || empty( $business_account_config['user_id'] ) ) {
+			$this->add_control(
+				'set_business_access_token',
+				array(
+					'type' => Controls_Manager::RAW_HTML,
+					'raw'  => sprintf(
+						esc_html__( 'Please set Business Instagram Access Token and User ID on the %1$s.', 'jet-elements' ),
+						'<a target="_blank" href="' . jet_elements_settings()->get_settings_page_link( 'integrations' ) . '">' . esc_html__( 'settings page', 'jet-elements' ) . '</a>'
+					),
+					'content_classes' => 'elementor-descriptor',
+					'condition' => array(
+						'endpoint'            => 'hashtag',
+						'use_insta_graph_api' => 'yes',
+					),
+				)
+			);
+		}
+
+		$this->add_control(
+			'order_by',
+			array(
+				'label'   => esc_html__( 'Order By', 'jet-elements' ),
+				'type'    => Controls_Manager::SELECT,
+				'default' => 'recent_media',
+				'options' => array(
+					'recent_media' => esc_html__( 'Recent Media', 'jet-elements' ),
+					'top_media'    => esc_html__( 'Top Media', 'jet-elements' ),
+				),
+				'condition' => array(
+					'endpoint'            => 'hashtag',
+					'use_insta_graph_api' => 'yes',
+				),
+			)
+		);
+
+		$this->add_control(
 			'access_token_source',
 			array(
 				'label'   => esc_html__( 'Access Token', 'jet-elements' ),
@@ -164,8 +213,9 @@ class Jet_Elements_Instagram_Gallery extends Jet_Elements_Base {
 					'type' => Controls_Manager::RAW_HTML,
 					'raw'  => sprintf(
 						esc_html__( 'Please set Instagram Access Token on the %1$s.', 'jet-elements' ),
-						'<a target="_blank" href="' . jet_elements_settings()->get_settings_page_link() . '">' . esc_html__( 'settings page', 'jet-elements' ) . '</a>'
+						'<a target="_blank" href="' . jet_elements_settings()->get_settings_page_link( 'integrations' ) . '">' . esc_html__( 'settings page', 'jet-elements' ) . '</a>'
 					),
+					'content_classes' => 'elementor-descriptor',
 					'condition' => array(
 						'endpoint' => 'self',
 						'access_token_source' => '',
@@ -183,6 +233,12 @@ class Jet_Elements_Instagram_Gallery extends Jet_Elements_Base {
 				'condition' => array(
 					'endpoint' => 'self',
 					'access_token_source' => 'custom',
+				),
+				'dynamic' => array(
+					'active'     => true,
+					'categories' => array(
+						TagsModule::POST_META_CATEGORY,
+					),
 				),
 			)
 		);
@@ -341,12 +397,20 @@ class Jet_Elements_Instagram_Gallery extends Jet_Elements_Base {
 		$this->add_responsive_control(
 			'columns',
 			array(
-				'label'   => esc_html__( 'Columns', 'jet-elements' ),
-				'type'    => Controls_Manager::SELECT,
-				'default' => 3,
-				'options' => jet_elements_tools()->get_select_range( 6 ),
-				'condition' => array(
+				'label'              => esc_html__( 'Columns', 'jet-elements' ),
+				'type'               => Controls_Manager::SELECT,
+				'default'            => 3,
+				'options'            => jet_elements_tools()->get_select_range( 6 ),
+				'condition'          => array(
 					'layout_type' => array( 'masonry', 'grid' ),
+				),
+				'frontend_available' => true,
+				'render_type'        => 'template',
+				'selectors'          => array(
+					'{{WRAPPER}} .salvattore-column' => 'width: calc(100% / {{VALUE}});',
+					'{{WRAPPER}} .jet-instagram-gallery__instance::before' => 'content: "{{VALUE}} .salvattore-column"',
+					'{{WRAPPER}} .jet-instagram-gallery__instance.layout-type-grid::before' => 'content: ""',
+					'{{WRAPPER}} .jet-instagram-gallery__instance.layout-type-grid .jet-instagram-gallery__item' => 'max-width: calc(100% / {{VALUE}});flex: 0 0 calc(100% / {{VALUE}});',
 				),
 			)
 		);
@@ -413,7 +477,7 @@ class Jet_Elements_Instagram_Gallery extends Jet_Elements_Base {
 		/**
 		 * Item Style Section
 		 */
-		$this->__start_controls_section(
+		$this->_start_controls_section(
 			'section_general_style',
 			array(
 				'label'      => esc_html__( 'Item', 'jet-elements' ),
@@ -422,7 +486,7 @@ class Jet_Elements_Instagram_Gallery extends Jet_Elements_Base {
 			)
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'cover_alignment',
 			array(
 				'label'   => esc_html__( 'Content Vertical Alignment', 'jet-elements' ),
@@ -441,7 +505,7 @@ class Jet_Elements_Instagram_Gallery extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'item_padding',
 			array(
 				'label'      => __( 'Padding', 'jet-elements' ),
@@ -454,7 +518,7 @@ class Jet_Elements_Instagram_Gallery extends Jet_Elements_Base {
 			75
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Border::get_type(),
 			array(
 				'name'        => 'item_border',
@@ -466,7 +530,7 @@ class Jet_Elements_Instagram_Gallery extends Jet_Elements_Base {
 			75
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'item_border_radius',
 			array(
 				'label'      => __( 'Border Radius', 'jet-elements' ),
@@ -479,7 +543,7 @@ class Jet_Elements_Instagram_Gallery extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Box_Shadow::get_type(),
 			array(
 				'name' => 'item_shadow',
@@ -488,7 +552,7 @@ class Jet_Elements_Instagram_Gallery extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'item_overlay_heading',
 			array(
 				'label'     => esc_html__( 'Overlay', 'jet-elements' ),
@@ -498,7 +562,7 @@ class Jet_Elements_Instagram_Gallery extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Background::get_type(),
 			array(
 				'name'     => 'overlay_background',
@@ -515,7 +579,7 @@ class Jet_Elements_Instagram_Gallery extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'overlay_paddings',
 			array(
 				'label'      => __( 'Padding', 'jet-elements' ),
@@ -528,7 +592,7 @@ class Jet_Elements_Instagram_Gallery extends Jet_Elements_Base {
 			100
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'item_order_heading',
 			array(
 				'label'     => esc_html__( 'Order', 'jet-elements' ),
@@ -538,7 +602,7 @@ class Jet_Elements_Instagram_Gallery extends Jet_Elements_Base {
 			100
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'caption_order',
 			array(
 				'label'   => esc_html__( 'Caption Order', 'jet-elements' ),
@@ -554,7 +618,7 @@ class Jet_Elements_Instagram_Gallery extends Jet_Elements_Base {
 			100
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'meta_order',
 			array(
 				'label'   => esc_html__( 'Meta Order', 'jet-elements' ),
@@ -570,12 +634,12 @@ class Jet_Elements_Instagram_Gallery extends Jet_Elements_Base {
 			100
 		);
 
-		$this->__end_controls_section();
+		$this->_end_controls_section();
 
 		/**
 		 * Caption Style Section
 		 */
-		$this->__start_controls_section(
+		$this->_start_controls_section(
 			'section_caption_style',
 			array(
 				'label'      => esc_html__( 'Caption', 'jet-elements' ),
@@ -584,7 +648,7 @@ class Jet_Elements_Instagram_Gallery extends Jet_Elements_Base {
 			)
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'caption_alignment',
 			array(
 				'label'   => esc_html__( 'Alignment', 'jet-elements' ),
@@ -610,7 +674,7 @@ class Jet_Elements_Instagram_Gallery extends Jet_Elements_Base {
 			)
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'caption_text_alignment',
 			array(
 				'label'   => esc_html__( 'Text Alignment', 'jet-elements' ),
@@ -633,10 +697,11 @@ class Jet_Elements_Instagram_Gallery extends Jet_Elements_Base {
 				'selectors'  => array(
 					'{{WRAPPER}} ' . $css_scheme['caption'] => 'text-align: {{VALUE}};',
 				),
+				'classes' => 'jet-elements-text-align-control',
 			)
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'caption_width',
 			array(
 				'label' => esc_html__( 'Caption Width', 'jet-elements' ),
@@ -665,7 +730,7 @@ class Jet_Elements_Instagram_Gallery extends Jet_Elements_Base {
 			100
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'caption_color',
 			array(
 				'label'  => esc_html__( 'Color', 'jet-elements' ),
@@ -677,7 +742,7 @@ class Jet_Elements_Instagram_Gallery extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Typography::get_type(),
 			array(
 				'name'     => 'caption_typography',
@@ -687,7 +752,7 @@ class Jet_Elements_Instagram_Gallery extends Jet_Elements_Base {
 			50
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'caption_padding',
 			array(
 				'label'      => __( 'Padding', 'jet-elements' ),
@@ -700,7 +765,7 @@ class Jet_Elements_Instagram_Gallery extends Jet_Elements_Base {
 			100
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'caption_margin',
 			array(
 				'label'      => __( 'Margin', 'jet-elements' ),
@@ -713,12 +778,12 @@ class Jet_Elements_Instagram_Gallery extends Jet_Elements_Base {
 			50
 		);
 
-		$this->__end_controls_section();
+		$this->_end_controls_section();
 
 		/**
 		 * Meta Style Section
 		 */
-		$this->__start_controls_section(
+		$this->_start_controls_section(
 			'section_meta_style',
 			array(
 				'label'      => esc_html__( 'Meta', 'jet-elements' ),
@@ -727,7 +792,7 @@ class Jet_Elements_Instagram_Gallery extends Jet_Elements_Base {
 			)
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'meta_alignment',
 			array(
 				'label'   => esc_html__( 'Alignment', 'jet-elements' ),
@@ -754,7 +819,7 @@ class Jet_Elements_Instagram_Gallery extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'comments_icon',
 			array(
 				'label'       => esc_html__( 'Comments Icon', 'jet-elements' ),
@@ -766,7 +831,7 @@ class Jet_Elements_Instagram_Gallery extends Jet_Elements_Base {
 			50
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'likes_icon',
 			array(
 				'label'       => esc_html__( 'Likes Icon', 'jet-elements' ),
@@ -778,7 +843,7 @@ class Jet_Elements_Instagram_Gallery extends Jet_Elements_Base {
 			50
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'meta_icon_color',
 			array(
 				'label'  => esc_html__( 'Icon Color', 'jet-elements' ),
@@ -790,7 +855,7 @@ class Jet_Elements_Instagram_Gallery extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'meta_icon_size',
 			array(
 				'label'      => esc_html__( 'Icon Size', 'jet-elements' ),
@@ -811,7 +876,7 @@ class Jet_Elements_Instagram_Gallery extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'meta_label_color',
 			array(
 				'label'  => esc_html__( 'Text Color', 'jet-elements' ),
@@ -823,7 +888,7 @@ class Jet_Elements_Instagram_Gallery extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Typography::get_type(),
 			array(
 				'name'     => 'meta_label_typography',
@@ -833,7 +898,7 @@ class Jet_Elements_Instagram_Gallery extends Jet_Elements_Base {
 			50
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Background::get_type(),
 			array(
 				'name'     => 'meta_background',
@@ -842,7 +907,7 @@ class Jet_Elements_Instagram_Gallery extends Jet_Elements_Base {
 			100
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'meta_padding',
 			array(
 				'label'      => __( 'Padding', 'jet-elements' ),
@@ -855,7 +920,7 @@ class Jet_Elements_Instagram_Gallery extends Jet_Elements_Base {
 			100
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'meta_margin',
 			array(
 				'label'      => __( 'Margin', 'jet-elements' ),
@@ -868,7 +933,7 @@ class Jet_Elements_Instagram_Gallery extends Jet_Elements_Base {
 			50
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'meta_item_margin',
 			array(
 				'label'      => __( 'Item Margin', 'jet-elements' ),
@@ -881,7 +946,7 @@ class Jet_Elements_Instagram_Gallery extends Jet_Elements_Base {
 			50
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Border::get_type(),
 			array(
 				'name'        => 'meta_border',
@@ -893,7 +958,7 @@ class Jet_Elements_Instagram_Gallery extends Jet_Elements_Base {
 			100
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'meta_radius',
 			array(
 				'label'      => __( 'Border Radius', 'jet-elements' ),
@@ -906,7 +971,7 @@ class Jet_Elements_Instagram_Gallery extends Jet_Elements_Base {
 			100
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Box_Shadow::get_type(),
 			array(
 				'name'     => 'meta_shadow',
@@ -915,16 +980,16 @@ class Jet_Elements_Instagram_Gallery extends Jet_Elements_Base {
 			100
 		);
 
-		$this->__end_controls_section();
+		$this->_end_controls_section();
 
 	}
 
 	protected function render() {
-		$this->__context = 'render';
+		$this->_context = 'render';
 
-		$this->__open_wrap();
-		include $this->__get_global_template( 'index' );
-		$this->__close_wrap();
+		$this->_open_wrap();
+		include $this->_get_global_template( 'index' );
+		$this->_close_wrap();
 	}
 
 	/**
@@ -935,13 +1000,25 @@ class Jet_Elements_Instagram_Gallery extends Jet_Elements_Base {
 	public function render_gallery() {
 		$settings = $this->get_settings_for_display();
 
-		if ( 'hashtag' === $settings['endpoint'] && empty( $settings['hashtag'] ) && is_user_logged_in() ) {
-			printf( '<div class="jet-instagram-gallery__notice">%s</div>', esc_html__( 'Please, enter #hashtag.', 'jet-elements' ) );
-			return;
+		if ( 'hashtag' === $settings['endpoint'] ) {
+
+			if ( empty( $settings['hashtag'] ) ) {
+				$this->print_notice( esc_html__( 'Please, enter #hashtag.', 'jet-elements' ) );
+				return;
+			}
+
+			if ( ! empty( $settings['use_insta_graph_api'] ) ) {
+				$business_account_config = $this->get_business_account_config();
+
+				if ( empty( $business_account_config['token'] || empty( $business_account_config['user_id'] ) ) ) {
+					$this->print_notice( esc_html__( 'Please, enter Business Access Token and User ID.', 'jet-elements' ) );
+					return;
+				}
+			}
 		}
 
-		if ( 'self' === $settings['endpoint'] && ! $this->get_access_token() && is_user_logged_in() ) {
-			printf( '<div class="jet-instagram-gallery__notice">%s</div>', esc_html__( 'Please, enter Access Token.', 'jet-elements' ) );
+		if ( 'self' === $settings['endpoint'] && ! $this->get_access_token() ) {
+			$this->print_notice( esc_html__( 'Please, enter Access Token.', 'jet-elements' ) );
 			return;
 		}
 
@@ -989,6 +1066,8 @@ class Jet_Elements_Instagram_Gallery extends Jet_Elements_Base {
 			'post_comments_count' => filter_var( $settings['post_comments_count'], FILTER_VALIDATE_BOOLEAN ),
 			'post_likes_count'    => filter_var( $settings['post_likes_count'], FILTER_VALIDATE_BOOLEAN ),
 			'cache_timeout'       => $cache_timeout,
+			'use_graph_api'       => isset( $settings['use_insta_graph_api'] ) ? filter_var( $settings['use_insta_graph_api'], FILTER_VALIDATE_BOOLEAN ) : false,
+			'order_by'            => ! empty( $settings['order_by'] ) ? $settings['order_by'] : 'recent_media',
 		);
 
 		$posts = $this->get_posts( $this->config );
@@ -997,7 +1076,7 @@ class Jet_Elements_Instagram_Gallery extends Jet_Elements_Base {
 
 			foreach ( $posts as $post_data ) {
 				$item_html   = '';
-				$link        = ( 'hashtag' === $endpoint ) ? sprintf( $this->get_post_url(), $post_data['link'] ) : $post_data['link'];
+				$link        = ( 'hashtag' === $endpoint && ! $this->config['use_graph_api'] ) ? sprintf( $this->get_post_url(), $post_data['link'] ) : $post_data['link'];
 				$the_image   = $this->the_image( $post_data );
 				$the_caption = $this->the_caption( $post_data );
 				$the_meta    = $this->the_meta( $post_data );
@@ -1050,6 +1129,19 @@ class Jet_Elements_Instagram_Gallery extends Jet_Elements_Base {
 	}
 
 	/**
+	 * Print widget notice.
+	 *
+	 * @param $notice
+	 */
+	public function print_notice( $notice ) {
+		if ( ! is_user_logged_in() ) {
+			return;
+		}
+
+		printf( '<div class="jet-instagram-gallery__notice">%s</div>', $notice );
+	}
+
+	/**
 	 * Display a HTML link with image.
 	 *
 	 * @since  1.0.0
@@ -1076,7 +1168,7 @@ class Jet_Elements_Instagram_Gallery extends Jet_Elements_Base {
 			$attr = ' width="' . esc_attr( $width ) . '" height="' . esc_attr( $height ) . '"';
 		}
 
-		$photo_format = '<img class="jet-instagram-gallery__image" src="%1$s"%2$s alt="%3$s">';
+		$photo_format = '<img class="jet-instagram-gallery__image" src="%1$s"%2$s alt="%3$s" loading="lazy">';
 		$photo_format = apply_filters( 'jet-elements/instagram-gallery/photo-format', $photo_format );
 
 		$image = sprintf( $photo_format, esc_url( $post_photo_url ), $attr, esc_attr( $item['caption'] ) );
@@ -1184,13 +1276,21 @@ class Jet_Elements_Instagram_Gallery extends Jet_Elements_Base {
 			return $data;
 		}
 
-		$response = $this->remote_get( $config );
+		if ( $config['use_graph_api'] ) {
+			$response = $this->remote_get_from_qraph_api( $config );
+		} else {
+			$response = $this->remote_get( $config );
+		}
 
 		if ( is_wp_error( $response ) ) {
 			return $response;
 		}
 
-		$data = ( 'hashtag' === $config['endpoint'] ) ? $this->get_response_data( $response ) : $this->get_response_data_from_official_api( $response );
+		if ( 'hashtag' === $config['endpoint'] && ! $config['use_graph_api'] ) {
+			$data = $this->get_response_data( $response );
+		} else {
+			$data = $this->get_response_data_from_official_api( $response );
+		}
 
 		if ( empty( $data ) ) {
 			return array();
@@ -1199,6 +1299,74 @@ class Jet_Elements_Instagram_Gallery extends Jet_Elements_Base {
 		set_transient( $transient_key, $data, $config['cache_timeout'] );
 
 		return $data;
+	}
+
+	/**
+	 * Retrieve the raw response from the HTTP request using the GET method from Graph API.
+	 *
+	 * @param array $config
+	 *
+	 * @return mixed|string|void|\WP_Error
+	 */
+	public function remote_get_from_qraph_api( $config ) {
+
+		$account_config = $this->get_business_account_config();
+
+		$access_token = $account_config['token'];
+		$user_id      = $account_config['user_id'];
+
+		$url = add_query_arg(
+			array(
+				'user_id'      => $user_id,
+				'q'            => $config['target'],
+				'access_token' => $access_token,
+			),
+			$this->graph_api_url . 'ig_hashtag_search'
+		);
+
+		$response = wp_remote_get( $url, array( 'timeout' => 10 ) );
+
+		$body = wp_remote_retrieve_body( $response );
+		$body = json_decode( $body, true );
+
+		if ( ! is_array( $body ) ) {
+			return new \WP_Error( 'invalid-data', esc_html__( 'Invalid data', 'jet-elements' ) );
+		}
+
+		if ( isset( $body['error']['message'] ) ) {
+			return new \WP_Error( 'invalid-data', $body['error']['message'] );
+		}
+
+		if ( empty( $body['data'][0]['id'] ) ) {
+			return new \WP_Error( 'invalid-data', esc_html__( 'Can\'t find the tag ID.', 'jet-elements' ) );
+		}
+
+		$tag_id = $body['data'][0]['id'];
+
+		$url = add_query_arg(
+			array(
+				'user_id'      => $user_id,
+				'access_token' => $access_token,
+				'limit'        => 50,
+				'fields'       => 'id,media_type,media_url,caption,comments_count,like_count,permalink,children{media_url,id,media_type,permalink}',
+			),
+			$this->graph_api_url . $tag_id . '/' . $config['order_by']
+		);
+
+		$response = wp_remote_get( $url, array( 'timeout' => 10 ) );
+
+		$body = wp_remote_retrieve_body( $response );
+		$body = json_decode( $body, true );
+
+		if ( ! is_array( $body ) ) {
+			return new \WP_Error( 'invalid-data', esc_html__( 'Invalid data', 'jet-elements' ) );
+		}
+
+		if ( isset( $body['error']['message'] ) ) {
+			return new \WP_Error( 'invalid-data', $body['error']['message'] );
+		}
+
+		return $body;
 	}
 
 	/**
@@ -1212,8 +1380,7 @@ class Jet_Elements_Instagram_Gallery extends Jet_Elements_Base {
 		$url = $this->get_grab_url( $config );
 
 		$response = wp_remote_get( $url, array(
-			'timeout'   => 60,
-			'sslverify' => false
+			'timeout' => 60,
 		) );
 
 		$response_code = wp_remote_retrieve_response_code( $response );
@@ -1305,6 +1472,10 @@ class Jet_Elements_Instagram_Gallery extends Jet_Elements_Base {
 			return array();
 		}
 
+		if ( $this->config['use_graph_api'] ) {
+			$response_items = $this->remove_video_items( $response_items );
+		}
+
 		$data  = array();
 		$nodes = array_slice(
 			$response_items,
@@ -1314,18 +1485,61 @@ class Jet_Elements_Instagram_Gallery extends Jet_Elements_Base {
 		);
 
 		foreach ( $nodes as $post ) {
+
+			$media_url = ! empty( $post['media_url'] ) ? $post['media_url'] : '';
+
+			switch ( $post['media_type'] ) {
+				case 'VIDEO':
+					$media_url = ! empty( $post['thumbnail_url'] ) ? $post['thumbnail_url'] : '';
+					break;
+
+				case 'CAROUSEL_ALBUM':
+					$media_url = ! empty( $post['children']['data'][0]['media_url'] ) ? $post['children']['data'][0]['media_url'] : $media_url;
+					break;
+			}
+
 			$_post             = array();
 			$_post['link']     = $post['permalink'];
-			$_post['image']    = 'VIDEO' === $post['media_type'] ? $post['thumbnail_url'] : $post['media_url'];
+			$_post['image']    = $media_url;
 			$_post['caption']  = ! empty( $post['caption'] ) ? wp_html_excerpt( $post['caption'], $this->config['post_caption_length'], '&hellip;' ) : '';
-			$_post['comments'] = ! empty( $post['comments_count'] ) ? $post['comments_count'] : 0;           // TODO: this data now not available
-			$_post['likes']    = ! empty( $post['likes_count'] ) ? $post['likes_count'] : 0;                 // TODO: this data now not available
+			$_post['comments'] = ! empty( $post['comments_count'] ) ? $post['comments_count'] : 0;           // TODO: available only for Graph Api
+			$_post['likes']    = ! empty( $post['like_count'] ) ? $post['like_count'] : 0;                   // TODO: available only for Graph Api
 			$_post['thumbnail_resources'] = $this->_generate_thumbnail_resources_from_official_api( $post ); // TODO: this data now not available
 
 			array_push( $data, $_post );
 		}
 
 		return $data;
+	}
+
+	/**
+	 * Remove video items.
+	 *
+	 * @param  array $data
+	 * @return array
+	 */
+	public function remove_video_items( $data ) {
+
+		$result = array();
+
+		foreach ( $data as $item ) {
+
+			if ( ! empty( $item['media_type'] ) && 'VIDEO' === $item['media_type'] ) {
+				continue;
+			}
+
+			if ( ! empty( $item['children']['data'] ) ) {
+				$item['children']['data'] = $this->remove_video_items( $item['children']['data'] );
+
+				if ( empty( $item['children']['data'] ) ) {
+					continue;
+				}
+			}
+
+			$result[] = $item;
+		}
+
+		return $result;
 	}
 
 	/**
@@ -1525,9 +1739,10 @@ class Jet_Elements_Instagram_Gallery extends Jet_Elements_Base {
 	 * @return string
 	 */
 	public function get_transient_key() {
-		return sprintf( 'jet_elements_instagram_%s_%s_posts_count_%s_caption_%s',
+		return sprintf( 'jet_elements_instagram_%s_%s%s_posts_count_%s_caption_%s',
 			$this->config['endpoint'],
 			$this->config['target'],
+			$this->config['use_graph_api'] ? '_order_' . $this->config['order_by'] : '',
 			$this->config['posts_counter'],
 			$this->config['post_caption_length']
 		);
@@ -1570,6 +1785,20 @@ class Jet_Elements_Instagram_Gallery extends Jet_Elements_Base {
 		}
 
 		return $this->access_token;
+	}
+
+	/**
+	 * Get business account config.
+	 *
+	 * @return array
+	 */
+	public function get_business_account_config() {
+		if ( ! $this->business_account_config ) {
+			$this->business_account_config['token']   = jet_elements_settings()->get( 'insta_business_access_token' );
+			$this->business_account_config['user_id'] = jet_elements_settings()->get( 'insta_business_user_id' );
+		}
+
+		return $this->business_account_config;
 	}
 
 	/**

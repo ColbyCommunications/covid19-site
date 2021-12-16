@@ -12,8 +12,8 @@ use Elementor\Group_Control_Border;
 use Elementor\Group_Control_Box_Shadow;
 use Elementor\Group_Control_Typography;
 use Elementor\Repeater;
-use Elementor\Scheme_Color;
-use Elementor\Scheme_Typography;
+use Elementor\Core\Schemes\Color as Scheme_Color;
+use Elementor\Core\Schemes\Typography as Scheme_Typography;
 use Elementor\Widget_Base;
 use Elementor\Utils;
 
@@ -109,7 +109,7 @@ class Jet_Elements_Animated_Box extends Jet_Elements_Base {
 			)
 		);
 
-		$this->__add_advanced_icon_control(
+		$this->_add_advanced_icon_control(
 			'front_side_icon',
 			array(
 				'label'       => esc_html__( 'Icon', 'jet-elements' ),
@@ -165,17 +165,19 @@ class Jet_Elements_Animated_Box extends Jet_Elements_Base {
 			'front_side_template_id',
 			array(
 				'label'       => esc_html__( 'Choose Template', 'jet-elements' ),
-				'label_block' => 'true',
-				'type'        => Controls_Manager::SELECT,
-				'default'     => '0',
-				'options'     => jet_elements_tools()->get_elementor_templates_options(),
+				'type'        => 'jet-query',
+				'query_type'  => 'elementor_templates',
+				'edit_button' => array(
+					'active' => true,
+					'label'  => __( 'Edit Template', 'jet-elements' ),
+				),
 				'condition'   => array(
 					'front_side_content_type' => 'template',
 				),
 			)
 		);
 
-		$this->__add_advanced_icon_control(
+		$this->_add_advanced_icon_control(
 			'front_side_toggle_icon',
 			array(
 				'label'       => esc_html__( 'Toggle Icon', 'jet-elements' ),
@@ -215,7 +217,7 @@ class Jet_Elements_Animated_Box extends Jet_Elements_Base {
 			)
 		);
 
-		$this->__add_advanced_icon_control(
+		$this->_add_advanced_icon_control(
 			'back_side_icon',
 			array(
 				'label'       => esc_html__( 'Icon', 'jet-elements' ),
@@ -300,17 +302,19 @@ class Jet_Elements_Animated_Box extends Jet_Elements_Base {
 			'back_side_template_id',
 			array(
 				'label'       => esc_html__( 'Choose Template', 'jet-elements' ),
-				'label_block' => 'true',
-				'type'        => Controls_Manager::SELECT,
-				'default'     => '0',
-				'options'     => jet_elements_tools()->get_elementor_templates_options(),
+				'type'        => 'jet-query',
+				'query_type'  => 'elementor_templates',
+				'edit_button' => array(
+					'active' => true,
+					'label'  => __( 'Edit Template', 'jet-elements' ),
+				),
 				'condition'   => array(
 					'back_side_content_type' => 'template',
 				),
 			)
 		);
 
-		$this->__add_advanced_icon_control(
+		$this->_add_advanced_icon_control(
 			'back_side_toggle_icon',
 			array(
 				'label'       => esc_html__( 'Toggle Icon', 'jet-elements' ),
@@ -377,6 +381,28 @@ class Jet_Elements_Animated_Box extends Jet_Elements_Base {
 					'fold'         => esc_html__( 'Paper Fold', 'jet-elements' ),
 					'peel'         => esc_html__( 'Peel', 'jet-elements' ),
 					'slide-out'    => esc_html__( 'Slide Out', 'jet-elements' ),
+				),
+			)
+		);
+
+		$this->add_control(
+			'scratch_fill_percent',
+			array(
+				'label'      => esc_html__( 'Fill percent for reveal full image', 'jet-elements' ),
+				'type'       => Controls_Manager::SLIDER,
+				'size_units' => array( '%' ),
+				'range' => array(
+					'%' => array(
+						'min' => 10,
+						'max' => 100,
+					),
+				),
+				'default' => array(
+					'size' => 75,
+					'unit' => '%',
+				),
+				'condition' => array(
+					'switch_event_type' => 'scratch',
 				),
 			)
 		);
@@ -499,7 +525,7 @@ class Jet_Elements_Animated_Box extends Jet_Elements_Base {
 		/**
 		 * General Style Section
 		 */
-		$this->__start_controls_section(
+		$this->_start_controls_section(
 			'section_animated_box_general_style',
 			array(
 				'label'      => esc_html__( 'General', 'jet-elements' ),
@@ -508,16 +534,16 @@ class Jet_Elements_Animated_Box extends Jet_Elements_Base {
 			)
 		);
 
-		$this->__start_controls_tabs( 'general_style_tabs' );
+		$this->_start_controls_tabs( 'general_style_tabs' );
 
-		$this->__start_controls_tab(
+		$this->_start_controls_tab(
 			'tab_front_general_styles',
 			array(
 				'label' => esc_html__( 'Front', 'jet-elements' ),
 			)
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'front_vertical_alignment',
 			array(
 				'label'   => esc_html__( 'Content Alignment', 'jet-elements' ),
@@ -536,7 +562,7 @@ class Jet_Elements_Animated_Box extends Jet_Elements_Base {
 			50
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Background::get_type(),
 			array(
 				'name'     => 'front_side_background',
@@ -554,7 +580,7 @@ class Jet_Elements_Animated_Box extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'front_padding',
 			array(
 				'label'      => __( 'Padding', 'jet-elements' ),
@@ -567,7 +593,7 @@ class Jet_Elements_Animated_Box extends Jet_Elements_Base {
 			50
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Border::get_type(),
 			array(
 				'name'        => 'front_border',
@@ -579,7 +605,7 @@ class Jet_Elements_Animated_Box extends Jet_Elements_Base {
 			50
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'front_border_radius',
 			array(
 				'label'      => __( 'Border Radius', 'jet-elements' ),
@@ -595,7 +621,7 @@ class Jet_Elements_Animated_Box extends Jet_Elements_Base {
 			75
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Box_Shadow::get_type(),
 			array(
 				'name' => 'front_box_shadow',
@@ -604,7 +630,7 @@ class Jet_Elements_Animated_Box extends Jet_Elements_Base {
 			100
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'front_overlay_styles_heading',
 			array(
 				'label'     => esc_html__( 'Overlay', 'jet-elements' ),
@@ -614,7 +640,7 @@ class Jet_Elements_Animated_Box extends Jet_Elements_Base {
 			50
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Background::get_type(),
 			array(
 				'name'     => 'front_overlay_background',
@@ -623,7 +649,7 @@ class Jet_Elements_Animated_Box extends Jet_Elements_Base {
 			50
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'front_order_heading',
 			array(
 				'label'     => esc_html__( 'Order', 'jet-elements' ),
@@ -633,7 +659,7 @@ class Jet_Elements_Animated_Box extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'front_side_icon_order',
 			array(
 				'label'   => esc_html__( 'Icon Order', 'jet-elements' ),
@@ -649,7 +675,7 @@ class Jet_Elements_Animated_Box extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'front_side_content_order',
 			array(
 				'label'   => esc_html__( 'Content Order', 'jet-elements' ),
@@ -665,16 +691,16 @@ class Jet_Elements_Animated_Box extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__end_controls_tab();
+		$this->_end_controls_tab();
 
-		$this->__start_controls_tab(
+		$this->_start_controls_tab(
 			'tab_back_general_styles',
 			array(
 				'label' => esc_html__( 'Back', 'jet-elements' ),
 			)
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'back_vertical_alignment',
 			array(
 				'label'   => esc_html__( 'Content Alignment', 'jet-elements' ),
@@ -693,7 +719,7 @@ class Jet_Elements_Animated_Box extends Jet_Elements_Base {
 			50
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Background::get_type(),
 			array(
 				'name'     => 'back_side_background',
@@ -710,7 +736,7 @@ class Jet_Elements_Animated_Box extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'back_padding',
 			array(
 				'label'      => __( 'Padding', 'jet-elements' ),
@@ -723,7 +749,7 @@ class Jet_Elements_Animated_Box extends Jet_Elements_Base {
 			50
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Border::get_type(),
 			array(
 				'name'        => 'back_border',
@@ -735,7 +761,7 @@ class Jet_Elements_Animated_Box extends Jet_Elements_Base {
 			50
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'back_border_radius',
 			array(
 				'label'      => __( 'Border Radius', 'jet-elements' ),
@@ -749,7 +775,7 @@ class Jet_Elements_Animated_Box extends Jet_Elements_Base {
 			75
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Box_Shadow::get_type(),
 			array(
 				'name'    => 'back_box_shadow',
@@ -758,7 +784,7 @@ class Jet_Elements_Animated_Box extends Jet_Elements_Base {
 			100
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'back_overlay_styles_heading',
 			array(
 				'label'     => esc_html__( 'Overlay', 'jet-elements' ),
@@ -768,7 +794,7 @@ class Jet_Elements_Animated_Box extends Jet_Elements_Base {
 			50
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Background::get_type(),
 			array(
 				'name'     => 'back_overlay_background',
@@ -777,7 +803,7 @@ class Jet_Elements_Animated_Box extends Jet_Elements_Base {
 			50
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'back_order_heading',
 			array(
 				'label'     => esc_html__( 'Order', 'jet-elements' ),
@@ -787,7 +813,7 @@ class Jet_Elements_Animated_Box extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'back_side_icon_order',
 			array(
 				'label'   => esc_html__( 'Icon Order', 'jet-elements' ),
@@ -803,7 +829,7 @@ class Jet_Elements_Animated_Box extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'back_side_content_order',
 			array(
 				'label'   => esc_html__( 'Content Order', 'jet-elements' ),
@@ -819,11 +845,11 @@ class Jet_Elements_Animated_Box extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__end_controls_tab();
+		$this->_end_controls_tab();
 
-		$this->__end_controls_tabs();
+		$this->_end_controls_tabs();
 
-		$this->__add_control(
+		$this->_add_control(
 			'toggle_button_heading',
 			array(
 				'label'     => esc_html__( 'Toggle Button', 'jet-elements' ),
@@ -833,16 +859,16 @@ class Jet_Elements_Animated_Box extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__start_controls_tabs( 'toggle_style_tabs' );
+		$this->_start_controls_tabs( 'toggle_style_tabs' );
 
-		$this->__start_controls_tab(
+		$this->_start_controls_tab(
 			'tab_toggle_icon_styles',
 			array(
 				'label' => esc_html__( 'Normal', 'jet-elements' ),
 			)
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			\Jet_Group_Control_Box_Style::get_type(),
 			array(
 				'name'     => 'toggle_button_style',
@@ -852,16 +878,16 @@ class Jet_Elements_Animated_Box extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__end_controls_tab();
+		$this->_end_controls_tab();
 
-		$this->__start_controls_tab(
+		$this->_start_controls_tab(
 			'tab_toggle_icon_hover_styles',
 			array(
 				'label' => esc_html__( 'Hover', 'jet-elements' ),
 			)
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			\Jet_Group_Control_Box_Style::get_type(),
 			array(
 				'name'     => 'toggle_button_hover_style',
@@ -871,16 +897,16 @@ class Jet_Elements_Animated_Box extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__end_controls_tab();
+		$this->_end_controls_tab();
 
-		$this->__end_controls_tabs();
+		$this->_end_controls_tabs();
 
-		$this->__end_controls_section();
+		$this->_end_controls_section();
 
 		/**
 		 * Icon Style Section
 		 */
-		$this->__start_controls_section(
+		$this->_start_controls_section(
 			'section_animated_box_icon_style',
 			array(
 				'label'      => esc_html__( 'Icon', 'jet-elements' ),
@@ -889,16 +915,16 @@ class Jet_Elements_Animated_Box extends Jet_Elements_Base {
 			)
 		);
 
-		$this->__start_controls_tabs( 'icon_style_tabs' );
+		$this->_start_controls_tabs( 'icon_style_tabs' );
 
-		$this->__start_controls_tab(
+		$this->_start_controls_tab(
 			'tab_front_icon_styles',
 			array(
 				'label' => esc_html__( 'Front', 'jet-elements' ),
 			)
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'front_icon_box_alignment',
 			array(
 				'label'   => esc_html__( 'Alignment', 'jet-elements' ),
@@ -925,7 +951,7 @@ class Jet_Elements_Animated_Box extends Jet_Elements_Base {
 			50
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'front_icon_color',
 			array(
 				'label' => esc_html__( 'Icon Color', 'jet-elements' ),
@@ -938,7 +964,7 @@ class Jet_Elements_Animated_Box extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'front_icon_bg_color',
 			array(
 				'label' => esc_html__( 'Icon Background Color', 'jet-elements' ),
@@ -950,7 +976,7 @@ class Jet_Elements_Animated_Box extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'front_icon_font_size',
 			array(
 				'label'      => esc_html__( 'Icon Font Size', 'jet-elements' ),
@@ -971,7 +997,7 @@ class Jet_Elements_Animated_Box extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'front_icon_size',
 			array(
 				'label'      => esc_html__( 'Icon Box Size', 'jet-elements' ),
@@ -992,7 +1018,7 @@ class Jet_Elements_Animated_Box extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'front_icon_box_margin',
 			array(
 				'label'      => __( 'Margin', 'jet-elements' ),
@@ -1005,7 +1031,7 @@ class Jet_Elements_Animated_Box extends Jet_Elements_Base {
 			50
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Border::get_type(),
 			array(
 				'name'        => 'front_icon_border',
@@ -1017,7 +1043,7 @@ class Jet_Elements_Animated_Box extends Jet_Elements_Base {
 			75
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'front_icon_box_border_radius',
 			array(
 				'label'      => esc_html__( 'Border Radius', 'jet-elements' ),
@@ -1030,7 +1056,7 @@ class Jet_Elements_Animated_Box extends Jet_Elements_Base {
 			75
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Box_Shadow::get_type(),
 			array(
 				'name'     => 'front_icon_box_shadow',
@@ -1039,16 +1065,16 @@ class Jet_Elements_Animated_Box extends Jet_Elements_Base {
 			100
 		);
 
-		$this->__end_controls_tab();
+		$this->_end_controls_tab();
 
-		$this->__start_controls_tab(
+		$this->_start_controls_tab(
 			'tab_back_icon_styles',
 			array(
 				'label' => esc_html__( 'Back', 'jet-elements' ),
 			)
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'back_icon_box_alignment',
 			array(
 				'label'   => esc_html__( 'Alignment', 'jet-elements' ),
@@ -1075,7 +1101,7 @@ class Jet_Elements_Animated_Box extends Jet_Elements_Base {
 			50
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'back_icon_color',
 			array(
 				'label' => esc_html__( 'Icon Color', 'jet-elements' ),
@@ -1088,7 +1114,7 @@ class Jet_Elements_Animated_Box extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'back_icon_bg_color',
 			array(
 				'label' => esc_html__( 'Icon Background Color', 'jet-elements' ),
@@ -1100,7 +1126,7 @@ class Jet_Elements_Animated_Box extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'back_icon_font_size',
 			array(
 				'label'      => esc_html__( 'Icon Font Size', 'jet-elements' ),
@@ -1121,7 +1147,7 @@ class Jet_Elements_Animated_Box extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'back_icon_size',
 			array(
 				'label'      => esc_html__( 'Icon Box Size', 'jet-elements' ),
@@ -1142,7 +1168,7 @@ class Jet_Elements_Animated_Box extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'back_icon_box_margin',
 			array(
 				'label'      => __( 'Margin', 'jet-elements' ),
@@ -1155,7 +1181,7 @@ class Jet_Elements_Animated_Box extends Jet_Elements_Base {
 			50
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Border::get_type(),
 			array(
 				'name'        => 'back_icon_border',
@@ -1167,7 +1193,7 @@ class Jet_Elements_Animated_Box extends Jet_Elements_Base {
 			75
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'back_icon_box_border_radius',
 			array(
 				'label'      => esc_html__( 'Border Radius', 'jet-elements' ),
@@ -1180,7 +1206,7 @@ class Jet_Elements_Animated_Box extends Jet_Elements_Base {
 			75
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Box_Shadow::get_type(),
 			array(
 				'name'     => 'back_icon_box_shadow',
@@ -1189,16 +1215,16 @@ class Jet_Elements_Animated_Box extends Jet_Elements_Base {
 			100
 		);
 
-		$this->__end_controls_tab();
+		$this->_end_controls_tab();
 
-		$this->__end_controls_tabs();
+		$this->_end_controls_tabs();
 
-		$this->__end_controls_section();
+		$this->_end_controls_section();
 
 		/**
 		 * Title Style Section
 		 */
-		$this->__start_controls_section(
+		$this->_start_controls_section(
 			'section_animated_box_title_style',
 			array(
 				'label'      => esc_html__( 'Title', 'jet-elements' ),
@@ -1207,16 +1233,16 @@ class Jet_Elements_Animated_Box extends Jet_Elements_Base {
 			)
 		);
 
-		$this->__start_controls_tabs( 'title_style_tabs' );
+		$this->_start_controls_tabs( 'title_style_tabs' );
 
-		$this->__start_controls_tab(
+		$this->_start_controls_tab(
 			'tab_front_title_styles',
 			array(
 				'label' => esc_html__( 'Front', 'jet-elements' ),
 			)
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'front_title_alignment',
 			array(
 				'label'   => esc_html__( 'Alignment', 'jet-elements' ),
@@ -1243,7 +1269,7 @@ class Jet_Elements_Animated_Box extends Jet_Elements_Base {
 			50
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'front_title_text_alignment',
 			array(
 				'label'   => esc_html__( 'Text Alignment', 'jet-elements' ),
@@ -1266,11 +1292,12 @@ class Jet_Elements_Animated_Box extends Jet_Elements_Base {
 				'selectors'  => array(
 					'{{WRAPPER}} ' . $css_scheme['animated_box_title_front'] => 'text-align: {{VALUE}};',
 				),
+				'classes' => 'jet-elements-text-align-control',
 			),
 			75
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'front_title_color',
 			array(
 				'label'  => esc_html__( 'Title Color', 'jet-elements' ),
@@ -1282,7 +1309,7 @@ class Jet_Elements_Animated_Box extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Typography::get_type(),
 			array(
 				'name'     => 'front_title_typography',
@@ -1292,7 +1319,7 @@ class Jet_Elements_Animated_Box extends Jet_Elements_Base {
 			50
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'front_title_padding',
 			array(
 				'label'      => __( 'Padding', 'jet-elements' ),
@@ -1305,7 +1332,7 @@ class Jet_Elements_Animated_Box extends Jet_Elements_Base {
 			100
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'front_title_margin',
 			array(
 				'label'      => __( 'Margin', 'jet-elements' ),
@@ -1318,16 +1345,16 @@ class Jet_Elements_Animated_Box extends Jet_Elements_Base {
 			50
 		);
 
-		$this->__end_controls_tab();
+		$this->_end_controls_tab();
 
-		$this->__start_controls_tab(
+		$this->_start_controls_tab(
 			'tab_back_title_styles',
 			array(
 				'label' => esc_html__( 'Back', 'jet-elements' ),
 			)
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'back_title_alignment',
 			array(
 				'label'   => esc_html__( 'Alignment', 'jet-elements' ),
@@ -1354,7 +1381,7 @@ class Jet_Elements_Animated_Box extends Jet_Elements_Base {
 			50
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'back_title_text_alignment',
 			array(
 				'label'   => esc_html__( 'Text Alignment', 'jet-elements' ),
@@ -1377,11 +1404,12 @@ class Jet_Elements_Animated_Box extends Jet_Elements_Base {
 				'selectors'  => array(
 					'{{WRAPPER}} ' . $css_scheme['animated_box_title_back'] => 'text-align: {{VALUE}};',
 				),
+				'classes' => 'jet-elements-text-align-control',
 			),
 			50
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'back_title_color',
 			array(
 				'label'  => esc_html__( 'Title Color', 'jet-elements' ),
@@ -1393,7 +1421,7 @@ class Jet_Elements_Animated_Box extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Typography::get_type(),
 			array(
 				'name'     => 'back_title_typography',
@@ -1403,7 +1431,7 @@ class Jet_Elements_Animated_Box extends Jet_Elements_Base {
 			50
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'back_title_padding',
 			array(
 				'label'      => __( 'Padding', 'jet-elements' ),
@@ -1416,7 +1444,7 @@ class Jet_Elements_Animated_Box extends Jet_Elements_Base {
 			100
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'back_title_margin',
 			array(
 				'label'      => __( 'Margin', 'jet-elements' ),
@@ -1429,16 +1457,16 @@ class Jet_Elements_Animated_Box extends Jet_Elements_Base {
 			50
 		);
 
-		$this->__end_controls_tab();
+		$this->_end_controls_tab();
 
-		$this->__end_controls_tabs();
+		$this->_end_controls_tabs();
 
-		$this->__end_controls_section();
+		$this->_end_controls_section();
 
 		/**
 		 * Subtitle Style Section
 		 */
-		$this->__start_controls_section(
+		$this->_start_controls_section(
 			'section_animated_box_subtitle_style',
 			array(
 				'label'      => esc_html__( 'Subtitle', 'jet-elements' ),
@@ -1447,16 +1475,16 @@ class Jet_Elements_Animated_Box extends Jet_Elements_Base {
 			)
 		);
 
-		$this->__start_controls_tabs( 'subtitle_style_tabs' );
+		$this->_start_controls_tabs( 'subtitle_style_tabs' );
 
-		$this->__start_controls_tab(
+		$this->_start_controls_tab(
 			'tab_front_subtitle_styles',
 			array(
 				'label' => esc_html__( 'Front', 'jet-elements' ),
 			)
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'front_subtitle_alignment',
 			array(
 				'label'   => esc_html__( 'Alignment', 'jet-elements' ),
@@ -1483,7 +1511,7 @@ class Jet_Elements_Animated_Box extends Jet_Elements_Base {
 			50
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'front_subtitle_text_alignment',
 			array(
 				'label'   => esc_html__( 'Text Alignment', 'jet-elements' ),
@@ -1506,11 +1534,12 @@ class Jet_Elements_Animated_Box extends Jet_Elements_Base {
 				'selectors'  => array(
 					'{{WRAPPER}} ' . $css_scheme['animated_box_subtitle_front'] => 'text-align: {{VALUE}};',
 				),
+				'classes' => 'jet-elements-text-align-control',
 			),
 			75
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'front_subtitle_color',
 			array(
 				'label'  => esc_html__( 'Color', 'jet-elements' ),
@@ -1522,7 +1551,7 @@ class Jet_Elements_Animated_Box extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Typography::get_type(),
 			array(
 				'name'     => 'front_subtitle_typography',
@@ -1532,7 +1561,7 @@ class Jet_Elements_Animated_Box extends Jet_Elements_Base {
 			50
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'front_subtitle_padding',
 			array(
 				'label'      => __( 'Padding', 'jet-elements' ),
@@ -1545,7 +1574,7 @@ class Jet_Elements_Animated_Box extends Jet_Elements_Base {
 			100
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'front_subtitle_margin',
 			array(
 				'label'      => __( 'Margin', 'jet-elements' ),
@@ -1558,16 +1587,16 @@ class Jet_Elements_Animated_Box extends Jet_Elements_Base {
 			50
 		);
 
-		$this->__end_controls_tab();
+		$this->_end_controls_tab();
 
-		$this->__start_controls_tab(
+		$this->_start_controls_tab(
 			'tab_back_subtitle_styles',
 			array(
 				'label' => esc_html__( 'Back', 'jet-elements' ),
 			)
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'back_subtitle_alignment',
 			array(
 				'label'   => esc_html__( 'Alignment', 'jet-elements' ),
@@ -1594,7 +1623,7 @@ class Jet_Elements_Animated_Box extends Jet_Elements_Base {
 			50
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'back_subtitle_text_alignment',
 			array(
 				'label'   => esc_html__( 'Text Alignment', 'jet-elements' ),
@@ -1617,11 +1646,12 @@ class Jet_Elements_Animated_Box extends Jet_Elements_Base {
 				'selectors'  => array(
 					'{{WRAPPER}} ' . $css_scheme['animated_box_subtitle_back'] => 'text-align: {{VALUE}};',
 				),
+				'classes' => 'jet-elements-text-align-control',
 			),
 			75
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'back_subtitle_color',
 			array(
 				'label'  => esc_html__( 'Color', 'jet-elements' ),
@@ -1633,7 +1663,7 @@ class Jet_Elements_Animated_Box extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Typography::get_type(),
 			array(
 				'name'     => 'back_subtitle_typography',
@@ -1643,7 +1673,7 @@ class Jet_Elements_Animated_Box extends Jet_Elements_Base {
 			50
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'back_subtitle_padding',
 			array(
 				'label'      => __( 'Padding', 'jet-elements' ),
@@ -1656,7 +1686,7 @@ class Jet_Elements_Animated_Box extends Jet_Elements_Base {
 			100
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'back_subtitle_margin',
 			array(
 				'label'      => __( 'Margin', 'jet-elements' ),
@@ -1669,16 +1699,16 @@ class Jet_Elements_Animated_Box extends Jet_Elements_Base {
 			50
 		);
 
-		$this->__end_controls_tab();
+		$this->_end_controls_tab();
 
-		$this->__end_controls_tabs();
+		$this->_end_controls_tabs();
 
-		$this->__end_controls_section();
+		$this->_end_controls_section();
 
 		/**
 		 * Description Style Section
 		 */
-		$this->__start_controls_section(
+		$this->_start_controls_section(
 			'section_animated_box_description_style',
 			array(
 				'label'      => esc_html__( 'Description', 'jet-elements' ),
@@ -1687,16 +1717,16 @@ class Jet_Elements_Animated_Box extends Jet_Elements_Base {
 			)
 		);
 
-		$this->__start_controls_tabs( 'description_style_tabs' );
+		$this->_start_controls_tabs( 'description_style_tabs' );
 
-		$this->__start_controls_tab(
+		$this->_start_controls_tab(
 			'tab_front_description_styles',
 			array(
 				'label' => esc_html__( 'Front', 'jet-elements' ),
 			)
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'front_description_alignment',
 			array(
 				'label'   => esc_html__( 'Text Alignment', 'jet-elements' ),
@@ -1719,11 +1749,12 @@ class Jet_Elements_Animated_Box extends Jet_Elements_Base {
 				'selectors'  => array(
 					'{{WRAPPER}} ' . $css_scheme['animated_box_desc_front'] => 'text-align: {{VALUE}};',
 				),
+				'classes' => 'jet-elements-text-align-control',
 			),
 			50
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'front_description_color',
 			array(
 				'label'  => esc_html__( 'Description Color', 'jet-elements' ),
@@ -1735,7 +1766,7 @@ class Jet_Elements_Animated_Box extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Typography::get_type(),
 			array(
 				'name'     => 'front_description_typography',
@@ -1745,7 +1776,7 @@ class Jet_Elements_Animated_Box extends Jet_Elements_Base {
 			50
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'front_description_padding',
 			array(
 				'label'      => __( 'Padding', 'jet-elements' ),
@@ -1758,7 +1789,7 @@ class Jet_Elements_Animated_Box extends Jet_Elements_Base {
 			100
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'front_description_margin',
 			array(
 				'label'      => __( 'Margin', 'jet-elements' ),
@@ -1771,16 +1802,16 @@ class Jet_Elements_Animated_Box extends Jet_Elements_Base {
 			50
 		);
 
-		$this->__end_controls_tab();
+		$this->_end_controls_tab();
 
-		$this->__start_controls_tab(
+		$this->_start_controls_tab(
 			'tab_back_description_styles',
 			array(
 				'label' => esc_html__( 'Back', 'jet-elements' ),
 			)
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'back_description_alignment',
 			array(
 				'label'   => esc_html__( 'Text Alignment', 'jet-elements' ),
@@ -1803,11 +1834,12 @@ class Jet_Elements_Animated_Box extends Jet_Elements_Base {
 				'selectors'  => array(
 					'{{WRAPPER}} ' . $css_scheme['animated_box_desc_back'] => 'text-align: {{VALUE}};',
 				),
+				'classes' => 'jet-elements-text-align-control',
 			),
 			50
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'back_description_color',
 			array(
 				'label'  => esc_html__( 'Description Color', 'jet-elements' ),
@@ -1819,7 +1851,7 @@ class Jet_Elements_Animated_Box extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Typography::get_type(),
 			array(
 				'name'     => 'back_description_typography',
@@ -1829,7 +1861,7 @@ class Jet_Elements_Animated_Box extends Jet_Elements_Base {
 			50
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'back_description_padding',
 			array(
 				'label'      => __( 'Padding', 'jet-elements' ),
@@ -1842,7 +1874,7 @@ class Jet_Elements_Animated_Box extends Jet_Elements_Base {
 			100
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'back_description_margin',
 			array(
 				'label'      => __( 'Margin', 'jet-elements' ),
@@ -1855,16 +1887,16 @@ class Jet_Elements_Animated_Box extends Jet_Elements_Base {
 			50
 		);
 
-		$this->__end_controls_tab();
+		$this->_end_controls_tab();
 
-		$this->__end_controls_tabs();
+		$this->_end_controls_tabs();
 
-		$this->__end_controls_section();
+		$this->_end_controls_section();
 
 		/**
 		 * Action Button Style Section
 		 */
-		$this->__start_controls_section(
+		$this->_start_controls_section(
 			'section_action_button_style',
 			array(
 				'label'      => esc_html__( 'Action Button', 'jet-elements' ),
@@ -1873,7 +1905,7 @@ class Jet_Elements_Animated_Box extends Jet_Elements_Base {
 			)
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'back_button_alignment',
 			array(
 				'label'   => esc_html__( 'Alignment', 'jet-elements' ),
@@ -1900,7 +1932,7 @@ class Jet_Elements_Animated_Box extends Jet_Elements_Base {
 			50
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'add_button_icon',
 			array(
 				'label'        => esc_html__( 'Add Icon', 'jet-elements' ),
@@ -1913,7 +1945,7 @@ class Jet_Elements_Animated_Box extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_icon_control(
+		$this->_add_icon_control(
 			'button_icon',
 			array(
 				'label'       => esc_html__( 'Icon', 'jet-elements' ),
@@ -1927,7 +1959,7 @@ class Jet_Elements_Animated_Box extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'button_icon_position',
 			array(
 				'label'   => esc_html__( 'Icon Position', 'jet-elements' ),
@@ -1945,7 +1977,7 @@ class Jet_Elements_Animated_Box extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'button_icon_size',
 			array(
 				'label' => esc_html__( 'Icon Size', 'jet-elements' ),
@@ -1966,7 +1998,7 @@ class Jet_Elements_Animated_Box extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'button_icon_color',
 			array(
 				'label'     => esc_html__( 'Icon Color', 'jet-elements' ),
@@ -1981,7 +2013,7 @@ class Jet_Elements_Animated_Box extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'button_icon_margin',
 			array(
 				'label'      => esc_html__( 'Icon Margin', 'jet-elements' ),
@@ -1997,7 +2029,7 @@ class Jet_Elements_Animated_Box extends Jet_Elements_Base {
 			50
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'button_padding',
 			array(
 				'label'      => esc_html__( 'Padding', 'jet-elements' ),
@@ -2010,7 +2042,7 @@ class Jet_Elements_Animated_Box extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'button_margin',
 			array(
 				'label'      => __( 'Margin', 'jet-elements' ),
@@ -2023,16 +2055,16 @@ class Jet_Elements_Animated_Box extends Jet_Elements_Base {
 			50
 		);
 
-		$this->__start_controls_tabs( 'tabs_button_style' );
+		$this->_start_controls_tabs( 'tabs_button_style' );
 
-		$this->__start_controls_tab(
+		$this->_start_controls_tab(
 			'tab_button_normal',
 			array(
 				'label' => esc_html__( 'Normal', 'jet-elements' ),
 			)
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'button_color',
 			array(
 				'label'     => esc_html__( 'Text Color', 'jet-elements' ),
@@ -2044,7 +2076,7 @@ class Jet_Elements_Animated_Box extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'button_bg_color',
 			array(
 				'label' => esc_html__( 'Background Color', 'jet-elements' ),
@@ -2060,7 +2092,7 @@ class Jet_Elements_Animated_Box extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Typography::get_type(),
 			array(
 				'name'     => 'button_typography',
@@ -2070,7 +2102,7 @@ class Jet_Elements_Animated_Box extends Jet_Elements_Base {
 			50
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Border::get_type(),
 			array(
 				'name'        => 'button_border',
@@ -2082,7 +2114,7 @@ class Jet_Elements_Animated_Box extends Jet_Elements_Base {
 			50
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'button_border_radius',
 			array(
 				'label'      => esc_html__( 'Border Radius', 'jet-elements' ),
@@ -2095,7 +2127,7 @@ class Jet_Elements_Animated_Box extends Jet_Elements_Base {
 			75
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Box_Shadow::get_type(),
 			array(
 				'name'     => 'button_box_shadow',
@@ -2104,16 +2136,16 @@ class Jet_Elements_Animated_Box extends Jet_Elements_Base {
 			100
 		);
 
-		$this->__end_controls_tab();
+		$this->_end_controls_tab();
 
-		$this->__start_controls_tab(
+		$this->_start_controls_tab(
 			'tab_button_hover',
 			array(
 				'label' => esc_html__( 'Hover', 'jet-elements' ),
 			)
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'button_hover_color',
 			array(
 				'label'     => esc_html__( 'Text Color', 'jet-elements' ),
@@ -2125,7 +2157,7 @@ class Jet_Elements_Animated_Box extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'button_hover_bg_color',
 			array(
 				'label'     => esc_html__( 'Background Color', 'jet-elements' ),
@@ -2137,7 +2169,7 @@ class Jet_Elements_Animated_Box extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Typography::get_type(),
 			array(
 				'name'     => 'button_hover_typography',
@@ -2146,7 +2178,7 @@ class Jet_Elements_Animated_Box extends Jet_Elements_Base {
 			50
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Border::get_type(),
 			array(
 				'name'        => 'button_hover_border',
@@ -2158,7 +2190,7 @@ class Jet_Elements_Animated_Box extends Jet_Elements_Base {
 			50
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'button_hover_border_radius',
 			array(
 				'label'      => esc_html__( 'Border Radius', 'jet-elements' ),
@@ -2171,7 +2203,7 @@ class Jet_Elements_Animated_Box extends Jet_Elements_Base {
 			75
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Box_Shadow::get_type(),
 			array(
 				'name'     => 'button_hover_box_shadow',
@@ -2180,21 +2212,21 @@ class Jet_Elements_Animated_Box extends Jet_Elements_Base {
 			100
 		);
 
-		$this->__end_controls_tab();
+		$this->_end_controls_tab();
 
-		$this->__end_controls_tabs();
+		$this->_end_controls_tabs();
 
-		$this->__end_controls_section();
+		$this->_end_controls_section();
 
 	}
 
 	protected function render() {
 
-		$this->__context = 'render';
+		$this->_context = 'render';
 
-		$this->__open_wrap();
-		include $this->__get_global_template( 'index' );
-		$this->__close_wrap();
+		$this->_open_wrap();
+		include $this->_get_global_template( 'index' );
+		$this->_close_wrap();
 	}
 
 	/**
@@ -2212,6 +2244,10 @@ class Jet_Elements_Animated_Box extends Jet_Elements_Base {
 			'slideOutDirection'  => isset( $settings['slide_out_direction'] ) ? $settings['slide_out_direction'] : 'left',
 		);
 
+		if ( 'scratch' === $settings['switch_event_type'] ) {
+			$instance_settings['scratchFillPercent'] = ! empty( $settings['scratch_fill_percent']['size'] ) ? $settings['scratch_fill_percent']['size'] : 75;
+		}
+
 		$instance_settings = json_encode( $instance_settings );
 
 		return sprintf( 'data-settings=\'%1$s\'', $instance_settings );
@@ -2224,11 +2260,13 @@ class Jet_Elements_Animated_Box extends Jet_Elements_Base {
 	 */
 	protected function get_template_content( $template_id ) {
 
-		if ( '0' === $template_id ) {
+		if ( empty( $template_id ) ) {
 			return;
 		}
 
-		$content = jet_elements()->elementor()->frontend->get_builder_content_for_display( $template_id );
+		// for multi-language plugins
+		$template_id = apply_filters( 'jet-elements/widgets/template_id', $template_id, $this );
+		$content     = jet_elements()->elementor()->frontend->get_builder_content_for_display( $template_id );
 
 		if ( jet_elements()->elementor()->editor->is_edit_mode() ) {
 			$edit_url = add_query_arg(

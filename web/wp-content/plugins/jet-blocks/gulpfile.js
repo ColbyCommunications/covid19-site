@@ -191,7 +191,7 @@ gulp.task( 'jet-blocks-editor-js-minify', function() {
 //watch
 gulp.task( 'watch', () => {
 	gulp.watch( './assets/scss/**', gulp.series( 'jet-blocks' ) );
-	gulp.watch( './assets/scss/**', gulp.series( 'jet-blocks-rtl', ) );
+	gulp.watch( './assets/scss/**', gulp.series( 'jet-blocks-rtl' ) );
 	gulp.watch( './assets/scss/**', gulp.series( 'jet-blocks-template' ) );
 	gulp.watch( './assets/scss/**', gulp.series( 'jet-blocks-template-rtl' ) );
 	gulp.watch( './assets/scss/**', gulp.series( 'jet-blocks-editor' ) );

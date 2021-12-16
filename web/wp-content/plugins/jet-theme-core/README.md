@@ -1,5 +1,21 @@
 # Changelog
 
+## 1.2.2 - 05.07.2021
+- FIX: minor bugs
+
+## 1.2.1 - 27.10.2020
+- FIX: minor bugs
+
+## 1.2.0 - 23.10.2020
+- UPD: Jet Dashboard 2.0.2
+
+## 1.1.25 - 16.09.2020
+- FIX: compatibility with Elementor 3.0
+
+## 1.1.24 - 01.09.2020
+- FIX: compatibility with Elementor 3.0
+- UPD: JetDashboard module to v1.1.0
+
 ## 1.1.23 - 23.04.2020
 - FIX: minor bugs
 

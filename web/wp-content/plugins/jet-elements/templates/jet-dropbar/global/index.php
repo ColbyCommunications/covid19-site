@@ -31,7 +31,7 @@ if ( isset( $settings['fixed'] ) && filter_var( $settings['fixed'], FILTER_VALID
 
 <div <?php $this->print_render_attribute_string( 'wrapper' ); ?>>
 	<div class="jet-dropbar__inner"><?php
-		include $this->__get_global_template( 'button' );
-		include $this->__get_global_template( 'content' );
+		include $this->_get_global_template( 'button' );
+		include $this->_get_global_template( 'content' );
 	?></div>
 </div>

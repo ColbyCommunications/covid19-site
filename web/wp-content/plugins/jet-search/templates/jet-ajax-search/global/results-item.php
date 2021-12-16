@@ -5,7 +5,7 @@
 ?>
 
 <div class="jet-ajax-search__results-item">
-	<a class="jet-ajax-search__item-link" href="{{{data.link}}}" >
+	<a class="jet-ajax-search__item-link" href="{{{data.link}}}" target="{{{data.link_target_attr}}}">
 		{{{data.thumbnail}}}
 		<div class="jet-ajax-search__item-content-wrapper">
 			{{{data.before_title}}}

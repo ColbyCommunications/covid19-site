@@ -12,8 +12,8 @@ use Elementor\Group_Control_Border;
 use Elementor\Group_Control_Box_Shadow;
 use Elementor\Group_Control_Typography;
 use Elementor\Repeater;
-use Elementor\Scheme_Color;
-use Elementor\Scheme_Typography;
+use Elementor\Core\Schemes\Color as Scheme_Color;
+use Elementor\Core\Schemes\Typography as Scheme_Typography;
 use Elementor\Widget_Base;
 use Elementor\Utils;
 
@@ -145,7 +145,7 @@ class Jet_Blog_Video_Playlist extends Jet_Blog_Base {
 			'videos_list',
 			array(
 				'type'    => Controls_Manager::REPEATER,
-				'fields'  => array_values( $repeater->get_controls() ),
+				'fields'  => $repeater->get_controls(),
 				'default' => array(
 					array(
 						'title'        => '',
@@ -747,17 +747,6 @@ class Jet_Blog_Video_Playlist extends Jet_Blog_Base {
 				'name'     => 'heading_counter_typography',
 				'scheme'   => Scheme_Typography::TYPOGRAPHY_3,
 				'selector' => '{{WRAPPER}}  ' . $css_scheme['heading_counter'],
-				'fields_options' => array(
-					'typography' => array(
-						'default' => 'custom',
-					),
-					'font_size' => array(
-						'default' => array(
-							'units' => 'px',
-							'size'  => 12,
-						),
-					),
-				),
 			),
 			50
 		);
@@ -833,23 +822,6 @@ class Jet_Blog_Video_Playlist extends Jet_Blog_Base {
 				'name'     => 'thumb_title_typography',
 				'scheme'   => Scheme_Typography::TYPOGRAPHY_3,
 				'selector' => '{{WRAPPER}}  ' . $css_scheme['thumb_title'],
-				'fields_options' => array(
-					'typography' => array(
-						'default' => 'custom',
-					),
-					'font_size' => array(
-						'default' => array(
-							'units' => 'px',
-							'size'  => 14,
-						),
-					),
-					'line_height' => array(
-						'default' => array(
-							'units' => 'px',
-							'size'  => 18,
-						),
-					),
-				),
 			),
 			50
 		);
@@ -883,23 +855,6 @@ class Jet_Blog_Video_Playlist extends Jet_Blog_Base {
 				'name'     => 'thumb_duration_typography',
 				'scheme'   => Scheme_Typography::TYPOGRAPHY_3,
 				'selector' => '{{WRAPPER}}  ' . $css_scheme['thumb_duration'],
-				'fields_options' => array(
-					'typography' => array(
-						'default' => 'custom',
-					),
-					'font_size' => array(
-						'default' => array(
-							'units' => 'px',
-							'size'  => 12,
-						),
-					),
-					'line_height' => array(
-						'default' => array(
-							'units' => 'px',
-							'size'  => 16,
-						),
-					),
-				),
 			),
 			50
 		);
@@ -1068,17 +1023,6 @@ class Jet_Blog_Video_Playlist extends Jet_Blog_Base {
 				'name'     => 'thumb_index_typography',
 				'scheme'   => Scheme_Typography::TYPOGRAPHY_3,
 				'selector' => '{{WRAPPER}}  ' . $css_scheme['thumb_index'],
-				'fields_options' => array(
-					'typography' => array(
-						'default' => 'custom',
-					),
-					'font_size' => array(
-						'default' => array(
-							'units' => 'px',
-							'size'  => 12,
-						),
-					),
-				),
 			),
 			50
 		);

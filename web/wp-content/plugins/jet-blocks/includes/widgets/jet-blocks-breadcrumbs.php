@@ -12,8 +12,8 @@ use Elementor\Group_Control_Border;
 use Elementor\Group_Control_Box_Shadow;
 use Elementor\Group_Control_Typography;
 use Elementor\Repeater;
-use Elementor\Scheme_Color;
-use Elementor\Scheme_Typography;
+use Elementor\Core\Schemes\Color as Scheme_Color;
+use Elementor\Core\Schemes\Typography as Scheme_Typography;
 use Elementor\Widget_Base;
 use Elementor\Utils;
 
@@ -133,6 +133,28 @@ class Jet_Blocks_Breadcrumbs extends Jet_Blocks_Base {
 		);
 
 		$this->add_control(
+			'enabled_custom_home_page_label',
+			array(
+				'label'   => esc_html__( 'Custom Home Page Label', 'jet-blocks' ),
+				'type'    => Controls_Manager::SWITCHER,
+				'default' => '',
+			)
+		);
+
+		$this->add_control(
+			'custom_home_page_label',
+			array(
+				'label'       => esc_html__( 'Label for home page', 'jet-blocks' ),
+				'label_block' => true,
+				'type'        => Controls_Manager::TEXT,
+				'default'     => esc_html__( 'Home', 'jet-blocks' ),
+				'condition' => array(
+					'enabled_custom_home_page_label' => 'yes',
+				),
+			)
+		);
+
+		$this->add_control(
 			'separator_type',
 			array(
 				'label' => esc_html__( 'Separator Type', 'jet-blocks' ),
@@ -245,7 +267,7 @@ class Jet_Blocks_Breadcrumbs extends Jet_Blocks_Base {
 				'separator'       => 'before',
 				'raw'             => sprintf(
 					esc_html__( 'Additional settings are available in the %s', 'jet-blocks' ),
-					'<a target="_blank" href="' . jet_blocks_settings()->get_settings_page_link() . '">' . esc_html__( 'Settings page', 'jet-blocks' ) . '</a>'
+					'<a target="_blank" href="' . jet_blocks_settings()->get_settings_page_link( 'general' ) . '">' . esc_html__( 'Settings page', 'jet-blocks' ) . '</a>'
 				),
 			)
 		);
@@ -384,7 +406,7 @@ class Jet_Blocks_Breadcrumbs extends Jet_Blocks_Base {
 			Group_Control_Typography::get_type(),
 			array(
 				'name'     => 'breadcrumbs_item_typography',
-				'selector' => '{{WRAPPER}} ' . $css_scheme['item'],
+				'selector' => '{{WRAPPER}} ' . $css_scheme['item'] . ' > *',
 			),
 			50
 		);
@@ -827,7 +849,13 @@ class Jet_Blocks_Breadcrumbs extends Jet_Blocks_Base {
 
 		$settings = $this->get_settings();
 
-		$title_format = '<' . $settings['title_tag'] . ' class="jet-breadcrumbs__title">%s</' . $settings['title_tag'] . '>';
+		$title_tag = jet_blocks_tools()->validate_html_tag( $settings['title_tag'] );
+
+		$title_format = '<' .$title_tag . ' class="jet-breadcrumbs__title">%s</' . $title_tag . '>';
+
+		$custom_home_page_enabled = ! empty( $settings['enabled_custom_home_page_label'] ) ? $settings['enabled_custom_home_page_label'] : false;
+		$custom_home_page_enabled = filter_var( $custom_home_page_enabled, FILTER_VALIDATE_BOOLEAN );
+		$custom_home_page_label   = ( $custom_home_page_enabled && ! empty( $settings['custom_home_page_label'] ) ) ? $settings['custom_home_page_label'] : esc_html__( 'Home', 'jet-blocks' );
 
 		$args = array(
 			'wrapper_format'    => '%1$s%2$s',
@@ -840,6 +868,7 @@ class Jet_Blocks_Breadcrumbs extends Jet_Blocks_Base {
 			'action'            => 'jet_breadcrumbs/render',
 			'strings' => array(
 				'browse'         => $settings['browse_label'],
+				'home'           => $custom_home_page_label,
 				'error_404'      => esc_html__( '404 Not Found', 'jet-blocks' ),
 				'archives'       => esc_html__( 'Archives', 'jet-blocks' ),
 				'search'         => esc_html__( 'Search results for &#8220;%s&#8221;', 'jet-blocks' ),
@@ -872,8 +901,15 @@ class Jet_Blocks_Breadcrumbs extends Jet_Blocks_Base {
 			),
 		);
 
+		if ( $custom_home_page_enabled ) {
+			add_filter( 'cx_breadcrumbs/custom_home_title', array( $this, 'static_home_page_title_off' ) );
+		}
 
 		$breadcrumbs = new \CX_Breadcrumbs( $args );
+
+		if ( $custom_home_page_enabled ) {
+			remove_filter( 'cx_breadcrumbs/custom_home_title', array( $this, 'static_home_page_title_off' ) );
+		}
 
 		$breadcrumbs->get_trail();
 
@@ -897,5 +933,14 @@ class Jet_Blocks_Breadcrumbs extends Jet_Blocks_Base {
 		}
 
 		return $separator;
+	}
+
+	/**
+	 * Disables getting the title of the home page if a static page is selected.
+	 *
+	 * @return boolean
+	 */
+	function static_home_page_title_off() {
+		return false;
 	}
 }

@@ -4,13 +4,14 @@
 		display: none;
 	}
 
-	.tippy-popper {
-		.tippy-tooltip {
-			max-width: 100%;
-		}
-
-		.jet-tooltip-widget__content {
-			display: block;
+	[data-tippy-root] {
+		.tippy-svg-arrow {
+			display: flex;
+			svg {
+				fill: currentColor;
+				width: 15px;
+				height: auto;
+			}
 		}
 	}
 }

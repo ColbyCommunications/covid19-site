@@ -38,9 +38,15 @@ if ( ! class_exists( 'Jet_Elements_Compatibility' ) ) {
 				}
 
 				add_filter( 'wpml_elementor_widgets_to_translate', array( $this, 'add_translatable_nodes' ) );
+				add_filter( 'jet-elements/widgets/template_id',    array( $this, 'set_wpml_translated_template_id' ) );
 
 				// Translated Popup Actions
 				add_filter( 'elementor/frontend/builder_content_data', array( $this, 'convert_popup_id' ) );
+			}
+
+			// Polylang compatibility
+			if ( class_exists( 'Polylang' ) ) {
+				add_filter( 'jet-elements/widgets/template_id', array( $this, 'set_pll_translated_template_id' ) );
 			}
 		}
 
@@ -78,8 +84,53 @@ if ( ! class_exists( 'Jet_Elements_Compatibility' ) ) {
 			require jet_elements()->plugin_path( 'includes/lib/compatibility/modules/class-wpml-jet-elements-subscribe-form.php' );
 			require jet_elements()->plugin_path( 'includes/lib/compatibility/modules/class-wpml-jet-elements-timeline.php' );
 			require jet_elements()->plugin_path( 'includes/lib/compatibility/modules/class-wpml-jet-elements-table-header.php' );
+			require jet_elements()->plugin_path( 'includes/lib/compatibility/modules/class-wpml-jet-elements-table-footer.php' );
 			require jet_elements()->plugin_path( 'includes/lib/compatibility/modules/class-wpml-jet-elements-table.php' );
 			require jet_elements()->plugin_path( 'includes/lib/compatibility/modules/class-wpml-jet-elements-horizontal-timeline.php' );
+			require jet_elements()->plugin_path( 'includes/lib/compatibility/modules/class-wpml-jet-elements-bar-chart.php' );
+			require jet_elements()->plugin_path( 'includes/lib/compatibility/modules/class-wpml-jet-elements-pie-chart.php' );
+			require jet_elements()->plugin_path( 'includes/lib/compatibility/modules/class-wpml-jet-elements-line-chart.php' );
+		}
+
+		/**
+		 * Set WPML translated template.
+		 *
+		 * @param $template_id
+		 *
+		 * @return mixed|void
+		 */
+		public function set_wpml_translated_template_id( $template_id ) {
+			$post_type = get_post_type( $template_id );
+
+			return apply_filters( 'wpml_object_id', $template_id, $post_type, true );
+		}
+
+		/**
+		 * Set Polylang translated template.
+		 *
+		 * @param $template_id
+		 *
+		 * @return false|int|null
+		 */
+		public function set_pll_translated_template_id( $template_id ) {
+
+			if ( function_exists( 'pll_get_post' ) ) {
+
+				$translation_template_id = pll_get_post( $template_id );
+
+				if ( null === $translation_template_id ) {
+					// the current language is not defined yet
+					return $template_id;
+				} elseif ( false === $translation_template_id ) {
+					//no translation yet
+					return $template_id;
+				} elseif ( $translation_template_id > 0 ) {
+					// return translated post id
+					return $translation_template_id;
+				}
+			}
+
+			return $template_id;
 		}
 
 		/**
@@ -181,7 +232,11 @@ if ( ! class_exists( 'Jet_Elements_Compatibility' ) ) {
 						'type'        => esc_html__( 'Jet Countdown Timer: Label Sec', 'jet-elements' ),
 						'editor_type' => 'LINE',
 					),
-
+					array(
+						'field'       => 'message_after_expire',
+						'type'        => esc_html__( 'Jet Countdown Timer: Message After Expire', 'jet-elements' ),
+						'editor_type' => 'AREA',
+					),
 				),
 			);
 
@@ -215,6 +270,16 @@ if ( ! class_exists( 'Jet_Elements_Compatibility' ) ) {
 						'type'        => esc_html__( 'Jet Circle Progress: Subtitle', 'jet-elements' ),
 						'editor_type' => 'LINE',
 					),
+					array(
+						'field'       => 'prefix',
+						'type'        => esc_html__( 'Jet Circle Progress: Prefix', 'jet-elements' ),
+						'editor_type' => 'LINE',
+					),
+					array(
+						'field'       => 'suffix',
+						'type'        => esc_html__( 'Jet Circle Progress: Suffix', 'jet-elements' ),
+						'editor_type' => 'LINE',
+					),
 				),
 			);
 
@@ -241,6 +306,11 @@ if ( ! class_exists( 'Jet_Elements_Compatibility' ) ) {
 						'field'       => 'after_text_content',
 						'type'        => esc_html__( 'Jet Animated Text: After Text', 'jet-elements' ),
 						'editor_type' => 'LINE',
+					),
+					'animated_text_link' => array(
+						'field'       => 'url',
+						'type'        => esc_html__( 'Jet Animated Text: Link', 'jet-elements' ),
+						'editor_type' => 'LINK',
 					),
 				),
 				'integration-class' => 'WPML_Jet_Elements_Animated_Text',
@@ -441,12 +511,12 @@ if ( ! class_exists( 'Jet_Elements_Compatibility' ) ) {
 					array(
 						'field'       => 'first_part',
 						'type'        => esc_html__( 'Jet Headline: First Part', 'jet-elements' ),
-						'editor_type' => 'LINE',
+						'editor_type' => 'AREA',
 					),
 					array(
 						'field'       => 'second_part',
 						'type'        => esc_html__( 'Jet Headline: Second Part', 'jet-elements' ),
-						'editor_type' => 'LINE',
+						'editor_type' => 'AREA',
 					),
 					'link' => array(
 						'field'       => 'url',
@@ -473,6 +543,11 @@ if ( ! class_exists( 'Jet_Elements_Compatibility' ) ) {
 					array(
 						'field'       => 'submit_placeholder',
 						'type'        => esc_html__( 'Jet Subscribe Form: Input Placeholder', 'jet-elements' ),
+						'editor_type' => 'LINE',
+					),
+					array(
+						'field'       => 'redirect_url',
+						'type'        => esc_html__( 'Jet Subscribe Form: Redirect Url', 'jet-elements' ),
 						'editor_type' => 'LINE',
 					),
 				),
@@ -556,6 +631,7 @@ if ( ! class_exists( 'Jet_Elements_Compatibility' ) ) {
 				'fields'            => array(),
 				'integration-class' => array(
 					'WPML_Jet_Elements_Table_Header',
+					'WPML_Jet_Elements_Table_Footer',
 					'WPML_Jet_Elements_Table',
 				),
 			);
@@ -564,6 +640,68 @@ if ( ! class_exists( 'Jet_Elements_Compatibility' ) ) {
 				'conditions'        => array( 'widgetType' => 'jet-horizontal-timeline' ),
 				'fields'            => array(),
 				'integration-class' => 'WPML_Jet_Elements_Horizontal_Timeline',
+			);
+
+			$nodes_to_translate['jet-bar-chart'] = array(
+				'conditions'        => array( 'widgetType' => 'jet-bar-chart' ),
+				'fields'            => array(
+					array(
+						'field'       => 'labels',
+						'type'        => esc_html__( 'Jet Bar Chart: Labels', 'jet-elements' ),
+						'editor_type' => 'LINE',
+					),
+					array(
+						'field'       => 'chart_tooltip_prefix',
+						'type'        => esc_html__( 'Jet Bar Chart: Tooltips Prefix', 'jet-elements' ),
+						'editor_type' => 'LINE',
+					),
+					array(
+						'field'       => 'chart_tooltip_suffix',
+						'type'        => esc_html__( 'Jet Bar Chart: Tooltips Suffix', 'jet-elements' ),
+						'editor_type' => 'LINE',
+					),
+				),
+				'integration-class' => 'WPML_Jet_Elements_Bar_Chart',
+			);
+
+			$nodes_to_translate['jet-pie-chart'] = array(
+				'conditions'        => array( 'widgetType' => 'jet-pie-chart' ),
+				'fields'            => array(
+					array(
+						'field'       => 'chart_title',
+						'type'        => esc_html__( 'Jet Pie Chart: Title', 'jet-elements' ),
+						'editor_type' => 'LINE',
+					),
+					array(
+						'field'       => 'chart_tooltip_suffix',
+						'type'        => esc_html__( 'Jet Pie Chart: Tooltips Suffix', 'jet-elements' ),
+						'editor_type' => 'LINE',
+					),
+				),
+				'integration-class' => 'WPML_Jet_Elements_Pie_Chart',
+			);
+
+			$nodes_to_translate['jet-line-chart'] = array(
+				'conditions'        => array( 'widgetType' => 'jet-line-chart' ),
+				'fields'            => array(
+					array(
+						'field'       => 'labels',
+						'type'        => esc_html__( 'Jet Line Chart: Labels', 'jet-elements' ),
+						'editor_type' => 'LINE',
+					),
+				),
+				'integration-class' => 'WPML_Jet_Elements_Line_Chart',
+			);
+
+			$nodes_to_translate['jet-lottie'] = array(
+				'conditions' => array( 'widgetType' => 'jet-lottie' ),
+				'fields'     => array(
+					'link' => array(
+						'field'       => 'url',
+						'type'        => esc_html__( 'Jet Lottie: Link', 'jet-elements' ),
+						'editor_type' => 'LINK',
+					),
+				),
 			);
 
 			return $nodes_to_translate;

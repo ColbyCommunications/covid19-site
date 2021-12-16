@@ -8,14 +8,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ZemezLab/jet-tabs.git"
+    "url": "git+https://github.com/ZemezLab/jet-tricks.git"
   },
   "author": "Shin",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/ZemezLab/jet-tabs/issues"
+    "url": "https://github.com/ZemezLab/jet-tricks/issues"
   },
-  "homepage": "https://github.com/ZemezLab/jet-tabs#readme",
+  "homepage": "https://github.com/ZemezLab/jet-tricks#readme",
   "devDependencies": {
     "gulp": "^4.0.2",
     "gulp-autoprefixer": "^4.1.0",

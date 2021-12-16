@@ -3,11 +3,11 @@
 }
 
 .jet-scroll-navigation--position-left {
-	margin-left: 20px;
+	@include margin-start(20px);
 }
 
 .jet-scroll-navigation--position-right {
-	margin-right: 20px;
+	@include margin-end(20px);
 }
 
 .jet-scroll-navigation__inner {

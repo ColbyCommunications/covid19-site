@@ -1,11 +1,15 @@
+$direction: ltr !default;
+@import "mixins/direction";
 @import "base/grid";
 @import "base/common";
 @import "base/animation";
 @import "base/flex-orientation";
+@import "base/slick";
 
 @import "addons/jet-animated-text";
 @import "addons/jet-animated-box";
 @import "addons/jet-banner";
+@import "addons/jet-brands";
 @import "addons/jet-carousel";
 @import "addons/jet-circle-progress";
 @import "addons/jet-countdown-timer";
@@ -37,3 +41,4 @@
 @import "addons/jet-audio";
 @import "addons/jet-horizontal-timeline";
 @import "addons/jet-charts";
+@import "addons/jet-lottie";

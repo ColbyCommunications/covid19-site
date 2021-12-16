@@ -73,6 +73,7 @@ class Jet_Elements_Templates_Source extends Elementor\TemplateLibrary\Source_Bas
 			'author'          => $template_data['author'],
 			'tags'            => $template_data['tags'],
 			'isPro'           => ( 1 == $template_data['isPro'] ),
+			'accessLevel'     => 0,
 			'popularityIndex' => (int) $template_data['popularityIndex'],
 			'trendIndex'      => (int) $template_data['trendIndex'],
 			'hasPageSettings' => ( 1 == $template_data['hasPageSettings'] ),

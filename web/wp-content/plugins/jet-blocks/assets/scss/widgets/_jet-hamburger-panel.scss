@@ -316,3 +316,24 @@ html.jet-hamburger-panel-visible {
 	color: #6ec1e4;
 	text-decoration: underline;
 }
+
+.jet-hamburger-panel-loader {
+	position: absolute;
+	left: 50%;
+	top: 50%;
+	width: 24px;
+	height: 24px;
+	margin-top: -12px;
+	margin-left: -12px;
+	border: 4px rgba( #000,0.15 ) solid;
+	border-top-width: 4px;
+	border-top-style: solid;
+	border-top-color: #fff;
+	border-radius: 50%;
+	animation: spCircRot .6s infinite linear;
+}
+
+@keyframes spCircRot {
+	from { transform: rotate(0deg); }
+	to { transform: rotate(359deg); }
+}

@@ -13,8 +13,8 @@ use Elementor\Group_Control_Box_Shadow;
 use Elementor\Group_Control_Typography;
 use Elementor\Modules\DynamicTags\Module as TagsModule;
 use Elementor\Repeater;
-use Elementor\Scheme_Color;
-use Elementor\Scheme_Typography;
+use Elementor\Core\Schemes\Color as Scheme_Color;
+use Elementor\Core\Schemes\Typography as Scheme_Typography;
 use Elementor\Widget_Base;
 use Elementor\Utils;
 
@@ -973,13 +973,37 @@ class Jet_Blog_Smart_Listing extends Jet_Blog_Base {
 				'type'    => Controls_Manager::SELECT,
 				'default' => 'all',
 				'options' => array(
-					'all' => esc_html__( 'All', 'jet-blog' ),
-					'ids' => esc_html__( 'IDs', 'jet-blog' ),
+					'all'   => esc_html__( 'All', 'jet-blog' ),
+					'ids'   => esc_html__( 'IDs', 'jet-blog' ),
+					'terms' => esc_html__( 'Terms', 'jet-blog' ),
 				),
 				'condition' => array(
 					'use_custom_query!'    => 'true',
 					'is_archive_template!' => 'yes',
 					'post_type!'           => 'post',
+				),
+			)
+		);
+
+		$this->add_control(
+			'custom_terms_ids',
+			array(
+				'label'       => esc_html__( 'Get custom posts from terms:', 'jet-blog' ),
+				'description' => esc_html__( 'Set comma separated terms IDs list (10, 22, 19 etc.)', 'jet-blog' ),
+				'type'        => Controls_Manager::TEXT,
+				'label_block' => true,
+				'default'     => '',
+				'dynamic'     => array(
+					'active'     => true,
+					'categories' => array(
+						TagsModule::POST_META_CATEGORY,
+					),
+				),
+				'condition'   => array(
+					'use_custom_query!'    => 'true',
+					'is_archive_template!' => 'yes',
+					'post_type!'           => 'post',
+					'custom_query_by'      => 'terms',
 				),
 			)
 		);
@@ -1011,7 +1035,7 @@ class Jet_Blog_Smart_Listing extends Jet_Blog_Base {
 			array(
 				'type'        => 'text',
 				'label_block' => true,
-				'description' => esc_html__( 'If this is used with query posts by ID, it will be ignored', 'jet-blog' ),
+				'description' => esc_html__( 'If this is used with query posts by ID, it will be ignored. Note: use the %current_id% macros to exclude the current post.', 'jet-blog' ),
 				'label'       => esc_html__( 'Exclude posts by IDs (eg. 10, 22, 19 etc.)', 'jet-blog' ),
 				'default'     => '',
 				'dynamic'     => array(
@@ -1036,6 +1060,52 @@ class Jet_Blog_Smart_Listing extends Jet_Blog_Base {
 				'min'       => 0,
 				'max'       => 300,
 				'step'      => 1,
+				'condition' => array(
+					'use_custom_query!'    => 'true',
+					'is_archive_template!' => 'yes',
+				),
+			)
+		);
+
+		$this->add_control(
+			'order',
+			array(
+				'label'   => esc_html__( 'Order', 'jet-blog' ),
+				'type'    => Controls_Manager::SELECT,
+				'default' => 'DESC',
+				'options' => array(
+					'ASC'  => esc_html__( 'ASC', 'jet-blog' ),
+					'DESC' => esc_html__( 'DESC', 'jet-blog' ),
+				),
+				'condition' => array(
+					'use_custom_query!'    => 'true',
+					'is_archive_template!' => 'yes',
+				),
+			)
+		);
+
+		$this->add_control(
+			'order_by',
+			array(
+				'label'   => esc_html__( 'Order by', 'jet-blog' ),
+				'type'    => Controls_Manager::SELECT,
+				'default' => 'date',
+				'options' => array(
+					'none'          => esc_html__( 'None', 'jet-blog' ),
+					'ID'            => esc_html__( 'ID', 'jet-blog' ),
+					'author'        => esc_html__( 'Author', 'jet-blog' ),
+					'title'         => esc_html__( 'Title', 'jet-blog' ),
+					'name'          => esc_html__( 'Name', 'jet-blog' ),
+					'type'          => esc_html__( 'Type', 'jet-blog' ),
+					'date'          => esc_html__( 'Date', 'jet-blog' ),
+					'modified'      => esc_html__( 'Modified', 'jet-blog' ),
+					'parent'        => esc_html__( 'Parent', 'jet-blog' ),
+					'rand'          => esc_html__( 'Rand', 'jet-blog' ),
+					'comment_count' => esc_html__( 'Comment count', 'jet-blog' ),
+					'relevance'     => esc_html__( 'Relevance', 'jet-blog' ),
+					'menu_order'    => esc_html__( 'Menu order', 'jet-blog' ),
+					'post__in'      => esc_html__( 'Preserve post ID order given in the "Include posts by IDs" option', 'jet-blog' ),
+				),
 				'condition' => array(
 					'use_custom_query!'    => 'true',
 					'is_archive_template!' => 'yes',
@@ -1101,10 +1171,30 @@ class Jet_Blog_Smart_Listing extends Jet_Blog_Base {
 				'return_value' => 'yes',
 				'default'      => '',
 				'separator'    => 'before',
-				'condition'    => array(
-					'use_custom_query!'    => 'true',
-					'is_archive_template!' => 'yes',
-					'post_type'            => $this->allowed_types_for_filter(),
+				'conditions'   => array(
+					'relation' => 'and',
+					'terms'    => array(
+						array(
+							'name'     => 'is_archive_template',
+							'operator' => '!==',
+							'value'    => 'yes',
+						),
+						array(
+							'relation' => 'or',
+							'terms'    => array(
+								array(
+									'name'     => 'use_custom_query',
+									'operator' => '===',
+									'value'    => 'true',
+								),
+								array(
+									'name'     => 'post_type',
+									'operator' => 'in',
+									'value'    => $this->allowed_types_for_filter(),
+								),
+							),
+						),
+					)
 				),
 			)
 		);
@@ -1117,11 +1207,35 @@ class Jet_Blog_Smart_Listing extends Jet_Blog_Base {
 				'type'        => Controls_Manager::SELECT,
 				'default'     => 'category',
 				'options'     => $this->get_filter_taxonomies(),
-				'condition'   => array(
-					'use_custom_query!'    => 'true',
-					'is_archive_template!' => 'yes',
-					'post_type'            => $this->allowed_types_for_filter(),
-					'show_filter'          => 'yes',
+				'conditions'  => array(
+					'relation' => 'and',
+					'terms'    => array(
+						array(
+							'name'     => 'is_archive_template',
+							'operator' => '!==',
+							'value'    => 'yes',
+						),
+						array(
+							'name'     => 'show_filter',
+							'operator' => '===',
+							'value'    => 'yes',
+						),
+						array(
+							'relation' => 'or',
+							'terms'    => array(
+								array(
+									'name'     => 'use_custom_query',
+									'operator' => '===',
+									'value'    => 'true',
+								),
+								array(
+									'name'     => 'post_type',
+									'operator' => 'in',
+									'value'    => $this->allowed_types_for_filter(),
+								),
+							),
+						),
+					)
 				),
 			)
 		);
@@ -1135,11 +1249,35 @@ class Jet_Blog_Smart_Listing extends Jet_Blog_Base {
 				'label_off'    => esc_html__( 'Hide', 'jet-blog' ),
 				'return_value' => 'yes',
 				'default'      => 'yes',
-				'condition'    => array(
-					'use_custom_query!'    => 'true',
-					'is_archive_template!' => 'yes',
-					'post_type'            => $this->allowed_types_for_filter(),
-					'show_filter'          => 'yes',
+				'conditions'   => array(
+					'relation' => 'and',
+					'terms'    => array(
+						array(
+							'name'     => 'is_archive_template',
+							'operator' => '!==',
+							'value'    => 'yes',
+						),
+						array(
+							'name'     => 'show_filter',
+							'operator' => '===',
+							'value'    => 'yes',
+						),
+						array(
+							'relation' => 'or',
+							'terms'    => array(
+								array(
+									'name'     => 'use_custom_query',
+									'operator' => '===',
+									'value'    => 'true',
+								),
+								array(
+									'name'     => 'post_type',
+									'operator' => 'in',
+									'value'    => $this->allowed_types_for_filter(),
+								),
+							),
+						),
+					)
 				),
 			)
 		);
@@ -1150,11 +1288,35 @@ class Jet_Blog_Smart_Listing extends Jet_Blog_Base {
 				'label'       => esc_html__( '"All" Button Label', 'jet-blog' ),
 				'type'        => Controls_Manager::TEXT,
 				'default'     => esc_html__( 'All', 'jet-blog' ),
-				'condition'    => array(
-					'use_custom_query!'    => 'true',
-					'is_archive_template!' => 'yes',
-					'post_type'            => $this->allowed_types_for_filter(),
-					'show_filter'          => 'yes',
+				'conditions'  => array(
+					'relation' => 'and',
+					'terms'    => array(
+						array(
+							'name'     => 'is_archive_template',
+							'operator' => '!==',
+							'value'    => 'yes',
+						),
+						array(
+							'name'     => 'show_filter',
+							'operator' => '===',
+							'value'    => 'yes',
+						),
+						array(
+							'relation' => 'or',
+							'terms'    => array(
+								array(
+									'name'     => 'use_custom_query',
+									'operator' => '===',
+									'value'    => 'true',
+								),
+								array(
+									'name'     => 'post_type',
+									'operator' => 'in',
+									'value'    => $this->allowed_types_for_filter(),
+								),
+							),
+						),
+					)
 				),
 			)
 		);
@@ -1170,11 +1332,35 @@ class Jet_Blog_Smart_Listing extends Jet_Blog_Base {
 				'description'  => esc_html__( 'Enable this option in order to reduce the terms filter size by grouping extra terms items and hiding them under the suspension dots.', 'jet-blog' ),
 				'default'      => '',
 				'separator'    => 'before',
-				'condition' => array(
-					'use_custom_query!'    => 'true',
-					'show_filter'          => 'yes',
-					'is_archive_template!' => 'yes',
-					'post_type'            => $this->allowed_types_for_filter(),
+				'conditions'   => array(
+					'relation' => 'and',
+					'terms'    => array(
+						array(
+							'name'     => 'is_archive_template',
+							'operator' => '!==',
+							'value'    => 'yes',
+						),
+						array(
+							'name'     => 'show_filter',
+							'operator' => '===',
+							'value'    => 'yes',
+						),
+						array(
+							'relation' => 'or',
+							'terms'    => array(
+								array(
+									'name'     => 'use_custom_query',
+									'operator' => '===',
+									'value'    => 'true',
+								),
+								array(
+									'name'     => 'post_type',
+									'operator' => 'in',
+									'value'    => $this->allowed_types_for_filter(),
+								),
+							),
+						),
+					)
 				),
 			)
 		);
@@ -1191,12 +1377,40 @@ class Jet_Blog_Smart_Listing extends Jet_Blog_Base {
 					'value'   => 'fas fa-ellipsis-h',
 					'library' => 'fa-solid',
 				),
-				'condition'        => array(
-					'use_custom_query!'    => 'true',
-					'is_archive_template!' => 'yes',
-					'post_type'            => $this->allowed_types_for_filter(),
-					'terms_rollup'         => 'yes',
-					'show_filter'          => 'yes',
+				'conditions'  => array(
+					'relation' => 'and',
+					'terms'    => array(
+						array(
+							'name'     => 'is_archive_template',
+							'operator' => '!==',
+							'value'    => 'yes',
+						),
+						array(
+							'name'     => 'show_filter',
+							'operator' => '===',
+							'value'    => 'yes',
+						),
+						array(
+							'name'     => 'terms_rollup',
+							'operator' => '===',
+							'value'    => 'yes',
+						),
+						array(
+							'relation' => 'or',
+							'terms'    => array(
+								array(
+									'name'     => 'use_custom_query',
+									'operator' => '===',
+									'value'    => 'true',
+								),
+								array(
+									'name'     => 'post_type',
+									'operator' => 'in',
+									'value'    => $this->allowed_types_for_filter(),
+								),
+							),
+						),
+					)
 				),
 			)
 		);
@@ -1212,7 +1426,6 @@ class Jet_Blog_Smart_Listing extends Jet_Blog_Base {
 				'default'      => '',
 				'separator'    => 'before',
 				'condition' => array(
-					'use_custom_query!'    => 'true',
 					'is_archive_template!' => 'yes',
 				),
 			)
@@ -1227,7 +1440,6 @@ class Jet_Blog_Smart_Listing extends Jet_Blog_Base {
 				'default'     => 'fa fa-angle-left',
 				'options'     => jet_blog_tools()->get_available_prev_arrows_list(),
 				'condition'   => array(
-					'use_custom_query!'    => 'true',
 					'is_archive_template!' => 'yes',
 					'show_arrows'          => 'yes',
 				),
@@ -1243,7 +1455,6 @@ class Jet_Blog_Smart_Listing extends Jet_Blog_Base {
 				'return_value' => 'yes',
 				'default'      => 'yes',
 				'condition'    => array(
-					'use_custom_query!'    => 'true',
 					'is_archive_template!' => 'yes',
 					'show_arrows'          => 'yes',
 				),
@@ -1283,7 +1494,7 @@ class Jet_Blog_Smart_Listing extends Jet_Blog_Base {
 				'default'    => array(
 					'top'      => 0,
 					'right'    => -10,
-					'bottom'   => 0,
+					'bottom'   => 40,
 					'left'     => -10,
 					'unit'     => 'px',
 					'isLinked' => false,
@@ -1776,6 +1987,7 @@ class Jet_Blog_Smart_Listing extends Jet_Blog_Base {
 				'selectors'  => array(
 					'{{WRAPPER}} ' . $css_scheme['filter'] => 'flex-grow: 1; text-align: {{VALUE}};',
 				),
+				'classes' => 'jet-elements-text-align-control',
 			),
 			50
 		);
@@ -2100,7 +2312,7 @@ class Jet_Blog_Smart_Listing extends Jet_Blog_Base {
 			array(
 				'name'     => 'featured_post_title_typography',
 				'scheme'   => Scheme_Typography::TYPOGRAPHY_1,
-				'selector' => '{{WRAPPER}}  ' . $css_scheme['featured_post_title'],
+				'selector' => '{{WRAPPER}}  ' . $css_scheme['featured_post_title'] . ', {{WRAPPER}} .jet-smart-listing__featured .jet-smart-listing__featured-box-link',
 			),
 			50
 		);
@@ -2166,6 +2378,7 @@ class Jet_Blog_Smart_Listing extends Jet_Blog_Base {
 				'selectors'  => array(
 					'{{WRAPPER}} ' . $css_scheme['featured_post_title'] => 'text-align: {{VALUE}};',
 				),
+				'classes' => 'jet-elements-text-align-control',
 			),
 			50
 		);
@@ -2187,6 +2400,7 @@ class Jet_Blog_Smart_Listing extends Jet_Blog_Base {
 				'type'      => Controls_Manager::COLOR,
 				'selectors' => array(
 					'{{WRAPPER}} ' . $css_scheme['featured_post_text'] => 'color: {{VALUE}}',
+					'{{WRAPPER}} .jet-smart-listing__featured-box-link ' . $css_scheme['featured_post_text'] => 'color: {{VALUE}}',
 				),
 			),
 			25
@@ -2197,7 +2411,7 @@ class Jet_Blog_Smart_Listing extends Jet_Blog_Base {
 			array(
 				'name'     => 'featured_post_text_typography',
 				'scheme'   => Scheme_Typography::TYPOGRAPHY_3,
-				'selector' => '{{WRAPPER}}  ' . $css_scheme['featured_post_text'],
+				'selector' => '{{WRAPPER}}  ' . $css_scheme['featured_post_text'] . ', {{WRAPPER}} .jet-smart-listing__featured a .post-excerpt-featured',
 			),
 			50
 		);
@@ -2241,6 +2455,7 @@ class Jet_Blog_Smart_Listing extends Jet_Blog_Base {
 				'selectors'  => array(
 					'{{WRAPPER}} ' . $css_scheme['featured_post_text'] => 'text-align: {{VALUE}};',
 				),
+				'classes' => 'jet-elements-text-align-control',
 			),
 			50
 		);
@@ -2412,6 +2627,7 @@ class Jet_Blog_Smart_Listing extends Jet_Blog_Base {
 				'selectors'  => array(
 					'{{WRAPPER}} ' . $css_scheme['featured_post'] . ' ' . $css_scheme['meta'] => 'text-align: {{VALUE}};',
 				),
+				'classes' => 'jet-elements-text-align-control',
 			),
 			50
 		);
@@ -3109,16 +3325,16 @@ class Jet_Blog_Smart_Listing extends Jet_Blog_Base {
 				'default' => 'flex-start',
 				'options' => array(
 					'flex-start'    => array(
-						'title' => esc_html__( 'Left', 'jet-blog' ),
-						'icon'  => 'fa fa-align-left',
+						'title' =>  is_rtl() ? esc_html__( 'Right', 'jet-blog' ) : esc_html__( 'Left', 'jet-blog' ),
+						'icon'  => is_rtl() ? 'fa fa-align-right' : 'fa fa-align-left',
 					),
 					'center' => array(
 						'title' => esc_html__( 'Center', 'jet-blog' ),
 						'icon'  => 'fa fa-align-center',
 					),
 					'flex-end' => array(
-						'title' => esc_html__( 'Right', 'jet-blog' ),
-						'icon'  => 'fa fa-align-right',
+						'title' => is_rtl() ? esc_html__( 'Left', 'jet-blog' ) : esc_html__( 'Right', 'jet-blog' ),
+						'icon'  => is_rtl() ? 'fa fa-align-left' : 'fa fa-align-right',
 					),
 				),
 				'selectors'  => array(
@@ -3553,8 +3769,8 @@ class Jet_Blog_Smart_Listing extends Jet_Blog_Base {
 				'label'     => esc_html__( 'Color', 'jet-blog' ),
 				'type'      => Controls_Manager::COLOR,
 				'selectors' => array(
-					'{{WRAPPER}} ' . $css_scheme['post_title'] . ' a' => 'color: {{VALUE}}',
-					'{{WRAPPER}} ' . $css_scheme['post_title']        => 'color: {{VALUE}}',
+					'{{WRAPPER}} ' . $css_scheme['post_title'] . ' a' => 'color: {{VALUE}};',
+					'{{WRAPPER}} ' . $css_scheme['post_title']        => 'color: {{VALUE}};',
 				),
 			),
 			25
@@ -3578,7 +3794,7 @@ class Jet_Blog_Smart_Listing extends Jet_Blog_Base {
 			array(
 				'name'     => 'post_title_typography',
 				'scheme'   => Scheme_Typography::TYPOGRAPHY_1,
-				'selector' => '{{WRAPPER}}  ' . $css_scheme['post_title'],
+				'selector' => '{{WRAPPER}}  ' . $css_scheme['post_title'] . ' a',
 			),
 			50
 		);
@@ -3644,6 +3860,7 @@ class Jet_Blog_Smart_Listing extends Jet_Blog_Base {
 				'selectors'  => array(
 					'{{WRAPPER}} ' . $css_scheme['post_title'] => 'text-align: {{VALUE}};',
 				),
+				'classes' => 'jet-elements-text-align-control',
 			),
 			50
 		);
@@ -3719,6 +3936,7 @@ class Jet_Blog_Smart_Listing extends Jet_Blog_Base {
 				'selectors'  => array(
 					'{{WRAPPER}} ' . $css_scheme['post_text'] => 'text-align: {{VALUE}};',
 				),
+				'classes' => 'jet-elements-text-align-control',
 			),
 			50
 		);
@@ -3830,7 +4048,7 @@ class Jet_Blog_Smart_Listing extends Jet_Blog_Base {
 			array(
 				'name'     => 'meta_typography',
 				'scheme'   => Scheme_Typography::TYPOGRAPHY_3,
-				'selector' => '{{WRAPPER}} ' . $css_scheme['post'] . ' ' . $css_scheme['meta'],
+				'selector' => '{{WRAPPER}} ' . $css_scheme['post'] . ' ' . $css_scheme['meta'] . ' a',
 			),
 			50
 		);
@@ -3884,6 +4102,7 @@ class Jet_Blog_Smart_Listing extends Jet_Blog_Base {
 				'selectors'  => array(
 					'{{WRAPPER}} ' . $css_scheme['post'] . ' ' . $css_scheme['meta'] => 'text-align: {{VALUE}};',
 				),
+				'classes' => 'jet-elements-text-align-control',
 			),
 			50
 		);
@@ -4581,16 +4800,16 @@ class Jet_Blog_Smart_Listing extends Jet_Blog_Base {
 				'default' => 'flex-start',
 				'options' => array(
 					'flex-start'    => array(
-						'title' => esc_html__( 'Left', 'jet-blog' ),
-						'icon'  => 'fa fa-align-left',
+						'title' =>  is_rtl() ? esc_html__( 'Right', 'jet-blog' ) : esc_html__( 'Left', 'jet-blog' ),
+						'icon'  => is_rtl() ? 'fa fa-align-right' : 'fa fa-align-left',
 					),
 					'center' => array(
 						'title' => esc_html__( 'Center', 'jet-blog' ),
 						'icon'  => 'fa fa-align-center',
 					),
 					'flex-end' => array(
-						'title' => esc_html__( 'Right', 'jet-blog' ),
-						'icon'  => 'fa fa-align-right',
+						'title' => is_rtl() ? esc_html__( 'Left', 'jet-blog' ) : esc_html__( 'Right', 'jet-blog' ),
+						'icon'  => is_rtl() ? 'fa fa-align-left' : 'fa fa-align-right',
 					),
 				),
 				'selectors'  => array(
@@ -5373,6 +5592,8 @@ class Jet_Blog_Smart_Listing extends Jet_Blog_Base {
 			'post_tag_ids',
 			'include_ids',
 			'exclude_ids',
+			'custom_query_by',
+			'custom_terms_ids',
 			'meta_query',
 			'meta_key',
 			'meta_value',
@@ -5409,7 +5630,9 @@ class Jet_Blog_Smart_Listing extends Jet_Blog_Base {
 			$this->_new_icon_prefix . 'post_button_icon',
 			'use_custom_query',
 			'custom_query',
-			'posts_offset'
+			'posts_offset',
+			'order',
+			'order_by',
 		) );
 
 		$result = array();
@@ -5430,7 +5653,7 @@ class Jet_Blog_Smart_Listing extends Jet_Blog_Base {
 
 		$settings  = $this->_get_widget_settings();
 		$enabled   = $settings['show_filter'];
-		$post_type = ! empty( $settings['post_type'] ) ? $settings['post_type'] : 'post';
+		$post_type = ! empty( $settings['post_type'] ) ? $settings['post_type'] : null;
 
 		if ( 'yes' !== $enabled ) {
 			return;
@@ -5454,6 +5677,12 @@ class Jet_Blog_Smart_Listing extends Jet_Blog_Base {
 			$args = array(
 				'taxonomy' => $settings['filter_by'],
 			);
+
+			$custom_query_by = $settings['custom_query_by'];
+
+			if ( 'terms' === $custom_query_by ) {
+				$args['include'] = $settings[ 'custom_terms_ids' ];
+			}
 
 		}
 
@@ -5500,7 +5729,6 @@ class Jet_Blog_Smart_Listing extends Jet_Blog_Base {
 
 		$settings   = $this->_get_widget_settings();
 		$enabled    = $settings['show_arrows'];
-		$scroll_top = ! empty( $settings['scroll_top'] ) ? filter_var( $settings['scroll_top'], FILTER_VALIDATE_BOOLEAN ) : false;
 
 		if ( 'yes' !== $enabled ) {
 			return;
@@ -5542,7 +5770,7 @@ class Jet_Blog_Smart_Listing extends Jet_Blog_Base {
 
 		$custom_controls = apply_filters( 'jet-blog/smart-list/custom-controls', null, $this );
 
-		printf( '<div class="jet-smart-listing__arrows" data-scroll-top="%3$s">%1$s%2$s</div>', $arrows, $custom_controls, $scroll_top );
+		printf( '<div class="jet-smart-listing__arrows">%1$s%2$s</div>', $arrows, $custom_controls );
 
 	}
 
@@ -5607,6 +5835,29 @@ class Jet_Blog_Smart_Listing extends Jet_Blog_Base {
 			);
 		}
 
+		if ( 'post' !== $post_type && 'terms' === $settings['custom_query_by'] && ! empty( $settings['custom_terms_ids'] ) ) {
+			$custom_terms_ids = explode( ',', str_replace( ' ', '', $settings['custom_terms_ids'] ) );
+			$custom_terms     = array();
+
+			foreach ( $custom_terms_ids as $term_id ) {
+				$term_data = get_term_by( 'term_taxonomy_id', $term_id );
+
+				if ( false !== $term_data ) {
+					$custom_terms[ $term_data->taxonomy ][] = $term_id;
+				}
+			}
+
+			$query_args['tax_query'] = array();
+
+			foreach ( $custom_terms as $taxonomy => $term_ids ) {
+				$query_args['tax_query'][] = array(
+					'taxonomy' => $taxonomy,
+					'field'    => 'term_id',
+					'terms'    => $term_ids,
+				);
+			}
+		}
+
 		if ( 'post' !== $post_type && ! empty( $settings['post_ids'] ) ) {
 			$post_ids = explode( ',', str_replace( ' ', '', $settings['post_ids'] ) );
 			$query_args['post__in'] = $post_ids;
@@ -5618,8 +5869,17 @@ class Jet_Blog_Smart_Listing extends Jet_Blog_Base {
 		}
 
 		if ( ! empty( $exclude ) && empty( $query_args['post__in'] ) ) {
+			$exclude                    = $this->render_macros( $exclude );
 			$exclude_ids                = explode( ',', str_replace( ' ', '', $exclude ) );
 			$query_args['post__not_in'] = $exclude_ids;
+		}
+
+		if ( ! empty( $settings['order'] ) ) {
+			$query_args['order'] = $settings['order'];
+		}
+
+		if ( ! empty( $settings['order_by'] ) ) {
+			$query_args['orderby'] = $settings['order_by'];
 		}
 
 		if ( isset( $settings['meta_query'] ) && 'yes' === $settings['meta_query'] ) {
@@ -5935,12 +6195,12 @@ class Jet_Blog_Smart_Listing extends Jet_Blog_Base {
 
 		switch ( $context ) {
 			case 'featured':
-				$length = $settings['featured_excerpt_length'];
+				$length = (int) $settings['featured_excerpt_length'];
 				$trimmed = $settings['featured_excerpt_trimmed_ending'];
 				break;
 
 			default:
-				$length = $settings['excerpt_length'];
+				$length = (int) $settings['excerpt_length'];
 				$trimmed = $settings['excerpt_trimmed_ending'];
 				break;
 		}

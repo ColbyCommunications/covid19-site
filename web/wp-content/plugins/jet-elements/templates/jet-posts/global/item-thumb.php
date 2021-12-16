@@ -10,7 +10,7 @@ jet_elements_post_tools()->get_post_image( array(
 	'size'        => $this->get_attr( 'thumb_size' ),
 	'mobile_size' => $this->get_attr( 'thumb_size' ),
 	'class'       => 'post-thumbnail__link',
-	'html'        => '<div class="post-thumbnail"><a href="%1$s" %2$s><img class="post-thumbnail__img wp-post-image" src="%3$s" alt="%4$s" %5$s></a></div>',
+	'html'        => '<div class="post-thumbnail"><a href="%1$s" %2$s><img class="post-thumbnail__img wp-post-image" src="%3$s" alt="%4$s" loading="lazy" %5$s></a></div>',
 	'placeholder' => false,
 	'echo'        => true,
 ) );

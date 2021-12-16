@@ -30,6 +30,12 @@ $this->add_render_attribute( 'main-container', 'data-settings', $this->generate_
 
 <div <?php echo $this->get_render_attribute_string( 'main-container' ); ?>><?php
 	$this->render_filters();
-	$this->__get_global_looped_template( esc_attr( $preset ) . '/portfolio', 'image_list' );
+
+	if ( isset( $settings['items_order'] ) && 'true' === $settings['items_order'] ) {
+		$this->_get_global_looped_template( esc_attr( $preset ) . '/portfolio', 'image_list', array( $this, '_random_items_order' ) );
+	} else {
+		$this->_get_global_looped_template( esc_attr( $preset ) . '/portfolio', 'image_list' );
+	}
+
 	$this->render_view_more_button();?>
 </div>

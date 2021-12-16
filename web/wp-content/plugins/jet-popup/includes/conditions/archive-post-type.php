@@ -43,6 +43,17 @@ if ( ! class_exists( 'Jet_Popup_Conditions_Archive_Post_Type' ) ) {
 		}
 
 		/**
+		 * [get_control description]
+		 * @return [type] [description]
+		 */
+		public function get_control() {
+			return [
+				'type'        => 'select',
+				'placeholder' => __( 'Select post type', 'jet-popup' ),
+			];
+		}
+
+		/**
 		 * [ajax_action description]
 		 * @return [type] [description]
 		 */

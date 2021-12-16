@@ -183,6 +183,11 @@
 	cursor: pointer;
 }
 
+.jet-popup-prevent-scroll {
+	overflow: hidden;
+	max-height: 100vh;
+}
+
 .jet-popup-loader {
 	display: none;
 	width: 48px;

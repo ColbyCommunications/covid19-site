@@ -334,10 +334,10 @@ if ( ! class_exists( 'Jet_Elements_Tools' ) ) {
 					'fa fa-angle-double-left'   => __( 'Angle Double', 'jet-elements' ),
 					'fa fa-arrow-left'          => __( 'Arrow', 'jet-elements' ),
 					'fa fa-caret-left'          => __( 'Caret', 'jet-elements' ),
-					'fa fa-long-arrow-left'     => __( 'Long Arrow', 'jet-elements' ),
+					'fa fa-long-arrow-alt-left' => __( 'Long Arrow', 'jet-elements' ),
 					'fa fa-arrow-circle-left'   => __( 'Arrow Circle', 'jet-elements' ),
 					'fa fa-chevron-circle-left' => __( 'Chevron Circle', 'jet-elements' ),
-					'fa fa-caret-square-o-left' => __( 'Caret Square', 'jet-elements' ),
+					'fa fa-caret-square-left'   => __( 'Caret Square', 'jet-elements' ),
 				)
 			);
 
@@ -357,10 +357,10 @@ if ( ! class_exists( 'Jet_Elements_Tools' ) ) {
 					'fa fa-angle-double-right'   => __( 'Angle Double', 'jet-elements' ),
 					'fa fa-arrow-right'          => __( 'Arrow', 'jet-elements' ),
 					'fa fa-caret-right'          => __( 'Caret', 'jet-elements' ),
-					'fa fa-long-arrow-right'     => __( 'Long Arrow', 'jet-elements' ),
+					'fa fa-long-arrow-alt-right'     => __( 'Long Arrow', 'jet-elements' ),
 					'fa fa-arrow-circle-right'   => __( 'Arrow Circle', 'jet-elements' ),
 					'fa fa-chevron-circle-right' => __( 'Chevron Circle', 'jet-elements' ),
-					'fa fa-caret-square-o-right' => __( 'Caret Square', 'jet-elements' ),
+					'fa fa-caret-square-right'   => __( 'Caret Square', 'jet-elements' ),
 				)
 			);
 
@@ -452,6 +452,29 @@ if ( ! class_exists( 'Jet_Elements_Tools' ) ) {
 		 */
 		public function is_valid_timestamp( $timestamp ) {
 			return ( ( string ) ( int ) $timestamp === $timestamp ) && ( $timestamp <= PHP_INT_MAX ) && ( $timestamp >= ~PHP_INT_MAX );
+		}
+
+		public function validate_html_tag( $tag ) {
+			$allowed_tags = array(
+				'article',
+				'aside',
+				'div',
+				'footer',
+				'h1',
+				'h2',
+				'h3',
+				'h4',
+				'h5',
+				'h6',
+				'header',
+				'main',
+				'nav',
+				'p',
+				'section',
+				'span',
+			);
+
+			return in_array( strtolower( $tag ), $allowed_tags ) ? $tag : 'div';
 		}
 
 		/**

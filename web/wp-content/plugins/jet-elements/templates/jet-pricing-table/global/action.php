@@ -4,7 +4,7 @@
  */
 ?>
 <div class="pricing-table__action">
-	<?php $this->__html( 'button_before', '<div class="pricing-table__action-before">%s</div>' ); ?>
-	<?php $this->__glob_inc_if( 'button', array( 'button_url', 'button_text' ) ); ?>
-	<?php $this->__html( 'button_after', '<div class="pricing-table__action-after">%s</div>' ); ?>
+	<?php $this->_html( 'button_before', '<div class="pricing-table__action-before">%s</div>' ); ?>
+	<?php $this->_glob_inc_if( 'button', array( 'button_url', 'button_text' ) ); ?>
+	<?php $this->_html( 'button_after', '<div class="pricing-table__action-after">%s</div>' ); ?>
 </div>
