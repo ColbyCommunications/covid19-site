@@ -175,6 +175,12 @@ if ( ! class_exists( 'Jet_Theme_Core_Settings' ) ) {
 
 		}
 
+		/**
+		 * [get description]
+		 * @param  [type]  $setting [description]
+		 * @param  boolean $default [description]
+		 * @return [type]           [description]
+		 */
 		public function get( $setting, $default = false ) {
 
 			if ( null === $this->settings ) {
@@ -182,7 +188,6 @@ if ( ! class_exists( 'Jet_Theme_Core_Settings' ) ) {
 			}
 
 			return isset( $this->settings[ $setting ] ) ? $this->settings[ $setting ] : $default;
-
 		}
 
 		/**

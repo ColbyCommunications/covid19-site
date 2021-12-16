@@ -2,7 +2,7 @@
 /**
  * Jet Dashboard Module
  *
- * Version: 1.0.10
+ * Version: 2.0.8
  */
 
 namespace Jet_Dashboard;
@@ -46,7 +46,7 @@ class Dashboard {
 	 *
 	 * @var string
 	 */
-	protected $version = '1.0.10';
+	protected $version = '2.0.8';
 
 	/**
 	 * [$dashboard_slug description]
@@ -61,6 +61,12 @@ class Dashboard {
 	public $module_manager = null;
 
 	/**
+	 * [$data_manager description]
+	 * @var null
+	 */
+	public $data_manager = null;
+
+	/**
 	 * [$license_manager description]
 	 * @var null
 	 */
@@ -71,6 +77,24 @@ class Dashboard {
 	 * @var null
 	 */
 	public $plugin_manager = null;
+
+	/**
+	 * [$notice_manager description]
+	 * @var null
+	 */
+	public $notice_manager = null;
+
+	/**
+	 * [$compat_manager description]
+	 * @var null
+	 */
+	public $compat_manager = null;
+
+	/**
+	 * [$subpage description]
+	 * @var null
+	 */
+	private $page = null;
 
 	/**
 	 * [$subpage description]
@@ -87,8 +111,10 @@ class Dashboard {
 		'url'            => '',
 		'cx_ui_instance' => false,
 		'plugin_data'    => array(
-			'slug'    => false,
-			'version' => '',
+			'slug'         => false,
+			'file'         => '',
+			'version'      => '',
+			'plugin_links' => array()
 		),
 	);
 
@@ -133,11 +159,11 @@ class Dashboard {
 
 		$this->load_files();
 
-		add_action( 'admin_menu', array( $this, 'register_page' ), 21 );
-
-		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_assets' ) );
-
 		add_action( 'init', array( $this, 'init_managers' ), -998 );
+
+		add_action( 'admin_menu', array( $this, 'register_page' ), -999 );
+
+		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_dashboard_assets' ) );
 	}
 
 	/**
@@ -145,13 +171,43 @@ class Dashboard {
 	 * @return [type] [description]
 	 */
 	public function load_files() {
+		/**
+		 * Modules
+		 */
+		require $this->path . 'inc/modules/manager.php';
+		require $this->path . 'inc/modules/page-base.php';
+		require $this->path . 'inc/modules/welcome/module.php';
+		require $this->path . 'inc/modules/welcome/dev-test.php';
+		require $this->path . 'inc/modules/license/module.php';
+		require $this->path . 'inc/modules/settings/module.php';
+		require $this->path . 'inc/modules/upsale/module.php';
+
 		require $this->path . 'inc/utils.php';
 		require $this->path . 'inc/license-manager.php';
 		require $this->path . 'inc/plugin-manager.php';
-		require $this->path . 'inc/module-manager.php';
-		require $this->path . 'inc/modules/base.php';
-		require $this->path . 'inc/modules/welcome/module.php';
-		require $this->path . 'inc/modules/license/module.php';
+		require $this->path . 'inc/data-manager.php';
+		require $this->path . 'inc/notice-manager.php';
+
+		/**
+		 * Compatibility
+		 */
+		require $this->path . 'inc/compatibility/manager.php';
+		require $this->path . 'inc/compatibility/base-theme.php';
+		require $this->path . 'inc/compatibility/themes/hello.php';
+	}
+
+	/**
+	 * [init_managers description]
+	 * @param  array  $args [description]
+	 * @return [type]       [description]
+	 */
+	public function init_managers() {
+		$this->module_manager  = new Modules\Manager();
+		$this->notice_manager  = new Notice_Manager();
+		$this->data_manager    = new Data_Manager();
+		$this->license_manager = new License_Manager();
+		$this->plugin_manager  = new Plugin_Manager();
+		$this->compat_manager  = new Compatibility\Manager();
 	}
 
 	/**
@@ -172,20 +228,9 @@ class Dashboard {
 			);
 		}
 
-		$this->plugin_data = $this->args['plugin_data'];
+		$plugin_data = wp_parse_args( $this->args['plugin_data'], $this->default_args['plugin_data'] );
 
-		$this->register_plugin( $this->args['plugin_data']['file'], $this->args['plugin_data'] );
-	}
-
-	/**
-	 * [init_managers description]
-	 * @param  array  $args [description]
-	 * @return [type]       [description]
-	 */
-	public function init_managers() {
-		$this->module_manager  = new Module_Manager();
-		$this->license_manager = new License_Manager();
-		$this->plugin_manager  = new Plugin_Manager();
+		$this->register_plugin( $this->args['plugin_data']['file'], $plugin_data );
 	}
 
 	/**
@@ -196,177 +241,44 @@ class Dashboard {
 	public function register_page() {
 
 		add_menu_page(
-			'JetPlugins',
-			'JetPlugins',
+			esc_html__( 'Crocoblock', 'jet-dashboard' ),
+			esc_html__( 'Crocoblock', 'jet-dashboard' ),
 			'manage_options',
 			$this->dashboard_slug,
-			array( $this, 'render_dashboard' ),
-			"data:image/svg+xml,%3Csvg width='18' height='15' viewBox='0 0 18 15' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M16.0767 0.00309188C17.6897 -0.0870077 18.6099 1.81257 17.5381 3.02007L7.99824 13.7682C6.88106 15.0269 4.79904 14.2223 4.82092 12.5403L4.87766 8.17935C4.88509 7.60797 4.62277 7.06644 4.16961 6.71768L0.710961 4.05578C-0.623014 3.02911 0.0373862 0.899003 1.71878 0.805085L16.0767 0.00309188Z' fill='white'/%3E%3C/svg%3E%0A",
+			function() {
+				include $this->get_view( 'common/dashboard' );
+			},
+			"data:image/svg+xml,%3Csvg width='11' height='18' viewBox='0 0 11 18' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M8.8 4.50004C10.0152 4.50004 11 3.49259 11 2.25002C11 1.00744 10.0152 0 8.8 0C8.79799 0 8.79612 0.00029408 8.79411 0.00029408C3.9368 0.00352919 0 4.03154 0 9.00007C0 13.9707 3.93997 18 8.8 18C10.0152 18 11 16.9926 11 15.75C11 14.5074 10.0152 13.5 8.8 13.5L8.79799 13.5001C6.3689 13.4989 4.39993 11.4846 4.39993 9.00007C4.39993 6.51478 6.36991 4.50004 8.8 4.50004Z' fill='white'/%3E%3C/svg%3E%0A",
 			59
 		);
 
 		add_submenu_page(
-			'jet-dashboard',
-			esc_html__( 'Dashboard', 'jet-tricks' ),
-			esc_html__( 'Dashboard', 'jet-tricks' ),
+			$this->dashboard_slug,
+			esc_html__( 'Dashboard', 'jet-dashboard' ),
+			esc_html__( 'Dashboard', 'jet-dashboard' ),
 			'manage_options',
-			'jet-dashboard'
+			$this->dashboard_slug
 		);
+
+		do_action( 'jet-dashboard/after-page-registration', $this );
 	}
 
 	/**
-	 * Render installation wizard page
-	 *
-	 * @return void
+	 * [maybe_modify_subpages_links description]
+	 * @return [type] [description]
+	 */
+	public function maybe_modify_subpages_links() {
+		global $submenu;
+
+		$submenu['jet-dashboard'][3][2] = 'admin.php?page=jet-dashboard-license-page&subpage=license-manager';
+	}
+
+	/**
+	 * [render_dashboard description]
+	 * @return [type] [description]
 	 */
 	public function render_dashboard() {
 		include $this->get_view( 'common/dashboard' );
-	}
-
-	/**
-	 * [init_ui_instance description]
-	 * @param  boolean $ui_callback [description]
-	 * @return [type]               [description]
-	 */
-	public function init_ui_instance( $ui_callback = false ) {
-
-		if ( $ui_callback && is_object( $ui_callback ) && 'CX_Vue_UI' === get_class( $ui_callback ) ) {
-			$this->cx_ui_instance = $ui_callback;
-		}
-
-		if ( ! $ui_callback || ! is_callable( $ui_callback ) ) {
-			return;
-		}
-
-		$this->cx_ui_instance = call_user_func( $ui_callback );
-	}
-
-	/**
-	 * Enqueue builder assets
-	 *
-	 * @return void
-	 */
-	public function enqueue_assets( $hook ) {
-
-		if ( 'toplevel_page_' . $this->dashboard_slug !== $hook ) {
-			return;
-		}
-
-		if ( $this->assets_enqueued ) {
-			return;
-		}
-
-		$this->init_ui_instance( $this->args['cx_ui_instance'] );
-
-		$this->cx_ui_instance->enqueue_assets();
-
-		/**
-		 * Fires before enqueue page assets
-		 */
-		do_action( 'jet-dashboard/before-enqueue-assets', $this );
-
-		/**
-		 * Fires before enqueue page assets with dynamic subpage name
-		 */
-		do_action( 'jet-dashboard/before-enqueue-assets/' . $this->get_subpage(), $this );
-
-		$direction_suffix = is_rtl() ? '-rtl' : '';
-
-		wp_enqueue_style(
-			'jet-dashboard-admin-css',
-			$this->url . 'assets/css/jet-dashboard-admin' . $direction_suffix . '.css',
-			false,
-			$this->version
-		);
-
-		wp_enqueue_script(
-			'jet-dashboard-script',
-			$this->url . 'assets/js/jet-dashboard.js',
-			array( 'cx-vue-ui' ),
-			$this->version,
-			true
-		);
-
-		$style_parent_theme = wp_get_theme( get_template() );
-
-		$theme_info = array(
-			'name'       => $style_parent_theme->get('Name'),
-			'theme'      => strtolower( preg_replace('/\s+/', '', $style_parent_theme->get('Name') ) ),
-			'version'    => $style_parent_theme->get('Version'),
-			'author'     => $style_parent_theme->get('Author'),
-			'authorSlug' => strtolower( preg_replace('/\s+/', '', $style_parent_theme->get('Author') ) ),
-		);
-
-		wp_localize_script(
-			'jet-dashboard-script',
-			'JetDashboardPageConfig',
-			apply_filters( 'jet-dashboard/js-page-config', array(
-				'themeInfo'         => $theme_info,
-				'headerTitle'       => '',
-				'mainPage'          => $this->get_dashboard_page_url( $this->get_initial_page() ),
-				'page'              => false,
-				'module'            => $this->get_subpage(),
-				'nonce'             => wp_create_nonce( $this->dashboard_slug ),
-				'ajaxUrl'           => esc_url( admin_url( 'admin-ajax.php' ) ),
-				'licenseList'       => array_values( Utils::get_license_list() ),
-				'allJetPlugins'     => $this->plugin_manager->get_plugin_data_list(),
-				'debugActions'      => $this->license_manager->get_debug_action_list(),
-			) )
-		);
-
-		add_action( 'admin_footer', array( $this, 'print_vue_templates' ), 0 );
-
-		$this->assets_enqueued = true;
-	}
-
-	/**
-	 * Print components templates
-	 *
-	 * @return void
-	 */
-	public function print_vue_templates() {
-
-		$templates = apply_filters(
-			'jet-dashboard/js-page-templates',
-			array(
-				'header' => 'common/header',
-			),
-			$this->get_subpage()
-		);
-
-		foreach ( $templates as $name => $path ) {
-
-			ob_start();
-			include $this->get_view( $path );
-			$content = ob_get_clean();
-
-			printf(
-				'<script type="text/x-template" id="jet-dashboard-%1$s">%2$s</script>',
-				$name,
-				$content
-			);
-		}
-	}
-
-	/**
-	 * [get_registered_plugins description]
-	 * @return [type] [description]
-	 */
-	public function get_registered_plugins() {
-		return $this->registered_plugins;
-	}
-
-	/**
-	 * [get_registered_plugins description]
-	 * @return [type] [description]
-	 */
-	public function register_plugin( $plugin_slug = false, $plugin_data = array() ) {
-
-		if ( ! array_key_exists( $plugin_slug, $this->registered_plugins ) ) {
-			$this->registered_plugins[ $plugin_slug ] = $plugin_data;
-		}
-
-		return false;
 	}
 
 	/**
@@ -394,6 +306,27 @@ class Dashboard {
 	}
 
 	/**
+	 * [get_registered_plugins description]
+	 * @return [type] [description]
+	 */
+	public function get_registered_plugins() {
+		return $this->registered_plugins;
+	}
+
+	/**
+	 * [get_registered_plugins description]
+	 * @return [type] [description]
+	 */
+	public function register_plugin( $plugin_slug = false, $plugin_data = array() ) {
+
+		if ( ! array_key_exists( $plugin_slug, $this->registered_plugins ) ) {
+			$this->registered_plugins[ $plugin_slug ] = $plugin_data;
+		}
+
+		return false;
+	}
+
+	/**
 	 * Returns path to view file
 	 *
 	 * @param  [type] $path [description]
@@ -404,26 +337,12 @@ class Dashboard {
 	}
 
 	/**
-	 * Returns current subpage slug
-	 *
-	 * @return string
-	 */
-	public function get_subpage() {
-
-		if ( null === $this->subpage ) {
-			$this->subpage = isset( $_GET['sub'] ) ? esc_attr( $_GET['sub'] ) : $this->get_initial_page();
-		}
-
-		return $this->subpage;
-	}
-
-	/**
 	 * Returns wizard initial subpage
 	 *
 	 * @return string
 	 */
 	public function get_initial_page() {
-		return 'license-page';
+		return 'welcome-page';
 	}
 
 	/**
@@ -432,18 +351,51 @@ class Dashboard {
 	 * @return boolean [description]
 	 */
 	public function is_dashboard_page() {
-		return ( ! empty( $_GET['page'] ) && $this->dashboard_slug === $_GET['page'] );
+		return ( ! empty( $_GET['page'] ) && false !== strpos( $_GET['page'], $this->dashboard_slug ) );
+	}
+
+	/**
+	 * Returns current subpage slug
+	 *
+	 * @return string
+	 */
+	public function get_page() {
+
+		if ( null === $this->page ) {
+
+			$page = isset( $_GET['page'] ) && $this->dashboard_slug !== $_GET['page'] ? esc_attr( $_GET['page'] ) : $this->dashboard_slug . '-' . $this->get_initial_page();
+
+			$this->page = str_replace( $this->dashboard_slug . '-', '', $page );
+		}
+
+		return $this->page;
+	}
+
+	/**
+	 * [get_subpage description]
+	 * @return [type] [description]
+	 */
+	public function get_subpage() {
+
+		if ( null === $this->subpage ) {
+
+			$this->subpage = isset( $_GET['subpage'] ) && $this->is_dashboard_page() ? esc_attr( $_GET['subpage'] ) : false;
+		}
+
+		return $this->subpage;
 	}
 
 	/**
 	 * [get_admin_url description]
 	 * @return [type] [description]
 	 */
-	public function get_dashboard_page_url( $subpage = null, $args = array() ) {
+	public function get_dashboard_page_url( $page = null, $subpage = null, $args = array() ) {
+
+		$page = $this->dashboard_slug . '-' . $page;
 
 		$page_args = array(
-			'page' => $this->dashboard_slug,
-			'sub'  => $subpage,
+			'page'    => $page,
+			'subpage' => $subpage,
 		);
 
 		if ( ! empty( $args ) ) {
@@ -451,6 +403,152 @@ class Dashboard {
 		}
 
 		return add_query_arg( $page_args, admin_url( 'admin.php' ) );
+	}
+
+	/**
+	 * [init_ui_instance description]
+	 * @param  boolean $ui_callback [description]
+	 * @return [type]               [description]
+	 */
+	public function init_ui_instance( $ui_callback = false ) {
+
+		if ( $ui_callback && is_object( $ui_callback ) && 'CX_Vue_UI' === get_class( $ui_callback ) ) {
+			$this->cx_ui_instance = $ui_callback;
+		}
+
+		if ( ! $ui_callback || ! is_callable( $ui_callback ) ) {
+			return;
+		}
+
+		$this->cx_ui_instance = call_user_func( $ui_callback );
+	}
+
+	/**
+	 * [enqueue_dashboard_assets description]
+	 * @param  [type] $hook [description]
+	 * @return [type]       [description]
+	 */
+	public function enqueue_dashboard_assets( $hook ) {
+
+		if ( ! $this->is_dashboard_page() ) {
+			return false;
+		}
+
+		if ( $this->assets_enqueued ) {
+			return false;
+		}
+
+		$this->enqueue_assets();
+
+		$this->assets_enqueued = true;
+	}
+
+	/**
+	 * Enqueue builder assets
+	 *
+	 * @return void
+	 */
+	public function enqueue_assets() {
+
+		$this->init_ui_instance( $this->args['cx_ui_instance'] );
+
+		$this->cx_ui_instance->enqueue_assets();
+
+		wp_enqueue_script(
+			'jet-dashboard-class-script',
+			$this->url . 'assets/js/jet-dashboard-class.js',
+			array( 'cx-vue-ui' ),
+			$this->version,
+			true
+		);
+
+		do_action( 'jet-dashboard/before-enqueue-assets', $this, $this->get_page() );
+
+		$direction_suffix = is_rtl() ? '-rtl' : '';
+
+		wp_enqueue_style(
+			'jet-dashboard-admin-css',
+			$this->url . 'assets/css/jet-dashboard-admin' . $direction_suffix . '.css',
+			false,
+			$this->version
+		);
+
+		wp_enqueue_script(
+			'jet-dashboard-script',
+			$this->url . 'assets/js/jet-dashboard.js',
+			array( 'cx-vue-ui' ),
+			$this->version,
+			true
+		);
+
+		do_action( 'jet-dashboard/after-enqueue-assets', $this, $this->get_page() );
+
+		wp_set_script_translations( 'jet-dashboard-script', 'jet-dashboard' );
+
+		wp_localize_script(
+			'jet-dashboard-script',
+			'JetDashboardConfig',
+			apply_filters( 'jet-dashboard/js-page-config',
+				array(
+					'pageModule'           => false,
+					'subPageModule'        => false,
+					'themeInfo'            => $this->data_manager->get_theme_info(),
+					'licenseList'          => array_values( Utils::get_license_list() ),
+					'primaryLicenseData'   => $this->license_manager->get_primary_license_data(),
+					'ajaxUrl'              => esc_url( admin_url( 'admin-ajax.php' ) ),
+					'nonce'                => wp_create_nonce( $this->dashboard_slug ),
+					'pageModuleConfig'     => $this->data_manager->get_dashboard_page_config( $this->get_page(), $this->get_subpage() ),
+					'helpCenterConfig'     => $this->data_manager->get_dashboard_config( 'helpCenter' ),
+					'avaliableBanners'     => $this->data_manager->get_dashboard_config( 'banners' ),
+					'noticeList'           => $this->notice_manager->get_registered_notices(),
+					'serviceActionOptions' => $this->data_manager->get_service_action_list(),
+				),
+				$this->get_page(),
+				$this->get_subpage()
+			)
+		);
+
+		add_action( 'admin_footer', array( $this, 'print_vue_templates' ), 0 );
+	}
+
+	/**
+	 * Print components templates
+	 *
+	 * @return void
+	 */
+	public function print_vue_templates() {
+
+		$templates = apply_filters(
+			'jet-dashboard/js-page-templates',
+			array(
+				'alert-list'       => $this->get_view( 'common/alert-list' ),
+				'alert-item'       => $this->get_view( 'common/alert-item' ),
+				'banner'           => $this->get_view( 'common/banner' ),
+				'before-content'   => $this->get_view( 'common/before-content' ),
+				'header'           => $this->get_view( 'common/header' ),
+				'before-component' => $this->get_view( 'common/before-component' ),
+				'inner-component'  => $this->get_view( 'common/inner-component' ),
+				'after-component'  => $this->get_view( 'common/after-component' ),
+				'before-sidebar'   => $this->get_view( 'common/before-sidebar' ),
+				'sidebar'          => $this->get_view( 'common/sidebar' ),
+				'after-sidebar'    => $this->get_view( 'common/after-sidebar' ),
+			),
+			$this->get_page(),
+			$this->get_subpage()
+		);
+
+		foreach ( $templates as $name => $path ) {
+
+			ob_start();
+			include $path;
+			$content = ob_get_clean();
+
+			printf(
+				'<script type="text/x-template" id="jet-dashboard-%1$s">%2$s</script>',
+				$name,
+				$content
+			);
+		}
 	}
 
 	/**

@@ -15,7 +15,7 @@ function jet_menu_generatepress_scripts() {
 
 	wp_enqueue_script(
 		'jet-menu-generatepress',
-		jet_menu()->get_theme_url( 'assets/js/script.js' ),
+		jet_menu()->integration_manager->get_theme_url( 'assets/js/script.js' ),
 		array( 'jquery' ),
 		jet_menu()->get_version(),
 		true

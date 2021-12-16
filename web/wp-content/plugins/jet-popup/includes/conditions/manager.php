@@ -292,6 +292,11 @@ if ( ! class_exists( 'Jet_Popup_Conditions_Manager' ) ) {
 				'Jet_Popup_Conditions_Archive_Post_Type'           => $base_path . 'archive-post-type.php',
 				'Jet_Popup_Conditions_Archive_Category'            => $base_path . 'archive-category.php',
 				'Jet_Popup_Conditions_Archive_Tag'                 => $base_path . 'archive-tag.php',
+
+				//Advanced
+				'Jet_Popup_Conditions_Advanced_Url_Param'          => $base_path . 'advanced-url-param.php',
+				'Jet_Popup_Conditions_Advanced_Device'             => $base_path . 'advanced-device.php',
+				'Jet_Popup_Conditions_Advanced_Roles'              => $base_path . 'advanced-roles.php',
 			);
 
 			foreach ( $default as $class => $file ) {
@@ -325,28 +330,6 @@ if ( ! class_exists( 'Jet_Popup_Conditions_Manager' ) ) {
 		 */
 		public function get_condition( $condition_id ) {
 			return isset( $this->_conditions[ $condition_id ] ) ? $this->_conditions[ $condition_id ] : false;
-		}
-
-		/**
-		 * [register_condition_button description]
-		 * @param  [type] $controls_manager [description]
-		 * @return [type]                   [description]
-		 */
-		public function register_condition_button( $controls_manager ) {
-
-			if ( ! $controls_manager ) {
-				return;
-			}
-
-			$controls_manager->add_control(
-				'jet_popup_conditions_manager',
-				[
-					'type'        => 'button',
-					'text'        => __( 'Display Conditions', 'jet-popup' ),
-					'event'       => 'jet-popup-conditions-manager',
-					'button_type' => 'default',
-				]
-			);
 		}
 
 		/**
@@ -409,66 +392,59 @@ if ( ! class_exists( 'Jet_Popup_Conditions_Manager' ) ) {
 				}
 
 				$check_list = [];
-				$include_list = [];
 
 				// for multi-language plugins
 				$popup_id = apply_filters( 'jet-popup/get_conditions/template_id', $popup_id );
 
-				foreach ( $popup_conditions as $key => $condition ) {
+				$popup_conditions = array_map( function( $condition ) use ( $popup_id ) {
 
 					$include = filter_var( $condition['include'], FILTER_VALIDATE_BOOLEAN );
 
 					if ( 'entire' === $condition['group'] ) {
-						$check_list['entire'] = true;
-						$include_list['entire'] = $include;
-						continue;
-					}
+						$match = 'entire' === $condition['group'] ? true : false;
+						$condition['match'] = $match;
 
-					$sub_group = $condition['subGroup'];
-					$instance = $this->get_condition( $sub_group );
+						return $condition;
+					} else {
+						$sub_group = $condition['subGroup'];
 
-					if ( ! $instance ) {
-						continue;
-					}
+						$instance = $this->get_condition( $sub_group );
 
-					$include_list[ $sub_group ] = $include;
+						if ( ! $instance ) {
+							$condition['match'] = true;
 
-					$sub_group_value = $condition['subGroupValue'];
-
-					$instance_check = call_user_func( array( $instance, 'check' ), $sub_group_value );
-
-					$check = ( $instance_check && $include ) ? true : false;
-
-					if ( ! $include ) {
-						if ( array_key_exists( $sub_group, $check_list ) ) {
-							$check_list[ $sub_group ] = false;
-
-							continue;
+							return $condition;
 						}
+
+						$sub_group_value = isset( $condition['subGroupValue'] ) ? $condition['subGroupValue'] : '';
+
+						$instance_check = call_user_func( array( $instance, 'check' ), $sub_group_value );
+
+						$condition['match'] = $instance_check;
+
+						return $condition;
+
 					}
 
-					$check_list[ $sub_group ] = $instance_check;
+					return $condition;
 
+				}, $popup_conditions );
+
+				$includes_matchs = [];
+				$excludes_matchs = [];
+
+				foreach ( $popup_conditions as $key => $condition ) {
+					$include = filter_var( $condition['include'], FILTER_VALIDATE_BOOLEAN );
+
+					if ( $include ) {
+						$includes_matchs[] = $condition['match'];
+					} else {
+						$excludes_matchs[] = $condition['match'];
+					}
 				}
 
-				foreach ( $check_list as $check_sub_group => $check ) {
-
-
-					if ( $check ) {
-
-						if ( ! $include_list[ $check_sub_group ] ) {
-
-							$key = array_search( $popup_id, $popup_id_list );
-
-							if ( isset( $key ) ) {
-								unset( $popup_id_list[ $key ] );
-							}
-
-							continue;
-						}
-
-						$popup_id_list[] = $popup_id;
-					}
+				if ( in_array( true, $includes_matchs ) && ! in_array( true, $excludes_matchs ) ) {
+					$popup_id_list[] = $popup_id;
 				}
 			}
 
@@ -584,7 +560,9 @@ if ( ! class_exists( 'Jet_Popup_Conditions_Manager' ) ) {
 					foreach ( $column['elements'] as $key => $element ) {
 						$element_type = $element['elType'];
 
-						if ( 'widget' === $element_type && ! empty( $element['settings']['jet_attached_popup'] ) ) {
+						$include = apply_filters( 'jet-engine/dynamic-visibility/check-conditions', true, $element['settings'] );
+
+						if ( 'widget' === $element_type && ! empty( $element['settings']['jet_attached_popup'] ) && $include ) {
 							$this->attached_popups[] = $element['settings']['jet_attached_popup'];
 						}
 
@@ -613,12 +591,15 @@ if ( ! class_exists( 'Jet_Popup_Conditions_Manager' ) ) {
 				],
 				'archive' => [
 					'label'   => __( 'Archive', 'jet-popup' ),
+				],
+				'advanced' => [
+					'label'   => __( 'Advanced', 'jet-popup' ),
 				]
 			];
 
 			foreach ( $this->_conditions as $cid => $instance ) {
 
-				$group  = $instance->get_group();
+				$group = $instance->get_group();
 
 				if ( ! isset( $sorted_conditions[ $group ] ) ) {
 					$sorted_conditions[ $group ] = [];
@@ -628,6 +609,7 @@ if ( ! class_exists( 'Jet_Popup_Conditions_Manager' ) ) {
 					'label'   => $instance->get_label(),
 					'action'  => $instance->ajax_action(),
 					'options' => $instance->get_avaliable_options(),
+					'control' => $instance->get_control(),
 				);
 
 				$sorted_conditions[ $group ]['sub-groups'][ $cid ] = $current;

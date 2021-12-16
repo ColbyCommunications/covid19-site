@@ -47,8 +47,9 @@ class Jet_Blocks_Woo_Cart extends Jet_Blocks_Base {
 			array(
 				'label'       => esc_html__( 'Icon', 'jet-blocks' ),
 				'type'        => Controls_Manager::ICON,
-				'label_block' => true,
+				'label_block' => false,
 				'file'        => '',
+				'skin'        => 'inline',
 				'default'     => 'fa fa-shopping-cart',
 				'fa5_default' => array(
 					'value'   => 'fas fa-shopping-cart',
@@ -119,6 +120,38 @@ class Jet_Blocks_Woo_Cart extends Jet_Blocks_Base {
 		);
 
 		$this->add_control(
+			'trigger_type',
+			array(
+				'type'       => 'select',
+				'label'      => esc_html__( 'Show Trigger Type', 'jet-blocks' ),
+				'default'    => 'hover',
+				'options'    => array(
+					'hover' => esc_html__( 'Hover', 'jet-blocks' ),
+					'click' => esc_html__( 'Click', 'jet-blocks' ),
+				),
+				'condition' => array(
+					'show_cart_list' => 'yes',
+				),
+			)
+		);
+
+		$this->add_control(
+			'layout_type',
+			array(
+				'type'       => 'select',
+				'label'      => esc_html__( 'Layout Type', 'jet-blocks' ),
+				'default'    => 'dropdown',
+				'options'    => array(
+					'dropdown' => esc_html__( 'Dropdown', 'jet-blocks' ),
+					'slide-out' => esc_html__( 'Slide Out', 'jet-blocks' ),
+				),
+				'condition' => array(
+					'show_cart_list' => 'yes',
+				),
+			)
+		);
+
+		$this->add_control(
 			'cart_list_label',
 			array(
 				'label'   => esc_html__( 'Cart Dropdown Label', 'jet-blocks' ),
@@ -126,6 +159,26 @@ class Jet_Blocks_Woo_Cart extends Jet_Blocks_Base {
 				'default' => esc_html__( 'My Cart', 'jet-blocks' ),
 				'condition' => array(
 					'show_cart_list' => 'yes',
+				),
+			)
+		);
+
+		$this->__add_advanced_icon_control(
+			'cart_list_close_icon',
+			array(
+				'label'       => esc_html__( 'Close Icon', 'jet-blocks' ),
+				'type'        => Controls_Manager::ICON,
+				'label_block' => false,
+				'skin'        => 'inline',
+				'file'        => '',
+				'default'     => 'fa fa-close',
+				'fa5_default' => array(
+					'value'   => 'fas fa-times',
+					'library' => 'fa-solid',
+				),
+				'condition' => array(
+					'show_cart_list' => 'yes',
+					'layout_type'    => 'slide-out',
 				),
 			)
 		);
@@ -143,6 +196,7 @@ class Jet_Blocks_Woo_Cart extends Jet_Blocks_Base {
 				'cart_totals'     => '.jet-blocks-cart__total',
 				'cart_list'       => '.jet-blocks-cart__list',
 				'cart_list_title' => '.jet-blocks-cart__list-title',
+				'cart_list_close' => '.jet-blocks-cart__close-button',
 
 				'cart_empty_message'    => '.widget_shopping_cart .woocommerce-mini-cart__empty-message',
 				'cart_product_list'     => '.widget_shopping_cart .woocommerce-mini-cart',
@@ -736,6 +790,57 @@ class Jet_Blocks_Woo_Cart extends Jet_Blocks_Base {
 		);
 
 		$this->__add_control(
+			'close_button_style_heading',
+			array(
+				'label'     => esc_html__( 'Close Button', 'jet-blocks' ),
+				'type'      => Controls_Manager::HEADING,
+				'separator' => 'before',
+				'condition' => array(
+					'layout_type' => 'slide-out',
+				),
+			),
+			25
+		);
+
+		$this->__add_responsive_control(
+			'close_button_size',
+			array(
+				'label'      => esc_html__( 'Icon Size', 'jet-blocks' ),
+				'type'       => Controls_Manager::SLIDER,
+				'size_units' => array( 'px' ),
+				'range'      => array(
+					'px' => array(
+						'min' => 10,
+						'max' => 100,
+					),
+				),
+				'selectors'  => array(
+					'{{WRAPPER}} ' . $css_scheme['cart_list_close'] => 'font-size: {{SIZE}}{{UNIT}};',
+					'{{WRAPPER}} ' . $css_scheme['cart_list_close'] . ' svg' => 'width: {{SIZE}}{{UNIT}};',
+				),
+				'condition' => array(
+					'layout_type' => 'slide-out',
+				),
+			),
+			50
+		);
+
+		$this->__add_control(
+			'close_button_color',
+			array(
+				'label'     => esc_html__( 'Icon Color', 'jet-blocks' ),
+				'type'      => Controls_Manager::COLOR,
+				'selectors' => array(
+					'{{WRAPPER}} ' . $css_scheme['cart_list_close'] => 'color: {{VALUE}}',
+				),
+				'condition' => array(
+					'layout_type' => 'slide-out',
+				),
+			),
+			50
+		);
+
+		$this->__add_control(
 			'cart_list_hor_position',
 			array(
 				'label'   => esc_html__( 'Horizontal Position by', 'jet-blocks' ),
@@ -746,6 +851,9 @@ class Jet_Blocks_Woo_Cart extends Jet_Blocks_Base {
 					'right' => esc_html__( 'Right', 'jet-blocks' ),
 				),
 				'separator' => 'before',
+				'condition' => array(
+					'layout_type' => 'dropdown',
+				),
 			),
 			25
 		);
@@ -772,6 +880,7 @@ class Jet_Blocks_Woo_Cart extends Jet_Blocks_Base {
 				),
 				'condition' => array(
 					'cart_list_hor_position' => 'left',
+					'layout_type' => 'dropdown',
 				),
 				'selectors'  => array(
 					'{{WRAPPER}} ' . $css_scheme['cart_list'] => 'left: {{SIZE}}{{UNIT}}; right: auto;',
@@ -802,6 +911,7 @@ class Jet_Blocks_Woo_Cart extends Jet_Blocks_Base {
 				),
 				'condition' => array(
 					'cart_list_hor_position' => 'right',
+					'layout_type' => 'dropdown',
 				),
 				'selectors'  => array(
 					'{{WRAPPER}} ' . $css_scheme['cart_list'] => 'right: {{SIZE}}{{UNIT}}; left: auto;',
@@ -1286,7 +1396,7 @@ class Jet_Blocks_Woo_Cart extends Jet_Blocks_Base {
 				'label' => esc_html__( 'Color', 'jet-blocks' ),
 				'type'  => Controls_Manager::COLOR,
 				'selectors' => array(
-					'{{WRAPPER}} ' . $css_scheme['cart_product_remove'] . ':before' => 'color: {{VALUE}}',
+					'{{WRAPPER}} ' . $css_scheme['cart_product_remove'] => 'color: {{VALUE}} !important',
 				),
 			),
 			25
@@ -1298,7 +1408,7 @@ class Jet_Blocks_Woo_Cart extends Jet_Blocks_Base {
 				'label' => esc_html__( 'Hover Color', 'jet-blocks' ),
 				'type'  => Controls_Manager::COLOR,
 				'selectors' => array(
-					'{{WRAPPER}} ' . $css_scheme['cart_product_remove'] . ':hover:before' => 'color: {{VALUE}}',
+					'{{WRAPPER}} ' . $css_scheme['cart_product_remove'] . ':hover' => 'color: {{VALUE}} !important',
 				),
 			),
 			25

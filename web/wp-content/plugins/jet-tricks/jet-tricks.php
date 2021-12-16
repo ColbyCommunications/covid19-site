@@ -3,7 +3,7 @@
  * Plugin Name: JetTricks
  * Plugin URI:  https://crocoblock.com/plugins/jettricks/
  * Description: Use different eye-catching stylish animation effects and let your content become truly alive with outstanding visual tricks!
- * Version:     1.2.9
+ * Version:     1.3.9
  * Author:      Crocoblock
  * Author URI:  https://crocoblock.com/
  * Text Domain: jet-tricks
@@ -39,7 +39,7 @@ if ( ! class_exists( 'Jet_Tricks' ) ) {
 		 *
 		 * @var string
 		 */
-		private $version = '1.2.9';
+		private $version = '1.3.9';
 
 		/**
 		 * Holder for base plugin URL
@@ -106,6 +106,7 @@ if ( ! class_exists( 'Jet_Tricks' ) ) {
 				array(
 					$this->plugin_path( 'includes/modules/vue-ui/cherry-x-vue-ui.php' ),
 					$this->plugin_path( 'includes/modules/jet-dashboard/jet-dashboard.php' ),
+					$this->plugin_path( 'includes/modules/jet-elementor-extension/jet-elementor-extension.php' ),
 				)
 			);
 		}
@@ -144,6 +145,11 @@ if ( ! class_exists( 'Jet_Tricks' ) ) {
 			//Init Rest Api
 			new \Jet_Tricks\Rest_Api();
 
+			if ( is_admin() ) {
+				//Init Rest Api
+				new \Jet_Tricks\Settings();
+			}
+
 			do_action( 'jet-tricks/init', $this );
 
 		}
@@ -169,6 +175,13 @@ if ( ! class_exists( 'Jet_Tricks' ) ) {
 						'slug'    => 'jet-tricks',
 						'file'    => 'jet-tricks/jet-tricks.php',
 						'version' => $this->get_version(),
+						'plugin_links' => array(
+							array(
+								'label'  => esc_html__( 'Go to settings', 'jet-tricks' ),
+								'url'    => add_query_arg( array( 'page' => 'jet-dashboard-settings-page', 'subpage' => 'jet-tricks-general-settings' ), admin_url( 'admin.php' ) ),
+								'target' => '_self',
+							),
+						),
 					),
 				) );
 			}
@@ -231,6 +244,7 @@ if ( ! class_exists( 'Jet_Tricks' ) ) {
 		 */
 		public function load_files() {
 			require $this->plugin_path( 'includes/settings.php' );
+			require $this->plugin_path( 'includes/settings/manager.php' );
 			require $this->plugin_path( 'includes/integration.php' );
 			require $this->plugin_path( 'includes/tools.php' );
 			require $this->plugin_path( 'includes/ext/element-section-extension.php' );

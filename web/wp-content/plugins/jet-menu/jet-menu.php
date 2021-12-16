@@ -3,7 +3,7 @@
  * Plugin Name: JetMenu
  * Plugin URI: https://crocoblock.com/plugins/jetmenu/
  * Description: A top-notch mega menu addon for Elementor. Use it to create a fully responsive mega menu with drop-down items, rich in content modules, and change your menu style according to your vision without any coding knowledge!
- * Version:     2.0.4
+ * Version:     2.1.4
  * Author:      Crocoblock
  * Author URI:  https://crocoblock.com/
  * Text Domain: jet-menu
@@ -48,7 +48,7 @@ if ( ! class_exists( 'Jet_Menu' ) ) {
 		 *
 		 * @var string
 		 */
-		private $version = '2.0.4';
+		private $version = '2.1.4';
 
 		/**
 		 * Plugin slug
@@ -76,20 +76,6 @@ if ( ! class_exists( 'Jet_Menu' ) ) {
 		private $plugin_path = null;
 
 		/**
-		 * Dynamic CSS module instance
-		 *
-		 * @var object
-		 */
-		private $dynamic_css = null;
-
-		/**
-		 * Dirname holder for plugins integration loader
-		 *
-		 * @var string
-		 */
-		private $dir = null;
-
-		/**
 		 * Framework component
 		 *
 		 * @since  1.0.0
@@ -97,6 +83,38 @@ if ( ! class_exists( 'Jet_Menu' ) ) {
 		 * @var    object
 		 */
 		public $module_loader = null;
+
+		/**
+		 * @var null
+		 */
+		public $integration_manager = null;
+
+		/**
+		 * @var null
+		 */
+		public $svg_manager = null;
+
+		/**
+		 * @var null
+		 */
+		public $post_type_manager = null;
+
+		/**
+		 * @var null
+		 */
+		public $settings_manager = null;
+
+		/**
+		 * Dynamic CSS module instance
+		 *
+		 * @var object
+		 */
+		public $dynamic_css_manager = null;
+
+		/**
+		 * @var null
+		 */
+		public $public_manager = null;
 
 		/**
 		 * Sets up needed actions/filters for the plugin to initialize.
@@ -149,6 +167,7 @@ if ( ! class_exists( 'Jet_Menu' ) ) {
 					$this->plugin_path( 'includes/modules/fonts-manager/cherry-x-fonts-manager.php' ),
 					$this->plugin_path( 'includes/modules/jet-dashboard/jet-dashboard.php' ),
 					$this->plugin_path( 'includes/modules/db-updater/cx-db-updater.php' ),
+					$this->plugin_path( 'includes/modules/jet-elementor-extension/jet-elementor-extension.php' ),
 				)
 			);
 		}
@@ -160,40 +179,97 @@ if ( ! class_exists( 'Jet_Menu' ) ) {
 		 */
 		public function init() {
 
+			if ( ! $this->has_elementor() ) {
+				add_action( 'admin_notices', array( $this, 'required_plugins_notice' ) );
+				return;
+			}
+
 			$this->load_files();
 
-			$this->dynamic_css = new CX_Dynamic_CSS( array(
+			$this->dynamic_css_manager = new CX_Dynamic_CSS( array(
 				'parent_handles' => array(
-					'js'  => 'jet-menu-public',
+					'js'  => 'jet-menu-public-scripts',
 				),
 			) );
 
-			jet_menu_assets()->init();
-			jet_menu_post_type()->init();
-			jet_menu_css_file()->init();
-			jet_menu_public_manager()->init();
-			jet_menu_integration()->init();
-			jet_menu_option_page();
-			jet_menu_options_presets()->init();
-			jet_menu_svg_manager()->init();
-
-			$this->include_integration_theme_file();
-			$this->include_integration_plugin_file();
+			//Init Settings Manager
+			$this->settings_manager = new \Jet_Menu\Settings_Manager();
 
 			//Init Rest Api
 			new \Jet_Menu\Rest_Api();
 
-			jet_menu_settings_nav()->init();
+			// Menu Post Type Manager
+			$this->post_type_manager = new \Jet_Menu\Menu_Post_Type();
+
+			// Svg Manager
+			$this->svg_manager = new \Jet_Menu\SVG_Manager();
+
+			//Init Elementor Integration Module
+			$this->elementor_manager = new \Jet_Menu\Elementor();
+
+			// Integrations Manager
+			$this->integration_manager = new \Jet_Menu\Integration();
+
+			jet_menu_assets()->init();
+			jet_menu_css_file()->init();
+
+			$this->render_manager = new \Jet_Menu\Render\Manager();
 
 			if ( is_admin() ) {
-
-				if ( ! $this->has_elementor() ) {
-					$this->required_plugins_notice();
-				}
-
-				// Init DB upgrader
+				// Init DB upgrade
 				new Jet_Menu_DB_Upgrader();
 			}
+		}
+
+		/**
+		 * Load required files.
+		 *
+		 * @return void
+		 */
+		public function load_files() {
+
+			// Lib Classes
+			if ( ! class_exists( 'Mobile_Detect' ) ) {
+				require $this->plugin_path( 'includes/lib/class-mobile-detect.php' );
+			}
+
+			// Menu Post Type Manager
+			require $this->plugin_path( 'includes/menu-post-type.php' );
+
+			// SVG Manager
+			require $this->plugin_path( 'includes/svg-manager.php' );
+
+			// Settings And Options manager
+			require $this->plugin_path( 'includes/settings/manager.php' );
+			require $this->plugin_path( 'includes/settings/options.php' );
+
+			// Render Manager
+			require $this->plugin_path( 'includes/render/manager.php' );
+
+			// Elementor Integration Module
+			require $this->plugin_path( 'includes/elementor/manager.php' );
+
+			// Plugin Assets Manager
+			require $this->plugin_path( 'includes/assets.php' );
+
+			// Tools
+			require $this->plugin_path( 'includes/tools.php' );
+
+			// Dynamic CSS
+			require $this->plugin_path( 'includes/dynamic-css.php' );
+			require $this->plugin_path( 'includes/css-file.php' );
+			require $this->plugin_path( 'includes/db-upgrader.php' );
+
+			// 3rd Party Integration Manager
+			require $this->plugin_path( 'integration/manager.php' );
+
+			// Rest Api
+			require $this->plugin_path( 'includes/rest-api/rest-api.php' );
+			require $this->plugin_path( 'includes/rest-api/endpoints/base.php' );
+			require $this->plugin_path( 'includes/rest-api/endpoints/elementor-template.php' );
+			require $this->plugin_path( 'includes/rest-api/endpoints/plugin-settings.php' );
+			require $this->plugin_path( 'includes/rest-api/endpoints/get-menu-items.php' );
+
 		}
 
 		/**
@@ -208,14 +284,24 @@ if ( ! class_exists( 'Jet_Menu' ) ) {
 
 				$jet_dashboard = \Jet_Dashboard\Dashboard::get_instance();
 
-				$jet_dashboard->init( array(
-					'path'           => $jet_dashboard_module_data['path'],
-					'url'            => $jet_dashboard_module_data['url'],
-					'cx_ui_instance' => array( $this, 'jet_dashboard_ui_instance_init' ),
-					'plugin_data'    => array(
-						'slug'    => 'jet-menu',
-						'file'    => 'jet-menu/jet-menu.php',
-						'version' => $this->get_version(),
+				$jet_dashboard->init( array (
+					'path'           => $jet_dashboard_module_data[ 'path' ],
+					'url'            => $jet_dashboard_module_data[ 'url' ],
+					'cx_ui_instance' => array ( $this, 'jet_dashboard_ui_instance_init' ),
+					'plugin_data'    => array (
+						'slug'         => 'jet-menu',
+						'file'         => 'jet-menu/jet-menu.php',
+						'version'      => $this->get_version(),
+						'plugin_links' => array (
+							array (
+								'label'  => esc_html__( 'Go to settings', 'jet-menu' ),
+								'url'    => add_query_arg( array (
+									'page'    => 'jet-dashboard-settings-page',
+									'subpage' => 'jet-menu-general-settings'
+								), admin_url( 'admin.php' ) ),
+								'target' => '_self',
+							),
+						),
 					),
 				) );
 			}
@@ -232,22 +318,43 @@ if ( ! class_exists( 'Jet_Menu' ) ) {
 		}
 
 		/**
-		 * Return dynamic CSS instance
-		 *
-		 * @return object
-		 */
-		public function dynamic_css() {
-			return $this->dynamic_css;
-		}
-
-		/**
 		 * Show recommended plugins notice.
 		 *
 		 * @return void
 		 */
 		public function required_plugins_notice() {
-			require $this->plugin_path( 'includes/lib/class-tgm-plugin-activation.php' );
-			add_action( 'tgmpa_register', array( $this, 'register_required_plugins' ) );
+			$screen = get_current_screen();
+
+			if ( isset( $screen->parent_file ) && 'plugins.php' === $screen->parent_file && 'update' === $screen->id ) {
+				return;
+			}
+
+			$plugin = 'elementor/elementor.php';
+
+			$installed_plugins      = get_plugins();
+			$is_elementor_installed = isset( $installed_plugins[ $plugin ] );
+
+			if ( $is_elementor_installed ) {
+				if ( ! current_user_can( 'activate_plugins' ) ) {
+					return;
+				}
+
+				$activation_url = wp_nonce_url( 'plugins.php?action=activate&amp;plugin=' . $plugin . '&amp;plugin_status=all&amp;paged=1&amp;s', 'activate-plugin_' . $plugin );
+
+				$message = sprintf( '<p>%s</p>', esc_html__( 'JetMenu requires Elementor to be activated.', 'jet-menu' ) );
+				$message .= sprintf( '<p><a href="%s" class="button-primary">%s</a></p>', $activation_url, esc_html__( 'Activate Elementor Now', 'jet-menu' ) );
+			} else {
+				if ( ! current_user_can( 'install_plugins' ) ) {
+					return;
+				}
+
+				$install_url = wp_nonce_url( self_admin_url( 'update.php?action=install-plugin&plugin=elementor' ), 'install-plugin_elementor' );
+
+				$message = sprintf( '<p>%s</p>', esc_html__( 'JetMenu requires Elementor to be installed.', 'jet-menu' ) );
+				$message .= sprintf( '<p><a href="%s" class="button-primary">%s</a></p>', $install_url, esc_html__( 'Install Elementor Now', 'jet-menu' ) );
+			}
+
+			printf( '<div class="notice notice-warning is-dismissible"><p>%s</p></div>', wp_kses_post( $message ) );
 		}
 
 		/**
@@ -308,101 +415,6 @@ if ( ! class_exists( 'Jet_Menu' ) ) {
 		 */
 		public function elementor() {
 			return \Elementor\Plugin::$instance;
-		}
-
-		/**
-		 * Load required files.
-		 *
-		 * @return void
-		 */
-		public function load_files() {
-			require $this->plugin_path( 'includes/class-jet-menu-assets.php' );
-			require $this->plugin_path( 'includes/class-jet-menu-dynamic-css.php' );
-			require $this->plugin_path( 'includes/class-jet-menu-settings-nav.php' );
-			require $this->plugin_path( 'includes/class-jet-menu-post-type.php' );
-			require $this->plugin_path( 'includes/class-jet-menu-tools.php' );
-			require $this->plugin_path( 'includes/class-jet-menu-integration.php' );
-			require $this->plugin_path( 'includes/walkers/class-jet-menu-main-walker.php' );
-			require $this->plugin_path( 'includes/walkers/class-jet-menu-widget-walker.php' );
-			require $this->plugin_path( 'includes/class-jet-menu-public-manager.php' );
-			require $this->plugin_path( 'includes/class-jet-menu-options-page.php' );
-			require $this->plugin_path( 'includes/class-jet-menu-options-presets.php' );
-			require $this->plugin_path( 'includes/class-jet-menu-css-file.php' );
-			require $this->plugin_path( 'includes/class-jet-menu-db-upgrader.php' );
-			require $this->plugin_path( 'includes/class-jet-menu-svg-manager.php' );
-
-			// Rest Api
-			require $this->plugin_path( 'includes/rest-api/rest-api.php' );
-			require $this->plugin_path( 'includes/rest-api/endpoints/base.php' );
-			require $this->plugin_path( 'includes/rest-api/endpoints/elementor-template.php' );
-			require $this->plugin_path( 'includes/rest-api/endpoints/plugin-settings.php' );
-			require $this->plugin_path( 'includes/rest-api/endpoints/get-menu-items.php' );
-		}
-
-		/**
-		 * Include integration theme file
-		 *
-		 * @return void
-		 */
-		public function include_integration_theme_file() {
-
-			$template = get_template();
-			$disabled = jet_menu_option_page()->get_option( 'jet-menu-disable-integration-' . $template, 'false' );
-			$disabled = filter_var( $disabled, FILTER_VALIDATE_BOOLEAN );
-
-			if ( is_readable( $this->plugin_path( "integration/themes/{$template}/functions.php" ) ) && ! $disabled ) {
-				require $this->plugin_path( "integration/themes/{$template}/functions.php" );
-			}
-
-		}
-
-		/**
-		 * Include plugin integrations file
-		 *
-		 * @return [type] [description]
-		 */
-		public function include_integration_plugin_file() {
-
-			$active_plugins = get_option( 'active_plugins' );
-
-			foreach ( glob( $this->plugin_path( 'integration/plugins/*' ) ) as $path ) {
-
-				if ( ! is_dir( $path ) ) {
-					continue;
-				}
-
-				$this->dir = basename( $path );
-
-				$matched_plugins = array_filter( $active_plugins, array( $this, 'is_plugin_active' ) );
-
-				if ( ! empty( $matched_plugins ) ) {
-					require "{$path}/functions.php";
-				}
-
-			}
-
-		}
-
-		/**
-		 * Callback to check if plugin is active
-		 * @param  [type]  $plugin [description]
-		 * @return boolean         [description]
-		 */
-		public function is_plugin_active( $plugin ) {
-			return ( false !== strpos( $plugin, $this->dir . '/' ) );
-		}
-
-		/**
-		 * Returns URL for current theme in theme-integration directory
-		 *
-		 * @param  string $file Path to file inside theme folder
-		 * @return [type]       [description]
-		 */
-		public function get_theme_url( $file ) {
-
-			$template = get_template();
-
-			return $this->plugin_url( "integration/themes/{$template}/{$file}" );
 		}
 
 		/**
@@ -483,8 +495,8 @@ if ( ! class_exists( 'Jet_Menu' ) ) {
 		 * @return void
 		 */
 		public function activation() {
-			require $this->plugin_path( 'includes/class-jet-menu-post-type.php' );
-			jet_menu_post_type()->init();
+			require $this->plugin_path( 'includes/menu-post-type.php' );
+			$this->post_type_manager = new \Jet_Menu\Menu_Post_Type();
 			flush_rewrite_rules();
 		}
 

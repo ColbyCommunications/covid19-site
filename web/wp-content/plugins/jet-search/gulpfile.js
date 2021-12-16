@@ -29,14 +29,38 @@ gulp.task( 'css', function() {
 
 		.pipe( rename( 'jet-search.css' ) )
 		.pipe( gulp.dest( './assets/css/' ) )
-		.pipe( notify( 'Compile Sass Done!' ) )
-		.pipe( livereload() );
+		.pipe( livereload() )
+		.pipe( notify( 'Compile Sass Done!' ) );
+} );
+
+//css-editor
+gulp.task( 'css-editor', () => {
+	return gulp.src( './assets/scss/jet-search-editor.scss' )
+		.pipe(
+			plumber( {
+				errorHandler: function( error ) {
+					console.log( '=================ERROR=================' );
+					console.log( error.message );
+					this.emit( 'end' );
+				}
+			} )
+		)
+		.pipe( sass( { outputStyle: 'compressed' } ) )
+		.pipe( autoprefixer( {
+			browsers: ['last 10 versions'],
+			cascade:  false
+		} ) )
+
+		.pipe( rename( 'jet-search-editor.css' ) )
+		.pipe( gulp.dest( './assets/css/' ) )
+		.pipe( livereload() )
+		.pipe( notify( 'Compile Sass Done!' ) );
 } );
 
 //watch
 gulp.task( 'watch', function() {
-	livereload.listen();
-	gulp.watch( './assets/scss/**', ['css'] );
+	//livereload.listen();
+	gulp.watch( './assets/scss/**', gulp.series( ...['css', 'css-editor'] ) );
 } );
 
 //checktextdomain

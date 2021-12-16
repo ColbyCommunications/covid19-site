@@ -86,10 +86,6 @@ if ( ! class_exists( 'Jet_Elements_Settings' ) ) {
 		 */
 		public function init() {
 
-			add_action( 'admin_enqueue_scripts', array( $this, 'admin_enqueue_scripts' ), 0 );
-
-			add_action( 'admin_menu', array( $this, 'register_page' ), 99 );
-
 			foreach ( glob( jet_elements()->plugin_path( 'includes/addons/' ) . '*.php' ) as $file ) {
 				$data = get_file_data( $file, array( 'class' => 'Class', 'name' => 'Name', 'slug' => 'Slug' ) );
 
@@ -97,8 +93,6 @@ if ( ! class_exists( 'Jet_Elements_Settings' ) ) {
 				$this->avaliable_widgets[ $slug ] = $data['name'];
 				$this->avaliable_widgets_slugs[]  = $data['slug'];
 			}
-
-			$this->generate_frontend_config_data();
 
 			add_action(
 				'jet-styles-manager/compatibility/register-plugin',
@@ -206,6 +200,12 @@ if ( ! class_exists( 'Jet_Elements_Settings' ) ) {
 					'insta_access_token'      => [
 						'value' => $this->get( 'insta_access_token', '' ),
 					],
+					'insta_business_access_token' => [
+						'value' => $this->get( 'insta_business_access_token', '' ),
+					],
+					'insta_business_user_id' => [
+						'value' => $this->get( 'insta_business_user_id', '' ),
+					],
 					'weather_api_key'         => [
 						'value' => $this->get( 'weather_api_key', '' ),
 					],
@@ -219,57 +219,26 @@ if ( ! class_exists( 'Jet_Elements_Settings' ) ) {
 					],
 				],
 			];
-		}
 
-		/**
-		 * Initialize page builder module if required
-		 *
-		 * @return void
-		 */
-		public function admin_enqueue_scripts() {
-
-			if ( isset( $_REQUEST['page'] ) && $this->key === $_REQUEST['page'] ) {
-
-				$module_data = jet_elements()->module_loader->get_included_module_data( 'cherry-x-vue-ui.php' );
-				$ui          = new CX_Vue_UI( $module_data );
-
-				$ui->enqueue_assets();
-
-				wp_enqueue_style(
-					'jet-elements-admin-css',
-					jet_elements()->plugin_url( 'assets/css/jet-elements-admin.css' ),
-					false,
-					jet_elements()->get_version()
-				);
-
-				wp_enqueue_script(
-					'jet-elements-admin-script',
-					jet_elements()->plugin_url( 'assets/js/jet-elements-admin.js' ),
-					array( 'cx-vue-ui' ),
-					jet_elements()->get_version(),
-					true
-				);
-
-				wp_localize_script(
-					'jet-elements-admin-script',
-					'JetElementsSettingsPageConfig',
-					apply_filters( 'jet-elements/admin/settings-page-config', $this->settings_page_config )
-				);
-			}
+			return $this->settings_page_config;
 		}
 
 		/**
 		 * Return settings page URL
 		 *
+		 * @param  string $subpage
 		 * @return string
 		 */
-		public function get_settings_page_link() {
+		public function get_settings_page_link( $subpage = 'general' ) {
+
 			return add_query_arg(
 				array(
-					'page' => $this->key,
+					'page'    => 'jet-dashboard-settings-page',
+					'subpage' => 'jet-elements-' . $subpage . '-settings',
 				),
 				esc_url( admin_url( 'admin.php' ) )
 			);
+
 		}
 
 		/**
@@ -286,32 +255,6 @@ if ( ! class_exists( 'Jet_Elements_Settings' ) ) {
 
 			return isset( $this->settings[ $setting ] ) ? $this->settings[ $setting ] : $default;
 
-		}
-
-		/**
-		 * Register add/edit page
-		 *
-		 * @return void
-		 */
-		public function register_page() {
-
-			add_submenu_page(
-				'jet-dashboard',
-				esc_html__( 'JetElements Settings', 'jet-elements' ),
-				esc_html__( 'JetElements Settings', 'jet-elements' ),
-				'manage_options',
-				$this->key,
-				array( $this, 'render_page' )
-			);
-		}
-
-		/**
-		 * Render settings page
-		 *
-		 * @return void
-		 */
-		public function render_page() {
-			include jet_elements()->get_template( 'admin-templates/settings-page.php' );
 		}
 
 		/**

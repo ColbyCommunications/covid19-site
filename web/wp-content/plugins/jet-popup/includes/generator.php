@@ -32,7 +32,10 @@ if ( ! class_exists( 'Jet_Popup_Generator' ) ) {
 			'jet_popup_user_inactivity_time' => 3,
 			'jet_popup_scrolled_to_value'    => 10,
 			'jet_popup_on_date_value'        => '',
+			'jet_popup_on_time_start_value'  => '',
+			'jet_popup_on_time_end_value'    => '',
 			'jet_popup_custom_selector'      => '',
+			'jet_popup_prevent_scrolling'    => false,
 			'jet_popup_show_once'            => false,
 			'jet_popup_show_again_delay'     => 'none',
 			'jet_popup_use_ajax'             => false,
@@ -180,14 +183,11 @@ if ( ! class_exists( 'Jet_Popup_Generator' ) ) {
 		 */
 		public function popup_render( $popup_id ) {
 
+			jet_popup()->admin_bar->register_post_item( $popup_id );
+
 			$meta_settings = get_post_meta( $popup_id, '_elementor_page_settings', true );
 
 			$popup_settings_main = wp_parse_args( $meta_settings, $this->popup_default_settings );
-
-			// Is Avaliable For User Check
-			if ( ! $this->is_avaliable_for_user( $popup_settings_main['jet_role_condition'] ) ) {
-				return false;
-			}
 
 			$close_button_html = '';
 
@@ -223,7 +223,10 @@ if ( ! class_exists( 'Jet_Popup_Generator' ) ) {
 				'user-inactivity-time'   => $popup_settings_main['jet_popup_user_inactivity_time'],
 				'scrolled-to'            => $popup_settings_main['jet_popup_scrolled_to_value'],
 				'on-date'                => $popup_settings_main['jet_popup_on_date_value'],
+				'on-time-start'          => $popup_settings_main['jet_popup_on_time_start_value'],
+				'on-time-end'            => $popup_settings_main['jet_popup_on_time_end_value'],
 				'custom-selector'        => $popup_settings_main['jet_popup_custom_selector'],
+				'prevent-scrolling'      => filter_var( $popup_settings_main['jet_popup_prevent_scrolling'], FILTER_VALIDATE_BOOLEAN ),
 				'show-once'              => filter_var( $popup_settings_main['jet_popup_show_once'], FILTER_VALIDATE_BOOLEAN ),
 				'show-again-delay'       => $jet_popup_show_again_delay,
 				'use-ajax'               => filter_var( $popup_settings_main['jet_popup_use_ajax'], FILTER_VALIDATE_BOOLEAN ),
@@ -281,7 +284,7 @@ if ( ! class_exists( 'Jet_Popup_Generator' ) ) {
 					$childrens = $element->get_children();
 
 					foreach ( $childrens as $key => $children ) {
-						$children_data[$key] = $children->get_raw_data();
+						$children_data[$key] = $children->get_raw_data( true );
 
 						$this->find_widgets_script_handlers( $children_data );
 					}
@@ -392,33 +395,6 @@ if ( ! class_exists( 'Jet_Popup_Generator' ) ) {
 		public function get_script_depends() {
 
 			return $this->depended_scripts;
-		}
-
-		/**
-		 * [is_avaliable_for_user description]
-		 * @param  [type]  $popup_roles [description]
-		 * @return boolean              [description]
-		 */
-		public function is_avaliable_for_user( $popup_roles ) {
-
-			if ( empty( $popup_roles ) ) {
-				return true;
-			}
-
-			$user     = wp_get_current_user();
-			$is_guest = empty( $user->roles ) ? true : false;
-
-			if ( ! $is_guest ) {
-				$user_role = $user->roles[0];
-			} else {
-				$user_role = 'guest';
-			}
-
-			if ( in_array( $user_role, $popup_roles ) ) {
-				return true;
-			}
-
-			return false;
 		}
 
 		/**

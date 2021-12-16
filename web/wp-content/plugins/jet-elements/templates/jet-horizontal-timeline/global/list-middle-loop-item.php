@@ -3,7 +3,7 @@
  * Timeline list item template
  */
 $settings      = $this->get_settings_for_display();
-$item_settings = $this->__processed_item;
+$item_settings = $this->_processed_item;
 
 $this->add_render_attribute(
 	'item_middle_' . $item_settings['_id'],
@@ -22,5 +22,5 @@ if ( filter_var( $item_settings['is_item_active'], FILTER_VALIDATE_BOOLEAN ) ) {
 ?>
 
 <div <?php $this->print_render_attribute_string( 'item_middle_' . $item_settings['_id'] ) ?>>
-	<?php include $this->__get_global_template( 'point' ); ?>
+	<?php include $this->_get_global_template( 'point' ); ?>
 </div>

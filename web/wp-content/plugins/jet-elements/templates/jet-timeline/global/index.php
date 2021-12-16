@@ -13,5 +13,5 @@ $classes = implode( ' ', $classes_list );
 ?>
 <div class="<?php echo $classes ?>">
 	<div class="jet-timeline__line"><div class="jet-timeline__line-progress"></div></div>
-	<?php $this->__get_global_looped_template( 'timeline', 'cards_list' ); ?>
+	<?php $this->_get_global_looped_template( 'timeline', 'cards_list' ); ?>
 </div>

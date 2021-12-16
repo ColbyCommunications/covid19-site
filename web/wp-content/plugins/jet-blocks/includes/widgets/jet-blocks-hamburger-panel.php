@@ -12,8 +12,8 @@ use Elementor\Group_Control_Border;
 use Elementor\Group_Control_Box_Shadow;
 use Elementor\Group_Control_Typography;
 use Elementor\Repeater;
-use Elementor\Scheme_Color;
-use Elementor\Scheme_Typography;
+use Elementor\Core\Schemes\Color as Scheme_Color;
+use Elementor\Core\Schemes\Typography as Scheme_Typography;
 use Elementor\Widget_Base;
 use Elementor\Utils;
 
@@ -69,7 +69,8 @@ class Jet_Blocks_Hamburger_Panel extends Jet_Blocks_Base {
 			array(
 				'label'       => esc_html__( 'Icon', 'jet-blocks' ),
 				'type'        => Controls_Manager::ICON,
-				'label_block' => true,
+				'label_block' => false,
+				'skin'        => 'inline',
 				'file'        => '',
 				'default'     => 'fa fa-align-justify',
 				'fa5_default' => array(
@@ -84,7 +85,8 @@ class Jet_Blocks_Hamburger_Panel extends Jet_Blocks_Base {
 			array(
 				'label'       => esc_html__( 'Active Icon', 'jet-blocks' ),
 				'type'        => Controls_Manager::ICON,
-				'label_block' => true,
+				'label_block' => false,
+				'skin'        => 'inline',
 				'file'        => '',
 				'default'     => 'fa fa-close',
 				'fa5_default' => array(
@@ -99,7 +101,8 @@ class Jet_Blocks_Hamburger_Panel extends Jet_Blocks_Base {
 			array(
 				'label'       => esc_html__( 'Close Icon', 'jet-blocks' ),
 				'type'        => Controls_Manager::ICON,
-				'label_block' => true,
+				'label_block' => false,
+				'skin'        => 'inline',
 				'file'        => '',
 				'default'     => 'fa fa-close',
 				'fa5_default' => array(
@@ -143,42 +146,16 @@ class Jet_Blocks_Hamburger_Panel extends Jet_Blocks_Base {
 			)
 		);
 
-		$templates = jet_blocks()->elementor()->templates_manager->get_source( 'local' )->get_items();
-
-		if ( empty( $templates ) ) {
-
-			$this->add_control(
-				'no_templates',
-				array(
-					'label' => false,
-					'type'  => Controls_Manager::RAW_HTML,
-					'raw'   => $this->empty_templates_message(),
-				)
-			);
-
-			return;
-		}
-
-		$options = [
-			'0' => '— ' . esc_html__( 'Select', 'jet-blocks' ) . ' —',
-		];
-
-		$types = [];
-
-		foreach ( $templates as $template ) {
-			$options[ $template['template_id'] ] = $template['title'] . ' (' . $template['type'] . ')';
-			$types[ $template['template_id'] ] = $template['type'];
-		}
-
 		$this->add_control(
 			'panel_template_id',
 			array(
 				'label'       => esc_html__( 'Choose Template', 'jet-blocks' ),
-				'type'        => Controls_Manager::SELECT,
-				'default'     => '0',
-				'options'     => $options,
-				'types'       => $types,
-				'label_block' => 'true',
+				'type'        => 'jet-query',
+				'query_type'  => 'elementor_templates',
+				'edit_button' => array(
+					'active' => true,
+					'label'  => __( 'Edit Template', 'jet-blocks' ),
+				),
 			)
 		);
 
@@ -229,6 +206,18 @@ class Jet_Blocks_Hamburger_Panel extends Jet_Blocks_Base {
 				'selectors'  => array(
 					'{{WRAPPER}} ' . $css_scheme['instance'] => 'z-index: {{VALUE}};',
 				),
+			)
+		);
+
+		$this->add_control(
+			'ajax_template',
+			array(
+				'label'        => esc_html__( 'Use Ajax Loading for Template', 'jet-blocks' ),
+				'type'         => Controls_Manager::SWITCHER,
+				'label_on'     => esc_html__( 'On', 'jet-blocks' ),
+				'label_off'    => esc_html__( 'Off', 'jet-blocks' ),
+				'return_value' => 'yes',
+				'default'      => 'false',
 			)
 		);
 
@@ -397,6 +386,34 @@ class Jet_Blocks_Hamburger_Panel extends Jet_Blocks_Base {
 		$this->__end_controls_tab();
 
 		$this->__end_controls_tabs();
+
+		$this->__add_control(
+			'content_loader_style_heading',
+			array(
+				'label'     => esc_html__( 'Loader Styles', 'jet-blocks' ),
+				'type'      => Controls_Manager::HEADING,
+				'separator' => 'before',
+				'condition' => array(
+					'ajax_template' => 'yes',
+				)
+			),
+			25
+		);
+
+		$this->__add_control(
+			'content_loader_color',
+			array(
+				'label' => esc_html__( 'Loader color', 'jet-blocks' ),
+				'type'  => Controls_Manager::COLOR,
+				'selectors' => array(
+					'{{WRAPPER}} ' . $css_scheme['content'] . ' .jet-hamburger-panel-loader' => 'border-color: {{VALUE}}; border-top-color: white;',
+				),
+				'condition' => array(
+					'ajax_template' => 'yes',
+				)
+			),
+			25
+		);
 
 		$this->__end_controls_section();
 
@@ -667,15 +684,16 @@ class Jet_Blocks_Hamburger_Panel extends Jet_Blocks_Base {
 		$template_id      = isset( $panel_settings['panel_template_id'] ) ? $panel_settings['panel_template_id'] : '0';
 		$position         = isset( $panel_settings['position'] ) ? $panel_settings['position'] : 'right';
 		$animation_effect = isset( $panel_settings['animation_effect'] ) ? $panel_settings['animation_effect'] : 'slide';
+		$ajax_template    = isset( $panel_settings['ajax_template'] ) ? filter_var( $panel_settings['ajax_template'], FILTER_VALIDATE_BOOLEAN ) : false;
 
 		$settings = array(
-			'position' => $position,
+			'position'     => $position,
+			'ajaxTemplate' => $ajax_template,
 		);
 
 		$this->add_render_attribute( 'instance', array(
 			'class' => array(
 				'jet-hamburger-panel',
-				//'jet-hamburger-panel-' . $panel_settings['type'] . '-type',
 				'jet-hamburger-panel-' . $position . '-position',
 				'jet-hamburger-panel-' . $animation_effect . '-effect',
 			),
@@ -710,7 +728,7 @@ class Jet_Blocks_Hamburger_Panel extends Jet_Blocks_Base {
 					<?php
 						echo $close_button_html;
 
-						if ( '0' !== $template_id ) {
+						if ( ! empty( $template_id ) ) {
 							$link = add_query_arg(
 								array(
 									'elementor' => '',
@@ -719,23 +737,27 @@ class Jet_Blocks_Hamburger_Panel extends Jet_Blocks_Base {
 							);
 
 							if ( jet_blocks_integration()->in_elementor() ) {
-								echo sprintf( '<div class="jet-blocks__edit-cover" data-template-edit-link="%s"><i class="fa fa-pencil"></i><span>%s</span></div>', $link, esc_html__( 'Edit Template', 'jet-blocks' ) );
+								echo sprintf( '<div class="jet-blocks__edit-cover" data-template-edit-link="%s"><i class="eicon-edit"></i><span>%s</span></div>', $link, esc_html__( 'Edit Template', 'jet-blocks' ) );
 							}
 						}
 
-					?>
-					<div class="jet-hamburger-panel__content"><?php
+						$this->add_render_attribute( 'jet-hamburger-panel__content', array(
+							'class'            => 'jet-hamburger-panel__content',
+							'data-template-id' => ! empty( $template_id ) ? $template_id : 'false',
+						) );
+
 						$content_html = '';
 
-						if ( '0' !== $template_id ) {
+						if ( ! empty( $template_id ) && ! $ajax_template ) {
 							$content_html .= jet_blocks()->elementor()->frontend->get_builder_content_for_display( $template_id );
-						} else {
+						} else if ( ! $ajax_template ) {
 							$content_html = $this->no_templates_message();
+						} else {
+							$content_html .= '<div class="jet-hamburger-panel-loader"></div>';
 						}
 
-						echo $content_html;
+						echo sprintf( '<div %1$s>%2$s</div>', $this->get_render_attribute_string( 'jet-hamburger-panel__content' ), $content_html );
 					?>
-					</div>
 				</div>
 			</div>
 		</div>

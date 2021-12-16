@@ -27,18 +27,18 @@ $classes = implode( ' ', $classes_list );
 	<div class="jet-team-member__inner">
 		<div class="jet-team-member__image">
 			<div class="jet-team-member__cover"><?php
-				echo $this->__generate_name( true );
-				echo $this->__generate_position( true );
-				echo $this->__generate_description( true );
-				echo $this->__generate_social_icon_list( true );
-				echo $this->__generate_action_button( true ); ?></div>
-			<?php echo $this->__get_member_image(); ?>
+				echo $this->_generate_name( true );
+				echo $this->_generate_position( true );
+				echo $this->_generate_description( true );
+				echo $this->_generate_social_icon_list( true );
+				echo $this->_generate_action_button( true ); ?></div>
+			<?php echo $this->_get_member_image(); ?>
 		</div>
 		<div class="jet-team-member__content"><?php
-			echo $this->__generate_name();
-			echo $this->__generate_position();
-			echo $this->__generate_description();
-			echo $this->__generate_social_icon_list();
-			echo $this->__generate_action_button(); ?></div>
+			echo $this->_generate_name();
+			echo $this->_generate_position();
+			echo $this->_generate_description();
+			echo $this->_generate_social_icon_list();
+			echo $this->_generate_action_button(); ?></div>
 	</div>
 </div>

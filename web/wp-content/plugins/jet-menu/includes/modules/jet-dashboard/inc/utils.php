@@ -47,7 +47,7 @@ class Utils {
 
 		$site_url = $urlParts['host'] . $urlParts['path'];
 
-		$site_url = preg_replace('#^https?://#', '', rtrim( $site_url ));
+		$site_url = preg_replace( '#^https?://#', '', rtrim( $site_url ) );
 
 		$site_url = str_replace( 'www.', '', $site_url );
 
@@ -182,7 +182,7 @@ class Utils {
 	 * @param  [type] $key [description]
 	 * @return [type]      [description]
 	 */
-	public static function package_url( $plugin_slug = false ) {
+	public static function package_url( $plugin_slug = false, $version = false ) {
 
 		$license_key = self::get_plugin_license_key( $plugin_slug );
 
@@ -195,6 +195,7 @@ class Utils {
 				'action'   => 'get_plugin_update',
 				'license'  => self::get_plugin_license_key( $plugin_slug ),
 				'plugin'   => $plugin_slug,
+				'version'  => $version,
 				'site_url' => urlencode( self::get_site_url() ),
 			),
 			self::get_api_url()
@@ -206,13 +207,18 @@ class Utils {
 	 * @param  boolean $expire_date [description]
 	 * @return [type]               [description]
 	 */
-	public static function license_expired_check( $expire_date = false ) {
+	public static function license_expired_check( $expire_date = false, $day_to_expire = 0 ) {
 
-		if ( '0000-00-00 00:00:00' === $expire_date || 'lifetime' === $expire_date ) {
+		if ( '0000-00-00 00:00:00' === $expire_date
+			|| '1000-01-01 00:00:00' === $expire_date
+			|| 'lifetime' === $expire_date
+		) {
 			return false;
 		}
 
 		$current_time = time();
+
+		$current_time = strtotime( sprintf( '+%s day', $day_to_expire ), $current_time );
 
 		$expire_time = strtotime( $expire_date );
 

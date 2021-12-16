@@ -15,5 +15,5 @@ $classes_list[] = 'jet-scroll-navigation--' . $hint_show_type;
 $classes = implode( ' ', $classes_list );
 
 ?><div class="<?php echo $classes; ?>" <?php echo $data_settings; ?>><?php
-	$this->__get_global_looped_template( 'scroll-navigation', 'item_list' );
+	$this->_get_global_looped_template( 'scroll-navigation', 'item_list' );
 ?></div>

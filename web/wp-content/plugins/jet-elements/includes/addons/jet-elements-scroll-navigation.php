@@ -12,8 +12,8 @@ use Elementor\Group_Control_Border;
 use Elementor\Group_Control_Box_Shadow;
 use Elementor\Group_Control_Typography;
 use Elementor\Repeater;
-use Elementor\Scheme_Color;
-use Elementor\Scheme_Typography;
+use Elementor\Core\Schemes\Color as Scheme_Color;
+use Elementor\Core\Schemes\Typography as Scheme_Typography;
 use Elementor\Widget_Base;
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
@@ -40,6 +40,10 @@ class Jet_Elements_Scroll_Navigation extends Jet_Elements_Base {
 		return array( 'cherry' );
 	}
 
+	public function get_script_depends() {
+		return array( 'jet-resize-sensor' );
+	}
+
 	protected function _register_controls() {
 		$css_scheme = apply_filters(
 			'jet-elements/scroll-navigation/css-scheme',
@@ -62,7 +66,7 @@ class Jet_Elements_Scroll_Navigation extends Jet_Elements_Base {
 
 		$repeater = new Repeater();
 
-		$this->__add_advanced_icon_control(
+		$this->_add_advanced_icon_control(
 			'item_icon',
 			array(
 				'label'       => esc_html__( 'Hint Icon', 'jet-elements' ),
@@ -73,7 +77,7 @@ class Jet_Elements_Scroll_Navigation extends Jet_Elements_Base {
 			$repeater
 		);
 
-		$this->__add_advanced_icon_control(
+		$this->_add_advanced_icon_control(
 			'item_dot_icon',
 			array(
 				'label'       => esc_html__( 'Dot Icon', 'jet-elements' ),
@@ -116,7 +120,7 @@ class Jet_Elements_Scroll_Navigation extends Jet_Elements_Base {
 			'item_list',
 			array(
 				'type'        => Controls_Manager::REPEATER,
-				'fields'      => array_values( $repeater->get_controls() ),
+				'fields'      => $repeater->get_controls(),
 				'default'     => array(
 					array(
 						'item_label'      => esc_html__( 'Section 1', 'jet-elements' ),
@@ -265,7 +269,7 @@ class Jet_Elements_Scroll_Navigation extends Jet_Elements_Base {
 		/**
 		 * General Style Section
 		 */
-		$this->__start_controls_section(
+		$this->_start_controls_section(
 			'section_general_style',
 			array(
 				'label'      => esc_html__( 'General', 'jet-elements' ),
@@ -274,7 +278,7 @@ class Jet_Elements_Scroll_Navigation extends Jet_Elements_Base {
 			)
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Background::get_type(),
 			array(
 				'name'     => 'instance_background',
@@ -283,7 +287,7 @@ class Jet_Elements_Scroll_Navigation extends Jet_Elements_Base {
 			50
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Border::get_type(),
 			array(
 				'name'        => 'instance_border',
@@ -295,7 +299,7 @@ class Jet_Elements_Scroll_Navigation extends Jet_Elements_Base {
 			75
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'instance_border_radius',
 			array(
 				'label'      => __( 'Border Radius', 'jet-elements' ),
@@ -308,7 +312,7 @@ class Jet_Elements_Scroll_Navigation extends Jet_Elements_Base {
 			75
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'instance_padding',
 			array(
 				'label'      => __( 'Padding', 'jet-elements' ),
@@ -321,7 +325,7 @@ class Jet_Elements_Scroll_Navigation extends Jet_Elements_Base {
 			50
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'instance_margin',
 			array(
 				'label'      => __( 'Margin', 'jet-elements' ),
@@ -334,7 +338,7 @@ class Jet_Elements_Scroll_Navigation extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Box_Shadow::get_type(),
 			array(
 				'name'     => 'instance_box_shadow',
@@ -343,12 +347,12 @@ class Jet_Elements_Scroll_Navigation extends Jet_Elements_Base {
 			100
 		);
 
-		$this->__end_controls_section();
+		$this->_end_controls_section();
 
 		/**
 		 * Hint Style Section
 		 */
-		$this->__start_controls_section(
+		$this->_start_controls_section(
 			'section_hint_style',
 			array(
 				'label'      => esc_html__( 'Hint', 'jet-elements' ),
@@ -357,7 +361,7 @@ class Jet_Elements_Scroll_Navigation extends Jet_Elements_Base {
 			)
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Background::get_type(),
 			array(
 				'name'     => 'hint_background',
@@ -366,7 +370,7 @@ class Jet_Elements_Scroll_Navigation extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Border::get_type(),
 			array(
 				'name'        => 'hint_border',
@@ -378,7 +382,7 @@ class Jet_Elements_Scroll_Navigation extends Jet_Elements_Base {
 			75
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'hint_border_radius',
 			array(
 				'label'      => __( 'Border Radius', 'jet-elements' ),
@@ -391,7 +395,7 @@ class Jet_Elements_Scroll_Navigation extends Jet_Elements_Base {
 			75
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'hint_padding',
 			array(
 				'label'      => __( 'Padding', 'jet-elements' ),
@@ -404,7 +408,7 @@ class Jet_Elements_Scroll_Navigation extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Box_Shadow::get_type(),
 			array(
 				'name'     => 'hint_box_shadow',
@@ -413,7 +417,7 @@ class Jet_Elements_Scroll_Navigation extends Jet_Elements_Base {
 			100
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'hint_icon_style',
 			array(
 				'label'     => esc_html__( 'Hint Icon', 'jet-elements' ),
@@ -423,7 +427,7 @@ class Jet_Elements_Scroll_Navigation extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'hint_icon_color',
 			array(
 				'label'  => esc_html__( 'Icon Color', 'jet-elements' ),
@@ -435,7 +439,7 @@ class Jet_Elements_Scroll_Navigation extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'hint_icon_size',
 			array(
 				'label'      => esc_html__( 'Icon Size', 'jet-elements' ),
@@ -456,7 +460,7 @@ class Jet_Elements_Scroll_Navigation extends Jet_Elements_Base {
 			50
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'hint_icon_margin',
 			array(
 				'label'      => __( 'Margin', 'jet-elements' ),
@@ -469,7 +473,7 @@ class Jet_Elements_Scroll_Navigation extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'hint_label_style',
 			array(
 				'label'     => esc_html__( 'Hint Label', 'jet-elements' ),
@@ -479,7 +483,7 @@ class Jet_Elements_Scroll_Navigation extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'hint_label_color',
 			array(
 				'label'  => esc_html__( 'Text Color', 'jet-elements' ),
@@ -491,7 +495,7 @@ class Jet_Elements_Scroll_Navigation extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'hint_label_margin',
 			array(
 				'label'      => __( 'Margin', 'jet-elements' ),
@@ -504,7 +508,7 @@ class Jet_Elements_Scroll_Navigation extends Jet_Elements_Base {
 			75
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'hint_label_padding',
 			array(
 				'label'      => __( 'Padding', 'jet-elements' ),
@@ -517,7 +521,7 @@ class Jet_Elements_Scroll_Navigation extends Jet_Elements_Base {
 			75
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Typography::get_type(),
 			array(
 				'name'     => 'hint_label_typography',
@@ -527,12 +531,12 @@ class Jet_Elements_Scroll_Navigation extends Jet_Elements_Base {
 			50
 		);
 
-		$this->__end_controls_section();
+		$this->_end_controls_section();
 
 		/**
 		 * Dots Style Section
 		 */
-		$this->__start_controls_section(
+		$this->_start_controls_section(
 			'section_dots_style',
 			array(
 				'label'      => esc_html__( 'Dots', 'jet-elements' ),
@@ -541,16 +545,16 @@ class Jet_Elements_Scroll_Navigation extends Jet_Elements_Base {
 			)
 		);
 
-		$this->__start_controls_tabs( 'tabs_dots_style' );
+		$this->_start_controls_tabs( 'tabs_dots_style' );
 
-		$this->__start_controls_tab(
+		$this->_start_controls_tab(
 			'tab_dots_normal',
 			array(
 				'label' => esc_html__( 'Normal', 'jet-elements' ),
 			)
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			\Jet_Group_Control_Box_Style::get_type(),
 			array(
 				'name'           => 'dots_style',
@@ -568,16 +572,16 @@ class Jet_Elements_Scroll_Navigation extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__end_controls_tab();
+		$this->_end_controls_tab();
 
-		$this->__start_controls_tab(
+		$this->_start_controls_tab(
 			'tab_dots_invert',
 			array(
 				'label' => esc_html__( 'Invert', 'jet-elements' ),
 			)
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			\Jet_Group_Control_Box_Style::get_type(),
 			array(
 				'name'           => 'dots_style_invert',
@@ -595,16 +599,16 @@ class Jet_Elements_Scroll_Navigation extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__end_controls_tab();
+		$this->_end_controls_tab();
 
-		$this->__start_controls_tab(
+		$this->_start_controls_tab(
 			'tab_dots_hover',
 			array(
 				'label' => esc_html__( 'Hover', 'jet-elements' ),
 			)
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			\Jet_Group_Control_Box_Style::get_type(),
 			array(
 				'name'           => 'dots_style_hover',
@@ -622,16 +626,16 @@ class Jet_Elements_Scroll_Navigation extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__end_controls_tab();
+		$this->_end_controls_tab();
 
-		$this->__start_controls_tab(
+		$this->_start_controls_tab(
 			'tab_dots_active',
 			array(
 				'label' => esc_html__( 'Active', 'jet-elements' ),
 			)
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			\Jet_Group_Control_Box_Style::get_type(),
 			array(
 				'name'           => 'dots_style_active',
@@ -649,11 +653,11 @@ class Jet_Elements_Scroll_Navigation extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__end_controls_tab();
+		$this->_end_controls_tab();
 
-		$this->__end_controls_tabs();
+		$this->_end_controls_tabs();
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'dots_padding',
 			array(
 				'label'      => __( 'Dots Padding', 'jet-elements' ),
@@ -667,7 +671,7 @@ class Jet_Elements_Scroll_Navigation extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'item_margin',
 			array(
 				'label'      => __( 'Dots Margin', 'jet-elements' ),
@@ -680,17 +684,17 @@ class Jet_Elements_Scroll_Navigation extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__end_controls_section();
+		$this->_end_controls_section();
 
 	}
 
 	protected function render() {
 
-		$this->__context = 'render';
+		$this->_context = 'render';
 
-		$this->__open_wrap();
-		include $this->__get_global_template( 'index' );
-		$this->__close_wrap();
+		$this->_open_wrap();
+		include $this->_get_global_template( 'index' );
+		$this->_close_wrap();
 	}
 
 	/**

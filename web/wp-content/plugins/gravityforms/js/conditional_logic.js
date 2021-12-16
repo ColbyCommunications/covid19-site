@@ -29,10 +29,11 @@ function gf_apply_rules(formId, fields, isInit){
 function gf_check_field_rule(formId, fieldId, isInit, callback){
 
 	//if conditional logic is not specified for that field, it is supposed to be displayed
-	if(!window["gf_form_conditional_logic"] || !window["gf_form_conditional_logic"][formId] || !window["gf_form_conditional_logic"][formId]["logic"][fieldId])
-		return "show";
+	var conditionalLogic = gf_get_field_logic( formId, fieldId );
+	if ( ! conditionalLogic ) {
+		return 'show';
+	}
 
-	var conditionalLogic = window["gf_form_conditional_logic"][formId]["logic"][fieldId];
 	var action = gf_get_field_action(formId, conditionalLogic["section"]);
 
 	//If section is hidden, always hide field. If section is displayed, see if field is supposed to be displayed or hidden
@@ -40,6 +41,42 @@ function gf_check_field_rule(formId, fieldId, isInit, callback){
 		action = gf_get_field_action(formId, conditionalLogic["field"]);
 
 	return action;
+}
+
+/**
+ * Retrieves the conditional logic properties for the specified field.
+ *
+ * @since 2.4.16
+ *
+ * @param {(string|number)} formId  The ID of the current form.
+ * @param {(string|number)} fieldId The ID of the current field.
+ *
+ * @return {(boolean|object)} False or the field conditional logic properties.
+ */
+function gf_get_field_logic(formId, fieldId) {
+	var formConditionalLogic = rgars( window, 'gf_form_conditional_logic/' + formId );
+	if ( ! formConditionalLogic ) {
+		return false;
+	}
+
+	var conditionalLogic = rgars( formConditionalLogic, 'logic/' + fieldId );
+	if ( conditionalLogic ) {
+		return conditionalLogic;
+	}
+
+	var dependents = rgar( formConditionalLogic, 'dependents' );
+	if ( ! dependents ) {
+		return false;
+	}
+
+	// Attempting to get section field conditional logic instead.
+	for ( var key in dependents ) {
+		if ( dependents[key].indexOf( fieldId ) !== -1 ) {
+			return rgars( formConditionalLogic, 'logic/' + key );
+		}
+	}
+
+	return false;
 }
 
 function gf_apply_field_rule(formId, fieldId, isInit, callback){
@@ -63,7 +100,16 @@ function gf_get_field_action(formId, conditionalLogic){
 
 	var matches = 0;
 	for(var i = 0; i < conditionalLogic["rules"].length; i++){
-		var rule = conditionalLogic["rules"][i];
+		/**
+		 * Filter the conditional logic rule before it is evaluated on the frontend.
+		 *
+		 * @param {object}          rule             The conditional logic rule about to be evaluated.
+		 * @param {(string|number)} formId           The current form ID.
+		 * @param {object}          conditionalLogic All details required to evaluate an objects conditional logic.
+		 *
+		 * @since 2.4.22
+		 */
+		var rule = gform.applyFilters( 'gform_rule_pre_evaluation', jQuery.extend( {}, conditionalLogic["rules"][i] ), formId, conditionalLogic );
 		if(gf_is_match(formId, rule))
 			matches++;
 	}
@@ -92,13 +138,18 @@ function gf_is_match( formId, rule ) {
 		$inputs = $( 'input[id="input_{0}_{1}"], input[id^="input_{0}_{1}_"], input[id^="choice_{0}_{1}_"], select#input_{0}_{1}, textarea#input_{0}_{1}'.format( formId, fieldId ) );
 	}
 
-	var isCheckable = $.inArray( $inputs.attr( 'type' ), [ 'checkbox', 'radio' ] ) !== -1,
-		isMatch     = isCheckable ? gf_is_match_checkable( $inputs, rule, formId, fieldId ) : gf_is_match_default( $inputs.eq( 0 ), rule, formId, fieldId );
+	var isCheckable = $.inArray( $inputs.attr( 'type' ), [ 'checkbox', 'radio' ] ) !== -1;
+	var isMatch     = isCheckable ? gf_is_match_checkable( $inputs, rule, formId, fieldId ) : gf_is_match_default( $inputs.eq( 0 ), rule, formId, fieldId );
 
 	return gform.applyFilters( 'gform_is_value_match', isMatch, formId, rule );
 }
 
 function gf_is_match_checkable( $inputs, rule, formId, fieldId ) {
+
+	// Rule is checking if the checkable is/isn't blank. Return a specific check for that use-case.
+	if ( rule.value === '' ) {
+		return rule.operator === 'is' ? gf_is_checkable_empty( $inputs ) : ! gf_is_checkable_empty( $inputs );
+	}
 
 	var isMatch = false;
 
@@ -120,7 +171,7 @@ function gf_is_match_checkable( $inputs, rule, formId, fieldId ) {
 		}
 		// if the 'other' choice is selected, get the value from the 'other' text input
 		else if ( fieldValue == 'gf_other_choice' ) {
-			fieldValue = $( '#input_{0}_{1}_other'.format( formId, fieldId ) ).val();
+			fieldValue = jQuery( '#input_{0}_{1}_other'.format( formId, fieldId ) ).val();
 		}
 
 		if( gf_matches_operation( fieldValue, rule.value, rule.operator ) ) {
@@ -133,13 +184,34 @@ function gf_is_match_checkable( $inputs, rule, formId, fieldId ) {
 	return isMatch;
 }
 
+/**
+ * Check if a collection of checkable inputs has any checked,
+ * or if they are all unchecked.
+ *
+ * @param {jQuery} $inputs A collection of inputs to check.
+ *
+ * @returns {boolean}
+ */
+function gf_is_checkable_empty( $inputs ) {
+	var isEmpty = true;
+
+	$inputs.each( function() {
+		if ( jQuery( this ).is( ':checked' ) ) {
+			isEmpty = false;
+		}
+	} );
+
+	return isEmpty;
+}
+
 function gf_is_match_default( $input, rule, formId, fieldId ) {
 
-	var val        = $input.val(),
-		values     = ( val instanceof Array ) ? val : [ val ], // transform regular value into array to support multi-select (which returns an array of selected items)
-		matchCount = 0;
+	var val           = $input.val(),
+		values        = ( val instanceof Array ) ? val : [ val ], // transform regular value into array to support multi-select (which returns an array of selected items)
+		matchCount    = 0,
+		valuesLength  = Math.max( values.length, 1 ); // jQuery 3.0: Make sure our length is at least 1 so that the following loop fires.
 
-	for( var i = 0; i < values.length; i++ ) {
+	for( var i = 0; i < valuesLength; i++ ) {
 
 		// fields with pipes in the value will use the label for conditional logic comparison
 		var hasLabel   = values[i] ? values[i].indexOf( '|' ) >= 0 : true,
@@ -162,7 +234,7 @@ function gf_is_match_default( $input, rule, formId, fieldId ) {
 	}
 
 	// if operator is 'isnot', none of the values can match
-	var isMatch = rule.operator == 'isnot' ? matchCount == values.length : matchCount > 0;
+	var isMatch = rule.operator == 'isnot' ? matchCount == valuesLength : matchCount > 0;
 
 	return isMatch;
 }
@@ -295,7 +367,6 @@ function gf_do_next_button_action(formId, action, fieldId, isInit){
 }
 
 function gf_do_action(action, targetId, useAnimation, defaultValues, isInit, callback, formId){
-
 	var $target = jQuery( targetId );
 
 	/**
@@ -317,7 +388,14 @@ function gf_do_action(action, targetId, useAnimation, defaultValues, isInit, cal
 
 		if(useAnimation && !isInit){
 			if($target.length > 0){
-				$target.find(':input:hidden:not(.gf-default-disabled)').prop( 'disabled', false );
+				$target.find(':input:hidden:not(.gf-default-disabled)').removeAttr( 'disabled' );
+				if ( $target.is( 'input[type="submit"]' ) || $target.hasClass( 'gform_next_button' ) ) {
+					$target.removeAttr( 'disabled' ).css( 'display', '' );
+					if ( '1' == gf_legacy.is_legacy ) {
+						// for legacy markup, remove screen reader class.
+						$target.removeClass( 'screen-reader-text' );
+					}
+				}
 				$target.slideDown(callback);
 			} else if(callback){
 				callback();
@@ -327,12 +405,22 @@ function gf_do_action(action, targetId, useAnimation, defaultValues, isInit, cal
 
 			var display = $target.data('gf_display');
 
-			//defaults to list-item if previous (saved) display isn't set for any reason
+			// set display if previous (saved) display isn't set for any reason
 			if ( display == '' || display == 'none' ){
-				display = 'list-item';
+				display = '1' === gf_legacy.is_legacy ? 'list-item' : 'block';
 			}
-			$target.find(':input:hidden:not(.gf-default-disabled)').prop( 'disabled', false );
-			$target.css('display', display);
+			$target.find(':input:hidden:not(.gf-default-disabled)').removeAttr( 'disabled' );
+
+			// Handle conditional submit and next buttons.
+			if ( $target.is( 'input[type="submit"]' ) || $target.hasClass( 'gform_next_button' ) ) {
+				$target.removeAttr( 'disabled' ).css( 'display', '' );
+				if ( '1' == gf_legacy.is_legacy ) {
+					// for legacy markup, remove screen reader class.
+					$target.removeClass( 'screen-reader-text' );
+				}
+			} else {
+				$target.css( 'display', display );
+			}
 
 			if(callback){
 				callback();
@@ -363,14 +451,30 @@ function gf_do_action(action, targetId, useAnimation, defaultValues, isInit, cal
 		}
 
 		if(useAnimation && !isInit){
-			if($target.length > 0 && $target.is(":visible")) {
-				$target.slideUp(callback);
-			} else if(callback) {
+			if( $target.is( 'input[type="submit"]' ) || $target.hasClass( 'gform_next_button' ) ) {
+				$target.attr( 'disabled', 'disabled' ).hide();
+				if ( '1' === gf_legacy.is_legacy ) {
+					// for legacy markup, let screen readers read the button.
+					$target.addClass( 'screen-reader-text' );
+				}
+			} else if ( $target.length > 0 && $target.is( ":visible" ) ) {
+				$target.slideUp( callback );
+			} else if ( callback ) {
 				callback();
 			}
 		} else{
-			$target.hide();
-			$target.find(':input:hidden:not(.gf-default-disabled)').prop( 'disabled', true );
+
+			// Handle conditional submit and next buttons.
+			if ( $target.is( 'input[type="submit"]' ) || $target.hasClass( 'gform_next_button' ) ) {
+				$target.attr( 'disabled', 'disabled' ).hide();
+				if ( '1' === gf_legacy.is_legacy ) {
+					// for legacy markup, let screen readers read the button.
+					$target.addClass( 'screen-reader-text' );
+				}
+			} else {
+				$target.css( 'display', 'none' );
+			}
+			$target.find(':input:hidden:not(.gf-default-disabled)').attr( 'disabled', 'disabled' );
 			if(callback){
 				callback();
 			}
@@ -482,7 +586,8 @@ function gf_reset_to_default(targetId, defaultValue){
 			// Check for Single Product & Shipping input and force visual price update.
 			if( gf_is_hidden_pricing_input( element ) ) {
 				var ids = gf_get_ids_by_html_id( element.parents( '.gfield' ).attr( 'id' ) );
-				jQuery( '#input_' + ids[1] + '_' + ids[2] ).text( gformFormatMoney( element.val() ) );
+				jQuery( '#input_' + ids[0] + '_' + ids[1] ).text( gformFormatMoney( element.val() ) );
+				element.val( gformFormatMoney( element.val() ) );
 			}
 		}
 		else{
@@ -521,13 +626,13 @@ function gf_reset_to_default(targetId, defaultValue){
 
 function gf_is_hidden_pricing_input( element ) {
 
-	if( element.attr( 'type' ) !== 'hidden' ) {
-		return false;
-	}
-
 	// Check for Single Product fields.
 	if( element.attr( 'id' ) && element.attr( 'id' ).indexOf( 'ginput_base_price' ) === 0 ) {
 		return true;
+	}
+
+	if( element.attr( 'type' ) !== 'hidden' ) {
+		return false;
 	}
 
 	// Check for Shipping fields.

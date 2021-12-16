@@ -12,8 +12,8 @@ use Elementor\Group_Control_Border;
 use Elementor\Group_Control_Box_Shadow;
 use Elementor\Group_Control_Typography;
 use Elementor\Repeater;
-use Elementor\Scheme_Color;
-use Elementor\Scheme_Typography;
+use Elementor\Core\Schemes\Color as Scheme_Color;
+use Elementor\Core\Schemes\Typography as Scheme_Typography;
 use Elementor\Widget_Base;
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
@@ -76,6 +76,67 @@ class Jet_Unfold_Widget extends Jet_Tricks_Base {
 			)
 		);
 
+		$this->add_control(
+			'fold_scroll',
+			array(
+				'label'        => esc_html__( 'Scroll to Top After Hiding Content', 'jet-tricks' ),
+				'type'         => Controls_Manager::SWITCHER,
+				'label_on'     => esc_html__( 'Yes', 'jet-tricks' ),
+				'label_off'    => esc_html__( 'No', 'jet-tricks' ),
+				'return_value' => 'true',
+				'default'      => 'false',
+			)
+		);
+
+		$this->add_control(
+			'autohide',
+			array(
+				'label'        => esc_html__( 'Fold After a Specified Amount of Time', 'jet-tricks' ),
+				'type'         => Controls_Manager::SWITCHER,
+				'label_on'     => esc_html__( 'Yes', 'jet-tricks' ),
+				'label_off'    => esc_html__( 'No', 'jet-tricks' ),
+				'return_value' => 'true',
+				'default'      => 'false',
+			)
+		);
+
+		$this->add_control(
+			'autohide_time',
+			array(
+				'label'      => esc_html__( 'Autohide Time (seconds)', 'jet-tricks' ),
+				'type'       => Controls_Manager::SLIDER,
+				'size_units' => array(
+					'px',
+				),
+				'range'      => array(
+					'px' => array(
+						'min' => 1,
+						'max' => 20,
+					),
+				),
+				'default' => array(
+					'size' => 5,
+					'unit' => 'px',
+				),
+				'render_type' => 'template',
+				'condition'   => array(
+					'autohide' => 'true'
+				)
+			)
+		);
+
+		$this->add_control(
+			'hide_outside_click',
+			array(
+				'label'        => esc_html__( 'Fold Сontent on Сlick Outside Widget', 'jet-tricks' ),
+				'type'         => Controls_Manager::SWITCHER,
+				'label_on'     => esc_html__( 'Yes', 'jet-tricks' ),
+				'label_off'    => esc_html__( 'No', 'jet-tricks' ),
+				'return_value' => 'true',
+				'default'      => 'false',
+			)
+		);
+
 		$this->add_responsive_control(
 			'mask_height',
 			array(
@@ -94,7 +155,11 @@ class Jet_Unfold_Widget extends Jet_Tricks_Base {
 					'size' => 50,
 					'unit' => 'px',
 				),
-				'render_type' => 'template',
+				'selectors'  => array(
+					'{{WRAPPER}} ' . $css_scheme['instance'] . ':not(.jet-unfold-state) ' . $css_scheme['content'] => 'max-height: {{SIZE}}{{UNIT}};',
+				),
+				'render_type'        => 'template',
+				'frontend_available' => true,
 			)
 		);
 
@@ -153,6 +218,7 @@ class Jet_Unfold_Widget extends Jet_Tricks_Base {
 					'size' => 500,
 					'unit' => 'ms',
 				),
+				'frontend_available' => true,
 			)
 		);
 
@@ -173,6 +239,7 @@ class Jet_Unfold_Widget extends Jet_Tricks_Base {
 					'easeInOutCirc' => esc_html__( 'InOutCirc', 'jet-tricks' ),
 					'easeInOutBack' => esc_html__( 'InOutBack', 'jet-tricks' ),
 				),
+				'frontend_available' => true,
 			)
 		);
 
@@ -202,6 +269,7 @@ class Jet_Unfold_Widget extends Jet_Tricks_Base {
 					'size' => 300,
 					'unit' => 'ms',
 				),
+				'frontend_available' => true,
 			)
 		);
 
@@ -222,6 +290,7 @@ class Jet_Unfold_Widget extends Jet_Tricks_Base {
 					'easeInOutCirc' => esc_html__( 'InOutCirc', 'jet-tricks' ),
 					'easeInOutBack' => esc_html__( 'InOutBack', 'jet-tricks' ),
 				),
+				'frontend_available' => true,
 			)
 		);
 
@@ -277,10 +346,12 @@ class Jet_Unfold_Widget extends Jet_Tricks_Base {
 			'template_id',
 			array(
 				'label'       => esc_html__( 'Choose Template', 'jet-tricks' ),
-				'label_block' => 'true',
-				'type'        => Controls_Manager::SELECT,
-				'default'     => '',
-				'options'     => $this->get_elementor_templates_options(),
+				'type'        => 'jet-query',
+				'query_type'  => 'elementor_templates',
+				'edit_button' => array(
+					'active' => true,
+					'label'  => __( 'Edit Template', 'jet-tricks' ),
+				),
 				'condition'   => array(
 					'content_type' => 'template',
 				),
@@ -340,7 +411,7 @@ class Jet_Unfold_Widget extends Jet_Tricks_Base {
 				'skin'             => 'inline',
 				'fa4compatibility' => 'button_fold_icon',
 				'default'          => array(
-					'value'   => 'fas fa-chevron-down',
+					'value'   => 'fas fa-chevron-up',
 					'library' => 'fa-solid',
 				),
 				'render_type'      => 'template',
@@ -353,6 +424,7 @@ class Jet_Unfold_Widget extends Jet_Tricks_Base {
 				'label'   => esc_html__( 'Fold Text', 'jet-tricks' ),
 				'type'    => Controls_Manager::TEXT,
 				'default' => esc_html__( 'Hide', 'jet-tricks' ),
+				'dynamic' => array( 'active' => true ),
 			)
 		);
 
@@ -374,7 +446,7 @@ class Jet_Unfold_Widget extends Jet_Tricks_Base {
 				'skin'             => 'inline',
 				'fa4compatibility' => 'button_unfold_icon',
 				'default'          => array(
-					'value'   => 'fas fa-chevron-up',
+					'value'   => 'fas fa-chevron-down',
 					'library' => 'fa-solid',
 				),
 				'render_type'      => 'template',
@@ -387,6 +459,7 @@ class Jet_Unfold_Widget extends Jet_Tricks_Base {
 				'label'   => esc_html__( 'Unfold Text', 'jet-tricks' ),
 				'type'    => Controls_Manager::TEXT,
 				'default' => esc_html__( 'Show', 'jet-tricks' ),
+				'dynamic' => array( 'active' => true ),
 			)
 		);
 
@@ -862,17 +935,19 @@ class Jet_Unfold_Widget extends Jet_Tricks_Base {
 	 */
 	protected function render() {
 
-		$settings = $this->get_settings();
+		$settings = $this->get_settings_for_display();
 
 		$json_settings = array(
-			'height'          => $settings['mask_height'],
-			'heightTablet'    => $settings['mask_height_tablet'],
-			'heightMobile'    => $settings['mask_height_mobile'],
-			'separatorHeight' => $settings['separator_height'],
-			'unfoldDuration'  => $settings['unfold_duration'],
-			'foldDuration'    => $settings['fold_duration'],
-			'unfoldEasing'    => $settings['unfold_easing'],
-			'foldEasing'      => $settings['fold_easing'],
+			'height'           => $settings['mask_height'],
+			'separatorHeight'  => $settings['separator_height'],
+			'unfoldDuration'   => $settings['unfold_duration'],
+			'foldDuration'     => $settings['fold_duration'],
+			'unfoldEasing'     => $settings['unfold_easing'],
+			'foldEasing'       => $settings['fold_easing'],
+			'foldScrolling'    => $settings['fold_scroll'],
+			'hideOutsideClick' => $settings['hide_outside_click'],
+			'autoHide'         => $settings['autohide'],
+			'autoHideTime'     => ! empty( $settings['autohide_time'] ) ? $settings['autohide_time'] : ''
 		);
 
 		$this->add_render_attribute( 'instance', array(
@@ -911,7 +986,7 @@ class Jet_Unfold_Widget extends Jet_Tricks_Base {
 			case 'template':
 				$template_id = $settings['template_id'];
 
-				if ( '' !== $template_id ) {
+				if ( ! empty( $template_id ) ) {
 
 					// for multi-language plugins
 					$template_id = apply_filters( 'jet-tricks/widgets/template_id', $template_id, $this );
@@ -946,13 +1021,10 @@ class Jet_Unfold_Widget extends Jet_Tricks_Base {
 		$button_icon      = $this->__get_icon( $button_icon_key, $settings );
 		$button_icon_html = sprintf( '<span class="jet-unfold__button-icon jet-tricks-icon">%s</span>', $button_icon );
 
-		$button_text_html = '';
-
-		if ( ! empty( $settings['button_unfold_text'] ) && ! empty( $settings['button_fold_text'] ) ) {
-			$button_text = ! filter_var( $settings['fold'], FILTER_VALIDATE_BOOLEAN ) ? $settings['button_unfold_text'] : $settings['button_fold_text'];
-
-			$button_text_html = sprintf( '<span class="jet-unfold__button-text">%1$s</span>', $button_text );
-		}
+		$fold_text        = ! empty( $settings['button_fold_text'] ) ? $settings['button_fold_text'] : '';
+		$unfold_text      = ! empty( $settings['button_unfold_text'] ) ? $settings['button_unfold_text'] : '';
+		$button_text      = ! filter_var( $settings['fold'], FILTER_VALIDATE_BOOLEAN ) ? $unfold_text : $fold_text;
+		$button_text_html = sprintf( '<span class="jet-unfold__button-text">%1$s</span>', $button_text );
 
 		?>
 		<div <?php echo $this->get_render_attribute_string( 'instance' ); ?>>

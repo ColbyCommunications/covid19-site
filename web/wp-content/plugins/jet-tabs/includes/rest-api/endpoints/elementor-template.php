@@ -55,6 +55,8 @@ class Elementor_Template extends Base {
 
 		$template_id = ! empty( $args['id'] ) ? $args['id'] : false;
 
+		$template_id = apply_filters('wpml_object_id', $template_id, 'elementor_library', true);
+
 		$dev = filter_var( $args['dev'], FILTER_VALIDATE_BOOLEAN ) ? true : false;
 
 		if ( ! $template_id ) {

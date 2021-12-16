@@ -31,13 +31,13 @@
 	.jet-subscribe-form__submit-icon {
 		color: white;
 		font-size: 15px;
-		margin-right: 10px;
+		@include margin-end(10px);
 	}
 }
 
 .jet-subscribe-form--inline-layout {
 	.jet-subscribe-form__submit {
-		margin-left: 10px;
+		@include margin-start(10px);
 	}
 }
 

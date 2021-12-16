@@ -4,7 +4,8 @@
  */
 
 $settings = $this->get_settings_for_display();
-$order    = isset( $settings['order'] ) ? esc_attr( $settings['order'] ) : 'login_register';
+
+$order = isset( $settings['order'] ) ? esc_attr( $settings['order'] ) : 'login_register';
 
 switch ( $order ) {
 	case 'register_login':

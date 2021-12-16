@@ -9,47 +9,13 @@
 .jet-blog-settings-page {
 	margin: 25px 15px 0 15px;
 
-	.cx-vui-tabs-panel {
-		> .cx-vui-subtitle {
-			padding: 20px;
-			margin-top: 20px;
-
-			&:first-child {
-				margin-top: 0;
-			}
-		}
-	}
-
-	.jet-blog-avaliable-widgets-control {
-		.cx-vui-checkgroup {
-			display: flex;
-			flex-flow: row wrap;
-
-			.cx-vui-checkbox-wrap {
-				width: 25%;
-
-				@media screen and (max-width: 1200px) {
-					width: 50%;
-				}
-
-				@media screen and (max-width: 782px) {
-					width: 100%;
-				}
-			}
-		}
-	}
-
-	&__avaliable-controls {
+	&__available-controls {
 		display: flex;
 		flex-flow: row wrap;
 	}
 
-	&__avaliable-control {
-		width: 33.3333%;
-
-		@media screen and (max-width: 1200px) {
-			width: 50%;
-		}
+	&__available-control {
+		width: 50%;
 
 		@media screen and (max-width: 782px) {
 			width: 100%;

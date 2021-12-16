@@ -12,8 +12,8 @@ use Elementor\Group_Control_Border;
 use Elementor\Group_Control_Box_Shadow;
 use Elementor\Group_Control_Typography;
 use Elementor\Repeater;
-use Elementor\Scheme_Color;
-use Elementor\Scheme_Typography;
+use Elementor\Core\Schemes\Color as Scheme_Color;
+use Elementor\Core\Schemes\Typography as Scheme_Typography;
 use Elementor\Widget_Base;
 use Elementor\Utils;
 use Elementor\Modules\DynamicTags\Module as TagsModule;
@@ -202,6 +202,24 @@ class Jet_Blocks_Auth_Links extends Jet_Blocks_Base {
 				'condition' => array(
 					'show_logout_link' => 'true',
 					'logout_redirect'  => 'custom',
+				),
+			)
+		);
+
+		$this->add_control(
+			'display_user_name',
+			array(
+				'type'    => 'select',
+				'label'   => esc_html__( 'User Name Display Format', 'jet-blocks' ),
+				'default' => 'default',
+				'options' => array(
+					'default'   => esc_html__( 'Profile Name Settings', 'jet-blocks' ),
+					'username'  => esc_html__( 'Username', 'jet-blocks' ),
+					'firstname' => esc_html__( 'First Name', 'jet-blocks' ),
+					'lastname'  => esc_html__( 'Last Name', 'jet-blocks' ),
+					'nickname'  => esc_html__( 'Nickname', 'jet-blocks' ),
+					'firstlast' => esc_html__( 'First Name - Last Name', 'jet-blocks' ),
+					'lastfirst' => esc_html__( 'Last Name - First Name', 'jet-blocks' ),
 				),
 			)
 		);
@@ -1338,10 +1356,12 @@ class Jet_Blocks_Auth_Links extends Jet_Blocks_Base {
 			return '#';
 		}
 
-		if ( false === strpos( $url, 'http' ) ) {
+		$is_elementor_action = false !== strpos( $url, 'elementor-action' );
+
+		if ( false === strpos( $url, 'http' ) && ! $is_elementor_action  ) {
 			return get_permalink( get_page_by_path( $url ) );
 		} else {
-			return esc_url( $url );
+			return $is_elementor_action ? $url : esc_url( $url );
 		}
 
 	}

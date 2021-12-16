@@ -8,6 +8,52 @@ The plugin works in tandem with Elementor live page builder, allowing to add con
 
 # ChangeLog
 
+## 2.1.4 - 19.11.2021
+* Fixed: minor JS/PHP issue
+
+## 2.1.3 - 22.10.2021
+* Fixed: minor JS/PHP issue
+
+## 2.1.2 - 08.10.2021
+* Fixed: minor JS/PHP issue
+
+## 2.1.1 - 04.09.2021
+* Added: Additional style options for mega widget
+* Fixed: minor JS/PHP issue
+
+## 2.1.0 - 09.09.2021
+* Added: Revamp Menu feature
+* Updated: JetMenu refactoring and reengineering code
+* Updated: Brand new Mega Menu widget
+* Updated: Admin panel UI
+* Fixed: minor JS/PHP issue
+
+## 2.0.9 - 03.03.2021
+* Fixed: Elementor 3.1.2 compatibility issue
+
+## 2.0.8 - 18.11.2020
+* Updated: JetDashboard Module to v2.0.4
+* Added: Woocommerse compatibility integration module
+
+## 2.0.7 - 3.11.2020
+* Updated: JetDashboard Module to v2.0.2
+* Added: Use cache for tempate content option
+* Fixed: iconpicker control iconset visible bug
+* Fixed: RTL megamenu container position relative to item
+* Fixed: WPML menu language swither for mobile menu
+* Fixed: Elementor custom fonts console error (https://github.com/Crocoblock/suggestions/issues/1996)
+
+## 2.0.6 - 6.10.2020
+* Updated: JetDashboard Module to v2.0.0
+
+## 2.0.5 - 20.07.2020
+* Added: Sub items dropdown layout for mobile view
+* Added: Close After link navigation option for mobile menu
+* Added: item attr compatibility for mobile menu items
+* Added: keyboard compatibility for mobile menu instance
+* Updated: Mobile view toggle button loader
+* Fixed: minor JS/PHP issue
+
 ## 2.0.4 - 24.04.2020
 * Added: Menu item icon svg option
 * Fixed: minor JS/PHP issue

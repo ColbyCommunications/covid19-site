@@ -15,21 +15,34 @@
 			this.initNavItemsSettingsInstance();
 			this.initTriggers();
 			this.initEvents();
-
 		},
 
 		initEvents: function() {
-			$( document ).on( 'click.jetMenuAdmin', '.jet-menu-item-trigger', this.openItemSettingPopup );
+			$( document ).on( 'click.jetMenuAdmin', '.jet-menu-item-settings__trigger', this.openItemSettingPopup );
 		},
 
 		initTriggers: function() {
 
-			$( '#menu-to-edit .menu-item' ).each( function() {
-				var $this = $( this ),
-					depth = JetMenuNavSettings.getItemDepth( $this ),
-					id    = JetMenuNavSettings.getItemId( $this );
+			let itemsSettings = navSettingsConfig.itemsSettings;
 
-				$this.find( '.item-title' ).append( `<span class="jet-menu-item-trigger" data-item-id="${ id }" data-item-depth="${ depth }">${ navSettingsConfig.labels.itemTriggerLabel }</span>` );
+			$( '#menu-to-edit .menu-item' ).each( function() {
+				let $this           = $( this ),
+					depth           = JetMenuNavSettings.getItemDepth( $this ),
+					id              = JetMenuNavSettings.getItemId( $this ),
+					infoTemplate    = '';
+
+				$this.addClass( 'jet-menu-item' );
+
+				if ( itemsSettings.hasOwnProperty( id ) && itemsSettings[ id ].hasOwnProperty( 'enabled' ) ) {
+					if ( 'true' === itemsSettings[ id ][ 'enabled' ] ) {
+						infoTemplate = `<span class="jet-menu-item-settings__info-label mega-enabled">${ navSettingsConfig.labels.itemMegaEnableLabel }</span>`;
+					}
+				}
+
+				let triggerTemplate = `<span class="jet-menu-item-settings__trigger" data-item-id="${ id }" data-item-depth="${ depth }">${ navSettingsConfig.labels.itemTriggerLabel }</span>`;
+
+				//$this.find( '.item-title' ).append( `<span class="jet-menu-item-settings"><span class="jet-menu-item-settings__info">${ infoTemplate }</span>${ triggerTemplate }</span>` );
+				$this.append( `<span class="jet-menu-item-settings"><span class="jet-menu-item-settings__info">${ infoTemplate }</span>${ triggerTemplate }</span>` );
 			});
 
 		},

@@ -13,7 +13,7 @@ if ( ! empty( $settings['play_button_hover_animation'] ) ) {
 
 <div <?php $this->print_render_attribute_string( 'play_button' ); ?>><?php
 	if ( 'icon' === $settings['play_button_type'] ) {
-		$this->__icon( 'play_button_icon', '<span class="jet-elements-icon jet-video__play-button-icon">%s</span>' );
+		$this->_icon( 'play_button_icon', '<span class="jet-elements-icon jet-video__play-button-icon">%s</span>' );
 	} elseif ( 'image' === $settings['play_button_type'] ) {
 		echo jet_elements_tools()->get_image_by_url(
 			$settings['play_button_image']['url'],

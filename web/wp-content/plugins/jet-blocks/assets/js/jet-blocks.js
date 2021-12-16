@@ -4,6 +4,12 @@
 
 	var JetBlocks = {
 
+		addedScripts: {},
+
+		addedStyles: {},
+
+		addedAssetsPromises: [],
+
 		init: function() {
 
 			var widgets = {
@@ -11,7 +17,7 @@
 				'jet-search.default' : JetBlocks.searchBox,
 				'jet-auth-links.default' : JetBlocks.authLinks,
 				'jet-hamburger-panel.default' : JetBlocks.hamburgerPanel,
-				'jet-blocks-cart.default': JetBlocks.refreshCart
+				'jet-blocks-cart.default': JetBlocks.wooCard,
 			};
 
 			$.each( widgets, function( widget, callback ) {
@@ -22,37 +28,109 @@
 				.on( 'click.jetBlocks', '.jet-search__popup-trigger', JetBlocks.searchPopupSwitch )
 				.on( 'click.jetBlocks', '.jet-search__popup-close', JetBlocks.searchPopupSwitch );
 
+			$( window ).on( 'jet-menu/ajax/frontend-init/before', function () {
+				$( document.body ).trigger( 'wc_fragment_refresh' );
+			} );
+
 			elementorFrontend.hooks.addAction( 'frontend/element_ready/section', JetBlocks.setStickySection );
 
-			$( document ).on( 'ready', JetBlocks.stickySection );
+			$( JetBlocks.stickySection );
 		},
 
-		refreshCart: function( $scope ) {
+		wooCard: function( $scope ) {
 
-			if ( ! elementor ) {
-				return;
+			if ( window.JetBlocksEditor &&  window.JetBlocksEditor.activeSection ) {
+				let section = window.JetBlocksEditor.activeSection,
+					isCart = -1 !== [ 'cart_list_style', 'cart_list_items_style', 'cart_buttons_style' ].indexOf( section );
+
+				$( '.widget_shopping_cart_content' ).empty();
+				$( document.body ).trigger( 'wc_fragment_refresh' );
 			}
 
-			if ( ! window.JetBlocksEditor ) {
-				return;
+			var $target         =  $( '.jet-blocks-cart', $scope ),
+				$toggle         = $( '.jet-blocks-cart__heading-link', $target ),
+				settings        = $target.data( 'settings' ),
+				firstMouseEvent = true;
+
+			switch ( settings['triggerType' ] ) {
+				case 'hover':
+					hoverType();
+				break;
+				case 'click':
+					clickType();
+				break;
 			}
 
-			if ( ! window.JetBlocksEditor.activeSection ) {
-				return;
+			$target.on( 'click', '.jet-blocks-cart__close-button', function( event ) {
+				if ( ! $target.hasClass( 'jet-cart-open-proccess' ) ) {
+					$target.toggleClass( 'jet-cart-open' );
+				}
+			} );
+
+			function hoverType() {
+
+				if ( 'ontouchend' in window || 'ontouchstart' in window ) {
+					$target.on( 'touchstart', function( event ) {
+						scrollOffset = $( window ).scrollTop();
+					} );
+
+					$target.on( 'touchend', function( event ) {
+
+						if ( scrollOffset !== $( window ).scrollTop() ) {
+							return false;
+						}
+
+						var $this = $( this );
+
+						if ( $this.hasClass( 'jet-cart-open-proccess' ) ) {
+							return;
+						}
+
+						setTimeout( function() {
+							$this.toggleClass( 'jet-cart-open' );
+						}, 10 );
+					} );
+
+					$( document ).on( 'touchend', function( event ) {
+
+						if ( $( event.target ).closest( $target ).length ) {
+							return;
+						}
+
+						if ( $target.hasClass( 'jet-cart-open-proccess' ) ) {
+							return;
+						}
+
+						if ( ! $target.hasClass( 'jet-cart-open' ) ) {
+							return;
+						}
+
+						$target.removeClass( 'jet-cart-open' );
+					} );
+				} else {
+
+					$target.on( 'mouseenter mouseleave', function( event ) {
+
+						if ( ! $( this ).hasClass( 'jet-cart-open-proccess' ) && 'mouseenter' === event.type ) {
+							$( this ).addClass( 'jet-cart-open' );
+						}
+
+						if ( ! $( this ).hasClass( 'jet-cart-open-proccess' ) && 'mouseleave' === event.type ) {
+							$( this ).removeClass( 'jet-cart-open' );
+						}
+					} );
+				}
 			}
 
-			var section = window.JetBlocksEditor.activeSection;
-			var isCart = -1 !== [ 'cart_list_style', 'cart_list_items_style', 'cart_buttons_style' ].indexOf( section );
+			function clickType() {
+				$toggle.on( 'click', function( event ) {
+					event.preventDefault();
 
-			if ( isCart ) {
-				$scope.find( '.jet-blocks-cart' ).addClass( 'jet-cart-hover' );
-			} else {
-				$scope.find( '.jet-blocks-cart' ).removeClass( 'jet-cart-hover' );
+					if ( ! $target.hasClass( 'jet-cart-open-proccess' ) ) {
+						$target.toggleClass( 'jet-cart-open' );
+					}
+				} );
 			}
-
-			$( '.widget_shopping_cart_content' ).empty();
-			$( document.body ).trigger( 'wc_fragment_refresh' );
-
 		},
 
 		navMenu: function( $scope ) {
@@ -91,6 +169,10 @@
 				$( document ).on( 'touchend.jetNavMenu', hideSubMenus );
 			} else {
 				$scope.find( '.jet-nav:not(.jet-nav--vertical-sub-bottom)' ).on( 'click.jetNavMenu', '.menu-item > a', clickItem );
+			}
+
+			if ( ! JetBlocks.isEditMode() ) {
+				initMenuAnchorsHandler();
 			}
 
 			function touchStartItem( event ) {
@@ -335,6 +417,54 @@
 			}
 			// END Mobile Layout: Full-width
 
+			// Menu Anchors Handler
+			function initMenuAnchorsHandler() {
+				var $anchorLinks = $scope.find( '.menu-item-link[href*="#"]' );
+
+				if ( $anchorLinks[0] ) {
+					$anchorLinks.each( function() {
+						if ( '' !== this.hash && location.pathname === this.pathname ) {
+							menuAnchorHandler( $( this ) );
+						}
+					} );
+				}
+			}
+
+			function menuAnchorHandler( $anchorLink ) {
+				var anchorHash = $anchorLink[0].hash,
+					activeClass = 'current-menu-item',
+					rootMargin = '-50% 0% -50%',
+					$anchor;
+
+				try {
+					$anchor = $( decodeURIComponent( anchorHash ) );
+				} catch (e) {
+					return;
+				}
+
+				if ( !$anchor[0] ) {
+					return;
+				}
+
+				if ( $anchor.hasClass( 'elementor-menu-anchor' ) ) {
+					rootMargin = '300px 0% -300px';
+				}
+
+				var observer = new IntersectionObserver( function( entries ) {
+						if ( entries[0].isIntersecting ) {
+							$anchorLink.parent( '.menu-item' ).addClass( activeClass );
+						} else {
+							$anchorLink.parent( '.menu-item' ).removeClass( activeClass );
+						}
+					},
+					{
+						rootMargin: rootMargin
+					}
+				);
+
+				observer.observe( $anchor[0] );
+			}
+
 			if ( JetBlocks.isEditMode() ) {
 				$scope.data( 'initialized', false );
 			}
@@ -434,10 +564,12 @@
 				$cover        = $( '.jet-hamburger-panel__cover', $scope ),
 				$inner        = $( '.jet-hamburger-panel__inner', $scope ),
 				$closeButton  = $( '.jet-hamburger-panel__close-button', $scope ),
+				$panelContent = $( '.jet-hamburger-panel__content', $scope),
 				scrollOffset,
 				timer,
 				editMode      = Boolean( elementorFrontend.isEditMode() ),
-				$html         = $( 'html' );
+				$html         = $( 'html' ),
+				settings      = $panel.data( 'settings' ) || {};
 
 			if ( 'ontouchend' in window || 'ontouchstart' in window ) {
 				$toggleButton.on( 'touchstart', function( event ) {
@@ -445,7 +577,6 @@
 				} );
 
 				$toggleButton.on( 'touchend', function( event ) {
-
 					if ( scrollOffset !== $( window ).scrollTop() ) {
 						return false;
 					}
@@ -459,6 +590,11 @@
 							$panel.addClass( 'open-state' );
 						}, 10 );
 						$html.addClass( 'jet-hamburger-panel-visible' );
+						JetBlocks.initAnimationsHandlers( $inner );
+
+						if ( settings['ajaxTemplate'] ) {
+							ajaxLoadTemplate( $panelContent );
+						}
 					} else {
 						$panel.removeClass( 'open-state' );
 						$html.removeClass( 'jet-hamburger-panel-visible' );
@@ -471,6 +607,11 @@
 					if ( ! $panel.hasClass( 'open-state' ) ) {
 						$panel.addClass( 'open-state' );
 						$html.addClass( 'jet-hamburger-panel-visible' );
+						JetBlocks.initAnimationsHandlers( $inner );
+
+						if ( settings['ajaxTemplate'] ) {
+							ajaxLoadTemplate( $panelContent );
+						}
 					} else {
 						$panel.removeClass( 'open-state' );
 						$html.removeClass( 'jet-hamburger-panel-visible' );
@@ -483,6 +624,7 @@
 				if ( ! $panel.hasClass( 'open-state' ) ) {
 					$panel.addClass( 'open-state' );
 					$html.addClass( 'jet-hamburger-panel-visible' );
+					JetBlocks.initAnimationsHandlers( $inner );
 				} else {
 					$panel.removeClass( 'open-state' );
 					$html.removeClass( 'jet-hamburger-panel-visible' );
@@ -509,6 +651,133 @@
 				event.stopPropagation();
 			} );
 
+
+
+			/**
+			 * [ajaxLoadTemplate description]
+			 * @param  {[type]} $index [description]
+			 * @return {[type]}        [description]
+			 */
+			function ajaxLoadTemplate( $panelContent ) {
+				var $contentHolder = $panelContent,
+					templateLoaded = $contentHolder.data( 'template-loaded' ) || false,
+					templateId     = $contentHolder.data( 'template-id' ),
+					loader         = $( '.jet-hamburger-panel-loader', $contentHolder );
+
+				if ( templateLoaded ) {
+					return false;
+				}
+
+				$( window ).trigger( 'jet-blocks/ajax-load-template/before', {
+					target: $panel,
+					contentHolder: $contentHolder
+				} );
+
+				$contentHolder.data( 'template-loaded', true );
+
+				$.ajax( {
+					type: 'GET',
+					url: window.JetHamburgerPanelSettings.templateApiUrl,
+					dataType: 'json',
+					data: {
+						'id': templateId,
+						'dev': window.JetHamburgerPanelSettings.devMode
+					},
+					success: function( responce, textStatus, jqXHR ) {
+						var templateContent     = responce['template_content'],
+							templateScripts     = responce['template_scripts'],
+							templateStyles      = responce['template_styles'];
+
+						for ( var scriptHandler in templateScripts ) {
+							JetBlocks.addedAssetsPromises.push( JetBlocks.loadScriptAsync( scriptHandler, templateScripts[ scriptHandler ] ) );
+						}
+
+						for ( var styleHandler in templateStyles ) {
+							JetBlocks.addedAssetsPromises.push( JetBlocks.loadStyle( styleHandler, templateStyles[ styleHandler ] ) );
+						}
+
+						Promise.all( JetBlocks.addedAssetsPromises ).then( function( value ) {
+							loader.remove();
+							$contentHolder.append( templateContent );
+							JetBlocks.elementorFrontendInit( $contentHolder );
+
+							$( window ).trigger( 'jet-blocks/ajax-load-template/after', {
+								target: $panel,
+								contentHolder: $contentHolder,
+								responce: responce
+							} );
+						}, function( reason ) {
+							console.log( 'Script Loaded Error' );
+						});
+					}
+				} );//end
+			}
+		},
+
+		loadStyle: function( style, uri ) {
+
+			if ( JetBlocks.addedStyles.hasOwnProperty( style ) && JetBlocks.addedStyles[ style ] ===  uri) {
+				return style;
+			}
+
+			if ( !uri ) {
+				return;
+			}
+
+			JetBlocks.addedStyles[ style ] = uri;
+
+			return new Promise( function( resolve, reject ) {
+				var tag = document.createElement( 'link' );
+
+				tag.id      = style;
+				tag.rel     = 'stylesheet';
+				tag.href    = uri;
+				tag.type    = 'text/css';
+				tag.media   = 'all';
+				tag.onload  = function() {
+					resolve( style );
+				};
+
+				document.head.appendChild( tag );
+			});
+		},
+
+		loadScriptAsync: function( script, uri ) {
+
+			if ( JetBlocks.addedScripts.hasOwnProperty( script ) ) {
+				return script;
+			}
+
+			if ( !uri ) {
+				return;
+			}
+
+			JetBlocks.addedScripts[ script ] = uri;
+
+			return new Promise( function( resolve, reject ) {
+				var tag = document.createElement( 'script' );
+
+				tag.src    = uri;
+				tag.async  = true;
+				tag.onload = function() {
+					resolve( script );
+				};
+
+				document.head.appendChild( tag );
+			});
+		},
+
+		initAnimationsHandlers: function( $selector ) {
+			$selector.find( '[data-element_type]' ).each( function() {
+				var $this       = $( this ),
+					elementType = $this.data( 'element_type' );
+
+				if ( !elementType ) {
+					return;
+				}
+
+				window.elementorFrontend.hooks.doAction( 'frontend/element_ready/global', $this, $ );
+			} );
 		},
 
 		searchPopupSwitch: function( event ) {
@@ -788,9 +1057,39 @@
 
 		isEditMode: function() {
 			return Boolean( elementorFrontend.isEditMode() );
+		},
+
+		elementorFrontendInit: function( $container ) {
+
+			$container.find( '[data-element_type]' ).each( function() {
+				var $this       = $( this ),
+					elementType = $this.data( 'element_type' );
+
+				if ( ! elementType ) {
+					return;
+				}
+
+				try {
+					if ( 'widget' === elementType ) {
+						elementType = $this.data( 'widget_type' );
+						window.elementorFrontend.hooks.doAction( 'frontend/element_ready/widget', $this, $ );
+					}
+
+					window.elementorFrontend.hooks.doAction( 'frontend/element_ready/global', $this, $ );
+					window.elementorFrontend.hooks.doAction( 'frontend/element_ready/' + elementType, $this, $ );
+
+				} catch ( err ) {
+					console.log(err);
+
+					$this.remove();
+
+					return false;
+				}
+			} );
+
 		}
 	};
 
 	$( window ).on( 'elementor/frontend/init', JetBlocks.init );
 
-}( jQuery, window.elementorFrontend, window.elementor ) );
+}( jQuery, window.elementorFrontend, window.elementor, window.JetHamburgerPanelSettings ) );

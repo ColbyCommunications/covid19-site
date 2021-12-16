@@ -12,8 +12,8 @@ use Elementor\Group_Control_Border;
 use Elementor\Group_Control_Box_Shadow;
 use Elementor\Group_Control_Typography;
 use Elementor\Repeater;
-use Elementor\Scheme_Color;
-use Elementor\Scheme_Typography;
+use Elementor\Core\Schemes\Color as Scheme_Color;
+use Elementor\Core\Schemes\Typography as Scheme_Typography;
 use Elementor\Widget_Base;
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
@@ -129,6 +129,7 @@ class Jet_Elements_Bar_Chart extends Jet_Elements_Base {
 				'type'        => Controls_Manager::NUMBER,
 				'default'     => 10,
 				'description' => esc_html__( 'User defined maximum number for the scale, overrides maximum value from data.', 'jet-elements' ),
+				'dynamic' => array( 'active' => true ),
 			)
 		);
 		
@@ -140,6 +141,7 @@ class Jet_Elements_Bar_Chart extends Jet_Elements_Base {
 				'default'     => 1,
 				'step'        => 1,
 				'description' => esc_html__( 'User defined fixed step size for the scale.', 'jet-elements' ),
+				'dynamic' => array( 'active' => true ),
 			)
 		);
 
@@ -220,7 +222,7 @@ class Jet_Elements_Bar_Chart extends Jet_Elements_Base {
 			'chart_data',
 			array(
 				'type'        => Controls_Manager::REPEATER,
-				'fields'      => array_values( $repeater->get_controls() ),
+				'fields'      => $repeater->get_controls(),
 				'default'     => array(
 					array(
 						'label'              => esc_html__( 'Google', 'jet-elements' ),
@@ -362,12 +364,61 @@ class Jet_Elements_Bar_Chart extends Jet_Elements_Base {
 			)
 		);
 
+		$this->add_control(
+			'chart_tooltips_heading',
+			array(
+				'label'     => esc_html__( 'Tooltips', 'jet-elements' ),
+				'type'      => Controls_Manager::HEADING,
+				'separator' => 'before',
+				'condition' => array(
+					'chart_tooltip_enabled'  => 'true',
+				),
+			)
+		);
+
+		$this->add_control(
+			'chart_tooltip_prefix',
+			array(
+				'label'     => esc_html__( 'Prefix', 'jet-elements' ),
+				'type'      => Controls_Manager::TEXT,
+				'dynamic'   => array( 'active' => true ),
+				'condition' => array(
+					'chart_tooltip_enabled'  => 'true',
+				),
+			)
+		);
+
+		$this->add_control(
+			'chart_tooltip_suffix',
+			array(
+				'label'     => esc_html__( 'Suffix', 'jet-elements' ),
+				'type'      => Controls_Manager::TEXT,
+				'dynamic'   => array( 'active' => true ),
+				'condition' => array(
+					'chart_tooltip_enabled'  => 'true',
+				),
+			)
+		);
+
+		$this->add_control(
+			'chart_tooltip_separator',
+			array(
+				'label'     => esc_html__( 'Thousand Separator', 'jet-elements' ),
+				'type'      => Controls_Manager::TEXT,
+				'default'   => '',
+				'dynamic'   => array( 'active' => true ),
+				'condition' => array(
+					'chart_tooltip_enabled'  => 'true',
+				),
+			)
+		);
+
 		$this->end_controls_section();
 		
 		/**
 		 * `Chart` Style Tab Section
 		 */
-		$this->__start_controls_section(
+		$this->_start_controls_section(
 			'section_chart_style',
 			array(
 				'label' => esc_html__( 'Chart', 'jet-elements' ),
@@ -375,7 +426,7 @@ class Jet_Elements_Bar_Chart extends Jet_Elements_Base {
 			)
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'chart_border_width',
 			array(
 				'label' => esc_html__( 'Border Width', 'jet-elements' ),
@@ -390,7 +441,7 @@ class Jet_Elements_Bar_Chart extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'chart_grid_color',
 			array(
 				'label'   => esc_html__( 'Grid Color', 'jet-elements' ),
@@ -400,12 +451,12 @@ class Jet_Elements_Bar_Chart extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__end_controls_section();
+		$this->_end_controls_section();
 		
 		/**
 		 * `Labels` Style Section
 		 */
-		$this->__start_controls_section(
+		$this->_start_controls_section(
 			'section_chart_labels_style',
 			array(
 				'label'     => esc_html__( 'Labels', 'jet-elements' ),
@@ -416,7 +467,7 @@ class Jet_Elements_Bar_Chart extends Jet_Elements_Base {
 			)
 		);
 		
-		$this->__add_control(
+		$this->_add_control(
 			'chart_labels_font_family',
 			array(
 				'label'   => esc_html__( 'Font Family', 'jet-elements' ),
@@ -426,7 +477,7 @@ class Jet_Elements_Bar_Chart extends Jet_Elements_Base {
 			50
 		);
 		
-		$this->__add_control(
+		$this->_add_control(
 			'chart_labels_font_size',
 			array(
 				'label'   => esc_html__( 'Font Size', 'jet-elements' ),
@@ -449,7 +500,7 @@ class Jet_Elements_Bar_Chart extends Jet_Elements_Base {
 			$typo_weight_options[ $weight ] = ucfirst( $weight );
 		}
 		
-		$this->__add_control(
+		$this->_add_control(
 			'chart_labels_font_weight',
 			array(
 				'label'   => esc_html__( 'Font Weight', 'jet-elements' ),
@@ -460,7 +511,7 @@ class Jet_Elements_Bar_Chart extends Jet_Elements_Base {
 			50
 		);
 		
-		$this->__add_control(
+		$this->_add_control(
 			'chart_labels_font_style',
 			array(
 				'label'   => esc_html__( 'Font Style', 'jet-elements' ),
@@ -476,7 +527,7 @@ class Jet_Elements_Bar_Chart extends Jet_Elements_Base {
 			50
 		);
 		
-		$this->__add_control(
+		$this->_add_control(
 			'chart_labels_font_color',
 			array(
 				'label' => esc_html__( 'Font Color', 'jet-elements' ),
@@ -485,12 +536,12 @@ class Jet_Elements_Bar_Chart extends Jet_Elements_Base {
 			25
 		);
 		
-		$this->__end_controls_section();
+		$this->_end_controls_section();
 
 		/**
 		 * `Legend` Style Section
 		 */
-		$this->__start_controls_section(
+		$this->_start_controls_section(
 			'section_chart_legend_style',
 			array(
 				'label'     => esc_html__( 'Legend', 'jet-elements' ),
@@ -501,7 +552,7 @@ class Jet_Elements_Bar_Chart extends Jet_Elements_Base {
 			)
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'chart_legend_box_width',
 			array(
 				'label' => esc_html__( 'Box Width', 'jet-elements' ),
@@ -516,7 +567,7 @@ class Jet_Elements_Bar_Chart extends Jet_Elements_Base {
 			25
 		);
 		
-		$this->__add_control(
+		$this->_add_control(
 			'chart_legend_font_family',
 			array(
 				'label'   => esc_html__( 'Font Family', 'jet-elements' ),
@@ -526,7 +577,7 @@ class Jet_Elements_Bar_Chart extends Jet_Elements_Base {
 			50
 		);
 		
-		$this->__add_control(
+		$this->_add_control(
 			'chart_legend_font_size',
 			array(
 				'label' => esc_html__( 'Font Size', 'jet-elements' ),
@@ -541,7 +592,7 @@ class Jet_Elements_Bar_Chart extends Jet_Elements_Base {
 			50
 		);
 		
-		$this->__add_control(
+		$this->_add_control(
 			'chart_legend_font_weight',
 			array(
 				'label'   => esc_html__( 'Font Weight', 'jet-elements' ),
@@ -552,7 +603,7 @@ class Jet_Elements_Bar_Chart extends Jet_Elements_Base {
 			50
 		);
 		
-		$this->__add_control(
+		$this->_add_control(
 			'chart_legend_font_style',
 			array(
 				'label'   => esc_html__( 'Font Style', 'jet-elements' ),
@@ -568,7 +619,7 @@ class Jet_Elements_Bar_Chart extends Jet_Elements_Base {
 			50
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'chart_legend_font_color',
 			array(
 				'label' => esc_html__( 'Font Color', 'jet-elements' ),
@@ -577,12 +628,12 @@ class Jet_Elements_Bar_Chart extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__end_controls_section();
+		$this->_end_controls_section();
 
 		/**
 		 * `Tooltips` Style Section
 		 */
-		$this->__start_controls_section(
+		$this->_start_controls_section(
 			'section_chart_tooltips_style',
 			array(
 				'label'     => esc_html__( 'Tooltips', 'jet-elements' ),
@@ -593,7 +644,7 @@ class Jet_Elements_Bar_Chart extends Jet_Elements_Base {
 			)
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'chart_tooltip_bg_color',
 			array(
 				'label' => esc_html__( 'Background Color', 'jet-elements' ),
@@ -602,7 +653,7 @@ class Jet_Elements_Bar_Chart extends Jet_Elements_Base {
 			25
 		);
 		
-		$this->__add_control(
+		$this->_add_control(
 			'chart_tooltip_style_title_heading',
 			array(
 				'label'     => esc_html__( 'Title', 'jet-elements' ),
@@ -612,7 +663,7 @@ class Jet_Elements_Bar_Chart extends Jet_Elements_Base {
 			25
 		);
 		
-		$this->__add_control(
+		$this->_add_control(
 			'chart_tooltip_title_font_family',
 			array(
 				'label'   => esc_html__( 'Font Family', 'jet-elements' ),
@@ -622,7 +673,7 @@ class Jet_Elements_Bar_Chart extends Jet_Elements_Base {
 			50
 		);
 		
-		$this->__add_control(
+		$this->_add_control(
 			'chart_tooltip_title_font_size',
 			array(
 				'label' => esc_html__( 'Font Size', 'jet-elements' ),
@@ -637,7 +688,7 @@ class Jet_Elements_Bar_Chart extends Jet_Elements_Base {
 			50
 		);
 		
-		$this->__add_control(
+		$this->_add_control(
 			'chart_tooltip_title_font_weight',
 			array(
 				'label'   => esc_html__( 'Font Weight', 'jet-elements' ),
@@ -648,7 +699,7 @@ class Jet_Elements_Bar_Chart extends Jet_Elements_Base {
 			50
 		);
 		
-		$this->__add_control(
+		$this->_add_control(
 			'chart_tooltip_title_font_style',
 			array(
 				'label'   => esc_html__( 'Font Style', 'jet-elements' ),
@@ -664,7 +715,7 @@ class Jet_Elements_Bar_Chart extends Jet_Elements_Base {
 			50
 		);
 		
-		$this->__add_control(
+		$this->_add_control(
 			'chart_tooltip_title_font_color',
 			array(
 				'label' => esc_html__( 'Font Color', 'jet-elements' ),
@@ -673,7 +724,7 @@ class Jet_Elements_Bar_Chart extends Jet_Elements_Base {
 			25
 		);
 		
-		$this->__add_control(
+		$this->_add_control(
 			'chart_tooltip_style_body_heading',
 			array(
 				'label'     => esc_html__( 'Body', 'jet-elements' ),
@@ -683,7 +734,7 @@ class Jet_Elements_Bar_Chart extends Jet_Elements_Base {
 			25
 		);
 		
-		$this->__add_control(
+		$this->_add_control(
 			'chart_tooltip_font_family',
 			array(
 				'label'   => esc_html__( 'Font Family', 'jet-elements' ),
@@ -693,7 +744,7 @@ class Jet_Elements_Bar_Chart extends Jet_Elements_Base {
 			50
 		);
 		
-		$this->__add_control(
+		$this->_add_control(
 			'chart_tooltip_font_size',
 			array(
 				'label' => esc_html__( 'Font Size', 'jet-elements' ),
@@ -708,7 +759,7 @@ class Jet_Elements_Bar_Chart extends Jet_Elements_Base {
 			50
 		);
 		
-		$this->__add_control(
+		$this->_add_control(
 			'chart_tooltip_font_weight',
 			array(
 				'label'   => esc_html__( 'Font Weight', 'jet-elements' ),
@@ -719,7 +770,7 @@ class Jet_Elements_Bar_Chart extends Jet_Elements_Base {
 			50
 		);
 		
-		$this->__add_control(
+		$this->_add_control(
 			'chart_tooltip_font_style',
 			array(
 				'label'   => esc_html__( 'Font Style', 'jet-elements' ),
@@ -735,7 +786,7 @@ class Jet_Elements_Bar_Chart extends Jet_Elements_Base {
 			50
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'chart_tooltip_font_color',
 			array(
 				'label' => esc_html__( 'Font Color', 'jet-elements' ),
@@ -744,20 +795,23 @@ class Jet_Elements_Bar_Chart extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__end_controls_section();
+		$this->_end_controls_section();
 	}
 	
 	/**
 	 * Render widget output on the frontend.
 	 */
 	protected function render() {
-		$this->__context = 'render';
-		$this->__open_wrap();
-		
-		$settings     = $this->get_settings_for_display();
-		$data_chart   = $this->get_chart_data();
-		$data_options = $this->get_chart_options();
-		
+		$this->_context = 'render';
+		$this->_open_wrap();
+
+		$settings          = $this->get_settings_for_display();
+		$data_chart        = $this->get_chart_data();
+		$data_options      = $this->get_chart_options();
+		$tooltip_prefix    = isset( $settings['chart_tooltip_prefix'] ) ? $settings['chart_tooltip_prefix'] : '';
+		$tooltip_suffix    = isset( $settings['chart_tooltip_suffix'] ) ? $settings['chart_tooltip_suffix'] : '';
+		$tooltip_separator = isset( $settings['chart_tooltip_separator'] ) ? $settings['chart_tooltip_separator'] : '';
+
 		$this->add_render_attribute( [
 				'container' => array(
 					'class'         => 'jet-bar-chart-container',
@@ -769,7 +823,10 @@ class Jet_Elements_Bar_Chart extends Jet_Elements_Base {
 								'datasets' => $data_chart,
 							),
 							'options' => $data_options
-						) ) )
+						) ) ),
+					'data-tooltip-prefix'    => $tooltip_prefix,
+					'data-tooltip-suffix'    => $tooltip_suffix,
+					'data-tooltip-separator' => $tooltip_separator,
 				),
 				'canvas' => array(
 					'class' => 'jet-bar-chart',
@@ -782,7 +839,7 @@ class Jet_Elements_Bar_Chart extends Jet_Elements_Base {
 			<canvas <?php echo $this->get_render_attribute_string( 'canvas' ); ?>></canvas>
 		</div>
 		<?php
-		$this->__close_wrap();
+		$this->_close_wrap();
 	}
 	
 	/**
@@ -795,6 +852,7 @@ class Jet_Elements_Bar_Chart extends Jet_Elements_Base {
 		
 		$datasets = array();
 		$chart_data = $settings['chart_data'];
+		$chart_data = apply_filters( 'jet-elements/widget/loop-items', $chart_data, 'chart_data', $this );
 		
 		foreach ( $chart_data as $item_data ) {
 			$item_data['label']                = ! empty( $item_data['label'] ) ? $item_data['label'] : '';
@@ -945,8 +1003,8 @@ class Jet_Elements_Bar_Chart extends Jet_Elements_Base {
 					'ticks'       => array(
 						'display'     => $labels_display,
 						'beginAtZero' => true,
-						'max'         => isset( $settings['axis_range'] ) ? $settings['axis_range'] : 10,
-						'stepSize'    => isset( $settings['step_size'] ) ? $settings['step_size'] : 1,
+						'max'         => isset( $settings['axis_range'] ) ? intval( $settings['axis_range'] ) : 10,
+						'stepSize'    => isset( $settings['step_size'] ) ? intval( $settings['step_size'] ) : 1,
 					),
 					'gridLines'   => array(
 						'drawBorder' => false,
@@ -957,8 +1015,8 @@ class Jet_Elements_Bar_Chart extends Jet_Elements_Base {
 					'ticks'     => array(
 						'display'     => $labels_display,
 						'beginAtZero' => true,
-						'max'         => isset( $settings['axis_range'] ) ? $settings['axis_range'] : 10,
-						'stepSize'    => isset( $settings['step_size'] ) ? $settings['step_size'] : 1,
+						'max'         => isset( $settings['axis_range'] ) ? intval( $settings['axis_range'] ) : 10,
+						'stepSize'    => isset( $settings['step_size'] ) ? intval( $settings['step_size'] ) : 1,
 					),
 					'gridLines' => array(
 						'drawBorder' => false,

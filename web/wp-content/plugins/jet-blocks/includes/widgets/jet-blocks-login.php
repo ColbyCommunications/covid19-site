@@ -12,8 +12,8 @@ use Elementor\Group_Control_Border;
 use Elementor\Group_Control_Box_Shadow;
 use Elementor\Group_Control_Typography;
 use Elementor\Repeater;
-use Elementor\Scheme_Color;
-use Elementor\Scheme_Typography;
+use Elementor\Core\Schemes\Color as Scheme_Color;
+use Elementor\Core\Schemes\Typography as Scheme_Typography;
 use Elementor\Widget_Base;
 use Elementor\Utils;
 
@@ -60,11 +60,29 @@ class Jet_Blocks_Login extends Jet_Blocks_Base {
 		);
 
 		$this->add_control(
+			'placeholder_username',
+			array(
+				'label'   => esc_html__( 'Username Placeholder', 'jet-blocks' ),
+				'type'    => Controls_Manager::TEXT,
+				'default' => '',
+			)
+		);
+
+		$this->add_control(
 			'label_password',
 			array(
 				'label'   => esc_html__( 'Password Label', 'jet-blocks' ),
 				'type'    => Controls_Manager::TEXT,
 				'default' => esc_html__( 'Password', 'jet-blocks' ),
+			)
+		);
+
+		$this->add_control(
+			'placeholder_password',
+			array(
+				'label'   => esc_html__( 'Password Placeholder', 'jet-blocks' ),
+				'type'    => Controls_Manager::TEXT,
+				'default' => '',
 			)
 		);
 
@@ -106,6 +124,9 @@ class Jet_Blocks_Login extends Jet_Blocks_Base {
 				'label'     => esc_html__( 'Redirect URL', 'jet-blocks' ),
 				'type'      => Controls_Manager::TEXT,
 				'default'   => '',
+				'dynamic'   => array(
+					'active' => true,
+				),
 				'condition' => array(
 					'login_redirect' => 'custom',
 				),
@@ -731,7 +752,7 @@ class Jet_Blocks_Login extends Jet_Blocks_Base {
 
 		$this->__context = 'render';
 
-		$settings = $this->get_settings();
+		$settings = $this->get_settings_for_display();
 
 		if ( is_user_logged_in() && ! jet_blocks_integration()->in_elementor() ) {
 
@@ -753,7 +774,7 @@ class Jet_Blocks_Login extends Jet_Blocks_Base {
 				break;
 
 			case 'custom':
-				$redirect_url = esc_url( $settings['login_redirect_url'] );
+				$redirect_url = esc_url( do_shortcode( $settings['login_redirect_url'] ) );
 				break;
 		}
 
@@ -770,7 +791,12 @@ class Jet_Blocks_Login extends Jet_Blocks_Base {
 
 		remove_filter( 'login_form_bottom', array( $this, 'add_login_fields' ) );
 
+		$username_placeholder = ! empty( $settings['placeholder_username'] ) ? $settings['placeholder_username'] : '';
+		$password_placeholder = ! empty( $settings['placeholder_password'] ) ? $settings['placeholder_password'] : '';
+
 		$login_form = preg_replace( '/action=[\'\"].*?[\'\"]/', '', $login_form );
+		$login_form = str_replace( 'id="user_login"', 'id="user_login" placeholder="' . $username_placeholder . '"', $login_form );
+		$login_form = str_replace( 'id="user_pass"', 'id="user_pass" placeholder="' . $password_placeholder . '"', $login_form );
 
 		echo '<div class="jet-login">';
 		echo $login_form;

@@ -1,6 +1,6 @@
 <?php
 /**
- * Main dashboard template
+ * Main dashboard template. Note: Legacy template
  */
 ?><div id="jet-blocks-settings-page">
 	<div class="jet-blocks-settings-page">
@@ -33,30 +33,32 @@
 				<cx-vui-tabs-panel
 					name="breadcrumb-settings"
 					label="<?php _e( 'Breadcrumb Settings', 'jet-blocks' ); ?>"
-					key="breadcrumb-settings"><?php
+					key="breadcrumb-settings">
+						<div class="cx-vui-subtitle"><?php _e( 'Taxonomy to show in breadcrumbs for content types', 'jet-blocks' ); ?></div>
 
-					$post_types = get_post_types( array( 'public' => true ), 'objects' );
+						<?php
+						$post_types = get_post_types( array( 'public' => true ), 'objects' );
 
-					if ( is_array( $post_types ) && ! empty( $post_types ) ) {
+						if ( is_array( $post_types ) && ! empty( $post_types ) ) {
 
-						foreach ( $post_types as $post_type ) {
-							$taxonomies = get_object_taxonomies( $post_type->name, 'objects' );
+							foreach ( $post_types as $post_type ) {
+								$taxonomies = get_object_taxonomies( $post_type->name, 'objects' );
 
-							if ( is_array( $taxonomies ) && ! empty( $taxonomies ) ) {
+								if ( is_array( $taxonomies ) && ! empty( $taxonomies ) ) {
 
-								$post_type_name = 'breadcrumbs_taxonomy_' . $post_type->name;
+									$post_type_name = 'breadcrumbs_taxonomy_' . $post_type->name;
 
-								?><cx-vui-select
-									name="<?php echo $post_type_name; ?>"
-									label="<?php echo $post_type->label; ?>"
-									:wrapper-css="[ 'equalwidth' ]"
-									size="fullwidth"
-									:options-list="pageOptions['<?php echo $post_type_name; ?>']['options']"
-									v-model="pageOptions['<?php echo $post_type_name; ?>']['value']"
-								></cx-vui-select><?php
+									?><cx-vui-select
+										name="<?php echo $post_type_name; ?>"
+										label="<?php echo $post_type->label; ?>"
+										:wrapper-css="[ 'equalwidth' ]"
+										size="fullwidth"
+										:options-list="pageOptions['<?php echo $post_type_name; ?>']['options']"
+										v-model="pageOptions['<?php echo $post_type_name; ?>']['value']"
+									></cx-vui-select><?php
+								}
 							}
 						}
-					}
 				?></cx-vui-tabs-panel>
 
 				<cx-vui-tabs-panel

@@ -4,9 +4,10 @@
  */
 
 $post_type_string = $this->__get_post_types_string();
+$link_target_attr = ( isset( $settings['show_result_new_tab'] ) && 'yes' === $settings['show_result_new_tab'] ) ? '_blank' : '';
 ?>
 
-<form class="jet-ajax-search__form" method="get" action="<?php echo esc_url( home_url( '/' ) ); ?>" role="search">
+<form class="jet-ajax-search__form" method="get" action="<?php echo esc_url( home_url( '/' ) ); ?>" role="search" target="<?php echo $link_target_attr; ?>">
 	<div class="jet-ajax-search__fields-holder">
 		<div class="jet-ajax-search__field-wrapper">
 			<?php $this->__icon( 'search_field_icon', '<span class="jet-ajax-search__field-icon jet-ajax-search-icon">%s</span>' ); ?>

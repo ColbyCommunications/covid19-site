@@ -33,12 +33,13 @@
 		},
 
 		elementorWidget: function( $scope ) {
-			var widget_id   = $scope.data( 'id' ),
-				widgetType  = $scope.data( 'element_type' ),
-				widgetsData = jetPopupData.elements_data.widgets;
+			var widget_id     = $scope.data( 'id' ),
+				widgetType    = $scope.data( 'element_type' ),
+				widgetsData   = jetPopupData.elements_data.widgets,
+				popupSettings = $scope.data( 'jet-popup' ) || false;
 
-			if ( widgetsData.hasOwnProperty( widget_id ) ) {
-				var widgetData     = widgetsData[ widget_id ],
+			if ( widgetsData.hasOwnProperty( widget_id ) || popupSettings ) {
+				var widgetData     = widgetsData[ widget_id ] || popupSettings,
 					opentEvent     = widgetData[ 'trigger-type' ],
 					customSelector = widgetData[ 'trigger-custom-selector' ],
 					popupData      = {
@@ -191,6 +192,7 @@
 
 						var $currentPopup = $button.closest( '.jet-popup ' ),
 							link          = $( this ).attr( 'href' ),
+							target        = $( this ).attr( 'target' ),
 							popupId       = $currentPopup.attr( 'id' );
 
 						$( window ).trigger( {
@@ -201,7 +203,11 @@
 							}
 						} );
 
-						window.location = link;
+						if ( '_blank' === target  ) {
+							window.open( link, '_blank' );
+						} else {
+							window.open( link );
+						}
 
 						return false;
 					} );
@@ -236,7 +242,7 @@
 					$button.on( 'click.JetPopup', function( event ) {
 						event.preventDefault();
 
-						var $popups = $( '.jet-popup ' );
+						var $popups = $( '.jet-popup' );
 
 						if ( $popups[0] ) {
 							$popups.each( function( index ) {
@@ -276,7 +282,7 @@
 					$button.on( 'click.JetPopup', function( event ) {
 						event.preventDefault();
 
-						var $popups = $( '.jet-popup ' );
+						var $popups = $( '.jet-popup' );
 
 						if ( $popups[0] ) {
 							$popups.each( function( index ) {
@@ -302,7 +308,7 @@
 				scoreId               = $scope.data( 'id' ),
 				settings              = $target.data( 'settings' ),
 				$subscribeForm        = $( '.jet-popup-mailchimp__form', $target ),
-				$fields               = $( '.jet-popup-mailchimp__fields', $target ),
+				$fields                = $( '.jet-popup-mailchimp__fields', $target ),
 				$mailField            = $( '.jet-popup-mailchimp__mail-field', $target ),
 				$inputData            = $mailField.data( 'instance-data' ),
 				$submitButton         = $( '.jet-popup-mailchimp__submit', $target ),
@@ -457,7 +463,7 @@
 			isAnimation            = false,
 			isOpen                 = false,
 			ajaxGetContentHanler   = null,
-			ajaxContentLoad        = true;
+			ajaxContentLoaded      = false;
 
 		self.init = function() {
 
@@ -474,6 +480,11 @@
 			self.initOpenEvent();
 
 			self.initCloseEvent();
+
+			$window.trigger( 'jet-popup/init/after', {
+				self: self,
+				settings: popupSettings
+			} );
 		};
 
 		/**
@@ -528,33 +539,39 @@
 		 */
 		self.initOpenEvent = function() {
 
+			$window.trigger( 'jet-popup/init-events/before', {
+				self: self,
+				settings: popupSettings
+			} );
+
 			switch ( popupSettings['open-trigger'] ) {
 				case 'page-load':
-
 					self.pageLoadEvent( popupSettings['page-load-delay'] );
-					break;
+				break;
+
 				case 'user-inactive':
-
 					self.userInactiveEvent( popupSettings['user-inactivity-time'] );
-					break;
+				break;
+
 				case 'scroll-trigger':
-
 					self.scrollPageEvent( popupSettings['scrolled-to'] );
-					break;
-				case 'try-exit-trigger':
+				break;
 
+				case 'try-exit-trigger':
 					self.tryExitEvent();
-					break;
+				break;
 
 				case 'on-date':
-
 					self.onDateEvent( popupSettings['on-date'] );
-					break;
+				break;
+
+				case 'on-time':
+					self.onTimeEvent( popupSettings['on-time-start'], popupSettings['on-time-end'] );
+				break;
 
 				case 'custom-selector':
-
 					self.onCustomSelector( popupSettings['custom-selector'] );
-					break;
+				break;
 			}
 
 			$window.on( 'jet-popup-open-trigger', function( event ) {
@@ -577,6 +594,11 @@
 					} );
 				}
 			});
+
+			$window.trigger( 'jet-popup/init-events/after', {
+				self: self,
+				settings: popupSettings
+			} );
 		};
 
 		/**
@@ -653,7 +675,7 @@
 
 			delay = delay * 1000;
 
-			$( document ).on( 'ready.jetPopup', function() {
+			$( function() {
 				setTimeout( function() {
 					self.showPopup();
 				}, delay );
@@ -737,7 +759,25 @@
 
 				setTimeout( function() {
 					self.showPopup();
-				}, 1000 );
+				}, 500 );
+			}
+		}
+
+		self.onTimeEvent = function( startTime = '00:00', endTime = '23:59' ) {
+			var startTime = '' !== startTime ? startTime : '00:00',
+				endTime = '' !== endTime ? endTime : '23:59',
+				nowTimeStamp = Date.now(),
+				dateTimeFormat = new Intl.DateTimeFormat( 'en', { year: 'numeric', month: 'short', day: '2-digit' } ),
+				[ { value: month },,{ value: day },,{ value: year } ] = dateTimeFormat.formatToParts( nowTimeStamp ),
+				startTime = `${ month }. ${ day }, ${ year } ${ startTime }`,
+				endTime = `${ month }. ${ day }, ${ year } ${ endTime }`,
+				startTimeStamp = Date.parse( startTime ),
+				endTimeStamp = Date.parse( endTime );
+
+			if ( ( startTimeStamp < nowTimeStamp ) && ( nowTimeStamp < endTimeStamp ) ) {
+				setTimeout( function() {
+					self.showPopup();
+				}, 500 );
 			}
 		}
 
@@ -747,10 +787,10 @@
 		 * @return {[type]}          [description]
 		 */
 		self.onCustomSelector = function( selector ) {
-			var $selector = $( selector );
+			let $selector = $( selector );
 
 			if ( $selector[0] ) {
-				$selector.on( 'click', function( event ) {
+				$( 'body' ).on( 'click', selector, function( event ) {
 					event.preventDefault();
 
 					self.showPopup();
@@ -782,15 +822,18 @@
 
 			$popup.toggleClass( 'jet-popup--hide-state jet-popup--show-state' );
 
-			// Get Ajax Content
-			self.renderContent( popupData );
+			if ( popupSettings['prevent-scrolling'] ) {
+				$( 'body' ).addClass( 'jet-popup-prevent-scroll' );
+			}
+
+			self.showContainer( popupData );
 		};
 
 		/**
-		 * [renderContent description]
+		 * [showContainer description]
 		 * @return {[type]} [description]
 		 */
-		self.renderContent = function( data ) {
+		self.showContainer = function( data ) {
 			var popupData        = data || {},
 				popupDefaultData = {
 					forceLoad: popupSettings['force-ajax'] || false, // Trigger Ajax Every Time
@@ -827,6 +870,7 @@
 
 			popupData = jQuery.extend( popupDefaultData, popupData );
 
+			// init Custom popup content
 			if ( '' !== popupData.customContent ) {
 				$content.html( popupData.customContent );
 				self.elementorFrontendInit();
@@ -843,11 +887,24 @@
 				return false;
 			}
 
-			if ( popupData.forceLoad ) {
-				ajaxContentLoad = true;
+			if ( ! popupSettings['use-ajax'] ) {
+				// Show Popup Container
+				animeContainerInstance = anime( animeContainer );
+
+				$window.trigger( 'jet-popup/render-content/render-custom-content', {
+					self: self,
+					popup_id: id,
+					data: popupData,
+				} );
+
+				return false;
 			}
 
-			if ( ! popupSettings['use-ajax'] || ! ajaxContentLoad ) {
+			if ( popupData.forceLoad ) {
+				ajaxContentLoaded = false;
+			}
+
+			if ( ajaxContentLoaded ) {
 
 				// Show Popup Container
 				animeContainerInstance = anime( animeContainer );
@@ -906,7 +963,7 @@
 					if ( 'success' === successType ) {
 						$content.html( content );
 
-						ajaxContentLoad = false;
+						ajaxContentLoaded = true;
 
 						self.elementorFrontendInit();
 
@@ -954,8 +1011,12 @@
 							isOpen = false;
 							$popup.toggleClass( 'jet-popup--show-state jet-popup--hide-state' );
 
-							if ( popupSettings['force-ajax'] ) {
+							if ( popupSettings['use-ajax'] && popupSettings['force-ajax'] ) {
 								$content.html( '' );
+							}
+
+							if ( popupSettings['prevent-scrolling'] && !$( '.jet-popup--show-state' )[0] ) {
+								$( 'body' ).removeClass( 'jet-popup-prevent-scroll' );
 							}
 
 							// After Popup Hide Action
@@ -1032,17 +1093,13 @@
 		 * [onShowPopupAction description]
 		 * @return {[type]} [description]
 		 */
-		self.onShowPopupAction = function() {
-
-		};
+		self.onShowPopupAction = function() {};
 
 		/**
 		 * [onHidePopupAction description]
 		 * @return {[type]} [description]
 		 */
-		self.onHidePopupAction = function() {
-
-		};
+		self.onHidePopupAction = function() {};
 
 		/**
 		 * Avaliable Effects

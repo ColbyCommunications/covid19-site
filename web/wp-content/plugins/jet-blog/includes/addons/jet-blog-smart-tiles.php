@@ -13,8 +13,8 @@ use Elementor\Group_Control_Box_Shadow;
 use Elementor\Group_Control_Typography;
 use Elementor\Modules\DynamicTags\Module as TagsModule;
 use Elementor\Repeater;
-use Elementor\Scheme_Color;
-use Elementor\Scheme_Typography;
+use Elementor\Core\Schemes\Color as Scheme_Color;
+use Elementor\Core\Schemes\Typography as Scheme_Typography;
 use Elementor\Widget_Base;
 use Elementor\Utils;
 
@@ -46,7 +46,7 @@ class Jet_Blog_Smart_Tiles extends Jet_Blog_Base {
 	}
 
 	public function get_script_depends() {
-		return array( 'jquery-slick' );
+		return array( 'jet-slick' );
 	}
 
 	protected function _register_controls() {
@@ -553,13 +553,37 @@ class Jet_Blog_Smart_Tiles extends Jet_Blog_Base {
 				'type'    => Controls_Manager::SELECT,
 				'default' => 'all',
 				'options' => array(
-					'all' => esc_html__( 'All', 'jet-blog' ),
-					'ids' => esc_html__( 'IDs', 'jet-blog' ),
+					'all'   => esc_html__( 'All', 'jet-blog' ),
+					'ids'   => esc_html__( 'IDs', 'jet-blog' ),
+					'terms' => esc_html__( 'Terms', 'jet-blog' ),
 				),
 				'condition' => array(
 					'use_custom_query!'    => 'true',
 					'is_archive_template!' => 'yes',
 					'post_type!'           => 'post',
+				),
+			)
+		);
+
+		$this->add_control(
+			'custom_terms_ids',
+			array(
+				'label'       => esc_html__( 'Get custom posts from terms:', 'jet-blog' ),
+				'description' => esc_html__( 'Set comma separated terms IDs list (10, 22, 19 etc.)', 'jet-blog' ),
+				'type'        => Controls_Manager::TEXT,
+				'label_block' => true,
+				'default'     => '',
+				'dynamic'     => array(
+					'active'     => true,
+					'categories' => array(
+						TagsModule::POST_META_CATEGORY,
+					),
+				),
+				'condition'   => array(
+					'use_custom_query!'    => 'true',
+					'is_archive_template!' => 'yes',
+					'post_type!'           => 'post',
+					'custom_query_by'      => 'terms',
 				),
 			)
 		);
@@ -591,7 +615,7 @@ class Jet_Blog_Smart_Tiles extends Jet_Blog_Base {
 			array(
 				'type'        => 'text',
 				'label_block' => true,
-				'description' => esc_html__( 'If this is used with query posts by ID, it will be ignored', 'jet-blog' ),
+				'description' => esc_html__( 'If this is used with query posts by ID, it will be ignored. Note: use the %current_id% macros to exclude the current post.', 'jet-blog' ),
 				'label'       => esc_html__( 'Exclude posts by IDs (eg. 10, 22, 19 etc.)', 'jet-blog' ),
 				'default'     => '',
 				'dynamic'     => array(
@@ -616,6 +640,52 @@ class Jet_Blog_Smart_Tiles extends Jet_Blog_Base {
 				'min'       => 0,
 				'max'       => 300,
 				'step'      => 1,
+				'condition' => array(
+					'use_custom_query!'    => 'true',
+					'is_archive_template!' => 'yes',
+				),
+			)
+		);
+
+		$this->add_control(
+			'order',
+			array(
+				'label'   => esc_html__( 'Order', 'jet-blog' ),
+				'type'    => Controls_Manager::SELECT,
+				'default' => 'DESC',
+				'options' => array(
+					'ASC'  => esc_html__( 'ASC', 'jet-blog' ),
+					'DESC' => esc_html__( 'DESC', 'jet-blog' ),
+				),
+				'condition' => array(
+					'use_custom_query!'    => 'true',
+					'is_archive_template!' => 'yes',
+				),
+			)
+		);
+
+		$this->add_control(
+			'order_by',
+			array(
+				'label'   => esc_html__( 'Order by', 'jet-blog' ),
+				'type'    => Controls_Manager::SELECT,
+				'default' => 'date',
+				'options' => array(
+					'none'          => esc_html__( 'None', 'jet-blog' ),
+					'ID'            => esc_html__( 'ID', 'jet-blog' ),
+					'author'        => esc_html__( 'Author', 'jet-blog' ),
+					'title'         => esc_html__( 'Title', 'jet-blog' ),
+					'name'          => esc_html__( 'Name', 'jet-blog' ),
+					'type'          => esc_html__( 'Type', 'jet-blog' ),
+					'date'          => esc_html__( 'Date', 'jet-blog' ),
+					'modified'      => esc_html__( 'Modified', 'jet-blog' ),
+					'parent'        => esc_html__( 'Parent', 'jet-blog' ),
+					'rand'          => esc_html__( 'Rand', 'jet-blog' ),
+					'comment_count' => esc_html__( 'Comment count', 'jet-blog' ),
+					'relevance'     => esc_html__( 'Relevance', 'jet-blog' ),
+					'menu_order'    => esc_html__( 'Menu order', 'jet-blog' ),
+					'post__in'      => esc_html__( 'Preserve post ID order given in the "Include posts by IDs" option', 'jet-blog' ),
+				),
 				'condition' => array(
 					'use_custom_query!'    => 'true',
 					'is_archive_template!' => 'yes',
@@ -1033,6 +1103,7 @@ class Jet_Blog_Smart_Tiles extends Jet_Blog_Base {
 				'selectors'  => array(
 					'{{WRAPPER}} ' . $css_scheme['title'] => 'text-align: {{VALUE}};',
 				),
+				'classes' => 'jet-elements-text-align-control',
 			),
 			50
 		);
@@ -1157,6 +1228,7 @@ class Jet_Blog_Smart_Tiles extends Jet_Blog_Base {
 				'selectors'  => array(
 					'{{WRAPPER}} ' . $css_scheme['excerpt'] => 'text-align: {{VALUE}};',
 				),
+				'classes' => 'jet-elements-text-align-control',
 			),
 			50
 		);
@@ -1298,6 +1370,7 @@ class Jet_Blog_Smart_Tiles extends Jet_Blog_Base {
 				'selectors'  => array(
 					'{{WRAPPER}} ' . $css_scheme['meta'] => 'text-align: {{VALUE}};',
 				),
+				'classes' => 'jet-elements-text-align-control',
 			),
 			50
 		);
@@ -1594,6 +1667,7 @@ class Jet_Blog_Smart_Tiles extends Jet_Blog_Base {
 					'{{WRAPPER}} ' . $css_scheme['terms'] => 'text-align: {{VALUE}};',
 				),
 				'separator' => 'before',
+				'classes'   => 'jet-elements-text-align-control',
 			),
 			25
 		);
@@ -2260,6 +2334,29 @@ class Jet_Blog_Smart_Tiles extends Jet_Blog_Base {
 			);
 		}
 
+		if ( 'post' !== $post_type && 'terms' === $settings['custom_query_by'] && ! empty( $settings['custom_terms_ids'] ) ) {
+			$custom_terms_ids = explode( ',', str_replace( ' ', '', $settings['custom_terms_ids'] ) );
+			$custom_terms     = array();
+
+			foreach ( $custom_terms_ids as $term_id ) {
+				$term_data = get_term_by( 'term_taxonomy_id', $term_id );
+
+				if ( false !== $term_data ) {
+					$custom_terms[ $term_data->taxonomy ][] = $term_id;
+				}
+			}
+
+			$query_args['tax_query'] = array();
+
+			foreach ( $custom_terms as $taxonomy => $term_ids ) {
+				$query_args['tax_query'][] = array(
+					'taxonomy' => $taxonomy,
+					'field'    => 'term_id',
+					'terms'    => $term_ids,
+				);
+			}
+		}
+
 		if ( 'post' !== $post_type && ! empty( $settings['post_ids'] ) ) {
 			$post_ids = explode( ',', str_replace( ' ', '', $settings['post_ids'] ) );
 			$query_args['post__in'] = $post_ids;
@@ -2271,12 +2368,21 @@ class Jet_Blog_Smart_Tiles extends Jet_Blog_Base {
 		}
 
 		if ( ! empty( $exclude ) && empty( $query_args['post__in'] ) ) {
+			$exclude                    = $this->render_macros( $exclude );
 			$exclude_ids                = explode( ',', str_replace( ' ', '', $exclude ) );
 			$query_args['post__not_in'] = $exclude_ids;
 		}
 
 		if ( $offset ) {
 			$query_args['offset'] = $offset;
+		}
+
+		if ( ! empty( $settings['order'] ) ) {
+			$query_args['order'] = $settings['order'];
+		}
+
+		if ( ! empty( $settings['order_by'] ) ) {
+			$query_args['orderby'] = $settings['order_by'];
 		}
 
 		if ( isset( $settings['meta_query'] ) && 'yes' === $settings['meta_query'] ) {

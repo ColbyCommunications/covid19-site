@@ -12,8 +12,8 @@ use Elementor\Group_Control_Border;
 use Elementor\Group_Control_Box_Shadow;
 use Elementor\Group_Control_Typography;
 use Elementor\Repeater;
-use Elementor\Scheme_Color;
-use Elementor\Scheme_Typography;
+use Elementor\Core\Schemes\Color as Scheme_Color;
+use Elementor\Core\Schemes\Typography as Scheme_Typography;
 use Elementor\Widget_Base;
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
@@ -41,7 +41,7 @@ class Jet_Hotspots_Widget extends Jet_Tricks_Base {
 	}
 
 	public function get_script_depends() {
-		return array( 'imagesloaded', 'jet-tricks-tippy' );
+		return array( 'imagesloaded', 'jet-tricks-tippy-bundle' );
 	}
 
 	protected function _register_controls() {
@@ -52,7 +52,8 @@ class Jet_Hotspots_Widget extends Jet_Tricks_Base {
 				'inner'      => '.jet-hotspots__inner',
 				'item'       => '.jet-hotspots__item',
 				'item_inner' => '.jet-hotspots__item-inner',
-				'tooltip'    => '.tippy-tooltip',
+				'tooltip'    => '.tippy-box',
+				'image'      => '.jet-hotspots__inner > img',
 			)
 		);
 
@@ -70,6 +71,46 @@ class Jet_Hotspots_Widget extends Jet_Tricks_Base {
 				'type'    => Controls_Manager::MEDIA,
 				'default' => array(
 					'url' => Utils::get_placeholder_image_src(),
+				),
+				'dynamic' => array( 'active' => true ),
+			)
+		);
+
+		$this->add_group_control(
+			Group_Control_Image_Size::get_type(),
+			array(
+				'name'      => 'image',
+				'default'   => 'full',
+			)
+		);
+
+		$this->add_responsive_control(
+			'image_align',
+			array(
+				'label' => esc_html__( 'Alignment', 'jet-tricks' ),
+				'type'  => Controls_Manager::CHOOSE,
+				'default' => 'justify',
+				'options' => array(
+					'left' => array(
+						'title' => esc_html__( 'Left', 'jet-tricks' ),
+						'icon' => 'eicon-h-align-left',
+					),
+					'center' => array(
+						'title' => esc_html__( 'Center', 'jet-tricks' ),
+						'icon' => 'eicon-h-align-center',
+					),
+					'right' => array(
+						'title' => esc_html__( 'Right', 'jet-tricks' ),
+						'icon' => 'eicon-h-align-right',
+					),
+				),
+				'selectors_dictionary' => array(
+					'left'    => 'text-align: left;',
+					'center'  => 'text-align: center;',
+					'right'   => 'text-align: right;',
+				),
+				'selectors' => array(
+					'{{WRAPPER}} ' . $css_scheme['instance'] => '{{VALUE}}',
 				),
 			)
 		);
@@ -114,6 +155,7 @@ class Jet_Hotspots_Widget extends Jet_Tricks_Base {
 			array(
 				'label'   => esc_html__( 'Text', 'jet-tricks' ),
 				'type'    => Controls_Manager::TEXT,
+				'dynamic' => array( 'active' => true ),
 			)
 		);
 
@@ -122,6 +164,7 @@ class Jet_Hotspots_Widget extends Jet_Tricks_Base {
 			array(
 				'label' => esc_html__( 'Description', 'jet-tricks' ),
 				'type'  => Controls_Manager::TEXTAREA,
+				'dynamic' => array( 'active' => true ),
 			)
 		);
 
@@ -134,6 +177,7 @@ class Jet_Hotspots_Widget extends Jet_Tricks_Base {
 				'default' => array(
 					'url' => '',
 				),
+				'dynamic' => array( 'active' => true ),
 			)
 		);
 
@@ -160,6 +204,7 @@ class Jet_Hotspots_Widget extends Jet_Tricks_Base {
 						'max' => 100,
 					),
 				),
+				'dynamic' => array( 'active' => true ),
 			)
 		);
 
@@ -177,6 +222,7 @@ class Jet_Hotspots_Widget extends Jet_Tricks_Base {
 						'max' => 100,
 					),
 				),
+				'dynamic' => array( 'active' => true ),
 			)
 		);
 
@@ -188,7 +234,7 @@ class Jet_Hotspots_Widget extends Jet_Tricks_Base {
 			'hotspots',
 			array(
 				'type'        => Controls_Manager::REPEATER,
-				'fields'      => array_values( $repeater->get_controls() ),
+				'fields'      => $repeater->get_controls(),
 				'title_field' => '{{{ hotspot_text }}}',
 				'default'     => array(
 					array(
@@ -252,83 +298,62 @@ class Jet_Hotspots_Widget extends Jet_Tricks_Base {
 				'type'    => Controls_Manager::SELECT,
 				'default' => 'top',
 				'options' => array(
-					'top'    => esc_html__( 'Top', 'jet-tricks' ),
-					'bottom' => esc_html__( 'Bottom', 'jet-tricks' ),
-					'left'   => esc_html__( 'Left', 'jet-tricks' ),
-					'right'  => esc_html__( 'Right', 'jet-tricks' ),
+					'top-start'    => esc_html__( 'Top Start', 'jet-tricks' ),
+					'top'          => esc_html__( 'Top', 'jet-tricks' ),
+					'top-end'      => esc_html__( 'Top End', 'jet-tricks' ),
+					'right-start'  => esc_html__( 'Right Start', 'jet-tricks' ),
+					'right'        => esc_html__( 'Right', 'jet-tricks' ),
+					'right-end'    => esc_html__( 'Right End', 'jet-tricks' ),
+					'bottom-start' => esc_html__( 'Bottom Start', 'jet-tricks' ),
+					'bottom'       => esc_html__( 'Bottom', 'jet-tricks' ),
+					'bottom-end'   => esc_html__( 'Bottom End', 'jet-tricks' ),
+					'left-start'   => esc_html__( 'Left Start', 'jet-tricks' ),
+					'left'         => esc_html__( 'Left', 'jet-tricks' ),
+					'left-end'     => esc_html__( 'Left End', 'jet-tricks' ),
 				),
 			)
 		);
 
 		$this->add_control(
-			'tooltip_arrow',
+			'tooltip_animation',
 			array(
-				'label'        => esc_html__( 'Use Arrow', 'jet-tricks' ),
-				'type'         => Controls_Manager::SWITCHER,
-				'label_on'     => esc_html__( 'Yes', 'jet-tricks' ),
-				'label_off'    => esc_html__( 'No', 'jet-tricks' ),
-				'return_value' => 'yes',
-				'default'      => 'yes',
-			)
-		);
-
-		$this->add_control(
-			'tooltip_arrow_type',
-			array(
-				'label'   => esc_html__( 'Arrow Type', 'jet-tricks' ),
+				'label'   => esc_html__( 'Animation', 'jet-tricks' ),
 				'type'    => Controls_Manager::SELECT,
-				'default' => 'sharp',
+				'default' => 'fade',
 				'options' => array(
-					'sharp' => esc_html__( 'Sharp', 'jet-tricks' ),
-					'round' => esc_html__( 'Round', 'jet-tricks' ),
+					'fade'         => esc_html__( 'Fade', 'jet-tricks' ),
+					'shift-away'   => esc_html__( 'Shift-Away', 'jet-tricks' ),
+					'shift-toward' => esc_html__( 'Shift-Toward', 'jet-tricks' ),
+					'scale'        => esc_html__( 'Scale', 'jet-tricks' ),
+					'perspective'  => esc_html__( 'Perspective', 'jet-tricks' ),
 				),
 				'condition' => array(
-					'tooltip_arrow' => 'yes',
+					'tooltip_trigger!' => 'manual',
 				),
 			)
 		);
 
 		$this->add_control(
-			'tooltip_arrow_size',
+			'tooltip_delay',
 			array(
-				'label'   => esc_html__( 'Arrow Size', 'jet-tricks' ),
-				'type'    => Controls_Manager::SELECT,
-				'default' => 'scale(1)',
-				'options' => array(
-					'scale(1)'     => esc_html__( 'Normal', 'jet-tricks' ),
-					'scale(0.75)'  => esc_html__( 'Small', 'jet-tricks' ),
-					'scaleX(0.75)' => esc_html__( 'Skinny', 'jet-tricks' ),
-					'scale(1.5)'   => esc_html__( 'Large', 'jet-tricks' ),
-					'scaleX(1.5)'  => esc_html__( 'Wide', 'jet-tricks' ),
+				'label'      => esc_html__( 'Animation Delay', 'jet-tricks' ),
+				'type'       => Controls_Manager::SLIDER,
+				'size_units' => array(
+					'ms',
+				),
+				'range'      => array(
+					'ms' => array(
+						'min'  => 0,
+						'max'  => 1000,
+						'step' => 100,
+					),
+				),
+				'default' => array(
+					'size' => 0,
+					'unit' => 'ms',
 				),
 				'condition' => array(
-					'tooltip_arrow' => 'yes',
-				),
-			)
-		);
-
-		$this->add_control(
-			'tooltip_trigger',
-			array(
-				'label'   => esc_html__( 'Trigger', 'jet-tricks' ),
-				'type'    => Controls_Manager::SELECT,
-				'default' => 'mouseenter',
-				'options' => array(
-					'mouseenter' => esc_html__( 'Mouseenter', 'jet-tricks' ),
-					'click'      => esc_html__( 'Click', 'jet-tricks' ),
-					'manual'     => esc_html__( 'None', 'jet-tricks' ),
-				),
-			)
-		);
-
-		$this->add_control(
-			'tooltip_trigger_none_desc',
-			array(
-				'type' => Controls_Manager::RAW_HTML,
-				'raw'  => esc_html__( 'Always show tooltips.', 'jet-tricks' ),
-				'content_classes' => 'elementor-descriptor',
-				'condition' => array(
-					'tooltip_trigger' => 'manual',
+					'tooltip_trigger!' => 'manual',
 				),
 			)
 		);
@@ -336,7 +361,7 @@ class Jet_Hotspots_Widget extends Jet_Tricks_Base {
 		$this->add_control(
 			'tooltip_show_duration',
 			array(
-				'label'      => esc_html__( 'Show Duration', 'jet-tricks' ),
+				'label'      => esc_html__( 'Appearance Duration', 'jet-tricks' ),
 				'type'       => Controls_Manager::SLIDER,
 				'size_units' => array(
 					'ms',
@@ -361,7 +386,7 @@ class Jet_Hotspots_Widget extends Jet_Tricks_Base {
 		$this->add_control(
 			'tooltip_hide_duration',
 			array(
-				'label'      => esc_html__( 'Hide Duration', 'jet-tricks' ),
+				'label'      => esc_html__( 'Disappearance Duration', 'jet-tricks' ),
 				'type'       => Controls_Manager::SLIDER,
 				'size_units' => array(
 					'ms',
@@ -384,26 +409,42 @@ class Jet_Hotspots_Widget extends Jet_Tricks_Base {
 		);
 
 		$this->add_control(
-			'tooltip_delay',
+			'tooltip_trigger',
 			array(
-				'label'      => esc_html__( 'Delay', 'jet-tricks' ),
-				'type'       => Controls_Manager::SLIDER,
-				'size_units' => array(
-					'ms',
+				'label'   => esc_html__( 'Trigger', 'jet-tricks' ),
+				'type'    => Controls_Manager::SELECT,
+				'default' => 'mouseenter',
+				'options' => array(
+					'manual'           => esc_html__( 'None', 'jet-tricks' ),
+					'mouseenter'       => esc_html__( 'Mouse Enter', 'jet-tricks' ),
+					'click'            => esc_html__( 'Click', 'jet-tricks' ),
+					'focus'            => esc_html__( 'Focus', 'jet-tricks' ),
+					'mouseenter click' => esc_html__( 'Mouse Enter + Click', 'jet-tricks' ),
+					'mouseenter focus' => esc_html__( 'Mouse Enter + Focus', 'jet-tricks' ),
 				),
-				'range'      => array(
-					'ms' => array(
-						'min'  => 0,
-						'max'  => 1000,
-						'step' => 100,
-					),
-				),
-				'default' => array(
-					'size' => 0,
-					'unit' => 'ms',
-				),
+			)
+		);
+
+		$this->add_control(
+			'tooltip_arrow',
+			array(
+				'label'        => esc_html__( 'Use Arrow', 'jet-tricks' ),
+				'type'         => Controls_Manager::SWITCHER,
+				'label_on'     => esc_html__( 'Yes', 'jet-tricks' ),
+				'label_off'    => esc_html__( 'No', 'jet-tricks' ),
+				'return_value' => 'yes',
+				'default'      => 'yes',
+			)
+		);
+
+		$this->add_control(
+			'tooltip_trigger_none_desc',
+			array(
+				'type' => Controls_Manager::RAW_HTML,
+				'raw'  => esc_html__( 'Always show tooltips.', 'jet-tricks' ),
+				'content_classes' => 'elementor-descriptor',
 				'condition' => array(
-					'tooltip_trigger!' => 'manual',
+					'tooltip_trigger' => 'manual',
 				),
 			)
 		);
@@ -425,25 +466,6 @@ class Jet_Hotspots_Widget extends Jet_Tricks_Base {
 				'default' => array(
 					'size' => 15,
 					'unit' => 'px',
-				),
-			)
-		);
-
-		$this->add_control(
-			'tooltip_animation',
-			array(
-				'label'   => esc_html__( 'Animation', 'jet-tricks' ),
-				'type'    => Controls_Manager::SELECT,
-				'default' => 'shift-toward',
-				'options' => array(
-					'shift-away'   => esc_html__( 'Shift-Away', 'jet-tricks' ),
-					'shift-toward' => esc_html__( 'Shift-Toward', 'jet-tricks' ),
-					'fade'         => esc_html__( 'Fade', 'jet-tricks' ),
-					'scale'        => esc_html__( 'Scale', 'jet-tricks' ),
-					'perspective'  => esc_html__( 'Perspective', 'jet-tricks' ),
-				),
-				'condition' => array(
-					'tooltip_trigger!' => 'manual',
 				),
 			)
 		);
@@ -672,7 +694,7 @@ class Jet_Hotspots_Widget extends Jet_Tricks_Base {
 				'label'  => esc_html__( 'Text Color', 'jet-tricks' ),
 				'type'   => Controls_Manager::COLOR,
 				'selectors' => array(
-					'{{WRAPPER}} ' . $css_scheme['instance'] . ' ' . $css_scheme['tooltip'] => 'color: {{VALUE}}',
+					'{{WRAPPER}} ' . $css_scheme['instance'] . ' ' . $css_scheme['tooltip']  . ' .tippy-content' => 'color: {{VALUE}}',
 				),
 			),
 			25
@@ -710,6 +732,7 @@ class Jet_Hotspots_Widget extends Jet_Tricks_Base {
 				'selectors' => array(
 					'{{WRAPPER}} ' . $css_scheme['instance'] . ' ' . $css_scheme['tooltip'] . ' .tippy-content' => 'text-align: {{VALUE}};',
 				),
+				'classes'   => 'jet-tricks-text-align-control',
 			),
 			75
 		);
@@ -720,10 +743,10 @@ class Jet_Hotspots_Widget extends Jet_Tricks_Base {
 				'label'  => esc_html__( 'Arrow Color', 'jet-tricks' ),
 				'type'   => Controls_Manager::COLOR,
 				'selectors' => array(
-					'{{WRAPPER}} ' . $css_scheme['instance'] . ' .tippy-popper[x-placement^=left] ' . $css_scheme['tooltip'] .' .tippy-arrow'=> 'border-left-color: {{VALUE}}',
-					'{{WRAPPER}} ' . $css_scheme['instance'] . ' .tippy-popper[x-placement^=right] ' . $css_scheme['tooltip'] .' .tippy-arrow'=> 'border-right-color: {{VALUE}}',
-					'{{WRAPPER}} ' . $css_scheme['instance'] . ' .tippy-popper[x-placement^=top] ' . $css_scheme['tooltip'] .' .tippy-arrow'=> 'border-top-color: {{VALUE}}',
-					'{{WRAPPER}} ' . $css_scheme['instance'] . ' .tippy-popper[x-placement^=bottom] ' . $css_scheme['tooltip'] .' .tippy-arrow'=> 'border-bottom-color: {{VALUE}}',
+					'{{WRAPPER}} ' . $css_scheme['instance'] . ' .tippy-box[data-placement*=left] .tippy-arrow:before'=> 'border-left-color: {{VALUE}}',
+					'{{WRAPPER}} ' . $css_scheme['instance'] . ' .tippy-box[data-placement*=right] .tippy-arrow:before'=> 'border-right-color: {{VALUE}}',
+					'{{WRAPPER}} ' . $css_scheme['instance'] . ' .tippy-box[data-placement*=top] .tippy-arrow:before'=> 'border-top-color: {{VALUE}}',
+					'{{WRAPPER}} ' . $css_scheme['instance'] . ' .tippy-box[data-placement*=bottom] .tippy-arrow:before'=> 'border-bottom-color: {{VALUE}}',
 				),
 			),
 			25
@@ -750,7 +773,7 @@ class Jet_Hotspots_Widget extends Jet_Tricks_Base {
 				'range'      => array(
 					'px' => array(
 						'min' => 50,
-						'max' => 500,
+						'max' => 1000,
 					),
 				),
 				'selectors'  => array(
@@ -776,7 +799,7 @@ class Jet_Hotspots_Widget extends Jet_Tricks_Base {
 				'type'       => Controls_Manager::DIMENSIONS,
 				'size_units' => array( 'px', '%' ),
 				'selectors'  => array(
-					'{{WRAPPER}} ' . $css_scheme['instance'] . ' ' . $css_scheme['tooltip'] => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+					'{{WRAPPER}} ' . $css_scheme['instance'] . ' ' . $css_scheme['tooltip']  . ' .tippy-content' => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				),
 			),
 			50
@@ -830,22 +853,21 @@ class Jet_Hotspots_Widget extends Jet_Tricks_Base {
 
 		$id_int = substr( $this->get_id_int(), 0, 3 );
 
-		$settings = $this->get_settings();
+		$settings = $this->get_settings_for_display();
 
 		$hotspots = $settings['hotspots'];
+		$hotspots = apply_filters( 'jet-tricks/widget/loop-items', $hotspots, 'hotspots', $this );
 
 		$json_settings = array(
 			'tooltipPlacement'    => $settings['tooltip_placement'],
 			'tooltipArrow'        => filter_var( $settings['tooltip_arrow'], FILTER_VALIDATE_BOOLEAN ),
-			'tooltipArrowType'    => $settings['tooltip_arrow_type'],
-			'tooltipArrowSize'    => $settings['tooltip_arrow_size'],
 			'tooltipTrigger'      => $settings['tooltip_trigger'],
 			'tooltipShowOnInit'   => filter_var( $settings['tooltip_show_on_init'], FILTER_VALIDATE_BOOLEAN ),
-			'tooltipShowDuration' => $settings['tooltip_show_duration'],
-			'tooltipHideDuration' => $settings['tooltip_hide_duration'],
-			'tooltipDelay'        => $settings['tooltip_delay'],
+			'tooltipShowDuration' => ! empty( $settings['tooltip_show_duration'] ) ? $settings['tooltip_show_duration'] : '',
+			'tooltipHideDuration' => ! empty( $settings['tooltip_hide_duration'] ) ? $settings['tooltip_hide_duration'] : '',
+			'tooltipDelay'        => ! empty( $settings['tooltip_delay'] ) ? $settings['tooltip_delay'] : '',
 			'tooltipDistance'     => $settings['tooltip_distance'],
-			'tooltipAnimation'    => $settings['tooltip_animation'],
+			'tooltipAnimation'    => ! empty( $settings['tooltip_animation'] ) ? $settings['tooltip_animation'] : '',
 		);
 
 		$this->add_render_attribute( 'instance', array(
@@ -862,10 +884,7 @@ class Jet_Hotspots_Widget extends Jet_Tricks_Base {
 			return false;
 		}
 
-		$image = sprintf( '<img class="jet-hotspots__image" src="%s" srcset="%s" alt="">',
-			wp_get_attachment_image_url( $settings['image']['id'] ),
-			wp_get_attachment_image_srcset( $settings['image']['id'], 'full' )
-		);
+		$image = Group_Control_Image_Size::get_attachment_image_html( $settings );
 
 		?>
 		<div <?php echo $this->get_render_attribute_string( 'instance' ); ?>>
@@ -884,9 +903,9 @@ class Jet_Hotspots_Widget extends Jet_Tricks_Base {
 							'class'                    => array(
 								'jet-hotspots__item',
 							),
-							'title'                    => $hotspot['hotspot_description'],
-							'data-horizontal-position' => $hotspot['horizontal_position']['size'],
-							'data-vertical-position'   => $hotspot['vertical_position']['size'],
+							'data-tippy-content' => $hotspot['hotspot_description'],
+							'data-horizontal-position' => isset( $hotspot['horizontal_position']['size'] ) ? $hotspot['horizontal_position']['size'] :  $hotspot['horizontal_position'],
+							'data-vertical-position'   => isset( $hotspot['vertical_position']['size'] ) ? $hotspot['vertical_position']['size'] :  $hotspot['vertical_position'],
 						) );
 
 						if ( $is_link ) {

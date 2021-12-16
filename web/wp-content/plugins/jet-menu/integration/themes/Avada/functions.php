@@ -42,7 +42,7 @@ function jet_menu_avada_fix_header_search( $items, $args ) {
 function jet_menu_avada_styles() {
 	wp_enqueue_style(
 		'jet-menu-avada',
-		jet_menu()->get_theme_url( 'assets/css/style.css' ),
+		jet_menu()->integration_manager->get_theme_url( 'assets/css/style.css' ),
 		array(),
 		jet_menu()->get_version()
 	);

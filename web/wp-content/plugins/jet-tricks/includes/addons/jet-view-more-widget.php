@@ -12,8 +12,8 @@ use Elementor\Group_Control_Border;
 use Elementor\Group_Control_Box_Shadow;
 use Elementor\Group_Control_Typography;
 use Elementor\Repeater;
-use Elementor\Scheme_Color;
-use Elementor\Scheme_Typography;
+use Elementor\Core\Schemes\Color as Scheme_Color;
+use Elementor\Core\Schemes\Typography as Scheme_Typography;
 use Elementor\Widget_Base;
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
@@ -66,6 +66,7 @@ class Jet_View_More_Widget extends Jet_Tricks_Base {
 				'label'   => esc_html__( 'Section Id', 'jet-tricks' ),
 				'type'    => Controls_Manager::TEXT,
 				'default' => 'section_1',
+				'dynamic' => array( 'active' => true ),
 			)
 		);
 
@@ -73,7 +74,7 @@ class Jet_View_More_Widget extends Jet_Tricks_Base {
 			'sections',
 			array(
 				'type'        => Controls_Manager::REPEATER,
-				'fields'      => array_values( $repeater->get_controls() ),
+				'fields'      => $repeater->get_controls(),
 				'default'     => array(
 					array(
 						'section_id' => 'section_1'
@@ -114,6 +115,7 @@ class Jet_View_More_Widget extends Jet_Tricks_Base {
 				'label'   => esc_html__( 'Label', 'jet-tricks' ),
 				'type'    => Controls_Manager::TEXT,
 				'default' => esc_html__( 'Read More', 'jet-tricks' ),
+				'dynamic' => array( 'active' => true ),
 			)
 		);
 
@@ -468,7 +470,7 @@ class Jet_View_More_Widget extends Jet_Tricks_Base {
 
 		$this->__context = 'render';
 
-		$button_settings = $this->get_settings();
+		$button_settings = $this->get_settings_for_display();
 
 		$sections = $button_settings[ 'sections' ];
 

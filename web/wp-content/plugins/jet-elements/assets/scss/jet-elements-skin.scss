@@ -1,4 +1,6 @@
 $color__lines: #e6e9ec;
+$direction: ltr !default;
+@import "mixins/direction";
 
 @import "skin/jet-pricing-table";
 @import "skin/jet-brands";

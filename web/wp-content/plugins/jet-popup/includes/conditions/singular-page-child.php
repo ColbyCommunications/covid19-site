@@ -43,6 +43,17 @@ if ( ! class_exists( 'Jet_Popup_Conditions_Singular_Page_Child' ) ) {
 		}
 
 		/**
+		 * [get_control description]
+		 * @return [type] [description]
+		 */
+		public function get_control() {
+			return [
+				'type'        => 'select',
+				'placeholder' => __( 'Select page', 'jet-popup' ),
+			];
+		}
+
+		/**
 		 * [ajax_action description]
 		 * @return [type] [description]
 		 */
@@ -77,7 +88,9 @@ if ( ! class_exists( 'Jet_Popup_Conditions_Singular_Page_Child' ) ) {
 
 			global $post;
 
-			return in_array( $post->post_parent, $arg );
+			$parent = intval( $arg );
+
+			return $post->post_parent === $parent;
 		}
 
 	}

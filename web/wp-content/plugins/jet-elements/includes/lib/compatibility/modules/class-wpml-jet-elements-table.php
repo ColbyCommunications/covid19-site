@@ -16,7 +16,7 @@ class WPML_Jet_Elements_Table extends WPML_Elementor_Module_With_Items {
 	 * @return array
 	 */
 	public function get_fields() {
-		return array( 'cell_text' );
+		return array( 'cell_text', 'cell_link' );
 	}
 
 	/**
@@ -28,6 +28,9 @@ class WPML_Jet_Elements_Table extends WPML_Elementor_Module_With_Items {
 		switch( $field ) {
 			case 'cell_text':
 				return esc_html__( 'Jet Table: Cell Text', 'jet-elements' );
+
+			case 'cell_link':
+				return esc_html__( 'Jet Table: Cell Link', 'jet-elements' );
 
 			default:
 				return '';
@@ -42,7 +45,10 @@ class WPML_Jet_Elements_Table extends WPML_Elementor_Module_With_Items {
 	protected function get_editor_type( $field ) {
 		switch( $field ) {
 			case 'cell_text':
-				return 'LINE';
+				return 'AREA';
+
+			case 'cell_link':
+				return 'LINK';
 
 			default:
 				return '';

@@ -25,6 +25,10 @@ echo '<div class="post-meta">';
 		'echo'    => true,
 	) );
 
+	if ( 'yes' === $this->get_attr( 'show_mod_date' ) ) {
+		echo sprintf( '<span class="post__modified_date post-meta__item">%1$s</span>', get_the_modified_date() );
+	}
+
 	jet_elements_post_tools()->get_post_comment_count( array(
 		'visible' => $this->get_attr( 'show_comments' ),
 		'class'   => 'post__comments-link',

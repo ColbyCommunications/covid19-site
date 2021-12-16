@@ -76,13 +76,23 @@ if ( ! class_exists( 'Jet_Elements_Ext_Section' ) ) {
 				)
 			);
 
-			$obj->add_control(
-				'jet_parallax_items_heading',
-				array(
-					'label'     => esc_html__( 'Layouts', 'jet-elements' ),
-					'type'      => Elementor\Controls_Manager::HEADING,
-				)
-			);
+			if ( \Elementor\Plugin::$instance->breakpoints && method_exists( \Elementor\Plugin::$instance->breakpoints, 'get_active_breakpoints') ) {
+				$active_breakpoints = \Elementor\Plugin::$instance->breakpoints->get_active_breakpoints();
+				$breakpoints_list   = array();
+
+				foreach ($active_breakpoints as $key => $value) {
+					$breakpoints_list[$key] = $value->get_label();
+				}
+
+				$breakpoints_list['desktop'] = 'Desktop';
+				$breakpoints_list            = array_reverse($breakpoints_list);
+			} else {
+				$breakpoints_list = array(
+					'desktop' => 'Desktop',
+					'tablet'  => 'Tablet',
+					'mobile'  => 'Mobile'
+				);
+			}
 
 			$repeater = new Elementor\Repeater();
 
@@ -93,8 +103,10 @@ if ( ! class_exists( 'Jet_Elements_Ext_Section' ) ) {
 					'type'    => Elementor\Controls_Manager::MEDIA,
 					'dynamic' => array( 'active' => true ),
 					'selectors' => array(
-						'{{WRAPPER}} {{CURRENT_ITEM}}.jet-parallax-section__layout .jet-parallax-section__image' => 'background-image: url("{{URL}}") !important;'
+						'{{WRAPPER}} {{CURRENT_ITEM}}.jet-parallax-section__layout .jet-parallax-section__image' => 'background-image: url("{{URL}}");'
 					),
+					'frontend_available' => true,
+					'render_type'        => 'template',
 				)
 			);
 
@@ -179,7 +191,7 @@ if ( ! class_exists( 'Jet_Elements_Ext_Section' ) ) {
 				)
 			);
 
-			$repeater->add_control(
+			$repeater->add_responsive_control(
 				'jet_parallax_layout_bg_x',
 				array(
 					'label'   => esc_html__( 'Background X Position(%)', 'jet-elements' ),
@@ -188,10 +200,12 @@ if ( ! class_exists( 'Jet_Elements_Ext_Section' ) ) {
 					'min'     => -200,
 					'max'     => 200,
 					'step'    => 1,
+					'frontend_available' => true,
+					'render_type'        => 'template',
 				)
 			);
 
-			$repeater->add_control(
+			$repeater->add_responsive_control(
 				'jet_parallax_layout_bg_y',
 				array(
 					'label'   => esc_html__( 'Background Y Position(%)', 'jet-elements' ),
@@ -200,10 +214,12 @@ if ( ! class_exists( 'Jet_Elements_Ext_Section' ) ) {
 					'min'     => -200,
 					'max'     => 200,
 					'step'    => 1,
+					'frontend_available' => true,
+					'render_type'        => 'template',
 				)
 			);
 
-			$repeater->add_control(
+			$repeater->add_responsive_control(
 				'jet_parallax_layout_bg_size',
 				array(
 					'label'   => esc_html__( 'Background Size', 'jet-elements' ),
@@ -214,6 +230,11 @@ if ( ! class_exists( 'Jet_Elements_Ext_Section' ) ) {
 						'cover'   => esc_html__( 'Cover', 'jet-elements' ),
 						'contain' => esc_html__( 'Contain', 'jet-elements' ),
 					),
+					'selectors' => array(
+						'{{WRAPPER}} {{CURRENT_ITEM}}.jet-parallax-section__layout .jet-parallax-section__image' => 'background-size: {{VALUE}};'
+					),
+					'frontend_available' => true,
+					'render_type'        => 'template',
 				)
 			);
 
@@ -245,19 +266,16 @@ if ( ! class_exists( 'Jet_Elements_Ext_Section' ) ) {
 						'desktop',
 						'tablet',
 					),
-					'options'     => array(
-						'desktop' => __( 'Desktop', 'jet-elements' ),
-						'tablet'  => __( 'Tablet', 'jet-elements' ),
-						'mobile'  => __( 'Mobile', 'jet-elements' ),
-					),
+					'options' => $breakpoints_list,
 				)
 			);
 
 			$obj->add_control(
 				'jet_parallax_layout_list',
 				array(
-					'type'    => Elementor\Controls_Manager::REPEATER,
-					'fields'  => array_values( $repeater->get_controls() ),
+					'label'   => '<b>' . esc_html__( 'Layouts', 'jet-elements' ) . '</b>',
+					'type'    => 'jet-repeater',
+					'fields'  => $repeater->get_controls(),
 					'default' => array(
 						array(
 							'jet_parallax_layout_image' => array(
@@ -265,6 +283,7 @@ if ( ! class_exists( 'Jet_Elements_Ext_Section' ) ) {
 							),
 						)
 					),
+					'frontend_available' => true,
 				)
 			);
 
@@ -314,10 +333,25 @@ if ( ! class_exists( 'Jet_Elements_Ext_Section' ) ) {
 		 */
 		public function enqueue_scripts() {
 
-			if ( ! empty( $this->parallax_sections ) || jet_elements()->elementor()->preview->is_preview_mode() ) {
-				wp_enqueue_script( 'jet-tween-js' );
-				jet_elements_assets()->localize_data['jetParallaxSections'] = $this->parallax_sections;
+			$has_mouse_type = false;
+
+			if ( ! empty( $this->parallax_sections ) ) {
+
+				foreach ( $this->parallax_sections as $parallax_items ) {
+					foreach ( $parallax_items as $parallax_item ) {
+						if ( 'mouse' === $parallax_item['jet_parallax_layout_type'] ) {
+							$has_mouse_type = true;
+						}
+					}
+				}
+
+				//jet_elements_assets()->localize_data['jetParallaxSections'] = $this->parallax_sections;
 			}
+
+			if ( $has_mouse_type || jet_elements()->elementor()->preview->is_preview_mode() ) {
+				wp_enqueue_script( 'jet-tween-js' );
+			}
+
 		}
 
 		/**

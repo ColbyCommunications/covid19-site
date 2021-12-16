@@ -32,13 +32,13 @@ if ( isset( $settings['button_nofollow'] ) && filter_var( $settings['button_nofo
 	$icon     = $settings['add_button_icon'];
 
 	if ( $icon && 'left' === $position ) {
-		echo $this->__icon( 'button_icon', '<span class="jet-elements-icon button-icon">%s</span>' );
+		echo $this->_icon( 'button_icon', '<span class="jet-elements-icon button-icon">%s</span>' );
 	}
 
-	echo $this->__html( 'button_text' );
+	echo $this->_html( 'button_text' );
 
 	if ( $icon && 'right' === $position ) {
-		echo $this->__icon( 'button_icon', '<span class="jet-elements-icon button-icon">%s</span>' );
+		echo $this->_icon( 'button_icon', '<span class="jet-elements-icon button-icon">%s</span>' );
 	}
 
 ?></a>

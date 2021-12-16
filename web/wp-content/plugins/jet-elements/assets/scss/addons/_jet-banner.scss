@@ -71,7 +71,7 @@
 			width: -webkit-calc(100% + 50px);
 			width: calc(100% + 50px);
 			transition: transform 0.35s;
-			transform: translate3d(-40px,0,0);
+			@include translate-3d(-40px,0,0);
 		}
 		.jet-banner__content {
 			text-align: left;
@@ -396,8 +396,7 @@
 			width: calc(100% + 60px);
 			-webkit-transition: opacity 0.35s, -webkit-transform 0.35s;
 			transition: opacity 0.35s, transform 0.35s;
-			-webkit-transform: translate3d(-50px,0,0);
-			transform: translate3d(-50px,0,0);
+			@include translate-3d(-50px,0,0);
 		}
 
 		.jet-banner__content::before {
@@ -519,8 +518,9 @@
 		.jet-banner__img {
 			-webkit-transition: opacity 0.35s, -webkit-transform 0.35s;
 			transition: opacity 0.35s, transform 0.35s;
-			-webkit-transform: translate3d(0,0,300px);
-			transform: translate3d(0,0,300px);
+			-webkit-transform: scale(1.45);
+			transform: scale(1.45);
+			object-fit: cover;
 		}
 
 		.jet-banner__content::before,
@@ -568,7 +568,8 @@
 
 			.jet-banner__img {
 				opacity: 0.6;
-				transform: translate3d(0,0,0);
+				-webkit-transform: scale(1);
+				transform: scale(1);
 			}
 
 			.jet-banner__title {

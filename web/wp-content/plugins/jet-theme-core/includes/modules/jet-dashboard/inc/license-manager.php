@@ -35,8 +35,6 @@ class License_Manager {
 
 		add_action( 'wp_ajax_jet_license_action', array( $this, 'jet_license_action' ) );
 
-		add_action( 'wp_ajax_jet_dashboard_debug_action', array( $this, 'jet_dashboard_debug_action' ) );
-
 		add_action( 'init', array( $this, 'maybe_modify_tm_license_data' ), -997 );
 
 		$this->license_expire_check();
@@ -79,19 +77,29 @@ class License_Manager {
 		$responce_data = [];
 
 		if ( 'error' === $responce['status'] ) {
-
 			wp_send_json(
 				array(
 					'status'  => 'error',
-					'code'    => $responce['code'],
-					'message' => $responce['message'],
-					'data'    => isset( $responce['data'] ) ? $responce['data'] : [],
+					'code'    => 'server_error',
+					'message' => 'Server Error, try again later',
+					'data'    => [],
 				)
 			);
 		}
 
 		if ( isset( $responce['data'] ) ) {
 			$responce_data = $responce['data'];
+		}
+
+		if ( 'activate' === $license_action && empty( $responce_data ) ) {
+			wp_send_json(
+				array(
+					'status'  => 'error',
+					'code'    => 'server_error',
+					'message' => 'Server Error. Try again later',
+					'data'    => [],
+				)
+			);
 		}
 
 		$responce_data = $this->maybe_modify_tm_responce_data( $responce_data );
@@ -300,7 +308,7 @@ class License_Manager {
 			$sites = array_merge( $sites, $license_details['sites'] );
 		}
 
-		$current_site = Utils::get_site_url();
+		$current_site = strtolower( Utils::get_site_url() );
 
 		if ( ! in_array( $current_site, $sites ) ) {
 			Utils::set_license_data( 'license-list', [] );
@@ -351,123 +359,4 @@ class License_Manager {
 		}
 	}
 
-	/**
-	 * [jet_dashboard_debug_action description]
-	 * @return [type] [description]
-	 */
-	public function get_debug_action_list() {
-		return array(
-			array(
-				'label' => 'Check Plugins Update',
-				'value' => 'check-plugin-update',
-			),
-			array(
-				'label' => 'Delete License Data',
-				'value' => 'delete-license-data',
-			),
-			array(
-				'label' => 'License Expire Check',
-				'value' => 'license-expire-check',
-			),
-			array(
-				'label' => 'Modify Tm License Data',
-				'value' => 'modify-tm-license-data',
-			),
-		);
-	}
-
-	/**
-	 * Proccesing subscribe form ajax
-	 *
-	 * @return void
-	 */
-	public function jet_dashboard_debug_action() {
-
-		$data = ( ! empty( $_POST['data'] ) ) ? $_POST['data'] : false;
-
-		if ( ! $data || ! isset( $data['action'] ) ) {
-			wp_send_json(
-				array(
-					'status'  => 'error',
-					'code'    => 'server_error',
-					'message' => $this->sys_messages['server_error'],
-					'data'    => [],
-				)
-			);
-		}
-
-		$license_action = $data['action'];
-
-		switch ( $license_action ) {
-
-			case 'check-plugin-update':
-				set_site_transient( 'update_plugins', null );
-
-				wp_send_json(
-					array(
-						'status'  => 'success',
-						'code'    => 'plugin_update_cheking',
-						'message' => 'Plugin Update Cheking',
-						'data'    => [],
-					)
-				);
-
-				break;
-
-			case 'delete-license-data':
-				Utils::set_license_data( 'license-list', [] );
-
-				wp_send_json(
-					array(
-						'status'  => 'success',
-						'code'    => 'license_deleted',
-						'message' => 'License data has been deleted',
-						'data'    => [],
-					)
-				);
-
-				break;
-
-			case 'license-expire-check':
-				delete_site_transient( 'jet_dashboard_license_expire_check' );
-
-				wp_send_json(
-					array(
-						'status'  => 'success',
-						'code'    => 'transient_deleted',
-						'message' => 'License Expire Check',
-						'data'    => [],
-					)
-				);
-
-				break;
-
-			case 'modify-tm-license-data':
-				update_option( 'jet_is_modify_tm_license_data', 'false' );
-
-				wp_send_json(
-					array(
-						'status'  => 'success',
-						'code'    => 'transient_deleted',
-						'message' => 'License Expire Check',
-						'data'    => [],
-					)
-				);
-
-				break;
-
-			default:
-				wp_send_json(
-					array(
-						'status'  => 'error',
-						'code'    => 'action_not_found',
-						'message' => 'Action Not Found',
-						'data'    => [],
-					)
-				);
-				break;
-		}
-
-		exit;
-	}
 }

@@ -12,8 +12,8 @@ use Elementor\Group_Control_Border;
 use Elementor\Group_Control_Box_Shadow;
 use Elementor\Group_Control_Typography;
 use Elementor\Repeater;
-use Elementor\Scheme_Color;
-use Elementor\Scheme_Typography;
+use Elementor\Core\Schemes\Color as Scheme_Color;
+use Elementor\Core\Schemes\Typography as Scheme_Typography;
 use Elementor\Widget_Base;
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
@@ -94,7 +94,7 @@ class Jet_Elements_Weather extends Jet_Elements_Base {
 					'raw'  => sprintf(
 						esc_html__( 'Please set Weather API key before using this widget. You can create own API key  %1$s. Paste created key on %2$s', 'jet-elements' ),
 						'<a target="_blank" href="https://www.weatherbit.io/">' . esc_html__( 'here', 'jet-elements' ) . '</a>',
-						'<a target="_blank" href="' . jet_elements_settings()->get_settings_page_link() . '">' . esc_html__( 'settings page', 'jet-elements' ) . '</a>'
+						'<a target="_blank" href="' . jet_elements_settings()->get_settings_page_link( 'integrations' ) . '">' . esc_html__( 'settings page', 'jet-elements' ) . '</a>'
 					)
 				)
 			);
@@ -269,7 +269,7 @@ class Jet_Elements_Weather extends Jet_Elements_Base {
 
 		$this->end_controls_section();
 
-		$this->__start_controls_section(
+		$this->_start_controls_section(
 			'section_title_style',
 			array(
 				'label'     => esc_html__( 'Title', 'jet-elements' ),
@@ -280,7 +280,7 @@ class Jet_Elements_Weather extends Jet_Elements_Base {
 			)
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'title_color',
 			array(
 				'label' => esc_html__( 'Color', 'jet-elements' ),
@@ -292,7 +292,7 @@ class Jet_Elements_Weather extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Typography::get_type(),
 			array(
 				'name'     => 'title_typography',
@@ -301,7 +301,7 @@ class Jet_Elements_Weather extends Jet_Elements_Base {
 			50
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'title_align',
 			array(
 				'label' => esc_html__( 'Alignment', 'jet-elements' ),
@@ -327,11 +327,12 @@ class Jet_Elements_Weather extends Jet_Elements_Base {
 				'selectors' => array(
 					'{{WRAPPER}} ' . $css_scheme['title'] => 'text-align: {{VALUE}};',
 				),
+				'classes' => 'jet-elements-text-align-control',
 			),
 			50
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'title_margin',
 			array(
 				'label'      => esc_html__( 'Margin', 'jet-elements' ),
@@ -344,7 +345,7 @@ class Jet_Elements_Weather extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'title_padding',
 			array(
 				'label'      => esc_html__( 'Padding', 'jet-elements' ),
@@ -357,7 +358,7 @@ class Jet_Elements_Weather extends Jet_Elements_Base {
 			75
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Border::get_type(),
 			array(
 				'name'     => 'title_border',
@@ -366,7 +367,7 @@ class Jet_Elements_Weather extends Jet_Elements_Base {
 			100
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Text_Shadow::get_type(),
 			array(
 				'name'     => 'title_text_shadow',
@@ -375,9 +376,9 @@ class Jet_Elements_Weather extends Jet_Elements_Base {
 			100
 		);
 
-		$this->__end_controls_section();
+		$this->_end_controls_section();
 
-		$this->__start_controls_section(
+		$this->_start_controls_section(
 			'section_current_style',
 			array(
 				'label'     => esc_html__( 'Current Weather', 'jet-elements' ),
@@ -388,7 +389,7 @@ class Jet_Elements_Weather extends Jet_Elements_Base {
 			)
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'current_container_heading',
 			array(
 				'label' => esc_html__( 'Container', 'jet-elements' ),
@@ -397,7 +398,7 @@ class Jet_Elements_Weather extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'current_container_margin',
 			array(
 				'label'      => esc_html__( 'Margin', 'jet-elements' ),
@@ -410,7 +411,7 @@ class Jet_Elements_Weather extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'current_container_padding',
 			array(
 				'label'      => esc_html__( 'Padding', 'jet-elements' ),
@@ -423,7 +424,7 @@ class Jet_Elements_Weather extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Border::get_type(),
 			array(
 				'name'     => 'current_container_border',
@@ -432,7 +433,7 @@ class Jet_Elements_Weather extends Jet_Elements_Base {
 			75
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'current_temp_heading',
 			array(
 				'label'     => esc_html__( 'Temperature', 'jet-elements' ),
@@ -442,7 +443,7 @@ class Jet_Elements_Weather extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'current_temp_color',
 			array(
 				'label' => esc_html__( 'Color', 'jet-elements' ),
@@ -454,7 +455,7 @@ class Jet_Elements_Weather extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Typography::get_type(),
 			array(
 				'name'     => 'current_temp_typography',
@@ -463,7 +464,7 @@ class Jet_Elements_Weather extends Jet_Elements_Base {
 			50
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'current_icon_heading',
 			array(
 				'label'     => esc_html__( 'Icon', 'jet-elements' ),
@@ -473,7 +474,7 @@ class Jet_Elements_Weather extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'current_icon_color',
 			array(
 				'label' => esc_html__( 'Color', 'jet-elements' ),
@@ -485,7 +486,7 @@ class Jet_Elements_Weather extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'current_icon_size',
 			array(
 				'label'      => esc_html__( 'Font Size', 'jet-elements' ),
@@ -504,7 +505,7 @@ class Jet_Elements_Weather extends Jet_Elements_Base {
 			50
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'current_desc_heading',
 			array(
 				'label'     => esc_html__( 'Description', 'jet-elements' ),
@@ -514,7 +515,7 @@ class Jet_Elements_Weather extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'current_desc_color',
 			array(
 				'label' => esc_html__( 'Color', 'jet-elements' ),
@@ -526,7 +527,7 @@ class Jet_Elements_Weather extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Typography::get_type(),
 			array(
 				'name'     => 'current_desc_typography',
@@ -535,7 +536,7 @@ class Jet_Elements_Weather extends Jet_Elements_Base {
 			50
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'current_desc_gap',
 			array(
 				'label' => esc_html__( 'Gap', 'jet-elements' ),
@@ -553,9 +554,9 @@ class Jet_Elements_Weather extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__end_controls_section();
+		$this->_end_controls_section();
 
-		$this->__start_controls_section(
+		$this->_start_controls_section(
 			'section_current_details_style',
 			array(
 				'label'     => esc_html__( 'Details Weather', 'jet-elements' ),
@@ -567,7 +568,7 @@ class Jet_Elements_Weather extends Jet_Elements_Base {
 			)
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'current_details_container_heading',
 			array(
 				'label' => esc_html__( 'Container', 'jet-elements' ),
@@ -576,7 +577,7 @@ class Jet_Elements_Weather extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'current_details_margin',
 			array(
 				'label'      => esc_html__( 'Margin', 'jet-elements' ),
@@ -589,7 +590,7 @@ class Jet_Elements_Weather extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'current_details_padding',
 			array(
 				'label'      => esc_html__( 'Padding', 'jet-elements' ),
@@ -602,7 +603,7 @@ class Jet_Elements_Weather extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Border::get_type(),
 			array(
 				'name'     => 'current_details_border',
@@ -611,7 +612,7 @@ class Jet_Elements_Weather extends Jet_Elements_Base {
 			75
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'current_details_items_heading',
 			array(
 				'label'     => esc_html__( 'Items', 'jet-elements' ),
@@ -621,7 +622,7 @@ class Jet_Elements_Weather extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'current_details_color',
 			array(
 				'label' => esc_html__( 'Color', 'jet-elements' ),
@@ -633,7 +634,7 @@ class Jet_Elements_Weather extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Typography::get_type(),
 			array(
 				'name'     => 'current_details_typography',
@@ -642,7 +643,7 @@ class Jet_Elements_Weather extends Jet_Elements_Base {
 			50
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Typography::get_type(),
 			array(
 				'name'     => 'current_day_typography',
@@ -652,7 +653,7 @@ class Jet_Elements_Weather extends Jet_Elements_Base {
 			50
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'current_details_item_gap',
 			array(
 				'label' => esc_html__( 'Gap', 'jet-elements' ),
@@ -670,7 +671,7 @@ class Jet_Elements_Weather extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'current_details_icon_heading',
 			array(
 				'label'     => esc_html__( 'Icon', 'jet-elements' ),
@@ -680,7 +681,7 @@ class Jet_Elements_Weather extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'current_details_icon_color',
 			array(
 				'label' => esc_html__( 'Color', 'jet-elements' ),
@@ -692,7 +693,7 @@ class Jet_Elements_Weather extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'current_details_icon_size',
 			array(
 				'label'      => esc_html__( 'Font Size', 'jet-elements' ),
@@ -711,9 +712,9 @@ class Jet_Elements_Weather extends Jet_Elements_Base {
 			50
 		);
 
-		$this->__end_controls_section();
+		$this->_end_controls_section();
 
-		$this->__start_controls_section(
+		$this->_start_controls_section(
 			'section_forecast_style',
 			array(
 				'label'     => esc_html__( 'Forecast Weather', 'jet-elements' ),
@@ -724,7 +725,7 @@ class Jet_Elements_Weather extends Jet_Elements_Base {
 			)
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'forecast_container_heading',
 			array(
 				'label' => esc_html__( 'Container', 'jet-elements' ),
@@ -733,7 +734,7 @@ class Jet_Elements_Weather extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'forecast_container_margin',
 			array(
 				'label'      => esc_html__( 'Margin', 'jet-elements' ),
@@ -746,7 +747,7 @@ class Jet_Elements_Weather extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'forecast_container_padding',
 			array(
 				'label'      => esc_html__( 'Padding', 'jet-elements' ),
@@ -759,7 +760,7 @@ class Jet_Elements_Weather extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Border::get_type(),
 			array(
 				'name'     => 'forecast_container_border',
@@ -768,7 +769,7 @@ class Jet_Elements_Weather extends Jet_Elements_Base {
 			75
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'forecast_item_heading',
 			array(
 				'label'     => esc_html__( 'Items', 'jet-elements' ),
@@ -778,7 +779,7 @@ class Jet_Elements_Weather extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'forecast_item_color',
 			array(
 				'label' => esc_html__( 'Color', 'jet-elements' ),
@@ -790,7 +791,7 @@ class Jet_Elements_Weather extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Typography::get_type(),
 			array(
 				'name'     => 'forecast_item_typography',
@@ -799,7 +800,7 @@ class Jet_Elements_Weather extends Jet_Elements_Base {
 			50
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Typography::get_type(),
 			array(
 				'name'     => 'forecast_day_typography',
@@ -809,7 +810,7 @@ class Jet_Elements_Weather extends Jet_Elements_Base {
 			50
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'forecast_item_margin',
 			array(
 				'label'      => esc_html__( 'Margin', 'jet-elements' ),
@@ -822,7 +823,7 @@ class Jet_Elements_Weather extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'forecast_item_padding',
 			array(
 				'label'      => esc_html__( 'Padding', 'jet-elements' ),
@@ -835,7 +836,7 @@ class Jet_Elements_Weather extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'forecast_item_divider',
 			array(
 				'label'        => esc_html__( 'Divider', 'jet-elements' ),
@@ -845,7 +846,7 @@ class Jet_Elements_Weather extends Jet_Elements_Base {
 			50
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'forecast_item_divider_style',
 			array(
 				'label' => esc_html__( 'Style', 'jet-elements' ),
@@ -867,7 +868,7 @@ class Jet_Elements_Weather extends Jet_Elements_Base {
 			50
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'forecast_item_divider_weight',
 			array(
 				'label'   => esc_html__( 'Weight', 'jet-elements' ),
@@ -891,7 +892,7 @@ class Jet_Elements_Weather extends Jet_Elements_Base {
 			50
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'forecast_item_divider_color',
 			array(
 				'label'     => esc_html__( 'Color', 'jet-elements' ),
@@ -906,7 +907,7 @@ class Jet_Elements_Weather extends Jet_Elements_Base {
 			50
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'forecast_icon_heading',
 			array(
 				'label'     => esc_html__( 'Icon', 'jet-elements' ),
@@ -916,7 +917,7 @@ class Jet_Elements_Weather extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'forecast_icon_color',
 			array(
 				'label' => esc_html__( 'Color', 'jet-elements' ),
@@ -928,7 +929,7 @@ class Jet_Elements_Weather extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'forecast_icon_size',
 			array(
 				'label'      => esc_html__( 'Font Size', 'jet-elements' ),
@@ -947,21 +948,21 @@ class Jet_Elements_Weather extends Jet_Elements_Base {
 			50
 		);
 
-		$this->__end_controls_section();
+		$this->_end_controls_section();
 	}
 
 	protected function render() {
-		$this->__context = 'render';
+		$this->_context = 'render';
 
-		$this->__open_wrap();
+		$this->_open_wrap();
 
 		$this->weather_data = $this->get_weather_data();
 
 		if ( ! empty( $this->weather_data ) ) {
-			include $this->__get_global_template( 'index' );
+			include $this->_get_global_template( 'index' );
 		}
 
-		$this->__close_wrap();
+		$this->_close_wrap();
 	}
 
 	/**
@@ -1010,7 +1011,7 @@ class Jet_Elements_Weather extends Jet_Elements_Base {
 				$this->current_weather_api_url
 			);
 
-			$current_request_data = $this->__get_request_data( $current_request_url );
+			$current_request_data = $this->_get_request_data( $current_request_url );
 
 			if ( ! $current_request_data ) {
 				$message = esc_html__( 'Weather data of this location not found.', 'jet-elements' );
@@ -1034,7 +1035,7 @@ class Jet_Elements_Weather extends Jet_Elements_Base {
 				$this->forecast_weather_api_url
 			);
 
-			$forecast_request_data = $this->__get_request_data( $forecast_request_url );
+			$forecast_request_data = $this->_get_request_data( $forecast_request_url );
 
 			if ( isset( $forecast_request_data['error'] ) ) {
 
@@ -1078,7 +1079,7 @@ class Jet_Elements_Weather extends Jet_Elements_Base {
 	 *
 	 * @return array|bool
 	 */
-	public function __get_request_data( $url ) {
+	public function _get_request_data( $url ) {
 
 		$response = wp_remote_get( $url, array( 'timeout' => 30 ) );
 
@@ -1392,7 +1393,7 @@ class Jet_Elements_Weather extends Jet_Elements_Base {
 		}
 
 		$type = isset( $settings['title_type'] ) ? $settings['title_type'] : 'api';
-		$tag  = isset( $settings['title_size'] ) ? $settings['title_size'] : 'h3';
+		$tag  = isset( $settings['title_size'] ) ? jet_elements_tools()->validate_html_tag( $settings['title_size'] ) : 'h3';
 
 		switch ( $type ) {
 			case 'location':

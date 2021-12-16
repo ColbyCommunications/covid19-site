@@ -51,13 +51,16 @@ if ( ! class_exists( 'Jet_Tricks_Elementor_Widget_Extension' ) ) {
 				'id' => '',
 			),
 			'jet_tricks_widget_tooltip'                 => 'false',
-			'jet_tricks_widget_tooltip_description'     => 'Lorem Ipsum',
+			'jet_tricks_widget_tooltip_description'     => 'This is Tooltip!',
 			'jet_tricks_widget_tooltip_placement'       => 'top',
+			'jet_tricks_widget_tooltip_arrow'           => true,
 			'jet_tricks_widget_tooltip_x_offset'        => 0,
 			'jet_tricks_widget_tooltip_y_offset'        => 0,
-			'jet_tricks_widget_tooltip_animation'       => 'shift-toward',
+			'jet_tricks_widget_tooltip_animation'       => 'fade',
+			'jet_tricks_widget_tooltip_trigger'         => 'mouseenter',
 			'jet_tricks_widget_tooltip_z_index'         => 999,
 			'jet_tricks_widget_tooltip_custom_selector' => '',
+			'jet_tricks_widget_tooltip_delay'           => 0,
 		);
 
 		/**
@@ -103,7 +106,8 @@ if ( ! class_exists( 'Jet_Tricks_Elementor_Widget_Extension' ) ) {
 
 			add_action( 'elementor/frontend/widget/before_render', array( $this, 'widget_before_render' ) );
 
-			add_action( 'elementor/widget/before_render_content', array( $this, 'widget_before_render_content' ) );
+			//add_action( 'elementor/widget/before_render_content', array( $this, 'widget_before_render_content' ) );
+			add_filter( 'elementor/widget/render_content', array( $this, 'widget_before_render_content' ), 10, 2 );
 
 			add_action( 'elementor/frontend/before_enqueue_scripts', array( $this, 'enqueue_scripts' ), 9 );
 		}
@@ -165,6 +169,24 @@ if ( ! class_exists( 'Jet_Tricks_Elementor_Widget_Extension' ) ) {
 				)
 			);
 
+			if ( \Elementor\Plugin::$instance->breakpoints && method_exists( \Elementor\Plugin::$instance->breakpoints, 'get_active_breakpoints') ) {
+				$active_breakpoints = \Elementor\Plugin::$instance->breakpoints->get_active_breakpoints();
+				$breakpoints_list   = array();
+
+				foreach ($active_breakpoints as $key => $value) {
+					$breakpoints_list[$key] = $value->get_label();
+				}
+
+				$breakpoints_list['desktop'] = 'Desktop';
+				$breakpoints_list            = array_reverse($breakpoints_list);
+			} else {
+				$breakpoints_list = array(
+					'desktop' => 'Desktop',
+					'tablet'  => 'Tablet',
+					'mobile'  => 'Mobile'
+				);
+			}
+
 			$obj->add_control(
 				'jet_tricks_widget_parallax_speed',
 				array(
@@ -213,11 +235,7 @@ if ( ! class_exists( 'Jet_Tricks_Elementor_Widget_Extension' ) ) {
 						'desktop',
 						'tablet',
 					),
-					'options'     => array(
-						'desktop' => __( 'Desktop', 'jet-tricks' ),
-						'tablet'  => __( 'Tablet', 'jet-tricks' ),
-						'mobile'  => __( 'Mobile', 'jet-tricks' ),
-					),
+					'options'     => $breakpoints_list,
 					'condition' => array(
 						'jet_tricks_widget_parallax' => 'true',
 					),
@@ -296,6 +314,7 @@ if ( ! class_exists( 'Jet_Tricks_Elementor_Widget_Extension' ) ) {
 					'type'        => Elementor\Controls_Manager::TEXT,
 					'default'     => '',
 					'placeholder' => 'Lorem Ipsum',
+					'dynamic'     => array( 'active' => true ),
 					'condition' => array(
 						'jet_tricks_widget_satellite'      => 'true',
 						'jet_tricks_widget_satellite_type' => 'text',
@@ -332,11 +351,12 @@ if ( ! class_exists( 'Jet_Tricks_Elementor_Widget_Extension' ) ) {
 					'default' => array(
 						'url' => Elementor\Utils::get_placeholder_image_src(),
 					),
+					'dynamic'   => array( 'active' => true ),
 					'condition' => array(
 						'jet_tricks_widget_satellite'     => 'true',
 						'jet_tricks_widget_satellite_type' => 'image',
 					),
-					'render_type'  => 'template',
+					//'render_type'  => 'template',
 				)
 			);
 
@@ -367,7 +387,7 @@ if ( ! class_exists( 'Jet_Tricks_Elementor_Widget_Extension' ) ) {
 			$obj->add_responsive_control(
 				'jet_tricks_widget_satellite_x_offset',
 				array(
-					'label'      => esc_html__( 'x-Offset', 'jet-tricks' ),
+					'label'      => esc_html__( 'Offset X', 'jet-tricks' ),
 					'type'       => Elementor\Controls_Manager::SLIDER,
 					'size_units' => array( 'px' ),
 					'range'      => array(
@@ -392,7 +412,7 @@ if ( ! class_exists( 'Jet_Tricks_Elementor_Widget_Extension' ) ) {
 			$obj->add_responsive_control(
 				'jet_tricks_widget_satellite_y_offset',
 				array(
-					'label'      => esc_html__( 'y-Offset', 'jet-tricks' ),
+					'label'      => esc_html__( 'Offset Y', 'jet-tricks' ),
 					'type'       => Elementor\Controls_Manager::SLIDER,
 					'size_units' => array( 'px' ),
 					'range'      => array(
@@ -447,7 +467,7 @@ if ( ! class_exists( 'Jet_Tricks_Elementor_Widget_Extension' ) ) {
 					'label'   => esc_html__( 'Z-Index', 'jet-tricks' ),
 					'type'    => Elementor\Controls_Manager::NUMBER,
 					'default' => 2,
-					'min'     => 0,
+					'min'     => -10,
 					'max'     => 999,
 					'step'    => 1,
 					'condition' => array(
@@ -628,11 +648,11 @@ if ( ! class_exists( 'Jet_Tricks_Elementor_Widget_Extension' ) ) {
 				'jet_tricks_widget_tooltip_description',
 				array(
 					'label'       => esc_html__( 'Description', 'jet-tricks' ),
-					'type'        => Elementor\Controls_Manager::TEXTAREA,
+					'type'        => Elementor\Controls_Manager::WYSIWYG,
 					'render_type' => 'template',
-					'default'     => '',
-					'placeholder' => 'Lorem Ipsum',
-					'condition'   => array(
+					'default'     => esc_html__( 'This is Tooltip!', 'jet-tricks' ),
+					'dynamic'     => array ( 'active' => true ),
+					'condition'   => array (
 						'jet_tricks_widget_tooltip' => 'true',
 					),
 				)
@@ -645,11 +665,35 @@ if ( ! class_exists( 'Jet_Tricks_Elementor_Widget_Extension' ) ) {
 					'type'    => Elementor\Controls_Manager::SELECT,
 					'default' => 'top',
 					'options' => array(
-						'top'    => esc_html__( 'Top', 'jet-tricks' ),
-						'bottom' => esc_html__( 'Bottom', 'jet-tricks' ),
-						'left'   => esc_html__( 'Left', 'jet-tricks' ),
-						'right'  => esc_html__( 'Right', 'jet-tricks' ),
+						'top-start'    => esc_html__( 'Top Start', 'jet-tricks' ),
+						'top'          => esc_html__( 'Top', 'jet-tricks' ),
+						'top-end'      => esc_html__( 'Top End', 'jet-tricks' ),
+						'right-start'  => esc_html__( 'Right Start', 'jet-tricks' ),
+						'right'        => esc_html__( 'Right', 'jet-tricks' ),
+						'right-end'    => esc_html__( 'Right End', 'jet-tricks' ),
+						'bottom-start' => esc_html__( 'Bottom Start', 'jet-tricks' ),
+						'bottom'       => esc_html__( 'Bottom', 'jet-tricks' ),
+						'bottom-end'   => esc_html__( 'Bottom End', 'jet-tricks' ),
+						'left-start'   => esc_html__( 'Left Start', 'jet-tricks' ),
+						'left'         => esc_html__( 'Left', 'jet-tricks' ),
+						'left-end'     => esc_html__( 'Left End', 'jet-tricks' ),
 					),
+					'render_type'  => 'template',
+					'condition' => array(
+						'jet_tricks_widget_tooltip' => 'true',
+					),
+				)
+			);
+
+			$obj->add_control(
+				'jet_tricks_widget_tooltip_arrow',
+				array(
+					'label'        => esc_html__( 'Use Arrow?', 'jet-tricks' ),
+					'type'         => Elementor\Controls_Manager::SWITCHER,
+					'label_on'     => esc_html__( 'Yes', 'jet-tricks' ),
+					'label_off'    => esc_html__( 'No', 'jet-tricks' ),
+					'return_value' => 'true',
+					'default'      => 'true',
 					'render_type'  => 'template',
 					'condition' => array(
 						'jet_tricks_widget_tooltip' => 'true',
@@ -662,11 +706,11 @@ if ( ! class_exists( 'Jet_Tricks_Elementor_Widget_Extension' ) ) {
 				array(
 					'label'   => esc_html__( 'Animation', 'jet-tricks' ),
 					'type'    => Elementor\Controls_Manager::SELECT,
-					'default' => 'shift-toward',
+					'default' => 'fade',
 					'options' => array(
+						'fade'         => esc_html__( 'Fade', 'jet-tricks' ),
 						'shift-away'   => esc_html__( 'Shift-Away', 'jet-tricks' ),
 						'shift-toward' => esc_html__( 'Shift-Toward', 'jet-tricks' ),
-						'fade'         => esc_html__( 'Fade', 'jet-tricks' ),
 						'scale'        => esc_html__( 'Scale', 'jet-tricks' ),
 						'perspective'  => esc_html__( 'Perspective', 'jet-tricks' ),
 					),
@@ -678,9 +722,52 @@ if ( ! class_exists( 'Jet_Tricks_Elementor_Widget_Extension' ) ) {
 			);
 
 			$obj->add_control(
+				'jet_tricks_widget_tooltip_trigger',
+				array(
+					'label'   => esc_html__( 'Trigger', 'jet-tricks' ),
+					'type'    => Elementor\Controls_Manager::SELECT,
+					'default' => 'mouseenter',
+					'options' => array(
+						'mouseenter'       => esc_html__( 'Mouse Enter', 'jet-tricks' ),
+						'click'            => esc_html__( 'Click', 'jet-tricks' ),
+						'focus'            => esc_html__( 'Focus', 'jet-tricks' ),
+						'mouseenter click' => esc_html__( 'Mouse Enter + Click', 'jet-tricks' ),
+						'mouseenter focus' => esc_html__( 'Mouse Enter + Focus', 'jet-tricks' ),
+					),
+					'render_type'  => 'template',
+					'condition' => array(
+						'jet_tricks_widget_tooltip' => 'true',
+					),
+				)
+			);
+
+			$obj->add_control(
+				'jet_tricks_widget_tooltip_delay',
+				array(
+					'label'      => esc_html__( 'Delay', 'jet-tricks' ),
+					'type'       => Elementor\Controls_Manager::SLIDER,
+					'size_units' => array( 'px'),
+					'range'      => array(
+						'px' => array(
+							'min'  => 0,
+							'max'  => 1000,
+							'step' => 100,
+						),
+					),
+					'default' => array(
+						'size' => 0,
+						'unit' => 'px',
+					),
+					'condition' => array(
+						'jet_tricks_widget_tooltip' => 'true',
+					),
+				)
+			);
+
+			$obj->add_control(
 				'jet_tricks_widget_tooltip_x_offset',
 				array(
-					'label'   => esc_html__( 'Offset X', 'jet-tricks' ),
+					'label'   => esc_html__( 'Offset', 'jet-tricks' ),
 					'type'    => Elementor\Controls_Manager::NUMBER,
 					'default' => 0,
 					'min'     => -1000,
@@ -695,7 +782,7 @@ if ( ! class_exists( 'Jet_Tricks_Elementor_Widget_Extension' ) ) {
 			$obj->add_control(
 				'jet_tricks_widget_tooltip_y_offset',
 				array(
-					'label'   => esc_html__( 'Offset Y', 'jet-tricks' ),
+					'label'   => esc_html__( 'Distance', 'jet-tricks' ),
 					'type'    => Elementor\Controls_Manager::NUMBER,
 					'default' => 0,
 					'min'     => -1000,
@@ -757,11 +844,11 @@ if ( ! class_exists( 'Jet_Tricks_Elementor_Widget_Extension' ) ) {
 					'range'      => array(
 						'px' => array(
 							'min' => 50,
-							'max' => 500,
+							'max' => 1000,
 						),
 					),
 					'selectors'  => array(
-						'{{WRAPPER}} > .tippy-popper .tippy-tooltip' => 'width: {{SIZE}}{{UNIT}};',
+						'{{WRAPPER}} > [data-tippy-root] .tippy-box' => 'width: {{SIZE}}{{UNIT}};',
 					),
 					'condition' => array(
 						'jet_tricks_widget_tooltip' => 'true',
@@ -774,7 +861,7 @@ if ( ! class_exists( 'Jet_Tricks_Elementor_Widget_Extension' ) ) {
 				Elementor\Group_Control_Typography::get_type(),
 				array(
 					'name'     => 'jet_tricks_widget_tooltip_typography',
-					'selector' => '{{WRAPPER}} > .tippy-popper .tippy-tooltip .tippy-content',
+					'selector' => '{{WRAPPER}} > [data-tippy-root] .tippy-box .tippy-content',
 					'condition' => array(
 						'jet_tricks_widget_tooltip' => 'true',
 					),
@@ -787,7 +874,7 @@ if ( ! class_exists( 'Jet_Tricks_Elementor_Widget_Extension' ) ) {
 					'label'  => esc_html__( 'Text Color', 'jet-tricks' ),
 					'type'   => Elementor\Controls_Manager::COLOR,
 					'selectors' => array(
-						'{{WRAPPER}} > .tippy-popper .tippy-tooltip' => 'color: {{VALUE}}',
+						'{{WRAPPER}} > [data-tippy-root] .tippy-box .tippy-content' => 'color: {{VALUE}}',
 					),
 					'condition' => array(
 						'jet_tricks_widget_tooltip' => 'true',
@@ -816,8 +903,12 @@ if ( ! class_exists( 'Jet_Tricks_Elementor_Widget_Extension' ) ) {
 						),
 					),
 					'selectors'  => array(
-						'{{WRAPPER}} > .tippy-popper .tippy-tooltip .tippy-content' => 'text-align: {{VALUE}};',
+						'{{WRAPPER}} > [data-tippy-root] .tippy-box .tippy-content' => 'text-align: {{VALUE}};',
 					),
+					'condition' => array(
+						'jet_tricks_widget_tooltip' => 'true',
+					),
+					'classes'   => 'jet-tricks-text-align-control',
 				)
 			);
 
@@ -825,7 +916,7 @@ if ( ! class_exists( 'Jet_Tricks_Elementor_Widget_Extension' ) ) {
 				Elementor\Group_Control_Background::get_type(),
 				array(
 					'name'     => 'jet_tricks_widget_tooltip_background',
-					'selector' => '{{WRAPPER}} > .tippy-popper .tippy-tooltip',
+					'selector' => '{{WRAPPER}} > [data-tippy-root] .tippy-box',
 					'condition' => array(
 						'jet_tricks_widget_tooltip' => 'true',
 					),
@@ -838,10 +929,10 @@ if ( ! class_exists( 'Jet_Tricks_Elementor_Widget_Extension' ) ) {
 					'label'  => esc_html__( 'Arrow Color', 'jet-tricks' ),
 					'type'   => Elementor\Controls_Manager::COLOR,
 					'selectors' => array(
-						'{{WRAPPER}} > .tippy-popper[x-placement^=left] .tippy-tooltip .tippy-arrow'=> 'border-left-color: {{VALUE}}',
-						'{{WRAPPER}} > .tippy-popper[x-placement^=right] .tippy-tooltip .tippy-arrow'=> 'border-right-color: {{VALUE}}',
-						'{{WRAPPER}} > .tippy-popper[x-placement^=top] .tippy-tooltip .tippy-arrow'=> 'border-top-color: {{VALUE}}',
-						'{{WRAPPER}} > .tippy-popper[x-placement^=bottom] .tippy-tooltip .tippy-arrow'=> 'border-bottom-color: {{VALUE}}',
+						'{{WRAPPER}} > [data-tippy-root] .tippy-box[data-placement^=left] .tippy-arrow:before'=> 'border-left-color: {{VALUE}}',
+						'{{WRAPPER}} > [data-tippy-root] .tippy-box[data-placement^=right] .tippy-arrow:before'=> 'border-right-color: {{VALUE}}',
+						'{{WRAPPER}} > [data-tippy-root] .tippy-box[data-placement^=top] .tippy-arrow:before'=> 'border-top-color: {{VALUE}}',
+						'{{WRAPPER}} > [data-tippy-root] .tippy-box[data-placement^=bottom] .tippy-arrow:before'=> 'border-bottom-color: {{VALUE}}',
 					),
 					'condition' => array(
 						'jet_tricks_widget_tooltip' => 'true',
@@ -856,7 +947,7 @@ if ( ! class_exists( 'Jet_Tricks_Elementor_Widget_Extension' ) ) {
 					'type'       => Elementor\Controls_Manager::DIMENSIONS,
 					'size_units' => array( 'px', '%' ),
 					'selectors'  => array(
-						'{{WRAPPER}} > .tippy-popper .tippy-tooltip' => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+						'{{WRAPPER}} > [data-tippy-root] .tippy-box .tippy-content' => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 					),
 					'render_type'  => 'template',
 					'condition' => array(
@@ -872,7 +963,7 @@ if ( ! class_exists( 'Jet_Tricks_Elementor_Widget_Extension' ) ) {
 					'label'       => esc_html__( 'Border', 'jet-tricks' ),
 					'placeholder' => '1px',
 					'default'     => '1px',
-					'selector'    => '{{WRAPPER}} > .tippy-popper .tippy-tooltip',
+					'selector'    => '{{WRAPPER}} > [data-tippy-root] .tippy-box',
 					'condition' => array(
 						'jet_tricks_widget_tooltip' => 'true',
 					),
@@ -886,7 +977,7 @@ if ( ! class_exists( 'Jet_Tricks_Elementor_Widget_Extension' ) ) {
 					'type'       => Elementor\Controls_Manager::DIMENSIONS,
 					'size_units' => array( 'px', '%' ),
 					'selectors'  => array(
-						'{{WRAPPER}} > .tippy-popper .tippy-tooltip' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+						'{{WRAPPER}} > [data-tippy-root] .tippy-box ' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 					),
 					'condition' => array(
 						'jet_tricks_widget_tooltip' => 'true',
@@ -898,7 +989,7 @@ if ( ! class_exists( 'Jet_Tricks_Elementor_Widget_Extension' ) ) {
 				Elementor\Group_Control_Box_Shadow::get_type(),
 				array(
 					'name' => 'jet_tricks_widget_tooltip_box_shadow',
-					'selector' => '{{WRAPPER}} > .tippy-popper .tippy-tooltip',
+					'selector' => '{{WRAPPER}} > [data-tippy-root] .tippy-box',
 					'condition' => array(
 						'jet_tricks_widget_tooltip' => 'true',
 					),
@@ -923,6 +1014,8 @@ if ( ! class_exists( 'Jet_Tricks_Elementor_Widget_Extension' ) ) {
 
 			$widget_settings = array();
 
+			static $enqueue_tooltip_scripts = false;
+
 			if (
 				filter_var( $settings['jet_tricks_widget_parallax'], FILTER_VALIDATE_BOOLEAN ) &&
 				filter_var( $this->avaliable_extensions['widget_parallax'], FILTER_VALIDATE_BOOLEAN )
@@ -942,8 +1035,8 @@ if ( ! class_exists( 'Jet_Tricks_Elementor_Widget_Extension' ) ) {
 				filter_var( $settings['jet_tricks_widget_satellite'], FILTER_VALIDATE_BOOLEAN ) &&
 				filter_var( $this->avaliable_extensions['widget_satellite'], FILTER_VALIDATE_BOOLEAN )
 			) {
-				$widget_settings['satellite'] = filter_var( $settings['jet_tricks_widget_satellite'], FILTER_VALIDATE_BOOLEAN ) ? 'true' : 'false';
-				$widget_settings['satelliteType'] = $settings['jet_tricks_widget_satellite_type'];
+				$widget_settings['satellite']         = filter_var( $settings['jet_tricks_widget_satellite'], FILTER_VALIDATE_BOOLEAN ) ? 'true' : 'false';
+				$widget_settings['satelliteType']     = $settings['jet_tricks_widget_satellite_type'];
 				$widget_settings['satellitePosition'] = $settings['jet_tricks_widget_satellite_position'];
 
 				$widget->add_render_attribute( '_wrapper', array(
@@ -952,23 +1045,32 @@ if ( ! class_exists( 'Jet_Tricks_Elementor_Widget_Extension' ) ) {
 			}
 
 			if (
-				filter_var( $settings['jet_tricks_widget_tooltip'], FILTER_VALIDATE_BOOLEAN ) &&
-				filter_var( $this->avaliable_extensions['widget_tooltip'], FILTER_VALIDATE_BOOLEAN )
+				filter_var( $settings[ 'jet_tricks_widget_tooltip' ], FILTER_VALIDATE_BOOLEAN ) &&
+				filter_var( $this->avaliable_extensions[ 'widget_tooltip' ], FILTER_VALIDATE_BOOLEAN )
 			) {
-				$widget_settings['tooltip'] = filter_var( $settings['jet_tricks_widget_tooltip'], FILTER_VALIDATE_BOOLEAN ) ? 'true' : 'false';
-				$widget_settings['tooltipDescription'] = $settings['jet_tricks_widget_tooltip_description'];
-				$widget_settings['tooltipPlacement'] = $settings['jet_tricks_widget_tooltip_placement'];
-				$widget_settings['xOffset'] = $settings['jet_tricks_widget_tooltip_x_offset'];
-				$widget_settings['yOffset'] = $settings['jet_tricks_widget_tooltip_y_offset'];
-				$widget_settings['tooltipAnimation'] = $settings['jet_tricks_widget_tooltip_animation'];
-				$widget_settings['zIndex'] = $settings['jet_tricks_widget_tooltip_z_index'];
-				$widget_settings['customSelector'] = $settings['jet_tricks_widget_tooltip_custom_selector'];
 
-				$widget->add_render_attribute( '_wrapper', array(
+				$widget_settings[ 'tooltip' ]            = filter_var( $settings[ 'jet_tricks_widget_tooltip' ], FILTER_VALIDATE_BOOLEAN ) ? 'true' : 'false';
+				$widget_settings[ 'tooltipDescription' ] = $settings[ 'jet_tricks_widget_tooltip_description' ];
+				$widget_settings[ 'tooltipPlacement' ]   = $settings[ 'jet_tricks_widget_tooltip_placement' ];
+				$widget_settings[ 'tooltipArrow' ]       = filter_var( $settings[ 'jet_tricks_widget_tooltip_arrow' ], FILTER_VALIDATE_BOOLEAN ) ? true : false;
+				$widget_settings[ 'xOffset' ]            = $settings[ 'jet_tricks_widget_tooltip_x_offset' ];
+				$widget_settings[ 'yOffset' ]            = $settings[ 'jet_tricks_widget_tooltip_y_offset' ];
+				$widget_settings[ 'tooltipAnimation' ]   = $settings[ 'jet_tricks_widget_tooltip_animation' ];
+				$widget_settings[ 'tooltipTrigger' ]     = $settings[ 'jet_tricks_widget_tooltip_trigger' ];
+				$widget_settings[ 'zIndex' ]             = $settings[ 'jet_tricks_widget_tooltip_z_index' ];
+				$widget_settings[ 'customSelector' ]     = $settings[ 'jet_tricks_widget_tooltip_custom_selector' ];
+				$widget_settings['delay']                = $settings['jet_tricks_widget_tooltip_delay'];
+
+				$widget->add_render_attribute( '_wrapper', array (
 					'class' => 'jet-tooltip-widget',
 				) );
 
-				$this->tooltip_widgets[] = $data['id'];
+				$this->tooltip_widgets[] = $data[ 'id' ];
+
+				if ( ! $enqueue_tooltip_scripts ) {
+					wp_enqueue_script( 'jet-tricks-tippy-bundle' );
+					$enqueue_tooltip_scripts = true;
+				}
 			}
 
 			$widget_settings = apply_filters(
@@ -979,22 +1081,22 @@ if ( ! class_exists( 'Jet_Tricks_Elementor_Widget_Extension' ) ) {
 			);
 
 			if ( ! empty( $widget_settings ) ) {
-				$widget->add_render_attribute( '_wrapper', array(
+				$widget->add_render_attribute( '_wrapper', array (
 					'data-jet-tricks-settings' => json_encode( $widget_settings ),
 				) );
 			}
 
-			$this->widgets_data[ $data['id'] ] = $widget_settings;
+			$this->widgets_data[ $data[ 'id' ] ] = $widget_settings;
 		}
 
 		/**
 		 * [widget_before_render_content description]
 		 * @return [type] [description]
 		 */
-		public function widget_before_render_content( $widget ) {
+		public function widget_before_render_content( $widget_content, $widget ) {
 
 			$data     = $widget->get_data();
-			$settings = $widget->get_settings();
+			$settings = $widget->get_settings_for_display();
 
 			$settings = wp_parse_args( $settings, $this->default_widget_settings );
 
@@ -1047,6 +1149,8 @@ if ( ! class_exists( 'Jet_Tricks_Elementor_Widget_Extension' ) ) {
 			) {
 				echo sprintf( '<div id="jet-tricks-tooltip-content-%1$s" class="jet-tooltip-widget__content">%2$s</div>', $data['id'], $settings['jet_tricks_widget_tooltip_description'] );
 			}
+
+			return $widget_content;
 		}
 
 		/**
@@ -1055,11 +1159,6 @@ if ( ! class_exists( 'Jet_Tricks_Elementor_Widget_Extension' ) ) {
 		 * @return void
 		 */
 		public function enqueue_scripts() {
-
-			if ( ! empty( $this->tooltip_widgets ) ) {
-				wp_enqueue_script( 'jet-tricks-tippy' );
-			}
-
 			jet_tricks_assets()->elements_data['widgets'] = $this->widgets_data;
 		}
 

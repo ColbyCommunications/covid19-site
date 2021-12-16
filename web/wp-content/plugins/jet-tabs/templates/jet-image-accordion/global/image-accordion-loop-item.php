@@ -4,7 +4,7 @@
  */
 ?>
 <div class="jet-image-accordion__item">
-<?php echo $this->__loop_item( array( 'item_image', 'url' ), '<img class="jet-image-accordion__image-instance" src="%s" alt="">' ); ?>
+<?php echo $this->__loop_item_image(); ?>
 	<div class="jet-image-accordion__content"><?php
 		echo $this->__loop_item( array( 'item_title' ), '<h5 class="jet-image-accordion__title">%s</h5>' );
 		echo $this->__loop_item( array( 'item_desc' ), '<div class="jet-image-accordion__desc">%s</div>' );

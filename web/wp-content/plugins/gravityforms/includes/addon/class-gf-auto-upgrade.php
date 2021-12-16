@@ -38,6 +38,8 @@ class GFAutoUpgrade {
 
 			if ( RG_CURRENT_PAGE == 'plugins.php' ) {
 				add_action( 'after_plugin_row_' . $this->_path, array( $this, 'rg_plugin_row' ) );
+			} elseif ( in_array( RG_CURRENT_PAGE, array( 'admin-ajax.php' ) ) ) {
+				add_action( 'wp_ajax_gf_get_changelog', array( $this, 'ajax_display_changelog' ) );
 			}
 		}
 
@@ -50,24 +52,19 @@ class GFAutoUpgrade {
 		add_filter( 'mwp_premium_perform_update', array( $this, 'premium_update' ) );
 	}
 
+	/**
+	 * Displays messages for the Gravity Forms listing on the Plugins page.
+	 *
+	 * Displays if Gravity Forms isn't supported.
+	 *
+	 * @since  Unknown
+	 * @since  2.4.15  Update to improve multisite updates.
+	 */
 	public function rg_plugin_row() {
 
 		if ( ! $this->_is_gravityforms_supported ) {
 			$message = sprintf( esc_html__( 'Gravity Forms %s is required. Activate it now or %spurchase it today!%s', 'gravityforms' ), $this->_min_gravityforms_version, "<a href='https://www.gravityforms.com'>", '</a>' );
 			GFAddOn::display_plugin_message( $message, true );
-		} else {
-			$version_info = $this->get_version_info( $this->_slug );
-
-			if ( ! rgar( $version_info, 'is_valid_key' ) ) {
-				$title       = $this->_title;
-				if ( version_compare( $this->_version, $version_info['version'], '<' ) ) {
-					$new_version = sprintf( esc_html__( 'There is a new version of %s available.', 'gravityforms' ), $title ) . sprintf( ' <a class="thickbox" title="%s" href="plugin-install.php?tab=plugin-information&plugin=%s&TB_iframe=true&width=640&height=808">', $title, $this->_slug ) . sprintf( esc_html__( 'View version %s Details', 'gravityforms' ), $version_info['version'] ) . '</a>. ';
-				} else {
-					$new_version = '';
-				}
-				$message = $new_version . sprintf( esc_html__( '%sRegister%s your copy of Gravity Forms to receive access to automatic upgrades and support. Need a license key? %sPurchase one now%s.', 'gravityforms' ), '<a href="admin.php?page=gf_settings">', '</a>', '<a href="https://www.gravityforms.com">', '</a>' ) . '</div></td>';
-				GFAddOn::display_plugin_message( $message );
-			}
 		}
 	}
 
@@ -124,6 +121,10 @@ class GFAutoUpgrade {
 
 	public function check_update( $option ) {
 
+		if ( empty( $option ) ) {
+			return $option;
+		}
+
 		$key = $this->get_key();
 
 		$version_info = $this->get_version_info( $this->_slug );
@@ -136,16 +137,21 @@ class GFAutoUpgrade {
 			$option->response[ $this->_path ] = new stdClass();
 		}
 
+		$plugin = array(
+			'plugin'      => $this->_path,
+			'url'         => $this->_url,
+			'slug'        => $this->_slug,
+			'package'     => str_replace( '{KEY}', $key, $version_info['url'] ),
+			'new_version' => $version_info['version'],
+			'id'          => '0',
+		);
+
 		//Empty response means that the key is invalid. Do not queue for upgrade
 		if ( ! rgar( $version_info, 'is_valid_key' ) || version_compare( $this->_version, $version_info['version'], '>=' ) ) {
 			unset( $option->response[ $this->_path ] );
+			$option->no_update[ $this->_path ] = (object) $plugin;
 		} else {
-			$option->response[ $this->_path ]->plugin      = $this->_path;
-			$option->response[ $this->_path ]->url         = $this->_url;
-			$option->response[ $this->_path ]->slug        = $this->_slug;
-			$option->response[ $this->_path ]->package     = str_replace( '{KEY}', $key, $version_info['url'] );
-			$option->response[ $this->_path ]->new_version = $version_info['version'];
-			$option->response[ $this->_path ]->id          = '0';
+			$option->response[ $this->_path ] = (object) $plugin;
 		}
 
 		return $option;
@@ -163,6 +169,17 @@ class GFAutoUpgrade {
 		echo $change_log;
 
 		exit;
+	}
+
+	/**
+	 * Get changelog with admin-ajax.php in GFForms::maybe_display_update_notification().
+	 *
+	 * @since 2.4.15
+	 */
+	public function ajax_display_changelog() {
+		check_admin_referer();
+
+		$this->display_changelog();
 	}
 
 	private function get_changelog() {
@@ -203,7 +220,7 @@ class GFAutoUpgrade {
 	private function get_remote_request_params( $offering, $key, $version ) {
 		global $wpdb;
 
-		return sprintf( 'of=%s&key=%s&v=%s&wp=%s&php=%s&mysql=%s', urlencode( $offering ), urlencode( $key ), urlencode( $version ), urlencode( get_bloginfo( 'version' ) ), urlencode( phpversion() ), urlencode( $wpdb->db_version() ) );
+		return sprintf( 'of=%s&key=%s&v=%s&wp=%s&php=%s&mysql=%s', urlencode( $offering ), urlencode( $key ), urlencode( $version ), urlencode( get_bloginfo( 'version' ) ), urlencode( phpversion() ), urlencode( GFCommon::get_db_version() ) );
 	}
 
 	private function get_key() {

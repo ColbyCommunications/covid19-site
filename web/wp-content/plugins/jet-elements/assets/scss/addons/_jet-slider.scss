@@ -42,6 +42,18 @@
 		flex-flow: column nowrap;
 		justify-content: center;
 		align-items: center;
+
+		&.jet-slider__item-linked {
+			cursor: pointer;
+
+			* {
+				cursor: auto;
+			}
+
+			.jet-slider__content-item-link{
+				visibility: hidden;
+			}
+		}
 	}
 
 	&__content-item {
@@ -59,6 +71,10 @@
 		align-items: center;
 		position: relative;
 		width: 100%;
+
+		.elementor[data-elementor-type="section"] {
+			width: 100%;
+		}
 	}
 
 	&__icon {
@@ -216,5 +232,13 @@
 
 	.sp-grab {
 		cursor: auto;
+	}
+
+	&__fraction-pagination {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		position: relative;
+		padding: 0;
 	}
 }

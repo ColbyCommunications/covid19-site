@@ -145,7 +145,6 @@ if ( ! class_exists( 'Jet_Theme_Core_Locations' ) ) {
 			}
 
 			if ( ! $template_id ) {
-
 				if ( -1 === $done_before ) {
 					return true;
 				} else {
@@ -178,11 +177,12 @@ if ( ! class_exists( 'Jet_Theme_Core_Locations' ) ) {
 		 * @param  string $location [description]
 		 * @return 1 - If Pro has priority and pro rendered
 		 *        -1 - If:
-		 *               - Shown both and Pro should rendered before Jet
+		 *               - Shown both and Pro should rendered before Jet and pro has template for this location.
 		 *               - Jet should be shown, but no Jet template defined and Pro could render own template.
 		 *         0 - If:
-		 *               - Pron not installed
+		 *               - Pro not installed
 		 *               - Jet has priority and Jet template found for current page
+		 *               - Shown both and Pro should rendered before Jet and pro not rendered template for this location (its empty).
 		 *               - We render pro after Jet
 		 *               - Jet has priority, Jet template not found and Pro also not renders anything
 		 */
@@ -219,8 +219,12 @@ if ( ! class_exists( 'Jet_Theme_Core_Locations' ) ) {
 
 			// If showed both, and Pro before - show Pro, and return -1 to define that something rendered
 			if ( 'before' === $where && 'show_both_reverse' === $relations ) {
-				elementor_theme_do_location( $location );
-				return -1;
+				$elemntor_done = elementor_theme_do_location( $location );
+				if ( $elemntor_done ) {
+					return -1;
+				} else {
+					return 0;
+				}
 			}
 
 			// If showed both, and Jet before - show Pro and return false
@@ -248,6 +252,11 @@ if ( ! class_exists( 'Jet_Theme_Core_Locations' ) ) {
 			$allow_edit = array( 'header', 'footer' );
 
 			if ( empty( $_GET['elementor-preview'] ) || ! in_array( $location, $allow_edit ) ) {
+				if ( 'single' === $location && post_password_required( get_the_ID() ) ) {
+					$_post = get_post( get_the_ID() );
+					echo get_the_password_form( $_post );
+					return;
+				}
 				echo $content;
 			} else {
 
@@ -288,4 +297,3 @@ if ( ! class_exists( 'Jet_Theme_Core_Locations' ) ) {
 	}
 
 }
-

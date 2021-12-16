@@ -12,8 +12,8 @@ use Elementor\Group_Control_Border;
 use Elementor\Group_Control_Box_Shadow;
 use Elementor\Group_Control_Typography;
 use Elementor\Repeater;
-use Elementor\Scheme_Color;
-use Elementor\Scheme_Typography;
+use Elementor\Core\Schemes\Color as Scheme_Color;
+use Elementor\Core\Schemes\Typography as Scheme_Typography;
 use Elementor\Widget_Base;
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
@@ -41,7 +41,7 @@ class Jet_Elements_Testimonials extends Jet_Elements_Base {
 	}
 
 	public function get_script_depends() {
-		return array( 'jquery-slick' );
+		return array( 'jet-slick' );
 	}
 
 	protected function _register_controls() {
@@ -85,7 +85,7 @@ class Jet_Elements_Testimonials extends Jet_Elements_Base {
 			)
 		);
 
-		$this->__add_advanced_icon_control(
+		$this->_add_advanced_icon_control(
 			'item_icon',
 			array(
 				'label'       => esc_html__( 'Icon', 'jet-elements' ),
@@ -171,7 +171,7 @@ class Jet_Elements_Testimonials extends Jet_Elements_Base {
 			'item_list',
 			array(
 				'type'        => Controls_Manager::REPEATER,
-				'fields'      => array_values( $repeater->get_controls() ),
+				'fields'      => $repeater->get_controls(),
 				'default'     => array(
 					array(
 						'item_comment'  => esc_html__( 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.', 'jet-elements' ),
@@ -238,14 +238,16 @@ class Jet_Elements_Testimonials extends Jet_Elements_Base {
 		$this->add_responsive_control(
 			'slides_to_show',
 			array(
-				'label'   => esc_html__( 'Slides to Show', 'jet-elements' ),
-				'type'    => Controls_Manager::SELECT,
-				'default' => '1',
-				'options' => jet_elements_tools()->get_select_range( 10 ),
+				'label'              => esc_html__( 'Slides to Show', 'jet-elements' ),
+				'type'               => Controls_Manager::SELECT,
+				'default'            => '1',
+				'options'            => jet_elements_tools()->get_select_range( 10 ),
+				'frontend_available' => true,
+				'render_type'        => 'template',
 			)
 		);
 
-		$this->add_control(
+		$this->add_responsive_control(
 			'slides_to_scroll',
 			array(
 				'label'     => esc_html__( 'Slides to Scroll', 'jet-elements' ),
@@ -255,6 +257,8 @@ class Jet_Elements_Testimonials extends Jet_Elements_Base {
 				'condition' => array(
 					'slides_to_show!' => '1',
 				),
+				'frontend_available' => true,
+				'render_type'        => 'template',
 			)
 		);
 
@@ -355,7 +359,7 @@ class Jet_Elements_Testimonials extends Jet_Elements_Base {
 			)
 		);
 
-		$this->__add_advanced_icon_control(
+		$this->_add_advanced_icon_control(
 			'prev_arrow',
 			array(
 				'label'       => esc_html__( 'Prev Arrow Icon', 'jet-elements' ),
@@ -373,7 +377,7 @@ class Jet_Elements_Testimonials extends Jet_Elements_Base {
 			)
 		);
 
-		$this->__add_advanced_icon_control(
+		$this->_add_advanced_icon_control(
 			'next_arrow',
 			array(
 				'label'       => esc_html__( 'Next Arrow Icon', 'jet-elements' ),
@@ -421,11 +425,11 @@ class Jet_Elements_Testimonials extends Jet_Elements_Base {
 				'options' => array(
 					'solid' => array(
 						'title' => esc_html__( 'Solid', 'jet-elements' ),
-						'icon'  => 'fa fa-star',
+						'icon'  => 'eicon-star',
 					),
 					'outline' => array(
 						'title' => esc_html__( 'Outline', 'jet-elements' ),
-						'icon'  => 'fa fa-star-o',
+						'icon'  => 'eicon-star-o',
 					),
 				),
 				'default' => 'solid',
@@ -441,11 +445,11 @@ class Jet_Elements_Testimonials extends Jet_Elements_Base {
 				'options' => array(
 					'solid' => array(
 						'title' => esc_html__( 'Solid', 'jet-elements' ),
-						'icon'  => 'fa fa-star',
+						'icon'  => 'eicon-star',
 					),
 					'outline' => array(
 						'title' => esc_html__( 'Outline', 'jet-elements' ),
-						'icon'  => 'fa fa-star-o',
+						'icon'  => 'eicon-star-o',
 					),
 				),
 				'default' => 'solid',
@@ -454,7 +458,7 @@ class Jet_Elements_Testimonials extends Jet_Elements_Base {
 
 		$this->end_controls_section();
 
-		$this->__start_controls_section(
+		$this->_start_controls_section(
 			'section_item_style',
 			array(
 				'label'      => esc_html__( 'Item', 'jet-elements' ),
@@ -463,7 +467,7 @@ class Jet_Elements_Testimonials extends Jet_Elements_Base {
 			)
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Background::get_type(),
 			array(
 				'name'     => 'item_background',
@@ -472,7 +476,7 @@ class Jet_Elements_Testimonials extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'item_margin',
 			array(
 				'label'       => esc_html__( 'Item Margin', 'jet-elements' ),
@@ -486,7 +490,7 @@ class Jet_Elements_Testimonials extends Jet_Elements_Base {
 			50
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Border::get_type(),
 			array(
 				'name'        => 'item_border',
@@ -498,7 +502,7 @@ class Jet_Elements_Testimonials extends Jet_Elements_Base {
 			50
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'item_border_radius',
 			array(
 				'label'      => esc_html__( 'Border Radius', 'jet-elements' ),
@@ -511,7 +515,7 @@ class Jet_Elements_Testimonials extends Jet_Elements_Base {
 			75
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Box_Shadow::get_type(),
 			array(
 				'name'     => 'item_shadow',
@@ -520,7 +524,7 @@ class Jet_Elements_Testimonials extends Jet_Elements_Base {
 			100
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'order_heading',
 			array(
 				'label'     => esc_html__( 'Order', 'jet-elements' ),
@@ -530,7 +534,7 @@ class Jet_Elements_Testimonials extends Jet_Elements_Base {
 			100
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'image_order',
 			array(
 				'label'   => esc_html__( 'Image Order', 'jet-elements' ),
@@ -546,7 +550,7 @@ class Jet_Elements_Testimonials extends Jet_Elements_Base {
 			100
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'icon_order',
 			array(
 				'label'   => esc_html__( 'Icon Order', 'jet-elements' ),
@@ -562,7 +566,7 @@ class Jet_Elements_Testimonials extends Jet_Elements_Base {
 			100
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'title_order',
 			array(
 				'label'   => esc_html__( 'Title Order', 'jet-elements' ),
@@ -578,7 +582,7 @@ class Jet_Elements_Testimonials extends Jet_Elements_Base {
 			100
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'comment_order',
 			array(
 				'label'   => esc_html__( 'Description Order', 'jet-elements' ),
@@ -594,7 +598,7 @@ class Jet_Elements_Testimonials extends Jet_Elements_Base {
 			100
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'name_order',
 			array(
 				'label'   => esc_html__( 'Name Order', 'jet-elements' ),
@@ -610,7 +614,7 @@ class Jet_Elements_Testimonials extends Jet_Elements_Base {
 			100
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'position_order',
 			array(
 				'label'   => esc_html__( 'Position Order', 'jet-elements' ),
@@ -626,7 +630,7 @@ class Jet_Elements_Testimonials extends Jet_Elements_Base {
 			100
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'date_order',
 			array(
 				'label'   => esc_html__( 'Date Order', 'jet-elements' ),
@@ -642,7 +646,7 @@ class Jet_Elements_Testimonials extends Jet_Elements_Base {
 			100
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'rating_order',
 			array(
 				'label'   => esc_html__( 'Rating Order', 'jet-elements' ),
@@ -658,7 +662,7 @@ class Jet_Elements_Testimonials extends Jet_Elements_Base {
 			100
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'content_alignment',
 			array(
 				'label'   => esc_html__( 'Cover Content Vertical Alignment', 'jet-elements' ),
@@ -677,12 +681,12 @@ class Jet_Elements_Testimonials extends Jet_Elements_Base {
 			100
 		);
 
-		$this->__end_controls_section();
+		$this->_end_controls_section();
 
 		/*
 		 * Image section
 		 */
-		$this->__start_controls_section(
+		$this->_start_controls_section(
 			'section_image_style',
 			array(
 				'label'      => esc_html__( 'Image', 'jet-elements' ),
@@ -691,7 +695,7 @@ class Jet_Elements_Testimonials extends Jet_Elements_Base {
 			)
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'image_alignment',
 			array(
 				'label'   => esc_html__( 'Alignment', 'jet-elements' ),
@@ -717,7 +721,7 @@ class Jet_Elements_Testimonials extends Jet_Elements_Base {
 			50
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'image_width',
 			array(
 				'label'      => esc_html__( 'Width', 'jet-elements' ),
@@ -746,7 +750,7 @@ class Jet_Elements_Testimonials extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'image_height',
 			array(
 				'label'      => esc_html__( 'Height', 'jet-elements' ),
@@ -775,20 +779,20 @@ class Jet_Elements_Testimonials extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'image_margin',
 			array(
 				'label'      => __( 'Margin', 'jet-elements' ),
 				'type'       => Controls_Manager::DIMENSIONS,
 				'size_units' => array( 'px', '%' ),
 				'selectors'  => array(
-					'{{WRAPPER}} ' . $css_scheme['image'] => 'margin: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+					'{{WRAPPER}} ' . $css_scheme['item'] . ' ' . $css_scheme['image'] => 'margin: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				),
 			),
 			75
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Border::get_type(),
 			array(
 				'name'        => 'image_border',
@@ -800,7 +804,7 @@ class Jet_Elements_Testimonials extends Jet_Elements_Base {
 			75
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'image_border_radius',
 			array(
 				'label'      => esc_html__( 'Border Radius', 'jet-elements' ),
@@ -813,7 +817,7 @@ class Jet_Elements_Testimonials extends Jet_Elements_Base {
 			75
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Box_Shadow::get_type(),
 			array(
 				'name'     => 'image_shadow',
@@ -822,12 +826,12 @@ class Jet_Elements_Testimonials extends Jet_Elements_Base {
 			100
 		);
 
-		$this->__end_controls_section();
+		$this->_end_controls_section();
 
 		/**
 		 * Icon Style Section
 		 */
-		$this->__start_controls_section(
+		$this->_start_controls_section(
 			'section_icon_style',
 			array(
 				'label'      => esc_html__( 'Icon', 'jet-elements' ),
@@ -836,7 +840,7 @@ class Jet_Elements_Testimonials extends Jet_Elements_Base {
 			)
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'icon_box_alignment',
 			array(
 				'label'   => esc_html__( 'Alignment', 'jet-elements' ),
@@ -863,7 +867,7 @@ class Jet_Elements_Testimonials extends Jet_Elements_Base {
 			50
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'icon_color',
 			array(
 				'label' => esc_html__( 'Icon Color', 'jet-elements' ),
@@ -876,7 +880,7 @@ class Jet_Elements_Testimonials extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'icon_bg_color',
 			array(
 				'label' => esc_html__( 'Icon Background Color', 'jet-elements' ),
@@ -888,7 +892,7 @@ class Jet_Elements_Testimonials extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'icon_font_size',
 			array(
 				'label'      => esc_html__( 'Icon Font Size', 'jet-elements' ),
@@ -910,7 +914,7 @@ class Jet_Elements_Testimonials extends Jet_Elements_Base {
 			50
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'icon_size',
 			array(
 				'label'      => esc_html__( 'Icon Box Size', 'jet-elements' ),
@@ -931,7 +935,7 @@ class Jet_Elements_Testimonials extends Jet_Elements_Base {
 			50
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'icon_box_margin',
 			array(
 				'label'      => __( 'Margin', 'jet-elements' ),
@@ -944,7 +948,7 @@ class Jet_Elements_Testimonials extends Jet_Elements_Base {
 			75
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Border::get_type(),
 			array(
 				'name'        => 'icon_border',
@@ -956,7 +960,7 @@ class Jet_Elements_Testimonials extends Jet_Elements_Base {
 			75
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'icon_box_border_radius',
 			array(
 				'label'      => esc_html__( 'Border Radius', 'jet-elements' ),
@@ -969,7 +973,7 @@ class Jet_Elements_Testimonials extends Jet_Elements_Base {
 			75
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Box_Shadow::get_type(),
 			array(
 				'name'     => 'icon_box_shadow',
@@ -978,12 +982,12 @@ class Jet_Elements_Testimonials extends Jet_Elements_Base {
 			100
 		);
 
-		$this->__end_controls_section();
+		$this->_end_controls_section();
 
 		/**
 		 * Title Style Section
 		 */
-		$this->__start_controls_section(
+		$this->_start_controls_section(
 			'section_title_style',
 			array(
 				'label'      => esc_html__( 'Title', 'jet-elements' ),
@@ -992,7 +996,7 @@ class Jet_Elements_Testimonials extends Jet_Elements_Base {
 			)
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'title_custom_width',
 			array(
 				'label'        => esc_html__( 'Custom width', 'jet-elements' ),
@@ -1005,7 +1009,7 @@ class Jet_Elements_Testimonials extends Jet_Elements_Base {
 			100
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'title_width',
 			array(
 				'label'      => esc_html__( 'Width', 'jet-elements' ),
@@ -1037,7 +1041,7 @@ class Jet_Elements_Testimonials extends Jet_Elements_Base {
 			100
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'title_text_alignment',
 			array(
 				'label'   => esc_html__( 'Text Alignment', 'jet-elements' ),
@@ -1060,11 +1064,12 @@ class Jet_Elements_Testimonials extends Jet_Elements_Base {
 				'selectors'  => array(
 					'{{WRAPPER}} ' . $css_scheme['title'] => 'text-align: {{VALUE}};',
 				),
+				'classes' => 'jet-elements-text-align-control',
 			),
 			50
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'title_alignment',
 			array(
 				'label'   => esc_html__( 'Alignment', 'jet-elements' ),
@@ -1091,7 +1096,7 @@ class Jet_Elements_Testimonials extends Jet_Elements_Base {
 			50
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'title_color',
 			array(
 				'label'  => esc_html__( 'Color', 'jet-elements' ),
@@ -1103,7 +1108,7 @@ class Jet_Elements_Testimonials extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Typography::get_type(),
 			array(
 				'name'     => 'title_typography',
@@ -1113,7 +1118,7 @@ class Jet_Elements_Testimonials extends Jet_Elements_Base {
 			50
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'title_padding',
 			array(
 				'label'      => __( 'Padding', 'jet-elements' ),
@@ -1126,7 +1131,7 @@ class Jet_Elements_Testimonials extends Jet_Elements_Base {
 			50
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'title_margin',
 			array(
 				'label'      => __( 'Margin', 'jet-elements' ),
@@ -1139,12 +1144,12 @@ class Jet_Elements_Testimonials extends Jet_Elements_Base {
 			75
 		);
 
-		$this->__end_controls_section();
+		$this->_end_controls_section();
 
 		/**
 		 * Comment Style Section
 		 */
-		$this->__start_controls_section(
+		$this->_start_controls_section(
 			'section_comment_style',
 			array(
 				'label'      => esc_html__( 'Comment', 'jet-elements' ),
@@ -1153,7 +1158,7 @@ class Jet_Elements_Testimonials extends Jet_Elements_Base {
 			)
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'comment_alignment',
 			array(
 				'label'   => esc_html__( 'Alignment', 'jet-elements' ),
@@ -1180,7 +1185,7 @@ class Jet_Elements_Testimonials extends Jet_Elements_Base {
 			50
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'comment_text_alignment',
 			array(
 				'label'   => esc_html__( 'Text Alignment', 'jet-elements' ),
@@ -1203,11 +1208,12 @@ class Jet_Elements_Testimonials extends Jet_Elements_Base {
 				'selectors'  => array(
 					'{{WRAPPER}} ' . $css_scheme['comment'] => 'text-align: {{VALUE}};',
 				),
+				'classes' => 'jet-elements-text-align-control',
 			),
 			50
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'comment_color',
 			array(
 				'label'  => esc_html__( 'Color', 'jet-elements' ),
@@ -1220,7 +1226,7 @@ class Jet_Elements_Testimonials extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Typography::get_type(),
 			array(
 				'name'     => 'comment_typography',
@@ -1230,7 +1236,7 @@ class Jet_Elements_Testimonials extends Jet_Elements_Base {
 			50
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'comment_width',
 			array(
 				'label'      => esc_html__( 'Width', 'jet-elements' ),
@@ -1259,7 +1265,7 @@ class Jet_Elements_Testimonials extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'use_comment_corner',
 			array(
 				'label'        => esc_html__( 'Use comment corner', 'jet-elements' ),
@@ -1272,7 +1278,7 @@ class Jet_Elements_Testimonials extends Jet_Elements_Base {
 			75
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'comment_corner_color',
 			array(
 				'label'   => esc_html__( 'Color', 'jet-elements' ),
@@ -1287,7 +1293,7 @@ class Jet_Elements_Testimonials extends Jet_Elements_Base {
 			75
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'comment_corner_position',
 			array(
 				'label'      => esc_html__( 'Corner Position', 'jet-elements' ),
@@ -1313,7 +1319,7 @@ class Jet_Elements_Testimonials extends Jet_Elements_Base {
 			75
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'comment_corner_width',
 			array(
 				'label'      => esc_html__( 'Corner Width', 'jet-elements' ),
@@ -1339,7 +1345,7 @@ class Jet_Elements_Testimonials extends Jet_Elements_Base {
 			75
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'comment_corner_height',
 			array(
 				'label'      => esc_html__( 'Corner Height', 'jet-elements' ),
@@ -1365,7 +1371,7 @@ class Jet_Elements_Testimonials extends Jet_Elements_Base {
 			75
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'comment_corner_skew',
 			array(
 				'label'      => esc_html__( 'Corner Skew', 'jet-elements' ),
@@ -1391,7 +1397,7 @@ class Jet_Elements_Testimonials extends Jet_Elements_Base {
 			75
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Background::get_type(),
 			array(
 				'name'     => 'comment_background',
@@ -1408,7 +1414,7 @@ class Jet_Elements_Testimonials extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'comment_padding',
 			array(
 				'label'      => __( 'Padding', 'jet-elements' ),
@@ -1427,7 +1433,7 @@ class Jet_Elements_Testimonials extends Jet_Elements_Base {
 			50
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'comment_margin',
 			array(
 				'label'      => __( 'Margin', 'jet-elements' ),
@@ -1440,7 +1446,7 @@ class Jet_Elements_Testimonials extends Jet_Elements_Base {
 			100
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Border::get_type(),
 			array(
 				'name'        => 'comment_border',
@@ -1452,7 +1458,7 @@ class Jet_Elements_Testimonials extends Jet_Elements_Base {
 			75
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'comment_border_radius',
 			array(
 				'label'      => esc_html__( 'Border Radius', 'jet-elements' ),
@@ -1471,7 +1477,7 @@ class Jet_Elements_Testimonials extends Jet_Elements_Base {
 			75
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Box_Shadow::get_type(),
 			array(
 				'name'     => 'comment_shadow',
@@ -1480,12 +1486,12 @@ class Jet_Elements_Testimonials extends Jet_Elements_Base {
 			100
 		);
 
-		$this->__end_controls_section();
+		$this->_end_controls_section();
 
 		/**
 		 * Name Style Section
 		 */
-		$this->__start_controls_section(
+		$this->_start_controls_section(
 			'section_name_style',
 			array(
 				'label'      => esc_html__( 'Name', 'jet-elements' ),
@@ -1494,7 +1500,7 @@ class Jet_Elements_Testimonials extends Jet_Elements_Base {
 			)
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'name_alignment',
 			array(
 				'label'   => esc_html__( 'Alignment', 'jet-elements' ),
@@ -1521,7 +1527,7 @@ class Jet_Elements_Testimonials extends Jet_Elements_Base {
 			50
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'name_text_alignment',
 			array(
 				'label'   => esc_html__( 'Text Alignment', 'jet-elements' ),
@@ -1544,11 +1550,12 @@ class Jet_Elements_Testimonials extends Jet_Elements_Base {
 				'selectors'  => array(
 					'{{WRAPPER}} ' . $css_scheme['name'] => 'text-align: {{VALUE}};',
 				),
+				'classes' => 'jet-elements-text-align-control',
 			),
 			50
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'name_custom_width',
 			array(
 				'label'        => esc_html__( 'Custom width', 'jet-elements' ),
@@ -1561,7 +1568,7 @@ class Jet_Elements_Testimonials extends Jet_Elements_Base {
 			100
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'name_width',
 			array(
 				'label'      => esc_html__( 'Width', 'jet-elements' ),
@@ -1593,7 +1600,7 @@ class Jet_Elements_Testimonials extends Jet_Elements_Base {
 			100
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'name_color',
 			array(
 				'label'  => esc_html__( 'Color', 'jet-elements' ),
@@ -1609,7 +1616,7 @@ class Jet_Elements_Testimonials extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'name_hover_color',
 			array(
 				'label'  => esc_html__( 'Hover Color', 'jet-elements' ),
@@ -1625,7 +1632,7 @@ class Jet_Elements_Testimonials extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Typography::get_type(),
 			array(
 				'name'     => 'name_typography',
@@ -1635,7 +1642,7 @@ class Jet_Elements_Testimonials extends Jet_Elements_Base {
 			50
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'name_padding',
 			array(
 				'label'      => __( 'Padding', 'jet-elements' ),
@@ -1648,7 +1655,7 @@ class Jet_Elements_Testimonials extends Jet_Elements_Base {
 			100
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'name_margin',
 			array(
 				'label'      => __( 'Margin', 'jet-elements' ),
@@ -1661,12 +1668,12 @@ class Jet_Elements_Testimonials extends Jet_Elements_Base {
 			50
 		);
 
-		$this->__end_controls_section();
+		$this->_end_controls_section();
 
 		/**
 		 * Position Style Section
 		 */
-		$this->__start_controls_section(
+		$this->_start_controls_section(
 			'section_position_style',
 			array(
 				'label'      => esc_html_x( 'Position', 'Position at work', 'jet-elements' ),
@@ -1675,7 +1682,7 @@ class Jet_Elements_Testimonials extends Jet_Elements_Base {
 			)
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'position_alignment',
 			array(
 				'label'   => esc_html__( 'Alignment', 'jet-elements' ),
@@ -1702,7 +1709,7 @@ class Jet_Elements_Testimonials extends Jet_Elements_Base {
 			50
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'position_text_alignment',
 			array(
 				'label'   => esc_html__( 'Text Alignment', 'jet-elements' ),
@@ -1725,11 +1732,12 @@ class Jet_Elements_Testimonials extends Jet_Elements_Base {
 				'selectors'  => array(
 					'{{WRAPPER}} ' . $css_scheme['position'] => 'text-align: {{VALUE}};',
 				),
+				'classes' => 'jet-elements-text-align-control',
 			),
 			50
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'position_custom_width',
 			array(
 				'label'        => esc_html__( 'Custom width', 'jet-elements' ),
@@ -1742,7 +1750,7 @@ class Jet_Elements_Testimonials extends Jet_Elements_Base {
 			100
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'position_width',
 			array(
 				'label'      => esc_html__( 'Width', 'jet-elements' ),
@@ -1774,7 +1782,7 @@ class Jet_Elements_Testimonials extends Jet_Elements_Base {
 			100
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'position_color',
 			array(
 				'label'  => esc_html__( 'Color', 'jet-elements' ),
@@ -1790,7 +1798,7 @@ class Jet_Elements_Testimonials extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Typography::get_type(),
 			array(
 				'name'     => 'position_typography',
@@ -1800,7 +1808,7 @@ class Jet_Elements_Testimonials extends Jet_Elements_Base {
 			50
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'position_padding',
 			array(
 				'label'      => __( 'Padding', 'jet-elements' ),
@@ -1813,7 +1821,7 @@ class Jet_Elements_Testimonials extends Jet_Elements_Base {
 			100
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'position_margin',
 			array(
 				'label'      => __( 'Margin', 'jet-elements' ),
@@ -1826,12 +1834,12 @@ class Jet_Elements_Testimonials extends Jet_Elements_Base {
 			50
 		);
 
-		$this->__end_controls_section();
+		$this->_end_controls_section();
 
 		/**
 		 * Date Style Section
 		 */
-		$this->__start_controls_section(
+		$this->_start_controls_section(
 			'section_date_style',
 			array(
 				'label'      => esc_html__( 'Date', 'jet-elements' ),
@@ -1840,7 +1848,7 @@ class Jet_Elements_Testimonials extends Jet_Elements_Base {
 			)
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'date_alignment',
 			array(
 				'label'   => esc_html__( 'Alignment', 'jet-elements' ),
@@ -1867,7 +1875,7 @@ class Jet_Elements_Testimonials extends Jet_Elements_Base {
 			50
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'date_text_alignment',
 			array(
 				'label'   => esc_html__( 'Text Alignment', 'jet-elements' ),
@@ -1890,11 +1898,12 @@ class Jet_Elements_Testimonials extends Jet_Elements_Base {
 				'selectors'  => array(
 					'{{WRAPPER}} ' . $css_scheme['date'] => 'text-align: {{VALUE}};',
 				),
+				'classes' => 'jet-elements-text-align-control',
 			),
 			50
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'date_custom_width',
 			array(
 				'label'        => esc_html__( 'Custom width', 'jet-elements' ),
@@ -1907,7 +1916,7 @@ class Jet_Elements_Testimonials extends Jet_Elements_Base {
 			100
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'date_width',
 			array(
 				'label'      => esc_html__( 'Width', 'jet-elements' ),
@@ -1939,7 +1948,7 @@ class Jet_Elements_Testimonials extends Jet_Elements_Base {
 			100
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'date_color',
 			array(
 				'label'  => esc_html__( 'Color', 'jet-elements' ),
@@ -1955,7 +1964,7 @@ class Jet_Elements_Testimonials extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Typography::get_type(),
 			array(
 				'name'     => 'date_typography',
@@ -1965,7 +1974,7 @@ class Jet_Elements_Testimonials extends Jet_Elements_Base {
 			50
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'date_padding',
 			array(
 				'label'      => __( 'Padding', 'jet-elements' ),
@@ -1978,7 +1987,7 @@ class Jet_Elements_Testimonials extends Jet_Elements_Base {
 			100
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'date_margin',
 			array(
 				'label'      => __( 'Margin', 'jet-elements' ),
@@ -1991,12 +2000,12 @@ class Jet_Elements_Testimonials extends Jet_Elements_Base {
 			50
 		);
 
-		$this->__end_controls_section();
+		$this->_end_controls_section();
 
 		/**
 		 * Rating Style Section
 		 */
-		$this->__start_controls_section(
+		$this->_start_controls_section(
 			'section_rating_style',
 			array(
 				'label'      => esc_html__( 'Rating', 'jet-elements' ),
@@ -2005,7 +2014,7 @@ class Jet_Elements_Testimonials extends Jet_Elements_Base {
 			)
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'star_color',
 			array(
 				'label'  => esc_html__( 'Stars', 'jet-elements' ),
@@ -2017,7 +2026,7 @@ class Jet_Elements_Testimonials extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'rating_active_star_color',
 			array(
 				'label'  => esc_html__( 'Active Stars', 'jet-elements' ),
@@ -2029,7 +2038,7 @@ class Jet_Elements_Testimonials extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'rating_icon_size',
 			array(
 				'label' => esc_html__( 'Size', 'jet-elements' ),
@@ -2052,7 +2061,7 @@ class Jet_Elements_Testimonials extends Jet_Elements_Base {
 			50
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'rating_icon_space',
 			array(
 				'label' => esc_html__( 'Spacing', 'jet-elements' ),
@@ -2075,7 +2084,7 @@ class Jet_Elements_Testimonials extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'rating_star_margin',
 			array(
 				'label'       => esc_html__( 'Margin', 'jet-elements' ),
@@ -2089,12 +2098,12 @@ class Jet_Elements_Testimonials extends Jet_Elements_Base {
 			50
 		);
 
-		$this->__end_controls_section();
+		$this->_end_controls_section();
 
 		/*
 		 * Arrows section
 		 */
-		$this->__start_controls_section(
+		$this->_start_controls_section(
 			'section_arrows_style',
 			array(
 				'label'      => esc_html__( 'Arrows', 'jet-elements' ),
@@ -2103,16 +2112,16 @@ class Jet_Elements_Testimonials extends Jet_Elements_Base {
 			)
 		);
 
-		$this->__start_controls_tabs( 'tabs_arrows_style' );
+		$this->_start_controls_tabs( 'tabs_arrows_style' );
 
-		$this->__start_controls_tab(
+		$this->_start_controls_tab(
 			'tab_arrows_normal',
 			array(
 				'label' => esc_html__( 'Normal', 'jet-elements' ),
 			)
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			\Jet_Group_Control_Box_Style::get_type(),
 			array(
 				'name'           => 'arrows_style',
@@ -2130,16 +2139,16 @@ class Jet_Elements_Testimonials extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__end_controls_tab();
+		$this->_end_controls_tab();
 
-		$this->__start_controls_tab(
+		$this->_start_controls_tab(
 			'tab_arrows_hover',
 			array(
 				'label' => esc_html__( 'Hover', 'jet-elements' ),
 			)
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			\Jet_Group_Control_Box_Style::get_type(),
 			array(
 				'name'           => 'arrows_hover_style',
@@ -2157,11 +2166,11 @@ class Jet_Elements_Testimonials extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__end_controls_tab();
+		$this->_end_controls_tab();
 
-		$this->__end_controls_tabs();
+		$this->_end_controls_tabs();
 
-		$this->__add_control(
+		$this->_add_control(
 			'prev_arrow_position',
 			array(
 				'label'     => esc_html__( 'Prev Arrow Position', 'jet-elements' ),
@@ -2171,7 +2180,7 @@ class Jet_Elements_Testimonials extends Jet_Elements_Base {
 			75
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'prev_vert_position',
 			array(
 				'label'   => esc_html__( 'Vertical Position by', 'jet-elements' ),
@@ -2185,7 +2194,7 @@ class Jet_Elements_Testimonials extends Jet_Elements_Base {
 			75
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'prev_top_position',
 			array(
 				'label'      => esc_html__( 'Top Indent', 'jet-elements' ),
@@ -2215,7 +2224,7 @@ class Jet_Elements_Testimonials extends Jet_Elements_Base {
 			75
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'prev_bottom_position',
 			array(
 				'label'      => esc_html__( 'Bottom Indent', 'jet-elements' ),
@@ -2245,7 +2254,7 @@ class Jet_Elements_Testimonials extends Jet_Elements_Base {
 			75
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'prev_hor_position',
 			array(
 				'label'   => esc_html__( 'Horizontal Position by', 'jet-elements' ),
@@ -2259,7 +2268,7 @@ class Jet_Elements_Testimonials extends Jet_Elements_Base {
 			75
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'prev_left_position',
 			array(
 				'label'      => esc_html__( 'Left Indent', 'jet-elements' ),
@@ -2289,7 +2298,7 @@ class Jet_Elements_Testimonials extends Jet_Elements_Base {
 			75
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'prev_right_position',
 			array(
 				'label'      => esc_html__( 'Right Indent', 'jet-elements' ),
@@ -2319,7 +2328,7 @@ class Jet_Elements_Testimonials extends Jet_Elements_Base {
 			75
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'next_arrow_position',
 			array(
 				'label'     => esc_html__( 'Next Arrow Position', 'jet-elements' ),
@@ -2329,7 +2338,7 @@ class Jet_Elements_Testimonials extends Jet_Elements_Base {
 			75
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'next_vert_position',
 			array(
 				'label'   => esc_html__( 'Vertical Position by', 'jet-elements' ),
@@ -2343,7 +2352,7 @@ class Jet_Elements_Testimonials extends Jet_Elements_Base {
 			75
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'next_top_position',
 			array(
 				'label'      => esc_html__( 'Top Indent', 'jet-elements' ),
@@ -2373,7 +2382,7 @@ class Jet_Elements_Testimonials extends Jet_Elements_Base {
 			75
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'next_bottom_position',
 			array(
 				'label'      => esc_html__( 'Bottom Indent', 'jet-elements' ),
@@ -2403,7 +2412,7 @@ class Jet_Elements_Testimonials extends Jet_Elements_Base {
 			75
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'next_hor_position',
 			array(
 				'label'   => esc_html__( 'Horizontal Position by', 'jet-elements' ),
@@ -2417,7 +2426,7 @@ class Jet_Elements_Testimonials extends Jet_Elements_Base {
 			75
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'next_left_position',
 			array(
 				'label'      => esc_html__( 'Left Indent', 'jet-elements' ),
@@ -2447,7 +2456,7 @@ class Jet_Elements_Testimonials extends Jet_Elements_Base {
 			75
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'next_right_position',
 			array(
 				'label'      => esc_html__( 'Right Indent', 'jet-elements' ),
@@ -2477,12 +2486,12 @@ class Jet_Elements_Testimonials extends Jet_Elements_Base {
 			75
 		);
 
-		$this->__end_controls_section();
+		$this->_end_controls_section();
 
 		/*
 		 * Dots section
 		 */
-		$this->__start_controls_section(
+		$this->_start_controls_section(
 			'section_dots_style',
 			array(
 				'label'      => esc_html__( 'Dots', 'jet-elements' ),
@@ -2491,7 +2500,7 @@ class Jet_Elements_Testimonials extends Jet_Elements_Base {
 			)
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'dots_alignment',
 			array(
 				'label'   => esc_html__( 'Alignment', 'jet-elements' ),
@@ -2518,7 +2527,7 @@ class Jet_Elements_Testimonials extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'dots_gap',
 			array(
 				'label' => esc_html__( 'Gap', 'jet-elements' ),
@@ -2540,7 +2549,7 @@ class Jet_Elements_Testimonials extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'dots_margin',
 			array(
 				'label'      => esc_html__( 'Dots Box Margin', 'jet-elements' ),
@@ -2554,16 +2563,16 @@ class Jet_Elements_Testimonials extends Jet_Elements_Base {
 			50
 		);
 
-		$this->__start_controls_tabs( 'tabs_dots_style' );
+		$this->_start_controls_tabs( 'tabs_dots_style' );
 
-		$this->__start_controls_tab(
+		$this->_start_controls_tab(
 			'tab_dots_normal',
 			array(
 				'label' => esc_html__( 'Normal', 'jet-elements' ),
 			)
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			\Jet_Group_Control_Box_Style::get_type(),
 			array(
 				'name'           => 'dots_style',
@@ -2585,16 +2594,16 @@ class Jet_Elements_Testimonials extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__end_controls_tab();
+		$this->_end_controls_tab();
 
-		$this->__start_controls_tab(
+		$this->_start_controls_tab(
 			'tab_dots_hover',
 			array(
 				'label' => esc_html__( 'Hover', 'jet-elements' ),
 			)
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			\Jet_Group_Control_Box_Style::get_type(),
 			array(
 				'name'           => 'dots_style_hover',
@@ -2616,16 +2625,16 @@ class Jet_Elements_Testimonials extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__end_controls_tab();
+		$this->_end_controls_tab();
 
-		$this->__start_controls_tab(
+		$this->_start_controls_tab(
 			'tab_dots_active',
 			array(
 				'label' => esc_html__( 'Active', 'jet-elements' ),
 			)
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			\Jet_Group_Control_Box_Style::get_type(),
 			array(
 				'name'           => 'dots_style_active',
@@ -2647,31 +2656,32 @@ class Jet_Elements_Testimonials extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__end_controls_tab();
+		$this->_end_controls_tab();
 
-		$this->__end_controls_tabs();
+		$this->_end_controls_tabs();
 
-		$this->__end_controls_section();
+		$this->_end_controls_section();
 	}
 
 	protected function render() {
 
-		$this->__context = 'render';
+		$this->_context = 'render';
 
-		$this->__open_wrap();
-		include $this->__get_global_template( 'index' );
-		$this->__close_wrap();
+		$this->_open_wrap();
+		include $this->_get_global_template( 'index' );
+		$this->_close_wrap();
 	}
 
 	protected function render_stars() {
 
-		$settings = $this->get_settings();
+		$settings   = $this->get_settings();
 		$stars_html = '';
 
 		for ( $stars = 1; $stars <= 5; $stars++ ) {
-			$star_style = ( "outline" === $settings['rating_star_style'] ) ? 'f006' : 'f005' ;
-			$active_star_style = ( "outline" === $settings['rating_active_star_style'] ) ? 'f006' : 'f005' ;
-			$stars_html .= '<i class="fa" aria-hidden="true" data-star-style="&#x' . $star_style .';" data-active-star-style="&#x' . $active_star_style .';"></i>';
+
+			$star_class = ( "outline" === $settings['rating_star_style'] ) ? 'far fa-star' : 'fas fa-star';
+			$active_star_class = ( "outline" === $settings['rating_active_star_style'] ) ? 'far fa-star' : 'fas fa-star';
+			$stars_html .= '<i aria-hidden="true" data-star="' . $star_class .'" data-active-star="' . $active_star_class .'"></i>';
 		}
 		return $stars_html;
 	}
@@ -2685,12 +2695,8 @@ class Jet_Elements_Testimonials extends Jet_Elements_Base {
 		$settings = $this->get_settings();
 		$widget_id = $this->get_id();
 
+
 		$instance_settings = array(
-			'slidesToShow'   => array(
-				'desktop' => absint( $settings['slides_to_show'] ),
-				'tablet'  => absint( $settings['slides_to_show_tablet'] ),
-				'mobile'  => absint( $settings['slides_to_show_mobile'] ),
-			),
 			'autoplaySpeed'  => absint( $settings['autoplay_speed'] ),
 			'autoplay'       => filter_var( $settings['autoplay'], FILTER_VALIDATE_BOOLEAN ),
 			'infinite'       => filter_var( $settings['infinite'], FILTER_VALIDATE_BOOLEAN ),
@@ -2699,13 +2705,13 @@ class Jet_Elements_Testimonials extends Jet_Elements_Base {
 			'speed'          => absint( $settings['speed'] ),
 			'arrows'         => filter_var( $settings['arrows'], FILTER_VALIDATE_BOOLEAN ),
 			'dots'           => filter_var( $settings['dots'], FILTER_VALIDATE_BOOLEAN ),
-			'slidesToScroll' => absint( $settings['slides_to_scroll'] ),
+			'slidesToScroll' => 1 < absint( $settings['slides_to_show'] ) ? absint( $settings['slides_to_scroll'] ) : 1,
 			'prevArrow'      => '.jet-testimonial__prev-arrow-' . $widget_id,
 			'nextArrow'      => '.jet-testimonial__next-arrow-' . $widget_id,
-			'rtl' => is_rtl(),
+			'rtl'            => is_rtl(),
 		);
 
-		if ( 'fade' === $settings['effect'] ) {
+		if ( 'fade' === $settings['effect'] && 1 >= absint( $settings['slides_to_show'] ) ) {
 			$instance_settings['fade'] = true;
 		}
 
@@ -2714,18 +2720,18 @@ class Jet_Elements_Testimonials extends Jet_Elements_Base {
 		return sprintf( 'data-settings=\'%1$s\'', $instance_settings );
 	}
 
-	public function __get_testimonials_image() {
-		$image_item = $this->__processed_item['item_image'];
+	public function _get_testimonials_image() {
+		$image_item = $this->_processed_item['item_image'];
 
 		if ( empty( $image_item['url'] ) ) {
 			return;
 		}
 
-		$item_link = isset( $this->__processed_item['item_link'] ) ? $this->__processed_item['item_link'] : false;
+		$item_link = isset( $this->_processed_item['item_link'] ) ? $this->_processed_item['item_link'] : false;
 
 		if ( $item_link && ! empty( $item_link['url'] ) ) {
 
-			$_id = $this->__processed_item['_id'];
+			$_id = $this->_processed_item['_id'];
 
 			if ( method_exists( $this, 'add_link_attributes' ) ) {
 				$this->add_link_attributes( 'img-link-' . $_id, $item_link );
@@ -2741,31 +2747,31 @@ class Jet_Elements_Testimonials extends Jet_Elements_Base {
 				}
 			}
 
-			return sprintf( '<figure class="jet-testimonials__figure"><a %3$s><img class="jet-testimonials__tag-img" src="%1$s" alt="%2$s"></a></figure>',
+			return sprintf( '<figure class="jet-testimonials__figure"><a %3$s><img class="jet-testimonials__tag-img" src="%1$s" alt="%2$s" loading="lazy"></a></figure>',
 				$image_item['url'],
 				esc_attr( Control_Media::get_image_alt( $image_item ) ),
 				$this->get_render_attribute_string( 'img-link-' . $_id )
 			);
 		}
 
-		return sprintf( '<figure class="jet-testimonials__figure"><img class="jet-testimonials__tag-img" src="%1$s" alt="%2$s"></figure>',
+		return sprintf( '<figure class="jet-testimonials__figure"><img class="jet-testimonials__tag-img" src="%1$s" alt="%2$s" loading="lazy"></figure>',
 			$image_item['url'],
 			esc_attr( Control_Media::get_image_alt( $image_item ) )
 		);
 	}
 
-	public function __get_testimonials_name() {
-		$item_name = $this->__processed_item['item_name'];
+	public function _get_testimonials_name() {
+		$item_name = $this->_processed_item['item_name'];
 
 		if ( empty( $item_name ) ) {
 			return;
 		}
 
-		$item_link = isset( $this->__processed_item['item_link'] ) ? $this->__processed_item['item_link'] : false;
+		$item_link = isset( $this->_processed_item['item_link'] ) ? $this->_processed_item['item_link'] : false;
 
 		if ( $item_link && ! empty( $item_link['url'] ) ) {
 
-			$_id = $this->__processed_item['_id'];
+			$_id = $this->_processed_item['_id'];
 
 			if ( method_exists( $this, 'add_link_attributes' ) ) {
 				$this->add_link_attributes( 'name-link-' . $_id, $item_link );

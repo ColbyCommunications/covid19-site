@@ -1,6 +1,11 @@
 .jet-posts {
 
 	&__item {
+		position: relative;
+		min-height: 1px;
+		padding: 10px;
+		box-sizing: border-box;
+		width: 100%;
 		outline: none;
 
 		&.slick-slide {

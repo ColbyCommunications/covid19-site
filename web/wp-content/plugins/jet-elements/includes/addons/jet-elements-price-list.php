@@ -12,8 +12,8 @@ use Elementor\Group_Control_Border;
 use Elementor\Group_Control_Box_Shadow;
 use Elementor\Group_Control_Typography;
 use Elementor\Repeater;
-use Elementor\Scheme_Color;
-use Elementor\Scheme_Typography;
+use Elementor\Core\Schemes\Color as Scheme_Color;
+use Elementor\Core\Schemes\Typography as Scheme_Typography;
 use Elementor\Widget_Base;
 use Elementor\Utils;
 
@@ -22,9 +22,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 } // Exit if accessed directly
 
 class Jet_Elements_Price_List extends Jet_Elements_Base {
-	public $__processed_item_index = 0;
+	public $_processed_item_index = 0;
 
-	public $__hidden_price_items = array();
+	public $_hidden_price_items = array();
 
 	public function get_name() {
 		return 'jet-price-list';
@@ -128,7 +128,7 @@ class Jet_Elements_Price_List extends Jet_Elements_Base {
 			array(
 				'label'       => esc_html__( 'List items', 'jet-elements' ),
 				'type'        => Controls_Manager::REPEATER,
-				'fields'      => array_values( $repeater->get_controls() ),
+				'fields'      => $repeater->get_controls(),
 				'default'     => array(
 					array(
 						'item_title' => esc_html__( 'Item #1', 'jet-elements' ),
@@ -162,7 +162,7 @@ class Jet_Elements_Price_List extends Jet_Elements_Base {
 
 		$this->end_controls_section();
 
-		$this->__start_controls_section(
+		$this->_start_controls_section(
 			'section_item_style',
 			array(
 				'label'      => esc_html__( 'Item', 'jet-elements' ),
@@ -171,7 +171,7 @@ class Jet_Elements_Price_List extends Jet_Elements_Base {
 			)
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'item_space_between',
 			array(
 				'label'      => esc_html__( 'Space Between Items (px)', 'jet-elements' ),
@@ -196,7 +196,7 @@ class Jet_Elements_Price_List extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Border::get_type(),
 			array(
 				'name'        => 'item_border',
@@ -208,7 +208,7 @@ class Jet_Elements_Price_List extends Jet_Elements_Base {
 			75
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'item_border_radius',
 			array(
 				'label'      => esc_html__( 'Border Radius', 'jet-elements' ),
@@ -221,7 +221,7 @@ class Jet_Elements_Price_List extends Jet_Elements_Base {
 			75
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Box_Shadow::get_type(),
 			array(
 				'name'     => 'item_box_shadow',
@@ -230,7 +230,7 @@ class Jet_Elements_Price_List extends Jet_Elements_Base {
 			100
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'item_padding',
 			array(
 				'label'      => esc_html__( 'Padding', 'jet-elements' ),
@@ -243,7 +243,7 @@ class Jet_Elements_Price_List extends Jet_Elements_Base {
 			50
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'item_content_alignment',
 			array(
 				'label'   => esc_html__( 'Content Vertical Alignment', 'jet-elements' ),
@@ -269,7 +269,7 @@ class Jet_Elements_Price_List extends Jet_Elements_Base {
 			50
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'first_item_heading',
 			array(
 				'label'     => esc_html__( 'First Item', 'jet-elements' ),
@@ -279,7 +279,7 @@ class Jet_Elements_Price_List extends Jet_Elements_Base {
 			75
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'first_item_border_width',
 			array(
 				'label'      => esc_html__( 'Border Width', 'jet-elements' ),
@@ -292,7 +292,7 @@ class Jet_Elements_Price_List extends Jet_Elements_Base {
 			75
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'first_item_border_color',
 			array(
 				'label' => esc_html__( 'Border Color', 'jet-elements' ),
@@ -304,7 +304,7 @@ class Jet_Elements_Price_List extends Jet_Elements_Base {
 			75
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'last_item_heading',
 			array(
 				'label'     => esc_html__( 'Last Item', 'jet-elements' ),
@@ -314,7 +314,7 @@ class Jet_Elements_Price_List extends Jet_Elements_Base {
 			75
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'last_item_border_width',
 			array(
 				'label'      => esc_html__( 'Border Width', 'jet-elements' ),
@@ -327,7 +327,7 @@ class Jet_Elements_Price_List extends Jet_Elements_Base {
 			75
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'last_item_border_color',
 			array(
 				'label' => esc_html__( 'Border Color', 'jet-elements' ),
@@ -339,9 +339,9 @@ class Jet_Elements_Price_List extends Jet_Elements_Base {
 			75
 		);
 
-		$this->__end_controls_section();
+		$this->_end_controls_section();
 
-		$this->__start_controls_section(
+		$this->_start_controls_section(
 			'section_title_style',
 			array(
 				'label'      => esc_html__( 'Title', 'jet-elements' ),
@@ -350,7 +350,7 @@ class Jet_Elements_Price_List extends Jet_Elements_Base {
 			)
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Typography::get_type(),
 			array(
 				'name'     => 'title_typography',
@@ -360,7 +360,7 @@ class Jet_Elements_Price_List extends Jet_Elements_Base {
 			50
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'title_color',
 			array(
 				'label'     => esc_html__( 'Color', 'jet-elements' ),
@@ -372,7 +372,7 @@ class Jet_Elements_Price_List extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'title_vertical_alignment',
 			array(
 				'label'     => esc_html__( 'Alignment', 'jet-elements' ),
@@ -399,9 +399,9 @@ class Jet_Elements_Price_List extends Jet_Elements_Base {
 			50
 		);
 
-		$this->__end_controls_section();
+		$this->_end_controls_section();
 
-		$this->__start_controls_section(
+		$this->_start_controls_section(
 			'section_price_style',
 			array(
 				'label'      => esc_html__( 'Price', 'jet-elements' ),
@@ -410,7 +410,7 @@ class Jet_Elements_Price_List extends Jet_Elements_Base {
 			)
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'price_min_width',
 			array(
 				'label'      => esc_html__( 'Price Minimal Width (px)', 'jet-elements' ),
@@ -431,7 +431,7 @@ class Jet_Elements_Price_List extends Jet_Elements_Base {
 			50
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Typography::get_type(),
 			array(
 				'name'     => 'price_typography',
@@ -441,7 +441,7 @@ class Jet_Elements_Price_List extends Jet_Elements_Base {
 			50
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'price_color',
 			array(
 				'label'     => esc_html__( 'Color', 'jet-elements' ),
@@ -453,7 +453,7 @@ class Jet_Elements_Price_List extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'price_background',
 			array(
 				'label'     => esc_html__( 'Background Color', 'jet-elements' ),
@@ -465,7 +465,7 @@ class Jet_Elements_Price_List extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Border::get_type(),
 			array(
 				'name'        => 'price_border',
@@ -477,7 +477,7 @@ class Jet_Elements_Price_List extends Jet_Elements_Base {
 			75
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'price_border_radius',
 			array(
 				'label'      => esc_html__( 'Border Radius', 'jet-elements' ),
@@ -490,7 +490,7 @@ class Jet_Elements_Price_List extends Jet_Elements_Base {
 			75
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Box_Shadow::get_type(),
 			array(
 				'name'     => 'price_box_shadow',
@@ -499,7 +499,7 @@ class Jet_Elements_Price_List extends Jet_Elements_Base {
 			100
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'price_padding',
 			array(
 				'label'      => esc_html__( 'Padding', 'jet-elements' ),
@@ -512,7 +512,7 @@ class Jet_Elements_Price_List extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'price_vertical_alignment',
 			array(
 				'label'     => esc_html__( 'Vertical Alignment', 'jet-elements' ),
@@ -539,7 +539,7 @@ class Jet_Elements_Price_List extends Jet_Elements_Base {
 			50
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'price_alignment',
 			array(
 				'label'     => esc_html__( 'Text Alignment', 'jet-elements' ),
@@ -562,13 +562,14 @@ class Jet_Elements_Price_List extends Jet_Elements_Base {
 				'selectors' => array(
 					'{{WRAPPER}} ' . $css_scheme['item_price'] => 'text-align: {{VALUE}};',
 				),
+				'classes' => 'jet-elements-text-align-control',
 			),
 			50
 		);
 
-		$this->__end_controls_section();
+		$this->_end_controls_section();
 
-		$this->__start_controls_section(
+		$this->_start_controls_section(
 			'section_description_style',
 			array(
 				'label'      => esc_html__( 'Description', 'jet-elements' ),
@@ -577,7 +578,7 @@ class Jet_Elements_Price_List extends Jet_Elements_Base {
 			)
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Typography::get_type(),
 			array(
 				'name'     => 'description_typography',
@@ -587,7 +588,7 @@ class Jet_Elements_Price_List extends Jet_Elements_Base {
 			50
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'description_color',
 			array(
 				'label'     => esc_html__( 'Color', 'jet-elements' ),
@@ -599,7 +600,7 @@ class Jet_Elements_Price_List extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'description_margin',
 			array(
 				'label'      => esc_html__( 'Margin', 'jet-elements' ),
@@ -612,7 +613,7 @@ class Jet_Elements_Price_List extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'description_alignment',
 			array(
 				'label'     => esc_html__( 'Alignment', 'jet-elements' ),
@@ -639,13 +640,14 @@ class Jet_Elements_Price_List extends Jet_Elements_Base {
 				'selectors' => array(
 					'{{WRAPPER}} ' . $css_scheme['item_description'] => 'text-align: {{VALUE}};',
 				),
+				'classes' => 'jet-elements-text-align-control',
 			),
 			50
 		);
 
-		$this->__end_controls_section();
+		$this->_end_controls_section();
 
-		$this->__start_controls_section(
+		$this->_start_controls_section(
 			'section_separator_style',
 			array(
 				'label'      => esc_html__( 'Separator', 'jet-elements' ),
@@ -654,7 +656,7 @@ class Jet_Elements_Price_List extends Jet_Elements_Base {
 			)
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'separator_border_type',
 			array(
 				'label'     => esc_html__( 'Separator Type', 'jet-elements' ),
@@ -675,7 +677,7 @@ class Jet_Elements_Price_List extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'separator_border_width',
 			array(
 				'label'      => esc_html__( 'Separator Width', 'jet-elements' ),
@@ -700,7 +702,7 @@ class Jet_Elements_Price_List extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'separator_border_color',
 			array(
 				'label'     => esc_html__( 'Color', 'jet-elements' ),
@@ -712,7 +714,7 @@ class Jet_Elements_Price_List extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'separator_vertical_alignment',
 			array(
 				'label'     => esc_html__( 'Vertical Alignment', 'jet-elements' ),
@@ -739,7 +741,7 @@ class Jet_Elements_Price_List extends Jet_Elements_Base {
 			50
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'separator_margin',
 			array(
 				'label'      => esc_html__( 'Margin', 'jet-elements' ),
@@ -752,9 +754,9 @@ class Jet_Elements_Price_List extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__end_controls_section();
+		$this->_end_controls_section();
 
-		$this->__start_controls_section(
+		$this->_start_controls_section(
 			'section_image_style',
 			array(
 				'label'      => esc_html__( 'Image', 'jet-elements' ),
@@ -763,7 +765,7 @@ class Jet_Elements_Price_List extends Jet_Elements_Base {
 			)
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'image_offset',
 			array(
 				'label'      => esc_html__( 'Image Offset (px)', 'jet-elements' ),
@@ -782,13 +784,13 @@ class Jet_Elements_Price_List extends Jet_Elements_Base {
 					'unit' => 'px',
 				),
 				'selectors'  => array(
-					'{{WRAPPER}} ' . $css_scheme['item_image_wrap'] => 'margin-right: {{SIZE}}{{UNIT}};',
+					'{{WRAPPER}} ' . $css_scheme['item_image_wrap'] => ! is_rtl() ? 'margin-right: {{SIZE}}{{UNIT}};' : 'margin-left: {{SIZE}}{{UNIT}};',
 				),
 			),
 			25
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'image_width',
 			array(
 				'label'      => esc_html__( 'Image Width', 'jet-elements' ),
@@ -818,7 +820,7 @@ class Jet_Elements_Price_List extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Border::get_type(),
 			array(
 				'name'        => 'image_border',
@@ -830,7 +832,7 @@ class Jet_Elements_Price_List extends Jet_Elements_Base {
 			75
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'image_border_radius',
 			array(
 				'label'      => esc_html__( 'Border Radius', 'jet-elements' ),
@@ -843,7 +845,7 @@ class Jet_Elements_Price_List extends Jet_Elements_Base {
 			75
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Box_Shadow::get_type(),
 			array(
 				'name'     => 'image_box_shadow',
@@ -852,27 +854,27 @@ class Jet_Elements_Price_List extends Jet_Elements_Base {
 			100
 		);
 
-		$this->__end_controls_section();
+		$this->_end_controls_section();
 
 	}
 
-	public function __open_price_item_link( $url_key ) {
-		call_user_func( array( $this, sprintf( '__open_price_item_link_%s', $this->__context ) ), $url_key );
+	public function _open_price_item_link( $url_key ) {
+		call_user_func( array( $this, sprintf( '_open_price_item_link_%s', $this->_context ) ), $url_key );
 	}
 
-	public function __open_price_item_link_format() {
+	public function _open_price_item_link_format() {
 		return '<a href="%1$s" class="price-list__item-link"%2$s%3$s>';
 	}
 
-	public function __open_price_item_link_render( $url_key ) {
+	public function _open_price_item_link_render( $url_key ) {
 
-		$item = $this->__processed_item;
+		$item = $this->_processed_item;
 
 		if ( empty( $item[ $url_key ]['url'] ) ) {
 			return;
 		}
 
-		$id = $this->__processed_item['_id'];
+		$id = $this->_processed_item['_id'];
 
 		if ( method_exists( $this, 'add_link_attributes' ) ) {
 			$this->add_link_attributes( 'link-' . $id, $item[ $url_key ] );
@@ -895,7 +897,7 @@ class Jet_Elements_Price_List extends Jet_Elements_Base {
 
 	}
 
-	public function __open_price_item_link_edit( $url_key ) {
+	public function _open_price_item_link_edit( $url_key ) {
 
 		echo '<# if ( item.' . $url_key . '.url ) { #>';
 		printf(
@@ -908,13 +910,13 @@ class Jet_Elements_Price_List extends Jet_Elements_Base {
 
 	}
 
-	public function __close_price_item_link( $url_key ) {
-		call_user_func( array( $this, sprintf( '__close_price_item_link_%s', $this->__context ) ), $url_key );
+	public function _close_price_item_link( $url_key ) {
+		call_user_func( array( $this, sprintf( '_close_price_item_link_%s', $this->_context ) ), $url_key );
 	}
 
-	public function __close_price_item_link_render( $url_key ) {
+	public function _close_price_item_link_render( $url_key ) {
 
-		$item = $this->__processed_item;
+		$item = $this->_processed_item;
 
 		if ( empty( $item[ $url_key ]['url'] ) ) {
 			return;
@@ -924,7 +926,7 @@ class Jet_Elements_Price_List extends Jet_Elements_Base {
 
 	}
 
-	public function __close_price_item_link_edit( $url_key ) {
+	public function _close_price_item_link_edit( $url_key ) {
 
 		echo '<# if ( item.' . $url_key . '.url ) { #>';
 		echo '</a>';
@@ -940,14 +942,14 @@ class Jet_Elements_Price_List extends Jet_Elements_Base {
 		return $this->get_render_attribute_string( $item_key );
 	}
 	
-	public function __get_price_list_image() {
-		$image_item = $this->__processed_item['item_image'];
+	public function _get_price_list_image() {
+		$image_item = $this->_processed_item['item_image'];
 		
 		if ( empty( $image_item['url'] ) ) {
 			return;
 		}
 		
-		return sprintf( '<div class="price-list__item-img-wrap"><img src="%1$s" alt="%2$s" class="price-list__item-img"></div>',
+		return sprintf( '<div class="price-list__item-img-wrap"><img src="%1$s" alt="%2$s" class="price-list__item-img" loading="lazy"></div>',
 			$image_item['url'],
 			esc_attr( Control_Media::get_image_alt( $image_item ) )
 		);
@@ -964,7 +966,7 @@ class Jet_Elements_Price_List extends Jet_Elements_Base {
 				if ( ! empty( $item['item_price'] ) ) {
 					$check = true;
 				} else {
-					$this->__hidden_price_items[] = $inx;
+					$this->_hidden_price_items[] = $inx;
 				}
 			}
 
@@ -975,17 +977,17 @@ class Jet_Elements_Price_List extends Jet_Elements_Base {
 	}
 
 	protected function render() {
-		$this->__context = 'render';
+		$this->_context = 'render';
 
 		if ( ! $this->check_render_price_items() ) {
 			return;
 		}
 
-		$this->__open_wrap();
-		include $this->__get_global_template( 'index' );
-		$this->__close_wrap();
+		$this->_open_wrap();
+		include $this->_get_global_template( 'index' );
+		$this->_close_wrap();
 
-		$this->__processed_item_index = 0;
+		$this->_processed_item_index = 0;
 	}
 
 }

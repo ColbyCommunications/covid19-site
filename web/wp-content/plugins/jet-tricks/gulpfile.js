@@ -31,6 +31,28 @@ gulp.task('jet-tricks-frontend', () => {
 		.pipe(notify('Compile Sass Done!'));
 });
 
+gulp.task('jet-tricks-admin', () => {
+	return gulp.src('./assets/scss/jet-tricks-admin.scss')
+		.pipe(
+			plumber( {
+				errorHandler: function ( error ) {
+					console.log('=================ERROR=================');
+					console.log(error.message);
+					this.emit( 'end' );
+				}
+			})
+		)
+		.pipe(sass( { outputStyle: 'compressed' } ))
+		.pipe(autoprefixer({
+				browsers: ['last 10 versions'],
+				cascade: false
+		}))
+
+		.pipe(rename('jet-tricks-admin.css'))
+		.pipe(gulp.dest('./assets/css/'))
+		.pipe(notify('Compile Sass Done!'));
+});
+
 gulp.task('jet-tricks-editor', () => {
 	return gulp.src('./assets/scss/jet-tricks-editor.scss')
 		.pipe(
@@ -78,6 +100,7 @@ gulp.task('jet-tricks-icons', () => {
 //watch
 gulp.task('watch', () => {
 	gulp.watch('./assets/scss/**', gulp.series( 'jet-tricks-frontend' ) );
+	gulp.watch('./assets/scss/**', gulp.series( 'jet-tricks-admin' ) );
 	gulp.watch('./assets/scss/**', gulp.series( 'jet-tricks-editor' ) );
 	gulp.watch('./assets/scss/**', gulp.series( 'jet-tricks-icons' ) );
 });

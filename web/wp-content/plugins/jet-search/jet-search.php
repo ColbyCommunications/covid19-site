@@ -3,13 +3,16 @@
  * Plugin Name: JetSearch For Elementor
  * Plugin URI:  https://crocoblock.com/plugins/jetsearch/
  * Description: The best tool for adding complex search functionality to pages built with Elementor
- * Version:     2.1.6
+ * Version:     2.1.14
  * Author:      Crocoblock
  * Author URI:  https://crocoblock.com/
  * Text Domain: jet-search
  * License:     GPL-2.0+
  * License URI: http://www.gnu.org/licenses/gpl-2.0.txt
  * Domain Path: /languages
+ *
+ * Elementor tested up to: 3.3
+ * Elementor Pro tested up to: 3.3
  *
  * @package jet-search
  * @author  Zemez
@@ -46,7 +49,7 @@ if ( ! class_exists( 'Jet_Search' ) ) {
 		 * @access private
 		 * @var    string
 		 */
-		private $version = '2.1.6';
+		private $version = '2.1.14';
 
 		/**
 		 * Holder for base plugin URL.

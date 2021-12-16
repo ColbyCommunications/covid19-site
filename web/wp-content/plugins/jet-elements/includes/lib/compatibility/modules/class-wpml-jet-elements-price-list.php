@@ -52,8 +52,10 @@ class WPML_Jet_Elements_Price_List extends WPML_Elementor_Module_With_Items {
 		switch( $field ) {
 			case 'item_title':
 			case 'item_price':
-			case 'item_text':
 				return 'LINE';
+
+			case 'item_text':
+				return 'AREA';
 
 			case 'url':
 				return 'LINK';

@@ -6,6 +6,47 @@ The plugin makes it simple to create a template with Elementor and add it to the
 
 # ChangeLog
 
+## [2.1.14](https://github.com/ZemezLab/jet-tricks/releases/tag/2.1.14) - 02.12.2021
+* Added: [Crocoblock/suggestions#2911](https://github.com/Crocoblock/suggestions/issues/2911)
+* Added: [Crocoblock/suggestions#3351](https://github.com/Crocoblock/suggestions/issues/3351)
+* Fixed: widgets compatibility with new breakpoints
+* Fixed: rtl compatibility
+* Fixed: minor issues
+
+## [2.1.13](https://github.com/ZemezLab/jet-tricks/releases/tag/2.1.13)
+* Added: [Crocoblock/suggestions#2584](https://github.com/Crocoblock/suggestions/issues/2584)
+* Fixed: prevent php warning
+
+## [2.1.12](https://github.com/ZemezLab/jet-tricks/releases/tag/2.1.12) - 04.03.2021
+* Fixed: [Crocoblock/suggestions#2751](https://github.com/Crocoblock/suggestions/issues/2751)
+
+## [2.1.11](https://github.com/ZemezLab/jet-tricks/releases/tag/2.1.11) - 03.03.2021
+* Added: JS triggers on ajax load template
+* Fixed: image alt attribute in the Image accordion widget
+* Fixed: Elementor 3.1.2 compatibility issue
+
+## [2.1.10](https://github.com/ZemezLab/jet-tricks/releases/tag/2.1.10) - 14.11.2020
+* Update: JetDashboard Module to v2.0.4
+
+## [2.1.9](https://github.com/ZemezLab/jet-tricks/releases/tag/2.1.9) - 11.11.2020
+* Update: JetDashboard Module to v2.0.3
+
+## [2.1.8](https://github.com/ZemezLab/jet-tricks/releases/tag/2.1.8) - 06.10.2020
+* Update: JetDashboard Module to v2.0.0
+
+## [2.1.7](https://github.com/ZemezLab/jet-tabs/releases/tag/2.1.7) - 17.07.2020
+* Added: ability using dynamic tags in the Image Accordion widget
+* Added: [Crocoblock/suggestions#651](https://github.com/Crocoblock/suggestions/issues/651)
+* Updated: JetDashboard Module to v1.0.16
+* Fixed: prevent Rest API error notice
+
+## [2.1.6](https://github.com/ZemezLab/jet-tabs/releases/tag/2.1.6) - 25.05.2020
+* Added: filter hooks for compatibility with the JetPlugin Dynamic Data Addon plugin
+
+## [2.1.5](https://github.com/ZemezLab/jet-tabs/releases/tag/2.1.5) - 14.05.2020
+* Added: multiple improvements
+* Fixed: the ability to change the tab by clicking on the anchor link
+
 ## [2.1.4](https://github.com/ZemezLab/jet-tabs/releases/tag/2.1.4) - 30.03.2020
 * Added: `Control CSS ID` control in the Tabs and Accordion widgets
 * Added: responsive control to the Orientation control in the Image Accordion widget

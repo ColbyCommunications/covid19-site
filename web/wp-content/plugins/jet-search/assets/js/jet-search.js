@@ -258,6 +258,7 @@
 			};
 
 			self.outputMessage = function( message, messageClass ) {
+				message = message.replace( /\\/g, '' ); // remove slashes
 				message = $( "<div/>" ).html( message ).text();
 				message = message.replace( /\\*"/g, '' );
 				messageHolder.removeClass( 'error show' ).addClass( messageClass ).html( message );

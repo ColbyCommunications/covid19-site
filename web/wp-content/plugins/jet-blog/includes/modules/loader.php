@@ -120,11 +120,22 @@ if ( ! class_exists( 'Jet_Blog_CX_Loader' ) ) {
 
 					$dir = pathinfo( $path, PATHINFO_DIRNAME );
 
-					$url = str_replace(
-						'\\',
-						'/',
-						str_replace( wp_normalize_path( WP_CONTENT_DIR ), content_url(), wp_normalize_path( $dir ) )
-					);
+					$normalize_dir = wp_normalize_path( $dir );
+					$plugin_dir    = wp_normalize_path( WP_PLUGIN_DIR );
+
+					if ( 0 === strpos( $normalize_dir, $plugin_dir ) ) {
+						$url = str_replace(
+							'\\',
+							'/',
+							str_replace( $plugin_dir, plugins_url(), $normalize_dir )
+						);
+					} else {
+						$url = str_replace(
+							'\\',
+							'/',
+							str_replace( wp_normalize_path( WP_CONTENT_DIR ), content_url(), $normalize_dir )
+						);
+					}
 
 					$this->included_modules[ $slug ] = array(
 						'path' => trailingslashit( $dir ),

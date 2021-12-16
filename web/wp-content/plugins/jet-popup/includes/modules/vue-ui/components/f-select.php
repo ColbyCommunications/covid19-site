@@ -36,6 +36,7 @@
 		>
 			<input
 				:id="currentId"
+				:placeholder="placeholder"
 				:autocomplete="autocomplete"
 				type="text"
 				:value="query"

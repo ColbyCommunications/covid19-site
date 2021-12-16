@@ -43,7 +43,7 @@ if ( ! class_exists( 'Jet_Tabs_Integration' ) ) {
 		 */
 		public function init() {
 
-			add_action( 'elementor/init', array( $this, 'register_category' ) );
+			add_action( 'elementor/elements/categories_registered', array( $this, 'register_category' ) );
 
 			add_action( 'elementor/widgets/widgets_registered', array( $this, 'register_addons' ), 10 );
 
@@ -54,6 +54,16 @@ if ( ! class_exists( 'Jet_Tabs_Integration' ) ) {
 			add_action( 'template_include', array( $this, 'set_post_type_template' ), 9999 );
 
 			add_filter( 'elementor/editor/localize_settings', array( $this, 'elementor_editor_localize_settings' ), 10, 2 );
+
+			// Init Jet Elementor Extension module
+			$ext_module_data = jet_tabs()->module_loader->get_included_module_data( 'jet-elementor-extension.php' );
+
+			Jet_Elementor_Extension\Module::get_instance(
+				array(
+					'path' => $ext_module_data['path'],
+					'url'  => $ext_module_data['url'],
+				)
+			);
 
 		}
 
@@ -203,9 +213,8 @@ if ( ! class_exists( 'Jet_Tabs_Integration' ) ) {
 		 *
 		 * @return void
 		 */
-		public function register_category() {
+		public function register_category( $elements_manager ) {
 
-			$elements_manager = Elementor\Plugin::instance()->elements_manager;
 			$cherry_cat       = 'cherry';
 
 			$elements_manager->add_category(

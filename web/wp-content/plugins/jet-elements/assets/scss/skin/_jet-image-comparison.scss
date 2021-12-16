@@ -38,11 +38,11 @@
 		font-size: 23px;
 
 		&.prev-arrow {
-			left: 20px;
+			@include start(20px);
 		}
 
 		&.next-arrow {
-			right: 20px;
+			@include end(20px);
 		}
 	}
 

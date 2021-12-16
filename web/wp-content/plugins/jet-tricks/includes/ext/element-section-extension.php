@@ -84,6 +84,8 @@ if ( ! class_exists( 'Jet_Tricks_Elementor_Section_Extension' ) ) {
 			add_action( 'elementor/frontend/section/before_render', array( $this, 'section_before_render' ) );
 
 			add_action( 'elementor/frontend/before_enqueue_scripts', array( $this, 'enqueue_scripts' ), 9 );
+
+			add_action( 'elementor/preview/enqueue_scripts', array( $this, 'enqueue_preview_scripts' ), 9 );
 		}
 
 		/**
@@ -119,14 +121,15 @@ if ( ! class_exists( 'Jet_Tricks_Elementor_Section_Extension' ) ) {
 			$obj->add_control(
 				'section_jet_tricks_particles_json',
 				array(
-					'label'                        => esc_html__( 'Particles JSON', 'jet-tricks' ),
-					'type'                         => Elementor\Controls_Manager::TEXTAREA,
-					'condition'                    => array(
+					'label'       => esc_html__( 'Particles JSON', 'jet-tricks' ),
+					'type'        => Elementor\Controls_Manager::TEXTAREA,
+					'description' => __( 'Paste your particles JSON code here - Generate it from <a href="https://vincentgarreau.com/particles.js/" target="_blank">Here!</a>', 'jet-tricks' ),
+					'default'     => '',
+					'render_type' => 'template',
+					'dynamic'     => array( 'active' => true ),
+					'condition'   => array(
 						'section_jet_tricks_particles' => 'true',
 					),
-					'description'                  => __( 'Paste your particles JSON code here - Generate it from <a href="http://vincentgarreau.com/particles.js/#default" target="_blank">Here!</a>', 'jet-tricks' ),
-					'default'                      => '',
-					'render_type'                  => 'template',
 				)
 			);
 
@@ -139,16 +142,16 @@ if ( ! class_exists( 'Jet_Tricks_Elementor_Section_Extension' ) ) {
 		 * @return [type]          [description]
 		 */
 		public function section_before_render( $element ) {
-			$data     = $element->get_data();
-			$type     = isset( $data['elType'] ) ? $data['elType'] : 'section';
+			$data            = $element->get_data();
+			$type            = isset( $data['elType'] ) ? $data['elType'] : 'section';
+			$elementSettings = $element->get_settings_for_display();
 
 			if ( 'section' !== $type ) {
 				return false;
 			}
 
-			$settings = $data['settings'];
-
-			$section_id = $data['id'];
+			$settings    = $data['settings'];
+			$section_id  = $data['id'];
 
 			$settings = wp_parse_args( $settings, $this->default_section_settings );
 
@@ -169,7 +172,7 @@ if ( ! class_exists( 'Jet_Tricks_Elementor_Section_Extension' ) ) {
 			$section_settings = array(
 				'view_more'      => filter_var( $settings['section_view_more'], FILTER_VALIDATE_BOOLEAN ),
 				'particles'      => filter_var( $settings['section_jet_tricks_particles'], FILTER_VALIDATE_BOOLEAN ) ? 'true' : 'false',
-				'particles_json' => $settings['section_jet_tricks_particles_json'],
+				'particles_json' => $elementSettings['section_jet_tricks_particles_json'],
 			);
 
 			$this->sections_data[ $data['id'] ] = $section_settings;
@@ -212,10 +215,14 @@ if ( ! class_exists( 'Jet_Tricks_Elementor_Section_Extension' ) ) {
 		public function enqueue_scripts() {
 
 			if ( ! empty( $this->particle_sections ) ) {
-				wp_enqueue_script( 'jet-tricks-particle-js' );
+				wp_enqueue_script( 'jet-tricks-ts-particles' );
 			}
 
 			jet_tricks_assets()->elements_data['sections'] = $this->sections_data;
+		}
+
+		public function enqueue_preview_scripts() {
+			wp_enqueue_script( 'jet-tricks-ts-particles' );
 		}
 
 		/**

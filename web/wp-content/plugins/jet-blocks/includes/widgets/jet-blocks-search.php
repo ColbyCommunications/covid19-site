@@ -12,8 +12,8 @@ use Elementor\Group_Control_Border;
 use Elementor\Group_Control_Box_Shadow;
 use Elementor\Group_Control_Typography;
 use Elementor\Repeater;
-use Elementor\Scheme_Color;
-use Elementor\Scheme_Typography;
+use Elementor\Core\Schemes\Color as Scheme_Color;
+use Elementor\Core\Schemes\Typography as Scheme_Typography;
 use Elementor\Widget_Base;
 use Elementor\Utils;
 
@@ -88,8 +88,9 @@ class Jet_Blocks_Search extends Jet_Blocks_Base {
 			array(
 				'label'     => esc_html__( 'Submit Button Icon', 'jet-blocks' ),
 				'type'        => Controls_Manager::ICON,
-				'label_block' => true,
+				'label_block' => false,
 				'file'        => '',
+				'skin'        => 'inline',
 				'default'     => 'fa fa-search',
 				'fa5_default' => array(
 					'value'   => 'fas fa-search',
@@ -133,8 +134,9 @@ class Jet_Blocks_Search extends Jet_Blocks_Base {
 			array(
 				'label'       => esc_html__( 'Popup Trigger Icon', 'jet-blocks' ),
 				'type'        => Controls_Manager::ICON,
-				'label_block' => true,
+				'label_block' => false,
 				'file'        => '',
+				'skin'        => 'inline',
 				'default'     => 'fa fa-search',
 				'fa5_default' => array(
 					'value'   => 'fas fa-search',
@@ -151,8 +153,9 @@ class Jet_Blocks_Search extends Jet_Blocks_Base {
 			array(
 				'label'     => esc_html__( 'Popup Close Button Icon', 'jet-blocks' ),
 				'type'        => Controls_Manager::ICON,
-				'label_block' => true,
+				'label_block' => false,
 				'file'        => '',
+				'skin'        => 'inline',
 				'default'     => 'fa fa-times',
 				'fa5_default' => array(
 					'value'   => 'fas fa-times',

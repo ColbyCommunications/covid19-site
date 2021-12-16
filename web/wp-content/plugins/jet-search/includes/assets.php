@@ -38,11 +38,30 @@ if ( ! class_exists( 'Jet_Search_Assets' ) ) {
 		 * Constructor for the class
 		 */
 		public function init() {
+			add_action( 'elementor/frontend/before_register_styles',  array( $this, 'register_styles' ) );
 			add_action( 'elementor/frontend/after_enqueue_styles',    array( $this, 'enqueue_styles' ) );
+
 			add_action( 'elementor/frontend/before_register_scripts', array( $this, 'register_scripts' ) );
+			add_action( 'elementor/frontend/after_enqueue_scripts',   array( $this, 'enqueue_scripts' ) );
+
 			add_action( 'elementor/editor/before_enqueue_scripts',    array( $this, 'editor_scripts' ) );
+			add_action( 'elementor/editor/after_enqueue_styles',      array( $this, 'editor_styles' ) );
 
 			add_action( 'wp_print_footer_scripts', array( $this, 'print_results_item_js_template' ), 0 );
+		}
+
+		/**
+		 * Register plugin stylesheets.
+		 *
+		 * @return void
+		 */
+		public function register_styles() {
+			wp_register_style(
+				'jquery-chosen',
+				jet_search()->plugin_url( 'assets/lib/chosen/chosen.min.css' ),
+				false,
+				'1.8.7'
+			);
 		}
 
 		/**
@@ -51,17 +70,10 @@ if ( ! class_exists( 'Jet_Search_Assets' ) ) {
 		 * @return void
 		 */
 		public function enqueue_styles() {
-			wp_register_style(
-				'jquery-chosen',
-				jet_search()->plugin_url( 'assets/lib/chosen/chosen.min.css' ),
-				false,
-				'1.8.7'
-			);
-
 			wp_enqueue_style(
 				'jet-search',
 				jet_search()->plugin_url( 'assets/css/jet-search.css' ),
-				array( 'jquery-chosen' ),
+				array(),
 				jet_search()->get_version()
 			);
 		}
@@ -80,8 +92,15 @@ if ( ! class_exists( 'Jet_Search_Assets' ) ) {
 				'1.8.7',
 				true
 			);
+		}
 
-			wp_register_script(
+		/**
+		 * Enqueue plugin scripts
+		 *
+		 * @return void
+		 */
+		public function enqueue_scripts() {
+			wp_enqueue_script(
 				'jet-search',
 				jet_search()->plugin_url( 'assets/js/jet-search.js' ),
 				array( 'jquery', 'elementor-frontend', 'wp-util' ),
@@ -110,6 +129,30 @@ if ( ! class_exists( 'Jet_Search_Assets' ) ) {
 				jet_search()->get_version(),
 				true
 			);
+		}
+
+		/**
+		 * Enqueue editor styles
+		 *
+		 * @return void
+		 */
+		public function editor_styles() {
+
+			if ( is_rtl() ) {
+				wp_enqueue_style(
+					'jet-search-editor',
+					jet_search()->plugin_url( 'assets/css/jet-search-editor.css' ),
+					array(),
+					jet_search()->get_version()
+				);
+
+				$ui_theme = \Elementor\Core\Settings\Manager::get_settings_managers( 'editorPreferences' )->get_model()->get_settings( 'ui_theme' );
+
+				if ( 'dark' === $ui_theme ) {
+					wp_add_inline_style( 'jet-search-editor', '.rtl .jet-search-text-align-control{--jet-search-text-align-control-border-color:#64666a}' );
+				}
+			}
+
 		}
 
 		/**

@@ -13,8 +13,12 @@
 		position: relative;
 		margin-bottom: 1px;
 
-		&.jet-custom-nav-mega-sub-position-top {
+		&.jet-custom-nav-mega-sub-position-default {
 			position: static;
+		}
+
+		&.jet-custom-nav-mega-sub-position-relative-item {
+			position: relative;
 		}
 
 		> a {

@@ -7,8 +7,8 @@ use Elementor\Group_Control_Border;
 use Elementor\Group_Control_Box_Shadow;
 use Elementor\Group_Control_Typography;
 use Elementor\Repeater;
-use Elementor\Scheme_Color;
-use Elementor\Scheme_Typography;
+use Elementor\Core\Schemes\Color as Scheme_Color;
+use Elementor\Core\Schemes\Typography as Scheme_Typography;
 use Elementor\Widget_Base;
 use Elementor\Utils;
 
@@ -28,7 +28,7 @@ class Jet_Popup_Mailchimp extends Jet_Popup_Base {
 	}
 
 	public function get_title() {
-		return esc_html__( 'mailchimp', 'jet-popup' );
+		return esc_html__( 'Mailchimp', 'jet-popup' );
 	}
 
 	public function get_icon() {
@@ -249,7 +249,7 @@ class Jet_Popup_Mailchimp extends Jet_Popup_Base {
 			'additional_fields',
 			[
 				'type'        => Controls_Manager::REPEATER,
-				'fields'      => array_values( $repeater->get_controls() ),
+				'fields'      => $repeater->get_controls(),
 				'default'     => [
 				],
 				'title_field' => '{{{ field_merge_tag }}}',

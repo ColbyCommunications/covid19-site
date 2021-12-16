@@ -21,12 +21,6 @@ if ( ! class_exists( 'Jet_Family_Column_Orientation_Ext' ) ) {
 	class Jet_Family_Column_Orientation_Ext {
 
 		/**
-		 * [$parallax_sections description]
-		 * @var array
-		 */
-		public $parallax_sections = array();
-
-		/**
 		 * A reference to an instance of this class.
 		 *
 		 * @since  1.0.0
@@ -187,6 +181,45 @@ if ( ! class_exists( 'Jet_Family_Column_Orientation_Ext' ) ) {
 					'condition' => [
 						'jet_family_use_column_order' => 'true'
 					],
+				]
+			);
+
+			$element->add_control(
+				'jet_family_column_vertical_scroll',
+				[
+					'label'       => esc_html__( 'Column Vertical Scrollbar', 'jet-elements' ),
+					'description' => esc_html__( 'Note: for the scrollbar to work correctly go to Edit Section > Layout, set the `Vertical Align` to `Default` and the `Column Position` to `Stretch`.', 'jet-elements' ),
+					'type'        => Elementor\Controls_Manager::SWITCHER,
+					'default'     => '',
+					'separator'   => 'before',
+					'selectors'   => [
+						'{{WRAPPER}}.elementor-column' => 'overflow-y: auto;',
+					],
+				]
+			);
+
+			$element->add_responsive_control(
+				'jet_family_column_max_height',
+				[
+					'label'      => esc_html__( 'Maximum Height', 'jet-elements' ),
+					'type'       => Elementor\Controls_Manager::SLIDER,
+					'size_units' => [ 'px', '%', 'vh' ],
+					'default' => [
+						'unit' => 'px',
+						'size' => '800',
+					],
+					'range' => [
+						'px' => [
+							'min' => 0,
+							'max' => 2000,
+						],
+					],
+					'selectors' => [
+						'{{WRAPPER}}.elementor-column' => 'max-height: {{SIZE}}{{UNIT}}',
+					],
+					'condition' => array(
+						'jet_family_column_vertical_scroll' => 'yes',
+					),
 				]
 			);
 

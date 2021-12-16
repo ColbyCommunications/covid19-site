@@ -54,7 +54,7 @@ function jet_menu_oceanwp_fix_menu_args( $args ) {
 function jet_menu_oceanwp_styles() {
 	wp_enqueue_style(
 		'jet-menu-oceanwp',
-		jet_menu()->get_theme_url( 'assets/css/style.css' ),
+		jet_menu()->integration_manager->get_theme_url( 'assets/css/style.css' ),
 		array(),
 		jet_menu()->get_version()
 	);

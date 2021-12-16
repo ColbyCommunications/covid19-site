@@ -28,7 +28,7 @@
 
 .jet-instagram-gallery__comments-icon {
 	color: #6ec1e4;
-	margin-right: 5px;
+	@include margin-end(5px);
 }
 
 .jet-instagram-gallery__likes-count {
@@ -39,6 +39,6 @@
 
 .jet-instagram-gallery__likes-icon {
 	color: #6ec1e4;
-	margin-right: 5px;
+	@include margin-end(5px);
 }
 

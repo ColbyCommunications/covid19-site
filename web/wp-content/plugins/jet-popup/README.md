@@ -4,6 +4,39 @@ Build popup with any layout in drag&drop way, change its position and trigger ev
 
 # ChangeLog
 
+## [1.5.5](https://github.com/ZemezLab/jet-popup/releases/tag/1.5.5)
+* FIX: minor issues
+
+## [1.5.4](https://github.com/ZemezLab/jet-popup/releases/tag/1.5.4)
+* FIX: minor issues
+
+## [1.5.3](https://github.com/ZemezLab/jet-popup/releases/tag/1.5.3)
+* FIX: minor issues
+* FIX: prevent php warning
+
+## [1.5.2](https://github.com/ZemezLab/jet-popup/releases/tag/1.5.2)
+* FIX: Elementor 3.1.2 compatibility issue
+* FIX: force ajax
+
+## [1.5.1](https://github.com/ZemezLab/jet-popup/releases/tag/1.5.1)
+* FIX: wp 5.6 compatibility
+
+## [1.5.0](https://github.com/ZemezLab/jet-popup/releases/tag/1.5.0)
+* ADD: Advanced conditions category (https://github.com/Crocoblock/suggestions/issues/1312)
+* ADD: On time show popup trigger (https://github.com/Crocoblock/suggestions/issues/1826)
+* ADD: Disable page scrolling option (https://github.com/Crocoblock/suggestions/issues/2132)
+* FIX: Child page condition (https://github.com/Crocoblock/suggestions/issues/901)
+
+## [1.4.2](https://github.com/ZemezLab/jet-popup/releases/tag/1.4.2)
+* Update: JetDashboard Module to v2.0.3
+
+## [1.4.1](https://github.com/ZemezLab/jet-popup/releases/tag/1.4.1)
+* Update: JetDashboard Module to v2.0.0
+
+## [1.4.0](https://github.com/ZemezLab/jet-popup/releases/tag/1.4.0)
+* Update: Popup Library presets list
+* Fixed: minor issues
+
 ## [1.3.1](https://github.com/ZemezLab/jet-popup/releases/tag/1.3.1)
 * Update: Jet Dashboard to v1.0.10
 * Fixed: compatibility with Elementor 2.9

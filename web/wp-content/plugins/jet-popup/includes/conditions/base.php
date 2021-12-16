@@ -61,8 +61,8 @@ if ( ! class_exists( 'Jet_Popup_Conditions_Base' ) ) {
 		 *
 		 * @return array
 		 */
-		public function get_controls() {
-			return array();
+		public function get_control() {
+			return false;
 		}
 
 		/**

@@ -97,6 +97,8 @@
 		}
 		
 		.jet-timeline-item {
+			@include getInverseDirection();
+
 			> .timeline-item__meta {
 				display: none;
 			}
@@ -109,12 +111,12 @@
 				flex-direction: row-reverse;
 				
 				.timeline-item__meta {
-					text-align: right;
+					text-align: $end;
 				}
 				
 				.timeline-item__card-arrow {
-					left: 0;
-					margin-left: -10px;
+					@include start(0);
+					@include margin-start(-10px);
 					border-top-width: 0!important;
 					border-right-width: 0!important;
 				}
@@ -122,12 +124,12 @@
 			
 			.jet-timeline-item:nth-child(odd) {
 				.timeline-item__meta {
-					text-align: left;
+					text-align: $start;
 				}
 				
 				.timeline-item__card-arrow {
-					right: 0;
-					margin-right: -10px;
+					@include end(0);
+					@include margin-end(-10px);
 					border-left-width: 0!important;
 					border-bottom-width: 0!important;
 				}
@@ -163,6 +165,22 @@
 					display: none;
 				}
 			}
+
+			.jet-timeline-item {
+				&:not(.jet-timeline-item--image-inside):not(.jet-timeline-item--image-inside_after) {
+					.timeline-item {
+						&__card {
+							
+							&-inner {
+
+								> .timeline-item__card-img {
+									display: none;
+								}
+							}
+						}
+					}
+				}
+			}
 		}
 		
 		@media (max-width: 1024px) {
@@ -190,6 +208,8 @@
 			}
 			
 			.jet-timeline-item {
+				@include getInverseDirection();
+
 				> .timeline-item__meta {
 					display: none;
 				}
@@ -225,6 +245,8 @@
 		}
 		
 		.jet-timeline-item {
+			@include getInverseDirection();
+
 			> .timeline-item__meta {
 				display: none;
 			}
@@ -238,7 +260,14 @@
 		
 		.timeline-item__card-arrow {
 			top: 0;
-			transform: rotate(45deg);
+
+			@if ( $direction == rtl ) {
+				@media (min-width: 1025px) {
+					transform: rotate(45deg);
+				}
+			} @else {
+				transform: rotate(45deg);
+			}
 		}
 	}
 	
@@ -249,7 +278,14 @@
 		
 		.timeline-item__card-arrow {
 			top: 50%;
-			transform: translateY(-50%) rotate(45deg);
+
+			@if ( $direction == rtl ) {
+				@media (min-width: 1025px) {
+					transform: translateY(-50%) rotate(45deg);
+				}
+			} @else {
+				transform: translateY(-50%) rotate(45deg);
+			}
 		}
 	}
 	
@@ -260,7 +296,14 @@
 		
 		.timeline-item__card-arrow {
 			bottom: 0;
-			transform: rotate(45deg);
+
+			@if ( $direction == rtl ) {
+				@media (min-width: 1025px) {
+					transform: rotate(45deg);
+				}
+			} @else {
+				transform: rotate(45deg);
+			}
 		}
 	}
 }

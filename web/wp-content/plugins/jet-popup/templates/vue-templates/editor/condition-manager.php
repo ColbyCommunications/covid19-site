@@ -9,7 +9,8 @@
 		<div class="jet-popup-conditions-manager__list">
 			<div class="jet-popup-conditions-manager__add-condition">
 				<cx-vui-button
-					button-style="accent-border"
+					button-style="default"
+					class="cx-vui-button--style-accent-border"
 					size="mini"
 					@click="addCondition"
 				>
@@ -31,7 +32,8 @@
 	</div>
 	<div class="jet-popup-conditions-manager__controls">
 		<cx-vui-button
-			button-style="accent-border"
+			button-style="default"
+			class="cx-vui-button--style-accent-border"
 			:loading="saveStatusLoading"
 			size="mini"
 			@click="saveCondition"

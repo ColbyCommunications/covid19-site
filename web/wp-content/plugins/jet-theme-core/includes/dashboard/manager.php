@@ -73,6 +73,7 @@ if ( ! class_exists( 'Jet_Theme_Core_Dashboard' ) ) {
 		 * @return [type]       [description]
 		 */
 		public function get( $page = '' ) {
+
 			return isset( $this->_pages[ $page ] ) ? $this->_pages[ $page ] : false;
 		}
 
@@ -122,7 +123,7 @@ if ( ! class_exists( 'Jet_Theme_Core_Dashboard' ) ) {
 				$default['Jet_Theme_Core_Dashboard_Theme'] = $base_path . 'page-theme.php';
 
 			} else {
-				$default = array();
+				$default['Jet_Theme_Core_Dashboard_Theme'] = $base_path . 'page-theme.php';
 			}
 
 			if ( Jet_Theme_Core_Utils::is_monstroid_check() ) {
@@ -173,22 +174,13 @@ if ( ! class_exists( 'Jet_Theme_Core_Dashboard' ) ) {
 		 */
 		public function register_main_menu_page() {
 
-			$menu_icon = jet_theme_core()->config->get( 'menu_icon' );
+			if ( Jet_Theme_Core_Utils::is_monstroid_check() ) {
+				$menu_icon = jet_theme_core()->config->get( 'menu_icon' );
 
-			if ( ! $menu_icon ) {
-				$menu_icon = 'dashicons-admin-generic';
-			}
+				if ( ! $menu_icon ) {
+					$menu_icon = 'dashicons-admin-generic';
+				}
 
-			if ( ! Jet_Theme_Core_Utils::is_monstroid_check() ) {
-				add_submenu_page(
-					'jet-dashboard',
-					esc_html__( 'JetThemeCore', 'jet-theme-core' ),
-					esc_html__( 'JetThemeCore', 'jet-theme-core' ),
-					'manage_options',
-					$this->slug(),
-					array( $this, 'render_dashboard' )
-				);
-			} else {
 				add_menu_page(
 					jet_theme_core()->config->get( 'dashboard_page_name' ),
 					jet_theme_core()->config->get( 'dashboard_page_name' ),
@@ -198,7 +190,6 @@ if ( ! class_exists( 'Jet_Theme_Core_Dashboard' ) ) {
 					$menu_icon
 				);
 			}
-
 		}
 
 		/**

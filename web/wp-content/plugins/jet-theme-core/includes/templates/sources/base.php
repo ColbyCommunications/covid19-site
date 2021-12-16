@@ -112,6 +112,8 @@ abstract class Jet_Theme_Core_Templates_Source_Base {
 	 * @return [type] [description]
 	 */
 	public function delete_templates_cache() {
+		var_dump($this->templates_key());
+		exit;
 		delete_transient( $this->templates_key() );
 	}
 

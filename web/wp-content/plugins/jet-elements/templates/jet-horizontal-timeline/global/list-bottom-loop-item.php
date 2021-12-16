@@ -5,7 +5,12 @@
 
 $settings      = $this->get_settings_for_display();
 $layout        = $settings['vertical_layout'];
-$item_settings = $this->__processed_item;
+
+if ( true === wp_is_mobile() ) {
+	$layout = isset( $settings['mobile_vertical_layout'] ) ? $settings['mobile_vertical_layout'] : $settings['vertical_layout'];
+}
+
+$item_settings = $this->_processed_item;
 
 $this->add_render_attribute(
 	'item_bottom_' . $item_settings['_id'],
@@ -28,23 +33,23 @@ if ( filter_var( $item_settings['is_item_active'], FILTER_VALIDATE_BOOLEAN ) ) {
 	switch ( $layout ) {
 		case 'top':
 
-			include $this->__get_global_template( 'meta' );
+			include $this->_get_global_template( 'meta' );
 
 			break;
 
 		case 'chess':
 
-			if ( $this->__processed_index % 2 ) {
-				include $this->__get_global_template( 'card' );
+			if ( $this->_processed_index % 2 ) {
+				include $this->_get_global_template( 'card' );
 			} else {
-				include $this->__get_global_template( 'meta' );
+				include $this->_get_global_template( 'meta' );
 			}
 
 			break;
 
 		case 'bottom':
 
-			include $this->__get_global_template( 'card' );
+			include $this->_get_global_template( 'card' );
 
 			break;
 	}

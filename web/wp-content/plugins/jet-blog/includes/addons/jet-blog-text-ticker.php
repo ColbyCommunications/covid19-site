@@ -13,8 +13,8 @@ use Elementor\Group_Control_Box_Shadow;
 use Elementor\Group_Control_Typography;
 use Elementor\Modules\DynamicTags\Module as TagsModule;
 use Elementor\Repeater;
-use Elementor\Scheme_Color;
-use Elementor\Scheme_Typography;
+use Elementor\Core\Schemes\Color as Scheme_Color;
+use Elementor\Core\Schemes\Typography as Scheme_Typography;
 use Elementor\Widget_Base;
 use Elementor\Utils;
 
@@ -43,7 +43,7 @@ class Jet_Blog_Text_Ticker extends Jet_Blog_Base {
 	}
 
 	public function get_script_depends() {
-		return array( 'jquery-slick' );
+		return array( 'jet-slick' );
 	}
 
 	protected function _register_controls() {
@@ -339,7 +339,7 @@ class Jet_Blog_Text_Ticker extends Jet_Blog_Base {
 			'exclude_ids',
 			array(
 				'label'       => esc_html__( 'Exclude posts by IDs (eg. 10, 22, 19 etc.)', 'jet-blog' ),
-				'description' => esc_html__( 'If this is used with query posts by sticky, it will be ignored', 'jet-blog' ),
+				'description' => esc_html__( 'If this is used with query posts by sticky, it will be ignored. Note: use the %current_id% macros to exclude the current post.', 'jet-blog' ),
 				'type'        => 'text',
 				'label_block' => true,
 				'default'     => '',
@@ -1698,6 +1698,7 @@ class Jet_Blog_Text_Ticker extends Jet_Blog_Base {
 		}
 
 		if ( ! empty( $exclude ) && empty( $query_args['post__in'] ) ) {
+			$exclude                    = $this->render_macros( $exclude );
 			$exclude_ids                = explode( ',', str_replace( ' ', '', $exclude ) );
 			$query_args['post__not_in'] = $exclude_ids;
 		}
@@ -1853,7 +1854,7 @@ class Jet_Blog_Text_Ticker extends Jet_Blog_Base {
 			return;
 		}
 
-		$tag = ! empty( $settings['title_tag'] ) ? esc_attr( $settings['title_tag'] ) : 'div';
+		$tag = ! empty( $settings['title_tag'] ) ? jet_blog_tools()->validate_html_tag( $settings['title_tag'] ) : 'div';
 
 		$hide_classes = '';
 

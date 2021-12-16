@@ -3,7 +3,7 @@
  * Plugin Name: JetPopup
  * Plugin URI:  https://crocoblock.com/plugins/jetpopup/
  * Description: The advanced plugin for creating popups with Elementor
- * Version:     1.3.1
+ * Version:     1.5.5
  * Author:      Crocoblock
  * Author URI:  https://crocoblock.com/
  * Text Domain: jet-popup
@@ -46,7 +46,7 @@ if ( ! class_exists( 'Jet_Popup' ) ) {
 		 * @var string
 		 */
 
-		private $version = '1.3.1';
+		private $version = '1.5.5';
 
 		/**
 		 * Holder for base plugin URL
@@ -142,6 +142,20 @@ if ( ! class_exists( 'Jet_Popup' ) ) {
 		public $elementor_finder = null;
 
 		/**
+		 * Holder for compatibility module
+		 *
+		 * @var null
+		 */
+		public $compatibility = null;
+
+		/**
+		 * Holder for the Admin Bar module
+		 *
+		 * @var null
+		 */
+		public $admin_bar = null;
+
+		/**
 		 * Sets up needed actions/filters for the plugin to initialize.
 		 *
 		 * @since 1.0.0
@@ -215,6 +229,9 @@ if ( ! class_exists( 'Jet_Popup' ) ) {
 				[
 					$this->plugin_path( 'includes/modules/vue-ui/cherry-x-vue-ui.php' ),
 					$this->plugin_path( 'includes/modules/jet-dashboard/jet-dashboard.php' ),
+					$this->plugin_path( 'includes/modules/jet-elementor-extension/jet-elementor-extension.php' ),
+					$this->plugin_path( 'includes/modules/db-updater/cx-db-updater.php' ),
+					$this->plugin_path( 'includes/modules/admin-bar/jet-admin-bar.php' ),
 				]
 			);
 		}
@@ -240,6 +257,40 @@ if ( ! class_exists( 'Jet_Popup' ) ) {
 						'slug'    => 'jet-popup',
 						'file'    => 'jet-popup/jet-popup.php',
 						'version' => $this->get_version(),
+						'plugin_links' => array(
+							array(
+								'label'  => esc_html__( 'All Popups', 'jet-popup' ),
+								'url'    => add_query_arg( array( 'post_type' => 'jet-popup' ), admin_url( 'edit.php' ) ),
+								'target' => '_self',
+							),
+							array(
+								'label'  => esc_html__( 'New Popup', 'jet-popup' ),
+								'url'    => add_query_arg( array( 'post_type' => 'jet-popup' ), admin_url( 'post-new.php' ) ),
+								'target' => '_self',
+							),
+							array(
+								'label'  => esc_html__( 'Preset Library', 'jet-popup' ),
+								'url'    => add_query_arg(
+									array(
+										'post_type' => 'jet-popup',
+										'page' => 'jet-popup-library',
+									),
+									admin_url( 'edit.php' )
+								),
+								'target' => '_self',
+							),
+							array(
+								'label'  => esc_html__( 'Settings', 'jet-popup' ),
+								'url'    => add_query_arg(
+									array(
+										'page' => 'jet-dashboard-settings-page',
+										'subpage' => 'jet-popup-integrations'
+									),
+									admin_url( 'admin.php' )
+								),
+								'target' => '_self',
+							),
+						),
 					),
 				) );
 			}
@@ -290,9 +341,20 @@ if ( ! class_exists( 'Jet_Popup' ) ) {
 
 			$this->elementor_finder = new Jet_Elementor_Finder();
 
+			$this->compatibility = new Jet_Popup_Compatibility();
+
+			$this->admin_bar = Jet_Admin_Bar::get_instance();
+
 			if ( is_admin() ) {
 
+				// Init Admin Ajax Handlers
 				new Jet_Popup_Admin_Ajax_Handlers();
+
+				// Init Rest Api
+				new \Jet_Popup\Settings();
+
+				// Init DB upgrader
+				new Jet_Popup_DB_Upgrader();
 			}
 
 		}
@@ -308,6 +370,7 @@ if ( ! class_exists( 'Jet_Popup' ) ) {
 			require $this->plugin_path( 'includes/ajax-handlers.php' );
 			require $this->plugin_path( 'includes/post-type.php' );
 			require $this->plugin_path( 'includes/settings.php' );
+			require $this->plugin_path( 'includes/settings/manager.php' );
 			require $this->plugin_path( 'includes/popup-library.php' );
 			require $this->plugin_path( 'includes/export-import.php' );
 			require $this->plugin_path( 'includes/utils.php' );
@@ -315,7 +378,14 @@ if ( ! class_exists( 'Jet_Popup' ) ) {
 			require $this->plugin_path( 'includes/extension.php' );
 			require $this->plugin_path( 'includes/integration.php' );
 			require $this->plugin_path( 'includes/generator.php' );
+			require $this->plugin_path( 'includes/db-upgrader.php' );
 			require $this->plugin_path( 'includes/elementor-finder/elementor-finder.php' );
+			require $this->plugin_path( 'includes/compatibility/manager.php' );
+
+			// Lib
+			if ( ! class_exists( 'Mobile_Detect' ) ) {
+				require $this->plugin_path( 'includes/lib/class-mobile-detect.php' );
+			}
 		}
 
 		/**

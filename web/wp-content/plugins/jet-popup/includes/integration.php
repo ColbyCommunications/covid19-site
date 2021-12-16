@@ -34,6 +34,7 @@ if ( ! class_exists( 'Jet_Popup_Integration' ) ) {
 		 */
 		public function __construct() {
 			add_action( 'elementor/init', array( $this, 'register_category' ) );
+			add_action( 'elementor/init', array( $this, 'init_extension_module' ) );
 
 			add_action( 'elementor/widgets/widgets_registered', array( $this, 'register_addons' ), 10 );
 
@@ -55,9 +56,16 @@ if ( ! class_exists( 'Jet_Popup_Integration' ) ) {
 				array(
 					'title' => esc_html__( 'JetPopup', 'jet-popup' ),
 					'icon'  => 'font',
-				),
-				1
+				)
 			);
+		}
+
+		/**
+		 * Init JetElementorExtension Module
+		 */
+		public function init_extension_module() {
+			$ext_module_data = jet_popup()->module_loader->get_included_module_data( 'jet-elementor-extension.php' );
+			Jet_Elementor_Extension\Module::get_instance( $ext_module_data );
 		}
 
 		/**

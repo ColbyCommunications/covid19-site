@@ -222,7 +222,7 @@ if ( ! class_exists( 'Jet_Blog_Integration' ) ) {
 		 */
 		public function register_addons( $widgets_manager ) {
 
-			$available_widgets = jet_blog_settings()->get( 'available_widgets' );
+			$available_widgets = jet_blog_settings()->get( 'avaliable_widgets' );
 
 			require jet_blog()->plugin_path( 'includes/base/class-jet-blog-base.php' );
 

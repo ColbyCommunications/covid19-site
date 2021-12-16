@@ -1,5 +1,40 @@
 # ChangeLog
 
+## [2.2.14](https://github.com/ZemezLab/jet-blog/releases/tag/2.2.14)
+* Fixed: prevent php warning
+* Fixed: post title/meta typography issue
+* Fixed: slick js dependencies issue
+
+## [2.2.13](https://github.com/ZemezLab/jet-blog/releases/tag/2.2.13)
+* Update: JetDashboard module to v2.0.8
+* Added: output validation for html tags settings
+* Added: Elementor compatibility tag
+* Fixed: RTL and minor styles issues
+
+## [2.2.12](https://github.com/ZemezLab/jet-blog/releases/tag/2.2.12)
+* Update: JetDashboard module to v2.0.4
+
+## [2.2.11](https://github.com/ZemezLab/jet-blog/releases/tag/2.2.11)
+* Update: JetDashboard module to v2.0.3
+
+## [2.2.10](https://github.com/ZemezLab/jet-blog/releases/tag/2.2.10)
+* Update: JetDashboard module to v2.0.2
+* Fixed: Text ticker widget on safari
+* Fixed: excerpt length on ajax in the Smart Posts List widget
+* Fixed: compatibility with Elementor 3.0
+
+## [2.2.9](https://github.com/ZemezLab/jet-blog/releases/tag/2.2.9)
+* Added: `Order` and `Order by` controls in the Smart Posts List and Smart Posts Tiles widgets
+* Fixed: prevent js error
+
+## [2.2.8](https://github.com/ZemezLab/jet-blog/releases/tag/2.2.8)
+* Added: an ability filter posts by terms for Custom post types
+* Fixed: `Available Widgets` options
+* Fixed: [Crocoblock/suggestions#1324](https://github.com/Crocoblock/suggestions/issues/1324)
+
+## [2.2.7](https://github.com/ZemezLab/jet-blog/releases/tag/2.2.7)
+* Added: an ability to use the %current_id% macros to exclude current post
+
 ## [2.2.6](https://github.com/ZemezLab/jet-blog/releases/tag/2.2.6)
 * Added: `To Top` control in the Smart Posts List widget
 * Fixed: not working pagination for CPT in the Smart Posts List widget

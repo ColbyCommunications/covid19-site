@@ -17,7 +17,7 @@ add_filter( 'elementor/widget/render_content',        'jet_menu_add_phlox_pro_na
 function jet_menu_phlox_pro_styles() {
 	wp_enqueue_style(
 		'jet-menu-phlox-pro',
-		jet_menu()->get_theme_url( 'assets/css/style.css' ),
+		jet_menu()->integration_manager->get_theme_url( 'assets/css/style.css' ),
 		array(),
 		jet_menu()->get_version()
 	);

@@ -15,7 +15,7 @@ add_action( 'wp_enqueue_scripts', 'jet_menu_enfold_styles', 0 );
 function jet_menu_enfold_scripts() {
 	wp_enqueue_script(
 		'jet-menu-enfold',
-		jet_menu()->get_theme_url( 'assets/js/script.js' ),
+		jet_menu()->integration_manager->get_theme_url( 'assets/js/script.js' ),
 		array( 'jquery' ),
 		jet_menu()->get_version(),
 		true
@@ -30,7 +30,7 @@ function jet_menu_enfold_scripts() {
 function jet_menu_enfold_styles() {
 	wp_enqueue_style(
 		'jet-menu-enfold',
-		jet_menu()->get_theme_url( 'assets/css/style.css' ),
+		jet_menu()->integration_manager->get_theme_url( 'assets/css/style.css' ),
 		array(),
 		jet_menu()->get_version()
 	);

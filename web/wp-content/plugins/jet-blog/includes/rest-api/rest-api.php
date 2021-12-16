@@ -25,7 +25,7 @@ class Rest_Api {
 	 * [$api_namespace description]
 	 * @var string
 	 */
-	public $api_namespace = '/jet-blog-api/v1';
+	public $api_namespace = 'jet-blog-api/v1';
 
 	/**
 	 * [$_endpoints description]

@@ -47,6 +47,15 @@ abstract class Jet_Blog_Base extends Widget_Base {
 		return false;
 	}
 
+	public function render_macros( $str ) {
+
+		$macros_list = array(
+			'/%current_id%/' => get_the_ID(),
+		);
+
+		return preg_replace( array_keys( $macros_list ), array_values( $macros_list ), $str );
+	}
+
 	/**
 	 * Get globaly affected template
 	 *
@@ -608,7 +617,7 @@ abstract class Jet_Blog_Base extends Widget_Base {
 			$position_slug . '_meta',
 			array(
 				'type'        => Controls_Manager::REPEATER,
-				'fields'      => array_values( $repeater->get_controls() ),
+				'fields'      => $repeater->get_controls(),
 				'title_field' => '{{{ meta_key }}}',
 				'default'     => array(
 					array(
@@ -715,7 +724,8 @@ abstract class Jet_Blog_Base extends Widget_Base {
 				'max'         => 20,
 				'step'        => 1,
 				'selectors' => array(
-					'{{WRAPPER}} .' . $base . '__item-label' => 'margin-right: {{VALUE}}px',
+					'body:not(.rtl) {{WRAPPER}} .' . $base . '__item-label' => 'margin-right: {{VALUE}}px',
+					'body.rtl {{WRAPPER}} .' . $base . '__item-label' => 'margin-left: {{VALUE}}px',
 				),
 			),
 			50
@@ -818,6 +828,7 @@ abstract class Jet_Blog_Base extends Widget_Base {
 				'selectors' => array(
 					'{{WRAPPER}} .' . $base => 'text-align: {{VALUE}};',
 				),
+				'classes' => 'jet-elements-text-align-control',
 			),
 			50
 		);

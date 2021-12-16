@@ -12,8 +12,8 @@ use Elementor\Group_Control_Border;
 use Elementor\Group_Control_Box_Shadow;
 use Elementor\Group_Control_Typography;
 use Elementor\Repeater;
-use Elementor\Scheme_Color;
-use Elementor\Scheme_Typography;
+use Elementor\Core\Schemes\Color as Scheme_Color;
+use Elementor\Core\Schemes\Typography as Scheme_Typography;
 use Elementor\Widget_Base;
 use Elementor\Modules\DynamicTags\Module as TagsModule;
 
@@ -134,7 +134,7 @@ class Jet_Elements_Team_Member extends Jet_Elements_Base {
 
 		$repeater = new Repeater();
 
-		$this->__add_advanced_icon_control(
+		$this->_add_advanced_icon_control(
 			'social_icon',
 			array(
 				'label'       => esc_html__( 'Icon', 'jet-elements' ),
@@ -209,7 +209,7 @@ class Jet_Elements_Team_Member extends Jet_Elements_Base {
 			'social_list',
 			array(
 				'type'    => Controls_Manager::REPEATER,
-				'fields'  => array_values( $repeater->get_controls() ),
+				'fields'  => $repeater->get_controls(),
 				'default' => array(
 					array(
 						'social_icon'   => 'fa fa-facebook',
@@ -369,7 +369,7 @@ class Jet_Elements_Team_Member extends Jet_Elements_Base {
 		/**
 		 * General Style Section
 		 */
-		$this->__start_controls_section(
+		$this->_start_controls_section(
 			'section_team_member_general_style',
 			array(
 				'label'      => esc_html__( 'General', 'jet-elements' ),
@@ -378,7 +378,7 @@ class Jet_Elements_Team_Member extends Jet_Elements_Base {
 			)
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'cover_height',
 			array(
 				'label'      => esc_html__( 'Overlay Height', 'jet-elements' ),
@@ -406,7 +406,7 @@ class Jet_Elements_Team_Member extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'hint_corner_color',
 			array(
 				'label'   => esc_html__( 'Overlay Corner Color', 'jet-elements' ),
@@ -422,7 +422,7 @@ class Jet_Elements_Team_Member extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Background::get_type(),
 			array(
 				'name'     => 'container_background',
@@ -431,7 +431,7 @@ class Jet_Elements_Team_Member extends Jet_Elements_Base {
 			100
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Border::get_type(),
 			array(
 				'name'        => 'container_border',
@@ -443,7 +443,7 @@ class Jet_Elements_Team_Member extends Jet_Elements_Base {
 			100
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'container_border_radius',
 			array(
 				'label'      => __( 'Border Radius', 'jet-elements' ),
@@ -456,7 +456,7 @@ class Jet_Elements_Team_Member extends Jet_Elements_Base {
 			100
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'container_padding',
 			array(
 				'label'      => __( 'Padding', 'jet-elements' ),
@@ -469,7 +469,7 @@ class Jet_Elements_Team_Member extends Jet_Elements_Base {
 			100
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'container_margin',
 			array(
 				'label'      => __( 'Margin', 'jet-elements' ),
@@ -482,7 +482,7 @@ class Jet_Elements_Team_Member extends Jet_Elements_Base {
 			100
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Box_Shadow::get_type(),
 			array(
 				'name' => 'container_box_shadow',
@@ -494,12 +494,12 @@ class Jet_Elements_Team_Member extends Jet_Elements_Base {
 			100
 		);
 
-		$this->__end_controls_section();
+		$this->_end_controls_section();
 
 		/**
 		 * Image Style Section
 		 */
-		$this->__start_controls_section(
+		$this->_start_controls_section(
 			'section_team_member_image_style',
 			array(
 				'label'      => esc_html__( 'Image', 'jet-elements' ),
@@ -508,7 +508,7 @@ class Jet_Elements_Team_Member extends Jet_Elements_Base {
 			)
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'custom_image_size',
 			array(
 				'label'        => esc_html__( 'Custom size', 'jet-elements' ),
@@ -521,7 +521,7 @@ class Jet_Elements_Team_Member extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'image_width',
 			array(
 				'label'      => esc_html__( 'Width', 'jet-elements' ),
@@ -541,7 +541,6 @@ class Jet_Elements_Team_Member extends Jet_Elements_Base {
 				),
 				'selectors'  => array(
 					'{{WRAPPER}} ' . $css_scheme['image'] => 'width: {{SIZE}}{{UNIT}};',
-					'{{WRAPPER}} ' . $css_scheme['figure'] => 'width: {{SIZE}}{{UNIT}};',
 				),
 				'condition' => array(
 					'custom_image_size' => 'yes',
@@ -550,7 +549,7 @@ class Jet_Elements_Team_Member extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'image_height',
 			array(
 				'label'      => esc_html__( 'Height', 'jet-elements' ),
@@ -570,7 +569,6 @@ class Jet_Elements_Team_Member extends Jet_Elements_Base {
 				),
 				'selectors'  => array(
 					'{{WRAPPER}} ' . $css_scheme['image'] => 'height: {{SIZE}}{{UNIT}};',
-					'{{WRAPPER}} ' . $css_scheme['figure'] => 'height: {{SIZE}}{{UNIT}};',
 				),
 				'condition' => array(
 					'custom_image_size' => 'yes',
@@ -579,7 +577,7 @@ class Jet_Elements_Team_Member extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Border::get_type(),
 			array(
 				'name'        => 'image_border',
@@ -591,7 +589,7 @@ class Jet_Elements_Team_Member extends Jet_Elements_Base {
 			75
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'image_border_radius',
 			array(
 				'label'      => __( 'Border Radius', 'jet-elements' ),
@@ -605,7 +603,7 @@ class Jet_Elements_Team_Member extends Jet_Elements_Base {
 			75
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'image_padding',
 			array(
 				'label'      => __( 'Padding', 'jet-elements' ),
@@ -618,7 +616,7 @@ class Jet_Elements_Team_Member extends Jet_Elements_Base {
 			50
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'image_margin',
 			array(
 				'label'      => __( 'Margin', 'jet-elements' ),
@@ -631,7 +629,7 @@ class Jet_Elements_Team_Member extends Jet_Elements_Base {
 			50
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Box_Shadow::get_type(),
 			array(
 				'name' => 'image_box_shadow',
@@ -643,12 +641,12 @@ class Jet_Elements_Team_Member extends Jet_Elements_Base {
 			100
 		);
 
-		$this->__end_controls_section();
+		$this->_end_controls_section();
 
 		/**
 		 * Name Style Section
 		 */
-		$this->__start_controls_section(
+		$this->_start_controls_section(
 			'section_team_member_name_style',
 			array(
 				'label'      => esc_html__( 'Name', 'jet-elements' ),
@@ -657,16 +655,16 @@ class Jet_Elements_Team_Member extends Jet_Elements_Base {
 			)
 		);
 
-		$this->__start_controls_tabs( 'tabs_name_style' );
+		$this->_start_controls_tabs( 'tabs_name_style' );
 
-		$this->__start_controls_tab(
+		$this->_start_controls_tab(
 			'tab_first_name_style',
 			array(
 				'label' => esc_html__( 'First name', 'jet-elements' ),
 			)
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'first_name_color',
 			array(
 				'label'  => esc_html__( 'Color', 'jet-elements' ),
@@ -678,7 +676,7 @@ class Jet_Elements_Team_Member extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Typography::get_type(),
 			array(
 				'name'     => 'first_name_typography',
@@ -688,16 +686,16 @@ class Jet_Elements_Team_Member extends Jet_Elements_Base {
 			50
 		);
 
-		$this->__end_controls_tab();
+		$this->_end_controls_tab();
 
-		$this->__start_controls_tab(
+		$this->_start_controls_tab(
 			'tab_last_name_style',
 			array(
 				'label' => esc_html__( 'Last name', 'jet-elements' ),
 			)
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'last_name_color',
 			array(
 				'label'  => esc_html__( 'Color', 'jet-elements' ),
@@ -709,7 +707,7 @@ class Jet_Elements_Team_Member extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Typography::get_type(),
 			array(
 				'name'     => 'last_name_typography',
@@ -719,11 +717,11 @@ class Jet_Elements_Team_Member extends Jet_Elements_Base {
 			50
 		);
 
-		$this->__end_controls_tab();
+		$this->_end_controls_tab();
 
-		$this->__end_controls_tabs();
+		$this->_end_controls_tabs();
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'name_padding',
 			array(
 				'label'      => __( 'Padding', 'jet-elements' ),
@@ -737,7 +735,7 @@ class Jet_Elements_Team_Member extends Jet_Elements_Base {
 			75
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'name_margin',
 			array(
 				'label'      => __( 'Margin', 'jet-elements' ),
@@ -750,7 +748,7 @@ class Jet_Elements_Team_Member extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'name_text_alignment',
 			array(
 				'label'   => esc_html__( 'Text Alignment', 'jet-elements' ),
@@ -773,16 +771,17 @@ class Jet_Elements_Team_Member extends Jet_Elements_Base {
 				'selectors'  => array(
 					'{{WRAPPER}} ' . $css_scheme['name'] => 'text-align: {{VALUE}};',
 				),
+				'classes' => 'jet-elements-text-align-control',
 			),
 			50
 		);
 
-		$this->__end_controls_section();
+		$this->_end_controls_section();
 
 		/**
 		 * Position Style Section
 		 */
-		$this->__start_controls_section(
+		$this->_start_controls_section(
 			'section_team_member_position_style',
 			array(
 				'label'      => esc_html_x( 'Position', 'Position at work', 'jet-elements' ),
@@ -791,7 +790,7 @@ class Jet_Elements_Team_Member extends Jet_Elements_Base {
 			)
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'position_color',
 			array(
 				'label'  => esc_html__( 'Color', 'jet-elements' ),
@@ -803,7 +802,7 @@ class Jet_Elements_Team_Member extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Typography::get_type(),
 			array(
 				'name'     => 'position_typography',
@@ -813,7 +812,7 @@ class Jet_Elements_Team_Member extends Jet_Elements_Base {
 			50
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'position_padding',
 			array(
 				'label'      => __( 'Padding', 'jet-elements' ),
@@ -826,7 +825,7 @@ class Jet_Elements_Team_Member extends Jet_Elements_Base {
 			75
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'position_margin',
 			array(
 				'label'      => __( 'Margin', 'jet-elements' ),
@@ -839,7 +838,7 @@ class Jet_Elements_Team_Member extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'position_alignment',
 			array(
 				'label'   => esc_html__( 'Alignment', 'jet-elements' ),
@@ -866,7 +865,7 @@ class Jet_Elements_Team_Member extends Jet_Elements_Base {
 			50
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'position_text_alignment',
 			array(
 				'label'   => esc_html__( 'Text Alignment', 'jet-elements' ),
@@ -889,16 +888,17 @@ class Jet_Elements_Team_Member extends Jet_Elements_Base {
 				'selectors'  => array(
 					'{{WRAPPER}} ' . $css_scheme['position'] => 'text-align: {{VALUE}};',
 				),
+				'classes' => 'jet-elements-text-align-control',
 			),
 			50
 		);
 
-		$this->__end_controls_section();
+		$this->_end_controls_section();
 
 		/**
 		 * Description Style Section
 		 */
-		$this->__start_controls_section(
+		$this->_start_controls_section(
 			'section_team_member_desc_style',
 			array(
 				'label'      => esc_html__( 'Description', 'jet-elements' ),
@@ -907,7 +907,7 @@ class Jet_Elements_Team_Member extends Jet_Elements_Base {
 			)
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'desc_color',
 			array(
 				'label'  => esc_html__( 'Color', 'jet-elements' ),
@@ -919,7 +919,7 @@ class Jet_Elements_Team_Member extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Typography::get_type(),
 			array(
 				'name'     => 'desc_typography',
@@ -929,7 +929,7 @@ class Jet_Elements_Team_Member extends Jet_Elements_Base {
 			50
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'desc_padding',
 			array(
 				'label'      => __( 'Padding', 'jet-elements' ),
@@ -942,7 +942,7 @@ class Jet_Elements_Team_Member extends Jet_Elements_Base {
 			75
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'desc_margin',
 			array(
 				'label'      => __( 'Margin', 'jet-elements' ),
@@ -955,7 +955,7 @@ class Jet_Elements_Team_Member extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'desc_alignment',
 			array(
 				'label'   => esc_html__( 'Alignment', 'jet-elements' ),
@@ -982,7 +982,7 @@ class Jet_Elements_Team_Member extends Jet_Elements_Base {
 			50
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'desc_text_alignment',
 			array(
 				'label'   => esc_html__( 'Text Alignment', 'jet-elements' ),
@@ -1005,16 +1005,17 @@ class Jet_Elements_Team_Member extends Jet_Elements_Base {
 				'selectors'  => array(
 					'{{WRAPPER}} ' . $css_scheme['desc'] => 'text-align: {{VALUE}};',
 				),
+				'classes' => 'jet-elements-text-align-control',
 			),
 			50
 		);
 
-		$this->__end_controls_section();
+		$this->_end_controls_section();
 
 		/**
 		 * Social List Style Section
 		 */
-		$this->__start_controls_section(
+		$this->_start_controls_section(
 			'section_social_list_style',
 			array(
 				'label'      => esc_html__( 'Social', 'jet-elements' ),
@@ -1023,7 +1024,7 @@ class Jet_Elements_Team_Member extends Jet_Elements_Base {
 			)
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'social_alignment',
 			array(
 				'label'   => esc_html__( 'Alignment', 'jet-elements' ),
@@ -1050,7 +1051,7 @@ class Jet_Elements_Team_Member extends Jet_Elements_Base {
 			50
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'social_items_spacing',
 			array(
 				'label' => esc_html__( 'Items Spacing', 'jet-elements' ),
@@ -1069,7 +1070,7 @@ class Jet_Elements_Team_Member extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'social_icon_heading',
 			array(
 				'label'     => esc_html__( 'Icon', 'jet-elements' ),
@@ -1079,16 +1080,16 @@ class Jet_Elements_Team_Member extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__start_controls_tabs( 'tabs_social_icon_style' );
+		$this->_start_controls_tabs( 'tabs_social_icon_style' );
 
-		$this->__start_controls_tab(
+		$this->_start_controls_tab(
 			'tab_social_icon_normal',
 			array(
 				'label' => esc_html__( 'Normal', 'jet-elements' ),
 			)
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'social_icon_color',
 			array(
 				'label' => esc_html__( 'Icon Color', 'jet-elements' ),
@@ -1100,7 +1101,7 @@ class Jet_Elements_Team_Member extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'social_icon_bg_color',
 			array(
 				'label' => esc_html__( 'Icon Background Color', 'jet-elements' ),
@@ -1112,7 +1113,7 @@ class Jet_Elements_Team_Member extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'social_icon_font_size',
 			array(
 				'label'      => esc_html__( 'Icon Font Size', 'jet-elements' ),
@@ -1133,7 +1134,7 @@ class Jet_Elements_Team_Member extends Jet_Elements_Base {
 			50
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'social_icon_size',
 			array(
 				'label'      => esc_html__( 'Icon Box Size', 'jet-elements' ),
@@ -1154,7 +1155,7 @@ class Jet_Elements_Team_Member extends Jet_Elements_Base {
 			50
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Border::get_type(),
 			array(
 				'name'        => 'social_icon_border',
@@ -1166,7 +1167,7 @@ class Jet_Elements_Team_Member extends Jet_Elements_Base {
 			75
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'social_icon_box_border_radius',
 			array(
 				'label'      => esc_html__( 'Border Radius', 'jet-elements' ),
@@ -1179,7 +1180,7 @@ class Jet_Elements_Team_Member extends Jet_Elements_Base {
 			75
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'social_icon_box_margin',
 			array(
 				'label'      => __( 'Margin', 'jet-elements' ),
@@ -1192,7 +1193,7 @@ class Jet_Elements_Team_Member extends Jet_Elements_Base {
 			75
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Box_Shadow::get_type(),
 			array(
 				'name'     => 'social_icon_box_shadow',
@@ -1201,16 +1202,16 @@ class Jet_Elements_Team_Member extends Jet_Elements_Base {
 			100
 		);
 
-		$this->__end_controls_tab();
+		$this->_end_controls_tab();
 
-		$this->__start_controls_tab(
+		$this->_start_controls_tab(
 			'tab_social_icon_hover',
 			array(
 				'label' => esc_html__( 'Hover', 'jet-elements' ),
 			)
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'social_icon_color_hover',
 			array(
 				'label' => esc_html__( 'Icon Color', 'jet-elements' ),
@@ -1222,7 +1223,7 @@ class Jet_Elements_Team_Member extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'social_icon_bg_color_hover',
 			array(
 				'label' => esc_html__( 'Icon Background Color', 'jet-elements' ),
@@ -1234,7 +1235,7 @@ class Jet_Elements_Team_Member extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'social_icon_font_size_hover',
 			array(
 				'label'      => esc_html__( 'Icon Font Size', 'jet-elements' ),
@@ -1255,7 +1256,7 @@ class Jet_Elements_Team_Member extends Jet_Elements_Base {
 			50
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'social_icon_size_hover',
 			array(
 				'label'      => esc_html__( 'Icon Box Size', 'jet-elements' ),
@@ -1276,7 +1277,7 @@ class Jet_Elements_Team_Member extends Jet_Elements_Base {
 			50
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Border::get_type(),
 			array(
 				'name'        => 'social_icon_border_hover',
@@ -1288,7 +1289,7 @@ class Jet_Elements_Team_Member extends Jet_Elements_Base {
 			75
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'social_icon_box_border_radius_hover',
 			array(
 				'label'      => esc_html__( 'Border Radius', 'jet-elements' ),
@@ -1301,7 +1302,7 @@ class Jet_Elements_Team_Member extends Jet_Elements_Base {
 			75
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'social_icon_box_margin_hover',
 			array(
 				'label'      => __( 'Margin', 'jet-elements' ),
@@ -1314,7 +1315,7 @@ class Jet_Elements_Team_Member extends Jet_Elements_Base {
 			75
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Box_Shadow::get_type(),
 			array(
 				'name'     => 'social_icon_box_shadow_hover',
@@ -1323,11 +1324,11 @@ class Jet_Elements_Team_Member extends Jet_Elements_Base {
 			100
 		);
 
-		$this->__end_controls_tab();
+		$this->_end_controls_tab();
 
-		$this->__end_controls_tabs();
+		$this->_end_controls_tabs();
 
-		$this->__add_control(
+		$this->_add_control(
 			'social_label_heading',
 			array(
 				'label'     => esc_html__( 'Label', 'jet-elements' ),
@@ -1337,7 +1338,7 @@ class Jet_Elements_Team_Member extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Typography::get_type(),
 			array(
 				'name'     => 'social_label_typography',
@@ -1346,7 +1347,7 @@ class Jet_Elements_Team_Member extends Jet_Elements_Base {
 			50
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'social_label_color',
 			array(
 				'label' => esc_html__( 'Color', 'jet-elements' ),
@@ -1358,7 +1359,7 @@ class Jet_Elements_Team_Member extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'social_label_hover_color',
 			array(
 				'label' => esc_html__( 'Hover Color', 'jet-elements' ),
@@ -1370,12 +1371,12 @@ class Jet_Elements_Team_Member extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__end_controls_section();
+		$this->_end_controls_section();
 
 		/**
 		 * Action Button Style Section
 		 */
-		$this->__start_controls_section(
+		$this->_start_controls_section(
 			'section_action_button_style',
 			array(
 				'label'      => esc_html__( 'Action Button', 'jet-elements' ),
@@ -1384,7 +1385,7 @@ class Jet_Elements_Team_Member extends Jet_Elements_Base {
 			)
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'button_alignment',
 			array(
 				'label'   => esc_html__( 'Alignment', 'jet-elements' ),
@@ -1411,16 +1412,16 @@ class Jet_Elements_Team_Member extends Jet_Elements_Base {
 			50
 		);
 
-		$this->__start_controls_tabs( 'tabs_button_style' );
+		$this->_start_controls_tabs( 'tabs_button_style' );
 
-		$this->__start_controls_tab(
+		$this->_start_controls_tab(
 			'tab_button_normal',
 			array(
 				'label' => esc_html__( 'Normal', 'jet-elements' ),
 			)
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'button_bg_color',
 			array(
 				'label' => esc_html__( 'Background Color', 'jet-elements' ),
@@ -1436,7 +1437,7 @@ class Jet_Elements_Team_Member extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'button_color',
 			array(
 				'label'     => esc_html__( 'Text Color', 'jet-elements' ),
@@ -1448,7 +1449,7 @@ class Jet_Elements_Team_Member extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Typography::get_type(),
 			array(
 				'name'     => 'button_typography',
@@ -1458,7 +1459,7 @@ class Jet_Elements_Team_Member extends Jet_Elements_Base {
 			50
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'button_padding',
 			array(
 				'label'      => esc_html__( 'Padding', 'jet-elements' ),
@@ -1471,7 +1472,7 @@ class Jet_Elements_Team_Member extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'button_margin',
 			array(
 				'label'      => __( 'Margin', 'jet-elements' ),
@@ -1484,7 +1485,7 @@ class Jet_Elements_Team_Member extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'button_border_radius',
 			array(
 				'label'      => esc_html__( 'Border Radius', 'jet-elements' ),
@@ -1497,7 +1498,7 @@ class Jet_Elements_Team_Member extends Jet_Elements_Base {
 			75
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Border::get_type(),
 			array(
 				'name'        => 'button_border',
@@ -1509,7 +1510,7 @@ class Jet_Elements_Team_Member extends Jet_Elements_Base {
 			75
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Box_Shadow::get_type(),
 			array(
 				'name'     => 'button_box_shadow',
@@ -1518,16 +1519,16 @@ class Jet_Elements_Team_Member extends Jet_Elements_Base {
 			100
 		);
 
-		$this->__end_controls_tab();
+		$this->_end_controls_tab();
 
-		$this->__start_controls_tab(
+		$this->_start_controls_tab(
 			'tab_button_hover',
 			array(
 				'label' => esc_html__( 'Hover', 'jet-elements' ),
 			)
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'primary_button_hover_bg_color',
 			array(
 				'label'     => esc_html__( 'Background Color', 'jet-elements' ),
@@ -1539,7 +1540,7 @@ class Jet_Elements_Team_Member extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'button_hover_color',
 			array(
 				'label'     => esc_html__( 'Text Color', 'jet-elements' ),
@@ -1551,7 +1552,7 @@ class Jet_Elements_Team_Member extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Typography::get_type(),
 			array(
 				'name'     => 'button_hover_typography',
@@ -1560,7 +1561,7 @@ class Jet_Elements_Team_Member extends Jet_Elements_Base {
 			75
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'button_hover_padding',
 			array(
 				'label'      => esc_html__( 'Padding', 'jet-elements' ),
@@ -1573,7 +1574,7 @@ class Jet_Elements_Team_Member extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'button_hover_border_radius',
 			array(
 				'label'      => esc_html__( 'Border Radius', 'jet-elements' ),
@@ -1586,7 +1587,7 @@ class Jet_Elements_Team_Member extends Jet_Elements_Base {
 			75
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Border::get_type(),
 			array(
 				'name'        => 'button_hover_border',
@@ -1598,7 +1599,7 @@ class Jet_Elements_Team_Member extends Jet_Elements_Base {
 			75
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Box_Shadow::get_type(),
 			array(
 				'name'     => 'button_hover_box_shadow',
@@ -1607,16 +1608,16 @@ class Jet_Elements_Team_Member extends Jet_Elements_Base {
 			100
 		);
 
-		$this->__end_controls_tab();
+		$this->_end_controls_tab();
 
-		$this->__end_controls_tabs();
+		$this->_end_controls_tabs();
 
-		$this->__end_controls_section();
+		$this->_end_controls_section();
 
 		/**
 		 * Overlay Style Section
 		 */
-		$this->__start_controls_section(
+		$this->_start_controls_section(
 			'section_team_member_overlay_style',
 			array(
 				'label'      => esc_html__( 'Overlay', 'jet-elements' ),
@@ -1625,7 +1626,7 @@ class Jet_Elements_Team_Member extends Jet_Elements_Base {
 			)
 		);
 
-		$this->__add_group_control(
+		$this->_add_group_control(
 			Group_Control_Background::get_type(),
 			array(
 				'name'     => 'overlay_background',
@@ -1634,7 +1635,7 @@ class Jet_Elements_Team_Member extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'overlay_paddings',
 			array(
 				'label'      => __( 'Padding', 'jet-elements' ),
@@ -1647,7 +1648,7 @@ class Jet_Elements_Team_Member extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'overlay_margin',
 			array(
 				'label'      => __( 'Margin', 'jet-elements' ),
@@ -1661,7 +1662,7 @@ class Jet_Elements_Team_Member extends Jet_Elements_Base {
 			25
 		);
 
-		$this->__add_responsive_control(
+		$this->_add_responsive_control(
 			'overlay_border_radius',
 			array(
 				'label'      => __( 'Border Radius', 'jet-elements' ),
@@ -1674,12 +1675,12 @@ class Jet_Elements_Team_Member extends Jet_Elements_Base {
 			75
 		);
 
-		$this->__end_controls_section();
+		$this->_end_controls_section();
 
 		/**
 		 * Order Style Section
 		 */
-		$this->__start_controls_section(
+		$this->_start_controls_section(
 			'section_order_style',
 			array(
 				'label'      => esc_html__( 'Content Order and Alignment', 'jet-elements' ),
@@ -1689,7 +1690,7 @@ class Jet_Elements_Team_Member extends Jet_Elements_Base {
 			50
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'name_order',
 			array(
 				'label'   => esc_html__( 'Name Order', 'jet-elements' ),
@@ -1705,7 +1706,7 @@ class Jet_Elements_Team_Member extends Jet_Elements_Base {
 			100
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'position_order',
 			array(
 				'label'   => esc_html__( 'Position Order', 'jet-elements' ),
@@ -1721,7 +1722,7 @@ class Jet_Elements_Team_Member extends Jet_Elements_Base {
 			100
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'desc_order',
 			array(
 				'label'   => esc_html__( 'Description Order', 'jet-elements' ),
@@ -1737,7 +1738,7 @@ class Jet_Elements_Team_Member extends Jet_Elements_Base {
 			100
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'social_order',
 			array(
 				'label'   => esc_html__( 'Social Order', 'jet-elements' ),
@@ -1753,7 +1754,7 @@ class Jet_Elements_Team_Member extends Jet_Elements_Base {
 			100
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'button_order',
 			array(
 				'label'   => esc_html__( 'Button Order', 'jet-elements' ),
@@ -1769,7 +1770,7 @@ class Jet_Elements_Team_Member extends Jet_Elements_Base {
 			100
 		);
 
-		$this->__add_control(
+		$this->_add_control(
 			'cover_alignment',
 			array(
 				'label'   => esc_html__( 'Cover Content Vertical Alignment', 'jet-elements' ),
@@ -1787,20 +1788,20 @@ class Jet_Elements_Team_Member extends Jet_Elements_Base {
 			50
 		);
 
-		$this->__end_controls_section( 50 );
+		$this->_end_controls_section( 50 );
 
 	}
 
 	protected function render() {
 
-		$this->__context = 'render';
+		$this->_context = 'render';
 
-		$this->__open_wrap();
-		include $this->__get_global_template( 'index' );
-		$this->__close_wrap();
+		$this->_open_wrap();
+		include $this->_get_global_template( 'index' );
+		$this->_close_wrap();
 	}
 
-	public function __get_member_image() {
+	public function _get_member_image() {
 
 		$image = $this->get_settings_for_display( 'member_image' );
 
@@ -1808,13 +1809,13 @@ class Jet_Elements_Team_Member extends Jet_Elements_Base {
 			return;
 		}
 
-		$format = apply_filters( 'jet-elements/team-member/image-format', '<figure class="jet-team-member__figure"><img class="jet-team-member__img-tag" src="%1$s" alt="%2$s" ></figure>' );
+		$format = apply_filters( 'jet-elements/team-member/image-format', '<figure class="jet-team-member__figure"><img class="jet-team-member__img-tag" src="%1$s" alt="%2$s" loading="lazy"></figure>' );
 		$alt    = esc_attr( Control_Media::get_image_alt( $image ) );
 
 		return sprintf( $format, $image['url'], $alt );
 	}
 
-	public function __generate_name( $cover_location = false ) {
+	public function _generate_name( $cover_location = false ) {
 		$first_name = $this->get_settings_for_display( 'member_first_name' );
 		$last_name  = $this->get_settings_for_display( 'member_last_name' );
 		$is_cover   = filter_var( $this->get_settings_for_display( 'name_cover_location' ), FILTER_VALIDATE_BOOLEAN );
@@ -1840,6 +1841,7 @@ class Jet_Elements_Team_Member extends Jet_Elements_Base {
 		}
 
 		$name_tag = $this->get_settings_for_display( 'member_name_html_tag' );
+		$name_tag = jet_elements_tools()->validate_html_tag( $name_tag );
 
 		$format = apply_filters( 'jet-elements/team-member/name-format', '<%3$s class="jet-team-member__name">%1$s%2$s</%3$s>' );
 
@@ -1847,7 +1849,7 @@ class Jet_Elements_Team_Member extends Jet_Elements_Base {
 
 	}
 
-	public function __generate_position( $cover_location = false ) {
+	public function _generate_position( $cover_location = false ) {
 		$position = $this->get_settings_for_display( 'member_position' );
 		$is_cover = filter_var( $this->get_settings_for_display( 'position_cover_location' ), FILTER_VALIDATE_BOOLEAN );
 
@@ -1864,7 +1866,7 @@ class Jet_Elements_Team_Member extends Jet_Elements_Base {
 		return sprintf( $format, $position );
 	}
 
-	public function __generate_description( $cover_location = false ) {
+	public function _generate_description( $cover_location = false ) {
 		$desc = $this->get_settings_for_display( 'member_description' );
 		$is_cover = filter_var( $this->get_settings_for_display( 'desc_cover_location' ), FILTER_VALIDATE_BOOLEAN );
 
@@ -1881,7 +1883,7 @@ class Jet_Elements_Team_Member extends Jet_Elements_Base {
 		return sprintf( $format, $desc );
 	}
 
-	public function __generate_action_button( $cover_location = false ) {
+	public function _generate_action_button( $cover_location = false ) {
 		$button_url = $this->get_settings_for_display( 'button_url' );
 		$button_text = $this->get_settings_for_display( 'button_text' );
 		$is_cover = filter_var( $this->get_settings_for_display( 'button_cover_location' ), FILTER_VALIDATE_BOOLEAN );
@@ -1927,7 +1929,7 @@ class Jet_Elements_Team_Member extends Jet_Elements_Base {
 		return sprintf( $format, $this->get_render_attribute_string( 'url' ), $button_text );
 	}
 
-	public function __generate_social_icon_list( $cover_location = false ) {
+	public function _generate_social_icon_list( $cover_location = false ) {
 		$social_icon_list = $this->get_settings_for_display( 'social_list' );
 		$is_cover = filter_var( $this->get_settings_for_display( 'social_list_cover_location' ), FILTER_VALIDATE_BOOLEAN );
 
@@ -1943,7 +1945,7 @@ class Jet_Elements_Team_Member extends Jet_Elements_Base {
 
 		foreach ( $social_icon_list as $key => $icon_data ) {
 
-			$this->__processed_item = $icon_data;
+			$this->_processed_item = $icon_data;
 
 			$label = '';
 
@@ -1959,7 +1961,7 @@ class Jet_Elements_Team_Member extends Jet_Elements_Base {
 					$this->add_render_attribute( 'social-link-' . $icon_data['_id'], 'rel', 'nofollow' );
 				}
 
-				$icon = $this->__get_icon( 'social_icon', '<div class="jet-team-member__socials-icon"><div class="inner"><span class="jet-elements-icon">%s</span></div></div>' );
+				$icon = $this->_get_icon( 'social_icon', '<div class="jet-team-member__socials-icon"><div class="inner"><span class="jet-elements-icon">%s</span></div></div>' );
 
 				if ( filter_var( $icon_data['label_visible'], FILTER_VALIDATE_BOOLEAN ) ) {
 					$label = sprintf( '<span class="jet-team-member__socials-label">%s</span>', $icon_data[ 'social_label' ] );
@@ -1972,7 +1974,7 @@ class Jet_Elements_Team_Member extends Jet_Elements_Base {
 			}
 		}
 
-		$this->__processed_item = false;
+		$this->_processed_item = false;
 
 		$format = apply_filters( 'jet-elements/team-member/social-list-format', '<div class="jet-team-member__socials">%1$s</div>' );
 

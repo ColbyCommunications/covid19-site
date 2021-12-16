@@ -12,8 +12,8 @@ use Elementor\Group_Control_Border;
 use Elementor\Group_Control_Box_Shadow;
 use Elementor\Group_Control_Typography;
 use Elementor\Repeater;
-use Elementor\Scheme_Color;
-use Elementor\Scheme_Typography;
+use Elementor\Core\Schemes\Color as Scheme_Color;
+use Elementor\Core\Schemes\Typography as Scheme_Typography;
 use Elementor\Widget_Base;
 use Elementor\Modules\DynamicTags\Module as TagsModule;
 
@@ -117,67 +117,55 @@ class Jet_Tabs_Widget extends Jet_Tabs_Base {
 				'label'   => esc_html__( 'Label', 'jet-tabs' ),
 				'type'    => Controls_Manager::TEXT,
 				'default' => esc_html__( 'New Tab', 'jet-tabs' ),
-				'dynamic' => [
+				'dynamic' => array(
 					'active' => true,
-				],
+				),
 			)
 		);
 
-		$templates = jet_tabs()->elementor()->templates_manager->get_source( 'local' )->get_items();
-
-		$options = [
-			'0' => '— ' . esc_html__( 'Select', 'jet-tabs' ) . ' —',
-		];
-
-		$types = [];
-
-		foreach ( $templates as $template ) {
-			$options[ $template['template_id'] ] = $template['title'] . ' (' . $template['type'] . ')';
-			$types[ $template['template_id'] ] = $template['type'];
-		}
-
 		$repeater->add_control(
 			'content_type',
-			[
+			array(
 				'label'       => esc_html__( 'Content Type', 'jet-tabs' ),
 				'type'        => Controls_Manager::SELECT,
 				'default'     => 'template',
-				'options'     => [
+				'options'     => array(
 					'template' => esc_html__( 'Template', 'jet-tabs' ),
 					'editor'   => esc_html__( 'Editor', 'jet-tabs' ),
-				],
+				),
 				'label_block' => 'true',
-			]
+			)
 		);
 
 		$repeater->add_control(
 			'item_template_id',
-			[
+			array(
 				'label'       => esc_html__( 'Choose Template', 'jet-tabs' ),
-				'type'        => Controls_Manager::SELECT,
-				'default'     => '0',
-				'options'     => $options,
-				'types'       => $types,
-				'label_block' => 'true',
-				'condition'   => [
+				'type'        => 'jet-query',
+				'query_type'  => 'elementor_templates',
+				'edit_button' => array(
+					'active' => true,
+					'label'  => esc_html__( 'Edit Template', 'jet-tabs' ),
+				),
+				'condition'   => array(
 					'content_type' => 'template',
-				]
-			]
+				)
+			)
 		);
 
 		$repeater->add_control(
 			'item_editor_content',
-			[
-				'label'      => __( 'Content', 'jet-tabs' ),
+			array(
+				'label'      => esc_html__( 'Content', 'jet-tabs' ),
 				'type'       => Controls_Manager::WYSIWYG,
-				'default'    => __( 'Tab Item Content', 'jet-tabs' ),
-				'dynamic' => [
+				'default'    => esc_html__( 'Tab Item Content', 'jet-tabs' ),
+				'dynamic' => array(
 					'active' => true,
-				],
-				'condition'   => [
+				),
+				'condition'   => array(
 					'content_type' => 'editor',
-				]
-			]
+				)
+			)
 		);
 
 		$repeater->add_control(
@@ -185,9 +173,9 @@ class Jet_Tabs_Widget extends Jet_Tabs_Base {
 			array(
 				'label'   => esc_html__( 'Control CSS ID', 'jet-tabs' ),
 				'type'    => Controls_Manager::TEXT,
-				'dynamic' => [
+				'dynamic' => array(
 					'active' => true,
-				],
+				),
 			)
 		);
 
@@ -195,16 +183,16 @@ class Jet_Tabs_Widget extends Jet_Tabs_Base {
 			'tabs',
 			array(
 				'type'        => Controls_Manager::REPEATER,
-				'fields'      => array_values( $repeater->get_controls() ),
+				'fields'      => $repeater->get_controls(),
 				'default'     => array(
 					array(
-						'item_label'  => esc_html__( 'Tab #1', 'jet-tabs' ),
+						'item_label' => esc_html__( 'Tab #1', 'jet-tabs' ),
 					),
 					array(
-						'item_label'  => esc_html__( 'Tab #2', 'jet-tabs' ),
+						'item_label' => esc_html__( 'Tab #2', 'jet-tabs' ),
 					),
 					array(
-						'item_label'  => esc_html__( 'Tab #3', 'jet-tabs' ),
+						'item_label' => esc_html__( 'Tab #3', 'jet-tabs' ),
 					),
 				),
 				'title_field' => '{{{ item_label }}}',
@@ -220,6 +208,16 @@ class Jet_Tabs_Widget extends Jet_Tabs_Base {
 			)
 		);
 
+		$this->add_control(
+			'item_html_tag',
+			array(
+				'label'   => esc_html__( 'Item Label HTML Tag', 'jet-tabs' ),
+				'type'    => Controls_Manager::SELECT,
+				'options' => $this->get_available_item_html_tags(),
+				'default' => 'div',
+			)
+		);
+
 		$this->add_responsive_control(
 			'tabs_position',
 			array(
@@ -232,15 +230,17 @@ class Jet_Tabs_Widget extends Jet_Tabs_Base {
 					'right'  => esc_html__( 'Right', 'jet-tabs' ),
 					'bottom' => esc_html__( 'Bottom', 'jet-tabs' ),
 				),
+				'frontend_available' => true,
+				'render_type'        => 'template',
 			)
 		);
 
 		$this->add_control(
 			'show_effect',
 			array(
-				'label'       => esc_html__( 'Show Effect', 'jet-tabs' ),
-				'type'        => Controls_Manager::SELECT,
-				'default'     => 'move-up',
+				'label'   => esc_html__( 'Show Effect', 'jet-tabs' ),
+				'type'    => Controls_Manager::SELECT,
+				'default' => 'move-up',
 				'options' => array(
 					'none'             => esc_html__( 'None', 'jet-tabs' ),
 					'fade'             => esc_html__( 'Fade', 'jet-tabs' ),
@@ -280,12 +280,12 @@ class Jet_Tabs_Widget extends Jet_Tabs_Base {
 		$this->add_control(
 			'auto_switch_delay',
 			array(
-				'label'   => esc_html__( 'Auto Switch Delay', 'jet-tabs' ),
-				'type'    => Controls_Manager::NUMBER,
-				'default' => 3000,
-				'min'     => 1000,
-				'max'     => 20000,
-				'step'    => 100,
+				'label'     => esc_html__( 'Auto Switch Delay', 'jet-tabs' ),
+				'type'      => Controls_Manager::NUMBER,
+				'default'   => 3000,
+				'min'       => 1000,
+				'max'       => 20000,
+				'step'      => 100,
 				'condition' => array(
 					'auto_switch' => 'yes',
 				),
@@ -316,6 +316,19 @@ class Jet_Tabs_Widget extends Jet_Tabs_Base {
 			)
 		);
 
+		$this->add_control(
+			'tab_control_switching',
+			array(
+				'label'        => esc_html__( 'Scrolling to the Content', 'jet-tabs' ),
+				'description'  => esc_html__( 'Scrolling to the Content after Switching Tab Control on Mobile Devices', 'jet-tabs' ),
+				'type'         => Controls_Manager::SWITCHER,
+				'label_on'     => esc_html__( 'On', 'jet-tabs' ),
+				'label_off'    => esc_html__( 'Off', 'jet-tabs' ),
+				'return_value' => 'yes',
+				'default'      => 'false',
+			)
+		);
+
 		$this->end_controls_section();
 
 		$this->__start_controls_section(
@@ -331,6 +344,7 @@ class Jet_Tabs_Widget extends Jet_Tabs_Base {
 			'tabs_control_wrapper_width',
 			array(
 				'label'      => esc_html__( 'Tabs Control Width', 'jet-tabs' ),
+				'description' => esc_html__( 'Working with left or right tabs position', 'jet-tabs' ),
 				'type'       => Controls_Manager::SLIDER,
 				'size_units' => array(
 					'px', '%',
@@ -345,12 +359,11 @@ class Jet_Tabs_Widget extends Jet_Tabs_Base {
 						'max' => 500,
 					),
 				),
-				'condition' => array(
-					'tabs_position' => array( 'left', 'right' ),
-				),
 				'selectors'  => array(
-					'{{WRAPPER}} ' . $css_scheme['control_wrapper'] => 'min-width: {{SIZE}}{{UNIT}}',
-					'{{WRAPPER}} ' . $css_scheme['content_wrapper'] => 'min-width: calc(100% - {{SIZE}}{{UNIT}})',
+					'{{WRAPPER}} > .elementor-widget-container > .jet-tabs.jet-tabs-position-left > .jet-tabs__control-wrapper' => 'min-width: {{SIZE}}{{UNIT}}',
+					'{{WRAPPER}} > .elementor-widget-container > .jet-tabs.jet-tabs-position-right > .jet-tabs__control-wrapper' => 'min-width: {{SIZE}}{{UNIT}}',
+					'{{WRAPPER}} > .elementor-widget-container > .jet-tabs.jet-tabs-position-left > .jet-tabs__content-wrapper' => 'min-width: calc(100% - {{SIZE}}{{UNIT}})',
+					'{{WRAPPER}} > .elementor-widget-container > .jet-tabs.jet-tabs-position-right > .jet-tabs__content-wrapper' => 'min-width: calc(100% - {{SIZE}}{{UNIT}})',
 				),
 			),
 			25
@@ -368,7 +381,7 @@ class Jet_Tabs_Widget extends Jet_Tabs_Base {
 		$this->__add_responsive_control(
 			'tabs_container_padding',
 			array(
-				'label'      => __( 'Padding', 'jet-tabs' ),
+				'label'      => esc_html__( 'Padding', 'jet-tabs' ),
 				'type'       => Controls_Manager::DIMENSIONS,
 				'size_units' => array( 'px', '%' ),
 				'selectors'  => array(
@@ -381,7 +394,7 @@ class Jet_Tabs_Widget extends Jet_Tabs_Base {
 		$this->__add_responsive_control(
 			'tabs_container_margin',
 			array(
-				'label'      => __( 'Margin', 'jet-tabs' ),
+				'label'      => esc_html__( 'Margin', 'jet-tabs' ),
 				'type'       => Controls_Manager::DIMENSIONS,
 				'size_units' => array( 'px', '%' ),
 				'selectors'  => array(
@@ -406,7 +419,7 @@ class Jet_Tabs_Widget extends Jet_Tabs_Base {
 		$this->__add_responsive_control(
 			'tabs_container_border_radius',
 			array(
-				'label'      => __( 'Border Radius', 'jet-tabs' ),
+				'label'      => esc_html__( 'Border Radius', 'jet-tabs' ),
 				'type'       => Controls_Manager::DIMENSIONS,
 				'size_units' => array( 'px', '%' ),
 				'selectors'  => array(
@@ -440,30 +453,68 @@ class Jet_Tabs_Widget extends Jet_Tabs_Base {
 		);
 
 		$this->__add_responsive_control(
+			'tabs_controls_container_aligment',
+			array(
+				'label'   => esc_html__( 'Tabs Container Alignment', 'jet-tabs' ),
+				'type'    => Controls_Manager::CHOOSE,
+				'default' => 'flex-start',
+				'options' => array(
+					'flex-start' => array(
+						'title' => esc_html__( 'Start', 'jet-tabs' ),
+						'icon'  => ! is_rtl() ? 'eicon-h-align-left' : 'eicon-h-align-right',
+					),
+					'center' => array(
+						'title' => esc_html__( 'Center', 'jet-tabs' ),
+						'icon'  => 'eicon-h-align-center',
+					),
+					'flex-end' => array(
+						'title' => esc_html__( 'End', 'jet-tabs' ),
+						'icon'  => ! is_rtl() ? 'eicon-h-align-right' : 'eicon-h-align-left',
+					),
+					'stretch' => array(
+						'title' => esc_html__( 'Stretch', 'jet-tabs' ),
+						'icon'  => 'eicon-h-align-stretch',
+					),
+				),
+				'selectors' => array(
+					'{{WRAPPER}} ' . $css_scheme['control_wrapper'] => 'align-self: {{VALUE}};',
+				),
+			),
+			100
+		);
+
+		$this->__add_responsive_control(
 			'tabs_controls_aligment',
 			array(
 				'label'   => esc_html__( 'Tabs Alignment', 'jet-tabs' ),
 				'type'    => Controls_Manager::CHOOSE,
 				'default' => 'flex-start',
 				'options' => array(
-					'flex-start'    => array(
-						'title' => esc_html__( 'Left', 'jet-tabs' ),
-						'icon'  => 'fa fa-arrow-left',
+					'flex-start' => array(
+						'title' => esc_html__( 'Start', 'jet-tabs' ),
+						'icon'  => ! is_rtl() ? 'eicon-h-align-left' : 'eicon-h-align-right',
 					),
 					'center' => array(
 						'title' => esc_html__( 'Center', 'jet-tabs' ),
-						'icon'  => 'fa fa-align-center',
+						'icon'  => 'eicon-h-align-center',
 					),
 					'flex-end' => array(
-						'title' => esc_html__( 'Right', 'jet-tabs' ),
-						'icon'  => 'fa fa-arrow-right',
+						'title' => esc_html__( 'End', 'jet-tabs' ),
+						'icon'  => ! is_rtl() ? 'eicon-h-align-right' : 'eicon-h-align-left',
+					),
+					'stretch' => array(
+						'title' => esc_html__( 'Stretch', 'jet-tabs' ),
+						'icon'  => 'eicon-h-align-stretch',
 					),
 				),
-				'condition' => array(
-					'tabs_position' => array( 'top', 'bottom' ),
+				'selectors_dictionary' => array(
+					'flex-start' => 'justify-content: flex-start; flex-grow: 0;',
+					'center'     => 'justify-content: center; flex-grow: 0;',
+					'flex-end'   => 'justify-content: flex-end; flex-grow: 0;',
+					'stretch'    => 'justify-content: stretch; flex-grow: 1;',
 				),
-				'selectors'  => array(
-					'{{WRAPPER}} ' . $css_scheme['control_wrapper'] => 'align-self: {{VALUE}};',
+				'selectors' => array(
+					'{{WRAPPER}} ' . $css_scheme['control_wrapper'] => '{{VALUE}}',
 				),
 			),
 			100
@@ -481,7 +532,7 @@ class Jet_Tabs_Widget extends Jet_Tabs_Base {
 		$this->__add_responsive_control(
 			'tabs_control_wrapper_padding',
 			array(
-				'label'      => __( 'Padding', 'jet-tabs' ),
+				'label'      => esc_html__( 'Padding', 'jet-tabs' ),
 				'type'       => Controls_Manager::DIMENSIONS,
 				'size_units' => array( 'px', '%' ),
 				'selectors'  => array(
@@ -494,7 +545,7 @@ class Jet_Tabs_Widget extends Jet_Tabs_Base {
 		$this->__add_responsive_control(
 			'tabs_control_wrapper_margin',
 			array(
-				'label'      => __( 'Margin', 'jet-tabs' ),
+				'label'      => esc_html__( 'Margin', 'jet-tabs' ),
 				'type'       => Controls_Manager::DIMENSIONS,
 				'size_units' => array( 'px', '%' ),
 				'selectors'  => array(
@@ -519,7 +570,7 @@ class Jet_Tabs_Widget extends Jet_Tabs_Base {
 		$this->__add_responsive_control(
 			'tabs_control_wrapper_border_radius',
 			array(
-				'label'      => __( 'Border Radius', 'jet-tabs' ),
+				'label'      => esc_html__( 'Border Radius', 'jet-tabs' ),
 				'type'       => Controls_Manager::DIMENSIONS,
 				'size_units' => array( 'px', '%' ),
 				'selectors'  => array(
@@ -556,62 +607,47 @@ class Jet_Tabs_Widget extends Jet_Tabs_Base {
 			'tabs_controls_item_aligment_top_icon',
 			array(
 				'label'   => esc_html__( 'Alignment', 'jet-tabs' ),
+				'description' => esc_html__( 'Working with left or right tabs position', 'jet-tabs' ),
 				'type'    => Controls_Manager::CHOOSE,
 				'default' => 'center',
 				'options' => array(
 					'flex-start'    => array(
-						'title' => esc_html__( 'Left', 'jet-tabs' ),
-						'icon'  => 'fa fa-arrow-left',
+						'title' => ! is_rtl() ? esc_html__( 'Left', 'jet-tabs' ) : esc_html__( 'Right', 'jet-tabs' ),
+						'icon'  => ! is_rtl() ? 'fa fa-arrow-left' : 'fa fa-arrow-right',
 					),
 					'center' => array(
 						'title' => esc_html__( 'Center', 'jet-tabs' ),
 						'icon'  => 'fa fa-align-center',
 					),
 					'flex-end' => array(
-						'title' => esc_html__( 'Right', 'jet-tabs' ),
-						'icon'  => 'fa fa-arrow-right',
+						'title' => ! is_rtl() ? esc_html__( 'Right', 'jet-tabs' ) : esc_html__( 'Left', 'jet-tabs' ),
+						'icon'  => ! is_rtl() ? 'fa fa-arrow-right' : 'fa fa-arrow-left',
 					),
 				),
-				'condition' => array(
-					'tabs_position' => array( 'left', 'right' ),
-					'tabs_control_icon_position' => 'top'
-				),
-				'selectors'  => array(
-					'{{WRAPPER}} ' . $css_scheme['control'] . ' .jet-tabs__control-inner' => 'align-items: {{VALUE}};',
+				'selectors' => array(
+					'{{WRAPPER}} > .elementor-widget-container > .jet-tabs.jet-tabs-position-left > .jet-tabs__control-wrapper > .jet-tabs__control.jet-tabs__control-icon-top .jet-tabs__control-inner' => 'align-items: {{VALUE}};',
+
+					'{{WRAPPER}} > .elementor-widget-container > .jet-tabs.jet-tabs-position-right > .jet-tabs__control-wrapper > .jet-tabs__control.jet-tabs__control-icon-left .jet-tabs__control-inner' => 'align-items: {{VALUE}};',
+
+					'{{WRAPPER}} > .elementor-widget-container > .jet-tabs.jet-tabs-position-left > .jet-tabs__control-wrapper > .jet-tabs__control.jet-tabs__control-icon-left .jet-tabs__control-inner' => 'justify-content: {{VALUE}};',
+
+					'{{WRAPPER}} > .elementor-widget-container > .jet-tabs.jet-tabs-position-right > .jet-tabs__control-wrapper > .jet-tabs__control.jet-tabs__control-icon-right .jet-tabs__control-inner' => 'align-items: {{VALUE}};',
+
+					'{{WRAPPER}} > .elementor-widget-container > .jet-tabs.jet-tabs-position-left > .jet-tabs__control-wrapper > .jet-tabs__control.jet-tabs__control-icon-right .jet-tabs__control-inner' => 'justify-content: {{VALUE}};',
 				),
 			),
 			25
 		);
 
-		$this->__add_responsive_control(
-			'tabs_controls_item_aligment_left_icon',
+		$this->add_control(
+			'tabs_control_icon_style_devider',
 			array(
-				'label'   => esc_html__( 'Alignment', 'jet-tabs' ),
-				'type'    => Controls_Manager::CHOOSE,
-				'default' => 'flex-start',
-				'options' => array(
-					'flex-start'    => array(
-						'title' => esc_html__( 'Left', 'jet-tabs' ),
-						'icon'  => 'fa fa-arrow-left',
-					),
-					'center' => array(
-						'title' => esc_html__( 'Center', 'jet-tabs' ),
-						'icon'  => 'fa fa-align-center',
-					),
-					'flex-end' => array(
-						'title' => esc_html__( 'Right', 'jet-tabs' ),
-						'icon'  => 'fa fa-arrow-right',
-					),
-				),
+				'type'      => Controls_Manager::DIVIDER,
 				'condition' => array(
 					'tabs_position' => array( 'left', 'right' ),
-					'tabs_control_icon_position' => 'left'
+					'tabs_control_icon_position' => array( 'left', 'top' ),
 				),
-				'selectors'  => array(
-					'{{WRAPPER}} ' . $css_scheme['control'] . ' .jet-tabs__control-inner' => 'justify-content: {{VALUE}};',
-				),
-			),
-			25
+			)
 		);
 
 		$this->__add_control(
@@ -619,7 +655,6 @@ class Jet_Tabs_Widget extends Jet_Tabs_Base {
 			array(
 				'label'     => esc_html__( 'Icon Styles', 'jet-tabs' ),
 				'type'      => Controls_Manager::HEADING,
-				'separator' => 'before',
 			)
 		);
 
@@ -673,12 +708,13 @@ class Jet_Tabs_Widget extends Jet_Tabs_Base {
 		$this->__add_control(
 			'tabs_control_icon_position',
 			array(
-				'label'       => esc_html__( 'Icon Position', 'jet-tabs' ),
-				'type'        => Controls_Manager::SELECT,
-				'default'     => 'left',
+				'label'   => esc_html__( 'Icon Position', 'jet-tabs' ),
+				'type'    => Controls_Manager::SELECT,
+				'default' => 'left',
 				'options' => array(
-					'left' => esc_html__( 'Left', 'jet-tabs' ),
-					'top'  => esc_html__( 'Top', 'jet-tabs' ),
+					'left'  => esc_html__( 'Left', 'jet-tabs' ),
+					'top'   => esc_html__( 'Top', 'jet-tabs' ),
+					'right' => esc_html__( 'Right', 'jet-tabs' ),
 				),
 			),
 			50
@@ -733,7 +769,7 @@ class Jet_Tabs_Widget extends Jet_Tabs_Base {
 			array(
 				'label'     => esc_html__( 'Icon Color', 'jet-tabs' ),
 				'type'      => Controls_Manager::COLOR,
-				'scheme' => array(
+				'scheme'    => array(
 					'type'  => Scheme_Color::get_type(),
 					'value' => Scheme_Color::COLOR_3,
 				),
@@ -777,7 +813,7 @@ class Jet_Tabs_Widget extends Jet_Tabs_Base {
 		$this->__add_responsive_control(
 			'tabs_control_padding',
 			array(
-				'label'      => __( 'Padding', 'jet-tabs' ),
+				'label'      => esc_html__( 'Padding', 'jet-tabs' ),
 				'type'       => Controls_Manager::DIMENSIONS,
 				'size_units' => array( 'px', '%' ),
 				'selectors'  => array(
@@ -790,7 +826,7 @@ class Jet_Tabs_Widget extends Jet_Tabs_Base {
 		$this->__add_responsive_control(
 			'tabs_control_margin',
 			array(
-				'label'      => __( 'Margin', 'jet-tabs' ),
+				'label'      => esc_html__( 'Margin', 'jet-tabs' ),
 				'type'       => Controls_Manager::DIMENSIONS,
 				'size_units' => array( 'px', '%' ),
 				'selectors'  => array(
@@ -807,7 +843,7 @@ class Jet_Tabs_Widget extends Jet_Tabs_Base {
 				'label'       => esc_html__( 'Border', 'jet-tabs' ),
 				'placeholder' => '1px',
 				'default'     => '1px',
-				'selector'  => '{{WRAPPER}} ' . $css_scheme['control'],
+				'selector'    => '{{WRAPPER}} ' . $css_scheme['control'],
 			),
 			25
 		);
@@ -918,7 +954,7 @@ class Jet_Tabs_Widget extends Jet_Tabs_Base {
 		$this->__add_responsive_control(
 			'tabs_control_padding_hover',
 			array(
-				'label'      => __( 'Padding', 'jet-tabs' ),
+				'label'      => esc_html__( 'Padding', 'jet-tabs' ),
 				'type'       => Controls_Manager::DIMENSIONS,
 				'size_units' => array( 'px', '%' ),
 				'selectors'  => array(
@@ -931,7 +967,7 @@ class Jet_Tabs_Widget extends Jet_Tabs_Base {
 		$this->__add_responsive_control(
 			'tabs_control_margin_hover',
 			array(
-				'label'      => __( 'Margin', 'jet-tabs' ),
+				'label'      => esc_html__( 'Margin', 'jet-tabs' ),
 				'type'       => Controls_Manager::DIMENSIONS,
 				'size_units' => array( 'px', '%' ),
 				'selectors'  => array(
@@ -948,7 +984,7 @@ class Jet_Tabs_Widget extends Jet_Tabs_Base {
 				'label'       => esc_html__( 'Border', 'jet-tabs' ),
 				'placeholder' => '1px',
 				'default'     => '1px',
-				'selector'  => '{{WRAPPER}} ' . $css_scheme['control'] . ':hover',
+				'selector'    => '{{WRAPPER}} ' . $css_scheme['control'] . ':hover',
 			),
 			25
 		);
@@ -1059,7 +1095,7 @@ class Jet_Tabs_Widget extends Jet_Tabs_Base {
 		$this->__add_responsive_control(
 			'tabs_control_padding_active',
 			array(
-				'label'      => __( 'Padding', 'jet-tabs' ),
+				'label'      => esc_html__( 'Padding', 'jet-tabs' ),
 				'type'       => Controls_Manager::DIMENSIONS,
 				'size_units' => array( 'px', '%' ),
 				'selectors'  => array(
@@ -1072,7 +1108,7 @@ class Jet_Tabs_Widget extends Jet_Tabs_Base {
 		$this->__add_responsive_control(
 			'tabs_control_margin_active',
 			array(
-				'label'      => __( 'Margin', 'jet-tabs' ),
+				'label'      => esc_html__( 'Margin', 'jet-tabs' ),
 				'type'       => Controls_Manager::DIMENSIONS,
 				'size_units' => array( 'px', '%' ),
 				'selectors'  => array(
@@ -1137,8 +1173,8 @@ class Jet_Tabs_Widget extends Jet_Tabs_Base {
 		$this->__add_control(
 			'tabs_content_text_color',
 			array(
-				'label' => esc_html__( 'Text color', 'jet-tabs' ),
-				'type'  => Controls_Manager::COLOR,
+				'label'     => esc_html__( 'Text color', 'jet-tabs' ),
+				'type'      => Controls_Manager::COLOR,
 				'selectors' => array(
 					'{{WRAPPER}} ' . $css_scheme['content'] => 'color: {{VALUE}};',
 				),
@@ -1167,7 +1203,7 @@ class Jet_Tabs_Widget extends Jet_Tabs_Base {
 		$this->__add_responsive_control(
 			'tabs_content_padding',
 			array(
-				'label'      => __( 'Padding', 'jet-tabs' ),
+				'label'      => esc_html__( 'Padding', 'jet-tabs' ),
 				'type'       => Controls_Manager::DIMENSIONS,
 				'size_units' => array( 'px', '%' ),
 				'selectors'  => array(
@@ -1184,7 +1220,7 @@ class Jet_Tabs_Widget extends Jet_Tabs_Base {
 				'label'       => esc_html__( 'Border', 'jet-tabs' ),
 				'placeholder' => '1px',
 				'default'     => '1px',
-				'selector'  => '{{WRAPPER}} ' . $css_scheme['content_wrapper'],
+				'selector'    => '{{WRAPPER}} ' . $css_scheme['content_wrapper'],
 			),
 			25
 		);
@@ -1192,7 +1228,7 @@ class Jet_Tabs_Widget extends Jet_Tabs_Base {
 		$this->__add_responsive_control(
 			'tabs_content_radius',
 			array(
-				'label'      => __( 'Border Radius', 'jet-tabs' ),
+				'label'      => esc_html__( 'Border Radius', 'jet-tabs' ),
 				'type'       => Controls_Manager::DIMENSIONS,
 				'size_units' => array( 'px', '%' ),
 				'selectors'  => array(
@@ -1217,9 +1253,9 @@ class Jet_Tabs_Widget extends Jet_Tabs_Base {
 				'label'     => esc_html__( 'Loader Styles', 'jet-tabs' ),
 				'type'      => Controls_Manager::HEADING,
 				'separator' => 'before',
-				'condition' => [
+				'condition' => array(
 					'ajax_template' => 'yes',
-				],
+				),
 			),
 			25
 		);
@@ -1227,14 +1263,14 @@ class Jet_Tabs_Widget extends Jet_Tabs_Base {
 		$this->__add_control(
 			'tabs_content_loader_color',
 			array(
-				'label' => esc_html__( 'Loader color', 'jet-tabs' ),
-				'type'  => Controls_Manager::COLOR,
+				'label'     => esc_html__( 'Loader color', 'jet-tabs' ),
+				'type'      => Controls_Manager::COLOR,
 				'selectors' => array(
 					'{{WRAPPER}} ' . $css_scheme['content'] . ' .jet-tabs-loader' => 'border-color: {{VALUE}}; border-top-color: white;',
 				),
-				'condition' => [
+				'condition' => array(
 					'ajax_template' => 'yes',
-				],
+				),
 			),
 			25
 		);
@@ -1251,6 +1287,7 @@ class Jet_Tabs_Widget extends Jet_Tabs_Base {
 		$this->__context = 'render';
 
 		$tabs = $this->get_settings_for_display( 'tabs' );
+		$tabs = apply_filters( 'jet-tabs/widget/loop-items', $tabs, 'tabs', $this );
 
 		if ( ! $tabs || empty( $tabs ) ) {
 			return false;
@@ -1258,12 +1295,13 @@ class Jet_Tabs_Widget extends Jet_Tabs_Base {
 
 		$id_int = substr( $this->get_id_int(), 0, 3 );
 
-		$tabs_position = $this->get_settings( 'tabs_position' );
+		$tabs_position        = $this->get_settings( 'tabs_position' );
 		$tabs_position_tablet = $this->get_settings( 'tabs_position_tablet' );
 		$tabs_position_mobile = $this->get_settings( 'tabs_position_mobile' );
-		$show_effect = $this->get_settings( 'show_effect' );
-		$no_active_tabs = filter_var( $this->get_settings( 'no_active_tabs' ), FILTER_VALIDATE_BOOLEAN );
-		$ajax_template = filter_var( $this->get_settings( 'ajax_template' ), FILTER_VALIDATE_BOOLEAN );
+		$show_effect          = $this->get_settings( 'show_effect' );
+		$no_active_tabs       = filter_var( $this->get_settings( 'no_active_tabs' ), FILTER_VALIDATE_BOOLEAN );
+		$ajax_template        = filter_var( $this->get_settings( 'ajax_template' ), FILTER_VALIDATE_BOOLEAN );
+		$tabs_item_label_tag  = ! empty( $this->get_settings( 'item_html_tag' ) ) ? $this->get_settings( 'item_html_tag' ) : 'div';
 
 		$active_index = 0;
 
@@ -1272,7 +1310,7 @@ class Jet_Tabs_Widget extends Jet_Tabs_Base {
 				$active_index = $index;
 			}
 
-			if ( 'template' === $item['content_type'] && 0 !== $item['item_template_id'] ) {
+			if ( 'template' === $item['content_type'] && ! empty( $item['item_template_id'] ) ) {
 
 				$post_status = get_post_status( $item['item_template_id'] );
 
@@ -1289,30 +1327,20 @@ class Jet_Tabs_Widget extends Jet_Tabs_Base {
 			'autoSwitch'      => filter_var( $this->get_settings( 'auto_switch' ), FILTER_VALIDATE_BOOLEAN ),
 			'autoSwitchDelay' => $this->get_settings( 'auto_switch_delay' ),
 			'ajaxTemplate'    => $ajax_template,
+			'tabsPosition'    => $tabs_position,
+			'switchScrolling' => filter_var( $this->get_settings( 'tab_control_switching' ), FILTER_VALIDATE_BOOLEAN )
 		);
 
 		$this->add_render_attribute( 'instance', array(
-			'class' => array(
+			'class'         => array(
 				'jet-tabs',
 				'jet-tabs-position-' . $tabs_position,
 				'jet-tabs-' . $show_effect . '-effect',
 				( $ajax_template ) ? 'jet-tabs-ajax-template' : '',
 			),
 			'data-settings' => json_encode( $settings ),
-			'role' => 'tablist',
+			'role'          => 'tablist',
 		) );
-
-		if ( ! empty( $tabs_position_tablet ) ) {
-			$this->add_render_attribute( 'instance', 'class', [
-				'jet-tabs-position-tablet-' . $tabs_position_tablet
-			] );
-		}
-
-		if ( ! empty( $tabs_position_mobile ) ) {
-			$this->add_render_attribute( 'instance', 'class', [
-				'jet-tabs-position-mobile-' . $tabs_position_mobile
-			] );
-		}
 
 		?>
 		<div <?php echo $this->get_render_attribute_string( 'instance' ); ?>>
@@ -1324,19 +1352,19 @@ class Jet_Tabs_Widget extends Jet_Tabs_Base {
 						$tab_control_id = ! empty( $item['control_id'] ) ? esc_attr( $item['control_id'] ) : 'jet-tabs-control-' . $id_int . $tab_count;
 
 						$this->add_render_attribute( $tab_title_setting_key, array(
-							'id'            => $tab_control_id,
-							'class'         => array(
+							'id'               => $tab_control_id,
+							'class'            => array(
 								'jet-tabs__control',
 								'jet-tabs__control-icon-' . $this->get_settings( 'tabs_control_icon_position' ),
 								'elementor-menu-anchor',
 								( $index === $active_index && ! $no_active_tabs ) ? 'active-tab' : '',
 							),
-							'data-tab'      => $tab_count,
-							'tabindex'      => $id_int . $tab_count,
-							'role'          => 'tab',
-							'aria-controls' => 'jet-tabs-content-' . $id_int . $tab_count,
-							'aria-expanded' => $index === $active_index ? 'true' : 'false',
-							'data-template-id' => '0' !== $item['item_template_id'] ? $item['item_template_id'] : 'false',
+							'data-tab'         => $tab_count,
+							'tabindex'         => $id_int . $tab_count,
+							'role'             => 'tab',
+							'aria-controls'    => 'jet-tabs-content-' . $id_int . $tab_count,
+							'aria-expanded'    => $index === $active_index ? 'true' : 'false',
+							'data-template-id' => ! empty( $item['item_template_id'] ) ? $item['item_template_id'] : 'false',
 						) );
 
 						$title_icon_html = $this->__get_icon( 'item_icon', $item, '<div class="jet-tabs__label-icon jet-tabs-icon">%s</div>' );
@@ -1350,15 +1378,24 @@ class Jet_Tabs_Widget extends Jet_Tabs_Base {
 						$title_label_html = '';
 
 						if ( ! empty( $item['item_label'] ) ) {
-							$title_label_html = sprintf( '<div class="jet-tabs__label-text">%1$s</div>', $item['item_label'] );
+							$title_label_html = sprintf( '<' . $tabs_item_label_tag . ' class="jet-tabs__label-text">%1$s</' . $tabs_item_label_tag . '>', $item['item_label'] );
 						}
 
-						echo sprintf(
-							'<div %1$s><div class="jet-tabs__control-inner">%2$s%3$s</div></div>',
-							$this->get_render_attribute_string( $tab_title_setting_key ),
-							filter_var( $item['item_use_image'], FILTER_VALIDATE_BOOLEAN ) ? $title_image_html : $title_icon_html,
-							$title_label_html
-						);
+						if ( 'right' === $this->get_settings( 'tabs_control_icon_position' ) ) {
+							echo sprintf(
+								'<div %1$s><div class="jet-tabs__control-inner">%2$s%3$s</div></div>',
+								$this->get_render_attribute_string( $tab_title_setting_key ),
+								$title_label_html,
+								filter_var( $item['item_use_image'], FILTER_VALIDATE_BOOLEAN ) ? $title_image_html : $title_icon_html,
+							);
+						} else {
+							echo sprintf(
+								'<div %1$s><div class="jet-tabs__control-inner">%2$s%3$s</div></div>',
+								$this->get_render_attribute_string( $tab_title_setting_key ),
+								filter_var( $item['item_use_image'], FILTER_VALIDATE_BOOLEAN ) ? $title_image_html : $title_icon_html,
+								$title_label_html
+							);
+						}
 					}
 				?>
 			</div>
@@ -1369,15 +1406,15 @@ class Jet_Tabs_Widget extends Jet_Tabs_Base {
 						$tab_content_setting_key = $this->get_repeater_setting_key( 'tab_content', 'tabs', $index );
 
 						$this->add_render_attribute( $tab_content_setting_key, array(
-							'id'       => 'jet-tabs-content-' . $id_int . $tab_count,
-							'class'    => array(
+							'id'               => 'jet-tabs-content-' . $id_int . $tab_count,
+							'class'            => array(
 								'jet-tabs__content',
 								( $index === $active_index && ! $no_active_tabs ) ? 'active-content' : '',
 							),
-							'data-tab'    => $tab_count,
-							'role'        => 'tabpanel',
-							'aria-hidden' => $index === $active_index ? 'false' : 'true',
-							'data-template-id' => '0' !== $item['item_template_id'] ? $item['item_template_id'] : 'false',
+							'data-tab'         => $tab_count,
+							'role'             => 'tabpanel',
+							'aria-hidden'      => $index === $active_index ? 'false' : 'true',
+							'data-template-id' => ! empty( $item['item_template_id'] ) ? $item['item_template_id'] : 'false',
 						) );
 
 						$content_html = '';
@@ -1385,7 +1422,7 @@ class Jet_Tabs_Widget extends Jet_Tabs_Base {
 						switch ( $item[ 'content_type' ] ) {
 							case 'template':
 
-								if ( '0' !== $item['item_template_id'] ) {
+								if ( ! empty( $item['item_template_id'] ) ) {
 
 									// for multi-language plugins
 									$template_id = apply_filters( 'jet-tabs/widgets/template_id', $item['item_template_id'], $this );

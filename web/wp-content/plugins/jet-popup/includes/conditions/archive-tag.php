@@ -43,6 +43,17 @@ if ( ! class_exists( 'Jet_Popup_Conditions_Archive_Tag' ) ) {
 		}
 
 		/**
+		 * [get_control description]
+		 * @return [type] [description]
+		 */
+		public function get_control() {
+			return [
+				'type'        => 'select',
+				'placeholder' => __( 'Select tag', 'jet-popup' ),
+			];
+		}
+
+		/**
 		 * [ajax_action description]
 		 * @return [type] [description]
 		 */

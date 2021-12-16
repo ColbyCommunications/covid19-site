@@ -36,6 +36,14 @@ if ( ! class_exists( 'Jet_Blog_Assets' ) ) {
 		public function register_lib_assets() {
 			wp_register_script( 'youtube-iframe-api', 'https://www.youtube.com/iframe_api' );
 			wp_register_script( 'vimeo-iframe-api', 'https://player.vimeo.com/api/player.js' );
+
+			wp_register_script(
+				'jet-slick',
+				jet_blog()->plugin_url( 'assets/js/lib/slick/slick.min.js' ),
+				array( 'jquery' ),
+				'1.8.1',
+				true
+			);
 		}
 
 		/**

@@ -52,6 +52,6 @@ if ( $settings['lightbox'] ) {
 
 <div <?php $this->print_render_attribute_string( 'overlay' ); ?>><?php
 	if ( filter_var( $settings['show_play_button'], FILTER_VALIDATE_BOOLEAN ) ) {
-		include $this->__get_global_template( 'play-button' );
+		include $this->_get_global_template( 'play-button' );
 	}
 ?></div>

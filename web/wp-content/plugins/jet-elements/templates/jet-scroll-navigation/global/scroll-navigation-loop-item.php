@@ -21,16 +21,16 @@ if ( filter_var( $settings['mobile_hint_hide'], FILTER_VALIDATE_BOOLEAN ) ) {
 
 $hint_classes = implode( ' ', $hint_classes_array );
 
-$section_id_attr = $this->__loop_item( array( 'item_section_id' ), 'data-anchor="%s"' );
-$section_invert = $this->__loop_item( array( 'item_section_invert' ), 'data-invert="%s"' );
+$section_id_attr = $this->_loop_item( array( 'item_section_id' ), 'data-anchor="%s"' );
+$section_invert = $this->_loop_item( array( 'item_section_invert' ), 'data-invert="%s"' );
 
 ?><div class="jet-scroll-navigation__item" <?php echo $section_id_attr; ?> <?php echo $section_invert; ?>>
 	<div class="jet-scroll-navigation__dot"><?php
-		echo $this->__icon( 'item_dot_icon', '<span class="jet-elements-icon">%s</span>' ); ?>
+		echo $this->_icon( 'item_dot_icon', '<span class="jet-elements-icon">%s</span>' ); ?>
 	</div>
 	<div class="<?php echo $hint_classes; ?>"><?php
-		echo $this->__icon( 'item_icon', '<span class="jet-scroll-navigation__icon jet-elements-icon">%s</span>' );
-		echo $this->__loop_item( array( 'item_label' ), '<span class="jet-scroll-navigation__label">%s</span>' );?>
+		echo $this->_icon( 'item_icon', '<span class="jet-scroll-navigation__icon jet-elements-icon">%s</span>' );
+		echo $this->_loop_item( array( 'item_label' ), '<span class="jet-scroll-navigation__label">%s</span>' );?>
 	</div>
 </div>
 

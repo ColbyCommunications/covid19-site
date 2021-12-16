@@ -99,6 +99,15 @@ if ( ! class_exists( 'Jet_Blocks_Assets' ) ) {
 					$localize_data
 				);
 			}
+
+			$rest_api_url = apply_filters( 'jet-blocks/rest/url', get_rest_url() );
+
+			wp_localize_script( 'jet-blocks', 'JetHamburgerPanelSettings', array(
+				'ajaxurl'        => esc_url( admin_url( 'admin-ajax.php' ) ),
+				'isMobile'       => filter_var( wp_is_mobile(), FILTER_VALIDATE_BOOLEAN ) ? 'true' : 'false',
+				'templateApiUrl' => $rest_api_url . 'jet-blocks-api/v1/elementor-template',
+				'devMode'        => is_user_logged_in() ? 'true' : 'false',
+			) );
 		}
 
 		/**

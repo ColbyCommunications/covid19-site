@@ -54,6 +54,27 @@ gulp.task('css-skin', () => {
 		.pipe(notify('Compile Sass Done!'));
 });
 
+gulp.task('css-skin-rtl', () => {
+	return gulp.src('./assets/scss/jet-elements-skin-rtl.scss')
+			.pipe(
+				plumber( {
+					errorHandler: function ( error ) {
+						console.log('=================ERROR=================');
+						console.log(error.message);
+						this.emit( 'end' );
+					}
+				})
+			)
+			.pipe(sass( { outputStyle: 'compressed' } ))
+			.pipe(autoprefixer({
+				browsers: ['last 10 versions'],
+				cascade: false
+			}))
+			.pipe(rename('jet-elements-skin-rtl.css'))
+			.pipe(gulp.dest('./assets/css/'))
+			.pipe(notify('Compile Sass Done!'));
+});
+
 gulp.task('css-admin', () => {
 	return gulp.src('./assets/scss/jet-elements-admin.scss')
 		.pipe(
@@ -120,6 +141,29 @@ gulp.task( 'css-icons', () => {
 		.pipe( notify( 'Compile Sass Done!' ) );
 } );
 
+//css-editor
+gulp.task( 'css-editor', () => {
+	return gulp.src( './assets/scss/jet-elements-editor.scss' )
+		.pipe(
+			plumber( {
+				errorHandler: function( error ) {
+					console.log( '=================ERROR=================' );
+					console.log( error.message );
+					this.emit( 'end' );
+				}
+			} )
+		)
+		.pipe( sass( { outputStyle: 'compressed' } ) )
+		.pipe( autoprefixer( {
+			browsers: ['last 10 versions'],
+			cascade:  false
+		} ) )
+
+		.pipe( rename( 'jet-elements-editor.css' ) )
+		.pipe( gulp.dest( './assets/css/' ) )
+		.pipe( notify( 'Compile Sass Done!' ) );
+} );
+
 // Minify JS
 gulp.task( 'js-minify', function() {
 	return gulp.src( './assets/js/jet-elements.js' )
@@ -139,7 +183,7 @@ gulp.task( 'js-editor-minify', function() {
 
 //watch
 gulp.task('watch', () => {
-	gulp.watch( './assets/scss/**', gulp.series( ...['css', 'css-skin', 'css-admin', 'css-rtl', 'css-icons'] ) );
+	gulp.watch( './assets/scss/**', gulp.series( ...['css', 'css-skin', 'css-admin', 'css-rtl', 'css-skin-rtl', 'css-icons', 'css-editor'] ) );
 
 	gulp.watch( './assets/js/jet-elements.js', gulp.series( 'js-minify' ) );
 	gulp.watch( './assets/js/jet-elements-editor.js', gulp.series( 'js-editor-minify' ) );

@@ -96,6 +96,9 @@
 			}
 		}
 	}
+	&__counter {
+		font-size: 12px;
+	}
 	&__items {
 		display: flex;
 		flex-direction: column;
@@ -223,6 +226,17 @@
 					display: none;
 				}
 			}
+		}
+		&-title {
+			font-size: 14px;
+			line-height: 18px;
+		}
+		&-duration {
+			font-size: 12px;
+			line-height: 16px;
+		}
+		&-index {
+			font-size: 12px;
 		}
 	}
 

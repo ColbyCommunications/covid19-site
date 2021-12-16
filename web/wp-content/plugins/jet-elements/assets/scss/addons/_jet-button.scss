@@ -73,11 +73,11 @@
 			flex-direction: row;
 
 			.jet-button__icon {
-				order: 1;
+				order: getValueByDirection( 1, 2 );
 			}
 
 			.jet-button__label {
-				order: 2;
+				order: getValueByDirection( 2, 1 );
 			}
 		}
 	}
@@ -101,11 +101,11 @@
 			flex-direction: row;
 
 			.jet-button__icon {
-				order: 2;
+				order: getValueByDirection( 2, 1 );
 			}
 
 			.jet-button__label {
-				order: 1;
+				order: getValueByDirection( 1, 2 );
 			}
 		}
 	}

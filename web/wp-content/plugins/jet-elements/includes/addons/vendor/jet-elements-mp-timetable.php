@@ -25,7 +25,7 @@ class Jet_Elements_Mp_Timetable extends Jet_Elements_Base {
 		return array( 'cherry' );
 	}
 
-	public function __tag() {
+	public function _tag() {
 		return 'mp-timetable';
 	}
 
@@ -68,7 +68,7 @@ class Jet_Elements_Mp_Timetable extends Jet_Elements_Base {
 	 *
 	 * @return array
 	 */
-	public function __create_list( $data_array = array(), $type = 'post' ) {
+	public function _create_list( $data_array = array(), $type = 'post' ) {
 		$list_array = array();
 		switch ( $type ) {
 			case "post":
@@ -88,12 +88,12 @@ class Jet_Elements_Mp_Timetable extends Jet_Elements_Base {
 		return $list_array;
 	}
 
-	public function __atts() {
+	public function _atts() {
 
-		$columns    = $this->__create_list( \mp_timetable\classes\models\Column::get_instance()->get_all_column() );
-		$events     = $this->__create_list( \mp_timetable\classes\models\Events::get_instance()->get_all_events() );
+		$columns    = $this->_create_list( \mp_timetable\classes\models\Column::get_instance()->get_all_column() );
+		$events     = $this->_create_list( \mp_timetable\classes\models\Events::get_instance()->get_all_events() );
 		$categories = get_terms( 'mp-event_category', 'orderby=count&hide_empty=0' );
-		$categories = $this->__create_list( $categories, 'term' );
+		$categories = $this->_create_list( $categories, 'term' );
 
 		return array(
 			'col' => array(
@@ -268,7 +268,7 @@ class Jet_Elements_Mp_Timetable extends Jet_Elements_Base {
 			)
 		);
 
-		foreach ( $this->__atts() as $control => $data ) {
+		foreach ( $this->_atts() as $control => $data ) {
 			$this->add_control( $control, $data );
 		}
 
@@ -279,13 +279,13 @@ class Jet_Elements_Mp_Timetable extends Jet_Elements_Base {
 
 		$settings = $this->get_settings();
 
-		$this->__context = 'render';
+		$this->_context = 'render';
 
-		$this->__open_wrap();
+		$this->_open_wrap();
 
 		$attributes = '';
 
-		foreach ( $this->__atts() as $attr => $data ) {
+		foreach ( $this->_atts() as $attr => $data ) {
 
 			$attr_val    = $settings[ $attr ];
 			$attr_val    = ! is_array( $attr_val ) ? $attr_val : implode( ',', $attr_val );
@@ -297,10 +297,10 @@ class Jet_Elements_Mp_Timetable extends Jet_Elements_Base {
 			$attributes .= sprintf( ' %1$s="%2$s"', $attr, $attr_val );
 		}
 
-		$shortcode = sprintf( '[%s %s]', $this->__tag(), $attributes );
+		$shortcode = sprintf( '[%s %s]', $this->_tag(), $attributes );
 		echo do_shortcode( $shortcode );
 
-		$this->__close_wrap();
+		$this->_close_wrap();
 
 	}
 

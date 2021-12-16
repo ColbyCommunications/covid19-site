@@ -1,6 +1,4 @@
 <?php
-$settings = $this->get_settings_for_display();
-
 $position = $this->get_settings_for_display( 'button_icon_position' );
 $use_icon = $this->get_settings_for_display( 'use_button_icon' );
 $hover_effect = $this->get_settings_for_display( 'hover_effect' );
@@ -38,17 +36,17 @@ if ( ! empty( $settings['button_url']['url'] ) ) {
 		<div class="jet-button__state jet-button__state-normal">
 			<?php
 				if ( filter_var( $use_icon, FILTER_VALIDATE_BOOLEAN ) ) {
-					echo $this->__icon( 'button_icon_normal', '<span class="jet-button__icon jet-elements-icon">%s</span>' );
+					echo $this->_icon( 'button_icon_normal', '<span class="jet-button__icon jet-elements-icon">%s</span>' );
 				}
-				echo $this->__html( 'button_label_normal', '<span class="jet-button__label">%s</span>' );
+				echo $this->_html( 'button_label_normal', '<span class="jet-button__label">%s</span>' );
 			?>
 		</div>
 		<div class="jet-button__state jet-button__state-hover">
 			<?php
 				if ( filter_var( $use_icon, FILTER_VALIDATE_BOOLEAN ) ) {
-					echo $this->__icon( 'button_icon_hover', '<span class="jet-button__icon jet-elements-icon">%s</span>' );
+					echo $this->_icon( 'button_icon_hover', '<span class="jet-button__icon jet-elements-icon">%s</span>' );
 				}
-				echo $this->__html( 'button_label_hover', '<span class="jet-button__label">%s</span>' );
+				echo $this->_html( 'button_label_hover', '<span class="jet-button__label">%s</span>' );
 			?>
 		</div>
 	</<?php echo $tag; ?>>

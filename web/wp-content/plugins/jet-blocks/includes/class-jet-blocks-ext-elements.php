@@ -179,6 +179,36 @@ if ( ! class_exists( 'Jet_Blocks_Ext_Elements' ) ) {
 			);
 
 			$element->add_responsive_control(
+				'jet_sticky_section_min_height',
+				array(
+					'label' => __( 'Minimum Height', 'jet-blocks' ),
+					'type' => Elementor\Controls_Manager::SLIDER,
+					'range' => array(
+						'px' => array(
+							'min' => 0,
+							'max' => 1440,
+						),
+						'vh' => array(
+							'min' => 0,
+							'max' => 100,
+						),
+						'vw' => array(
+							'min' => 0,
+							'max' => 100,
+						),
+					),
+					'size_units' => array( 'px', 'vh', 'vw' ),
+					'selectors' => array(
+						'{{WRAPPER}}.jet-sticky-section--stuck > .elementor-container' => 'min-height: {{SIZE}}{{UNIT}};',
+					),
+					'condition' => array(
+						'jet_sticky_section' => 'yes',
+					),
+					'hide_in_inner' => true,
+				)
+			);
+
+			$element->add_responsive_control(
 				'jet_sticky_section_margin',
 				array(
 					'label'      => esc_html__( 'Margin', 'jet-blocks' ),
@@ -253,9 +283,11 @@ if ( ! class_exists( 'Jet_Blocks_Ext_Elements' ) ) {
 					),
 					'selectors' => array(
 						'{{WRAPPER}}.jet-sticky-section--stuck.jet-sticky-transition-in, {{WRAPPER}}.jet-sticky-section--stuck.jet-sticky-transition-out' => 'transition: margin {{SIZE}}s, padding {{SIZE}}s, background {{SIZE}}s, box-shadow {{SIZE}}s',
+						'{{WRAPPER}}.jet-sticky-section--stuck.jet-sticky-transition-in > .elementor-container, {{WRAPPER}}.jet-sticky-section--stuck.jet-sticky-transition-out > .elementor-container' => 'transition: min-height {{SIZE}}s',
 					),
 					'condition' => array(
 						'jet_sticky_section' => 'yes',
+						'jet_sticky_section_background_background!' => 'gradient'
 					),
 				)
 			);

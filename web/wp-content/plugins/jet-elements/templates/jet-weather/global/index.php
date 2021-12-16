@@ -9,11 +9,11 @@ $settings = $this->get_settings_for_display();
 		echo $this->get_weather_title();
 
 		if ( isset( $settings['show_current_weather'] ) && 'true' === $settings['show_current_weather'] ) {
-			include $this->__get_global_template( 'current' );
+			include $this->_get_global_template( 'current' );
 		}
 
 		if ( isset( $settings['show_forecast_weather'] ) && 'true' === $settings['show_forecast_weather'] ) {
-			include $this->__get_global_template( 'forecast' );
+			include $this->_get_global_template( 'forecast' );
 		}
 	?></div>
 </div>

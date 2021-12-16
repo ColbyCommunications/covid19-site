@@ -63,7 +63,7 @@
 	.jet-smart-tiles__meta-icon,
 	.jet-smart-listing__meta-icon,
 	.jet-blog-playlist__item-index {
-		margin-left: 5px;
+		margin-left: 15px;
 		margin-right: 0;
 	}
 
@@ -74,5 +74,60 @@
 	.jet-tumbs-vertical .jet-blog-playlist__heading-icon {
 		padding-left: 15px;
 		padding-right: 0;
+	}
+
+	.slick-slide {
+		float: right;
+	}
+
+	.elementor-slick-slider {
+
+		.slick-prev {
+			right: -25px;
+
+			&:before {
+				content: "\e89e";
+			}
+		}
+
+		.slick-next {
+			left: -25px;
+
+			&:before {
+				content: "\e89f";
+			}
+		}
+
+		.slick-arrows-inside {
+			.slick-prev {
+				right: 0;
+			}
+
+			.slick-next {
+				left: 0;
+			}
+		}
+	}
+
+	.jet-tumbs-v-pos-left.jet-tumbs-vertical .jet-blog-playlist__items {
+		order: 0;
+	}
+
+	.jet-tumbs-v-pos-right.jet-tumbs-vertical .jet-blog-playlist__items {
+		order: -1;
+	}
+
+	.jet-smart-tiles {
+		&-slide {
+			&__wrap {
+				&.layout-1-1-2-h,
+				&.layout-1-1-2-v,
+				&.layout-1-2,
+				&.layout-1-2-2,
+				&.layout-2-3-v {
+					direction: ltr;
+				}
+			}
+		}
 	}
 }

@@ -4,6 +4,60 @@ Enjoy adding animation on the fly without coding skills
 
 # ChangeLog
 
+## [1.3.9](https://github.com/ZemezLab/jet-tricks/releases/tag/1.3.9)
+* Added: [Crocoblock/suggestions#2674](https://github.com/Crocoblock/suggestions/issues/2674)
+* Added: [Crocoblock/suggestions#2767](https://github.com/Crocoblock/suggestions/issues/2767)
+* Fixed: widgets compatibility with new breakpoints
+* Fixed: rtl compatibility
+* Fixed: minor Issues
+
+## [1.3.8](https://github.com/ZemezLab/jet-tricks/releases/tag/1.3.8)
+* Added: [Crocoblock/suggestions#3282](https://github.com/Crocoblock/suggestions/issues/3282)
+* Fixed: minor Issues
+
+## [1.3.7](https://github.com/ZemezLab/jet-tricks/releases/tag/1.3.7) - 13.05.2021
+* Fixed: Hot Fix & Minor Issues
+
+## [1.3.5](https://github.com/ZemezLab/jet-tricks/releases/tag/1.3.5) - 03.03.2021
+* Fixed: Elementor 3.1.2 compatibility issue
+
+## [1.3.4](https://github.com/ZemezLab/jet-tricks/releases/tag/1.3.4) - 01.02.2021
+* Update: JetDashboard Module to v2.0.6
+* Added: an opportunity to set the image size in the Hotspots widget
+* Added: compatibility the Hotspots widget with JetPlugins Dynamic Data Addon plugin
+* Added: better compatibility with JetEngine plugin
+* Added: [Crocoblock/suggestions#1700](https://github.com/Crocoblock/suggestions/issues/1700)
+* Added: [Crocoblock/suggestions#1487](https://github.com/Crocoblock/suggestions/issues/1487)
+* Fixed: [Crocoblock/suggestions#909](https://github.com/Crocoblock/suggestions/issues/909)
+
+## [1.3.3](https://github.com/ZemezLab/jet-tricks/releases/tag/1.3.3) - 14.12.2020
+* Added: init sticky column after images loaded
+* Added: an ability to use dynamic tags for widgets and extension
+* Fixed: init tooltip if widget content is empty
+
+## [1.3.2](https://github.com/ZemezLab/jet-tricks/releases/tag/1.3.2) - 12.11.2020
+* Update: JetDashboard Module to v2.0.4
+* Settings manager hot fix
+
+## [1.3.1](https://github.com/ZemezLab/jet-tricks/releases/tag/1.3.1) - 11.11.2020
+* Update: JetDashboard Module to v2.0.3
+
+## [1.3.0](https://github.com/ZemezLab/jet-tricks/releases/tag/1.3.0) - 06.10.2020
+* Update: JetDashboard Module to v2.0.0
+
+## [1.2.12](https://github.com/ZemezLab/jet-tricks/releases/tag/1.2.12) - 01.09.2020
+* Fixed: the Unfold widget
+
+## [1.2.11](https://github.com/ZemezLab/jet-tricks/releases/tag/1.2.11) - 28.08.2020
+* Added: getting a list of templates in controls through ajax
+* Update: JetDashboard Module to v1.1.0
+* Fixed: compatibility with Elementor 3.0
+* Fixed: init the Unfold widget
+
+## [1.2.10](https://github.com/ZemezLab/jet-tricks/releases/tag/1.2.10) - 17.07.2020
+* Update: JetDashboard Module to v1.0.16
+* Fixed: prevent Rest API error notice
+
 ## [1.2.9](https://github.com/ZemezLab/jet-tricks/releases/tag/1.2.9) - 11.05.2020
 * Added: Icon Position/Orientation/Gap controls in the View More widget
 * Fixed: tooltip overlap in the Hotspot widget

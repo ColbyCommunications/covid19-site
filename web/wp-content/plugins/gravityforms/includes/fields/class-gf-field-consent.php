@@ -42,6 +42,15 @@ class GF_Field_Consent extends GF_Field {
 	public $checked_indicator_markup = '';
 
 	/**
+	 * Indicates if this field supports state validation.
+	 *
+	 * @since 2.5.11
+	 *
+	 * @var bool
+	 */
+	protected $_supports_state_validation = true;
+
+	/**
 	 * GF_Field_Consent constructor.
 	 *
 	 * @since 2.4
@@ -82,6 +91,30 @@ class GF_Field_Consent extends GF_Field {
 	}
 
 	/**
+	 * Returns the field's form editor description.
+	 *
+	 * @since 2.5
+	 *
+	 * @return string
+	 */
+	public function get_form_editor_field_description() {
+		return esc_attr__( 'Offers a “yes/no” consent checkbox and a detailed description of what is being consented to.', 'gravityforms' );
+	}
+
+	/**
+	 * Returns the field's form editor icon.
+	 *
+	 * This could be an icon url or a gform-icon class.
+	 *
+	 * @since 2.5
+	 *
+	 * @return string
+	 */
+	public function get_form_editor_field_icon() {
+		return 'gform-icon--consent';
+	}
+
+	/**
 	 * Returns the field button properties for the form editor. The array contains two elements:
 	 * 'group' => 'standard_fields' // or  'advanced_fields', 'post_fields', 'pricing_fields'
 	 * 'text'  => 'Button text'
@@ -114,7 +147,6 @@ class GF_Field_Consent extends GF_Field {
 			'checkbox_label_setting',
 			'rules_setting',
 			'visibility_setting',
-			'placeholder_setting',
 			'description_setting',
 			'css_class_setting',
 		);
@@ -129,6 +161,25 @@ class GF_Field_Consent extends GF_Field {
 	 */
 	public function is_conditional_logic_supported() {
 		return true;
+	}
+
+	/**
+	 * Returns the HTML tag for the field container.
+	 *
+	 * @since 2.5
+	 *
+	 * @param array $form The current Form object.
+	 *
+	 * @return string
+	 */
+	public function get_field_container_tag( $form ) {
+
+		if ( GFCommon::is_legacy_markup_enabled( $form ) ) {
+			return parent::get_field_container_tag( $form );
+		}
+
+		return 'fieldset';
+
 	}
 
 	/**
@@ -158,28 +209,26 @@ class GF_Field_Consent extends GF_Field {
 		$target_input_id       = parent::get_first_input_id( $form );
 		$for_attribute         = empty( $target_input_id ) ? '' : "for='{$target_input_id}'";
 		$label_class_attribute = 'class="gfield_consent_label"';
-		$required_div          = ( $this->labelPlacement === 'hidden_label' && ( $is_admin || $this->isRequired ) ) ? sprintf( "<span class='gfield_required'>%s</span>", $this->isRequired ? '*' : '' ) : '';
+		$required_div          = ( $this->labelPlacement === 'hidden_label' && $this->isRequired ) ? $this->get_required_indicator() : '';
 
 		if ( $is_admin && ! GFCommon::is_entry_detail_edit() ) {
 			$checkbox_label = ! is_array( $value ) || empty( $value[ $id . '.2' ] ) ? $this->checkboxLabel : $value[ $id . '.2' ];
 			$revision_id    = ! is_array( $value ) || empty( $value[ $id . '.3' ] ) ? GFFormsModel::get_latest_form_revisions_id( $form['id'] ) : $value[ $id . '.3' ];
 			$value          = ! is_array( $value ) || empty( $value[ $id . '.1' ] ) ? '0' : esc_attr( $value[ $id . '.1' ] );
 		} else {
-			$checkbox_label = $this->checkboxLabel;
+			$checkbox_label = trim( $this->checkboxLabel );
 			$revision_id    = GFFormsModel::get_latest_form_revisions_id( $form['id'] );
 			// We compare if the description text from different revisions has been changed.
 			$current_description   = $this->get_field_description_from_revision( $revision_id );
 			$submitted_description = $this->get_field_description_from_revision( $value[ $id . '.3' ] );
 
-			$value = ! is_array( $value ) || empty( $value[ $id . '.1' ] ) || ( $this->checkboxLabel !== $value[ $id . '.2' ] ) || ( $current_description !== $submitted_description ) ? '0' : esc_attr( $value[ $id . '.1' ] );
+			$value = ! is_array( $value ) || empty( $value[ $id . '.1' ] ) || ( $checkbox_label !== $value[ $id . '.2' ] ) || ( $current_description !== $submitted_description ) ? '0' : esc_attr( $value[ $id . '.1' ] );
 		}
 		$checked = $is_form_editor ? '' : checked( '1', $value, false );
 
-		$aria_describedby  = '';
-		$description       = $is_entry_detail ? $this->get_field_description_from_revision( $revision_id ) : $this->description;
-		if ( ! empty( $description ) ) {
-			$aria_describedby = "aria-describedby='gfield_consent_description_{$form['id']}_{$this->id}'";
-		}
+		$description           = $is_entry_detail ? $this->get_field_description_from_revision( $revision_id ) : $this->description;
+		$extra_describedby_ids = empty( $description ) ? array() : array( "gfield_consent_description_{$form['id']}_{$this->id}" );
+		$aria_describedby      = $this->get_aria_describedby( $extra_describedby_ids );
 
 		$input  = "<input name='input_{$id}.1' id='{$target_input_id}' type='{$html_input_type}' value='1' {$tabindex} {$aria_describedby} {$required_attribute} {$invalid_attribute} {$disabled_text} {$checked} /> <label {$label_class_attribute} {$for_attribute} >{$checkbox_label}</label>{$required_div}";
 		$input .= "<input type='hidden' name='input_{$id}.2' value='" . esc_attr( $checkbox_label ) . "' class='gform_hidden' />";
@@ -364,7 +413,7 @@ class GF_Field_Consent extends GF_Field {
 
 			if ( ! rgblank( $consent ) ) {
 				$return  = $this->checked_indicator_markup;
-				$return .= ' ' . $text;
+				$return .= ' ' . wp_kses_post( $text );
 
 				// checking revisions.
 				$description = $this->get_field_description_from_revision( $revision_id );
@@ -393,9 +442,13 @@ class GF_Field_Consent extends GF_Field {
 	 * @return string|array
 	 */
 	public function get_value_export( $entry, $input_id = '', $use_text = false, $is_csv = false ) {
+		if ( empty( $input_id ) ) {
+			return '';
+		}
+
 		$value = parent::get_value_export( $entry, $input_id, $use_text, $is_csv );
 
-		list( $field_id, $input_id ) = explode( '.', $input_id );
+		list( $field_id, $input_id ) = rgexplode( '.', $input_id, 2 );
 
 		switch ( $input_id ) {
 			case '1':

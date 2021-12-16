@@ -70,18 +70,12 @@ if ( ! class_exists( 'Jet_Tricks_Settings' ) ) {
 		 */
 		public function init() {
 
-			add_action( 'admin_enqueue_scripts', array( $this, 'admin_enqueue_scripts' ), 0 );
-
-			add_action( 'admin_menu', array( $this, 'register_page' ), 99 );
-
 			foreach ( glob( jet_tricks()->plugin_path( 'includes/addons/' ) . '*.php' ) as $file ) {
 				$data = get_file_data( $file, array( 'class'=>'Class', 'name' => 'Name', 'slug'=>'Slug' ) );
 
 				$slug = basename( $file, '.php' );
 				$this->avaliable_widgets[ $slug] = $data['name'];
 			}
-
-			$this->generate_frontend_config_data();
 
 			add_action( 'jet-styles-manager/compatibility/register-plugin', array( $this, 'register_for_styles_manager' ) );
 		}
@@ -100,7 +94,7 @@ if ( ! class_exists( 'Jet_Tricks_Settings' ) ) {
 		 * [generate_frontend_config_data description]
 		 * @return [type] [description]
 		 */
-		public function generate_frontend_config_data() {
+		public function get_frontend_config_data() {
 
 			$default_active_widgets = [];
 
@@ -143,7 +137,7 @@ if ( ! class_exists( 'Jet_Tricks_Settings' ) ) {
 
 			$rest_api_url = apply_filters( 'jet-tricks/rest/frontend/url', get_rest_url() );
 
-			$this->settings_page_config = [
+			return [
 				'messages' => [
 					'saveSuccess' => esc_html__( 'Saved', 'jet-tricks' ),
 					'saveError'   => esc_html__( 'Error', 'jet-tricks' ),
@@ -189,43 +183,6 @@ if ( ! class_exists( 'Jet_Tricks_Settings' ) ) {
 		}
 
 		/**
-		 * Initialize page builder module if required
-		 *
-		 * @return void
-		 */
-		public function admin_enqueue_scripts() {
-
-			if ( isset( $_REQUEST['page'] ) && $this->key === $_REQUEST['page'] ) {
-
-				$module_data = jet_tricks()->module_loader->get_included_module_data( 'cherry-x-vue-ui.php' );
-				$ui          = new CX_Vue_UI( $module_data );
-
-				$ui->enqueue_assets();
-
-				wp_enqueue_style(
-					'jet-tricks-admin-css',
-					jet_tricks()->plugin_url( 'assets/css/jet-tricks-admin.css' ),
-					false,
-					jet_tricks()->get_version()
-				);
-
-				wp_enqueue_script(
-					'jet-tricks-admin-script',
-					jet_tricks()->plugin_url( 'assets/js/jet-tricks-admin.js' ),
-					array( 'cx-vue-ui' ),
-					jet_tricks()->get_version(),
-					true
-				);
-
-				wp_localize_script(
-					'jet-tricks-admin-script',
-					'JetTricksSettingsPageConfig',
-					apply_filters( 'jet-tricks/admin/settings-page-config', $this->settings_page_config )
-				);
-			}
-		}
-
-		/**
 		 * Return settings page URL
 		 *
 		 * @return string
@@ -252,33 +209,6 @@ if ( ! class_exists( 'Jet_Tricks_Settings' ) ) {
 			}
 
 			return isset( $this->settings[ $setting ] ) ? $this->settings[ $setting ] : $default;
-		}
-
-		/**
-		 * Register add/edit page
-		 *
-		 * @return void
-		 */
-		public function register_page() {
-
-			add_submenu_page(
-				'jet-dashboard',
-				esc_html__( 'JetTricks Settings', 'jet-tricks' ),
-				esc_html__( 'JetTricks Settings', 'jet-tricks' ),
-				'manage_options',
-				$this->key,
-				array( $this, 'render_page' )
-			);
-		}
-
-		/**
-		 * Render settings page
-		 *
-		 * @return void
-		 */
-		public function render_page() {
-
-			include jet_tricks()->get_template( 'admin-templates/settings-page.php' );
 		}
 
 		/**

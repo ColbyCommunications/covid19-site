@@ -19,21 +19,36 @@
 		},
 
 		importInit: function() {
-			var $importButton = $( '#jet-popup-import-trigger' ),
-				$createButton = $( '#jet-popup-create-trigger' );
+			var $newPopupButton = $( '.page-title-action[href*="post-new.php?post_type=jet-popup"]' ),
+				$importButton = $( '#jet-popup-import-trigger' );
 
 			if ( ! $( '#wpbody-content .page-title-action' )[0] ) {
 				return false;
 			}
 
 			$( '#wpbody-content' ).find( '.page-title-action:last' ).after( $importButton );
-			$( '#wpbody-content' ).find( '.page-title-action:last' ).after( $createButton );
+
+			$newPopupButton.on( 'click', function( event ) {
+				event.preventDefault();
+			} );
+
+			var newPopupTippy = tippy( [ $newPopupButton[0] ], {
+				html: document.querySelector( '#jet-popup-create-form' ),
+				//appendTo: $importButton[0],
+				arrow: true,
+				placement: 'bottom-start',
+				flipBehavior: 'clockwise',
+				trigger: 'click',
+				interactive: true,
+				hideOnClick: true,
+				theme: 'jet-popup-light'
+			} );
 
 			var importTippy = tippy( [ $importButton[0] ], {
 					html: document.querySelector( '#jet-popup-import-form' ),
 					//appendTo: $importButton[0],
 					arrow: true,
-					placement: 'bottom',
+					placement: 'bottom-start',
 					flipBehavior: 'clockwise',
 					trigger: 'click',
 					interactive: true,
@@ -41,18 +56,6 @@
 					theme: 'jet-popup-light'
 				}
 			);
-
-			var createTippy = tippy( [ $createButton[0] ], {
-				html: document.querySelector( '#jet-popup-create-form' ),
-				//appendTo: $importButton[0],
-				arrow: true,
-				placement: 'bottom',
-				flipBehavior: 'clockwise',
-				trigger: 'click',
-				interactive: true,
-				hideOnClick: true,
-				theme: 'jet-popup-light'
-			} );
 		},
 
 		presetLibraryInit: function() {
@@ -129,11 +132,9 @@
 				methods: {
 					openModal: function() {
 						this.modalShow = true;
-					},
 
-					createPopup: function(){
-						eventBus.$emit( 'createPopup', this.presetId );
-					}
+						eventBus.$emit( 'openIntallPopup', this.presetId );
+					},
 				}
 			});
 
@@ -150,6 +151,8 @@
 						categoryData: [],
 						activeCategories: [],
 						presetsLength: false,
+						installPopupVisible: false,
+						inactiveLicenseVisible: false,
 						page: 1,
 						perPage: 6,
 						preset: false,
@@ -169,6 +172,84 @@
 							},
 						]
 					})
+				},
+
+				mounted: function() {
+					var libraryPresetsUrl         = window.jetPopupData.libraryPresetsUrl,
+						libraryPresetsCategoryUrl = window.jetPopupData.libraryPresetsCategoryUrl,
+						categories                = [],
+						presets                   = [],
+						vueInstance               = this;
+
+					axios.get( libraryPresetsUrl ).then( function ( response ) {
+						var data = response.data;
+
+						if ( data.success ) {
+							for ( var preset in data.presets ) {
+								var presetData = data.presets[ preset ];
+
+								presets.push( {
+									id: presetData['id'],
+									title: presetData['title'],
+									thumb: presetData['thumb'],
+									category: presetData['category'],
+									categoryNames: presetData['category_names'],
+									order: presetData['order'],
+									install: +presetData['install'],
+									required: presetData['required'],
+									excerpt: presetData['excerpt'],
+									details: presetData['details'],
+									permalink: presetData['permalink'],
+								} );
+							}
+
+							vueInstance.presetsData = presets;
+							vueInstance.spinnerShow = false;
+							vueInstance.presetsLoaded = true;
+						} else {
+							vueInstance.spinnerShow = false;
+							vueInstance.presetsLoadedError = true;
+						}
+
+					}).catch(function (error) {
+						// handle error
+						vueInstance.spinnerShow = false;
+						vueInstance.presetsLoadedError = true;
+						vueInstance.presetsData = [];
+					});
+
+					axios.get( libraryPresetsCategoryUrl ).then( function ( response ) {
+						var data = response.data;
+
+						if ( data.success ) {
+							for ( var category in data.categories ) {
+								categories.push( {
+									id: category,
+									label: data.categories[category],
+									state: false
+								} );
+							}
+
+							vueInstance.categoryData = categories;
+						}
+
+						vueInstance.categoriesLoaded = true;
+
+					}).catch( function ( error ) {
+						vueInstance.categoryData = [];
+					});
+
+					// Bus Events
+					eventBus.$on( 'openIntallPopup', function( presetId ) {
+						vueInstance.preset = presetId;
+
+						if ( 'true' === window.jetPopupData.pluginActivated ) {
+							vueInstance.installPopupVisible = true;
+						} else {
+							vueInstance.inactiveLicenseVisible = true;
+						}
+
+					} );
 				},
 
 				computed: {
@@ -270,85 +351,17 @@
 
 					changePage: function( page ) {
 						this.page = page;
-					}
-				},
+					},
 
-				created: function() {
-					var libraryPresetsUrl         = window.jetPopupData.libraryPresetsUrl,
-						libraryPresetsCategoryUrl = window.jetPopupData.libraryPresetsCategoryUrl,
-						categories                = [],
-						presets                   = [],
-						vueInstance               = this;
+					createPopup: function() {
+						window.location.href = window.jetPopupData.createPopupLink + '&preset=' + this.preset;
+					},
 
-					axios.get( libraryPresetsUrl ).then( function ( response ) {
-						var data = response.data;
+					activateLicense: function() {
+						window.location.href = window.jetPopupData.licenseActivationLink;
+					},
 
-						if ( data.success ) {
-							for ( var preset in data.presets ) {
-								var presetData = data.presets[ preset ];
-
-								presets.push( {
-									id: presetData['id'],
-									title: presetData['title'],
-									thumb: presetData['thumb'],
-									category: presetData['category'],
-									categoryNames: presetData['category_names'],
-									order: presetData['order'],
-									install: +presetData['install'],
-									required: presetData['required'],
-									excerpt: presetData['excerpt'],
-									details: presetData['details'],
-									permalink: presetData['permalink'],
-								} );
-
-							}
-
-							vueInstance.presetsData = presets;
-							vueInstance.spinnerShow = false;
-							vueInstance.presetsLoaded = true;
-						} else {
-							vueInstance.spinnerShow = false;
-							vueInstance.presetsLoadedError = true;
-						}
-
-					}).catch(function (error) {
-						// handle error
-						vueInstance.spinnerShow = false;
-						vueInstance.presetsLoadedError = true;
-						vueInstance.presetsData = [];
-					});
-
-					axios.get( libraryPresetsCategoryUrl ).then( function ( response ) {
-						var data = response.data;
-
-						if ( data.success ) {
-							for ( var category in data.categories ) {
-								categories.push( {
-									id: category,
-									label: data.categories[category],
-									state: false
-								} );
-							}
-
-							vueInstance.categoryData = categories;
-						}
-
-						vueInstance.categoriesLoaded = true;
-
-					}).catch( function ( error ) {
-						vueInstance.categoryData = [];
-					});
-
-					// Bus Events
-					eventBus.$on( 'createPopup', function ( presetId ) {
-						vueInstance.preset = presetId;
-
-						setTimeout( function(){
-							vueInstance.$refs.jetPopupLibraryForm.submit();
-						}, 100 );
-
-					});
-				},
+				}
 			});
 
 			var eventBus = new Vue();

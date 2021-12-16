@@ -48,7 +48,7 @@
 .jet-popup-light-theme {
 	color: #555;
 	background-color: white;
-	filter: drop-shadow( 2px 2px 5px rgba( 0, 0, 0, 0.4 ) );
+	filter: drop-shadow( 1px 1px 3px rgba( 0, 0, 0, 0.2 ) );
 
 	.tippy-popper[x-placement^=bottom] & .tippy-arrow {
 		border-bottom-color: white;
@@ -59,7 +59,6 @@
 	width: 700px;
 	padding: 10px 10px 20px 10px;
 	max-width: 100%;
-
 	display: flex;
 	flex-flow: column;
 	justify-content: flex-start;
@@ -71,20 +70,20 @@
 		flex-flow: row wrap;
 		justify-content: flex-start;
 		align-items: center;
+		gap: 10px;
 		margin-bottom: 20px;
 	}
 
 	&__item {
-		width: 33.3333%;
+		width: calc(33.3333% - 7px);
 	}
 
 	&__item-inner {
 		position: relative;
-		margin: 5px;
 	}
 
 	&__item-title {
-		margin: 5px 0 10px 0;
+		margin: 0;
 	}
 
 	&__check {
@@ -94,11 +93,11 @@
 		position: absolute;
 		top: 5px;
 		right: 5px;
-		font-size: 22px;
+		font-size: 18px;
 		border-radius: 50%;
 		background-color: transparent;
-		border: 2px solid #19be6b;
-		color: #19be6b;
+		border: 1px solid #0071a1;
+		color: #0071a1;
 		display: flex;
 		justify-content: center;
 		align-items: center;
@@ -111,7 +110,6 @@
 
 		img {
 			width: 100%;
-			box-shadow: 0px 0px 5px rgba(35, 40, 45, 0.4);
 		}
 
 		input[type="radio"] {
@@ -121,15 +119,15 @@
 				opacity: 1;
 			};
 
-			&:checked ~ img {
-				box-shadow: 0px 0px 0px 2px #19be6b;
-			}
-
 		}
 	}
 
 	&__actions {
 		width: 100%;
+
+		#jet_popup_type_submit {
+
+		}
 	}
 }
 
@@ -213,37 +211,35 @@
 	&__filters {
 		margin: 20px 0;
 		display: flex;
-		flex-flow: row wrap;
-		justify-content: space-between;
-		align-items: center;
+		flex-flow: row no-wrap;
+		justify-content: flex-start;
+		align-items: flex-start;
 	}
 
 	&__filters-category {
 		display: flex;
 		flex-flow: row nowrap;
 		justify-content: flex-start;
-		align-items: center;
+		align-items: flex-start;
 
 		> span {
+			white-space: nowrap;
 			margin-right: 10px;
 		}
 
 		ul {
 			display: flex;
 			flex-flow: row wrap;
-			justify-content: center;
-			align-items: center;
+			justify-content: flex-start;
+			align-items: flex-start;
 			margin: 0;
 
 			li {
-				margin-left: 15px;
+				margin-right: 15px;
+				margin-bottom: 15px;
 				display: flex;
 				justify-content: flex-start;
 				align-items: center;
-
-				&:first-child {
-					margin-left: 0;
-				}
 
 				.cx-vui-component-raw {
 					margin-right: 10px;
@@ -258,6 +254,7 @@
 		align-items: center;
 
 		> span {
+			white-space: nowrap;
 			margin-right: 10px;
 		}
 
@@ -445,20 +442,30 @@
 }
 
 .jet-popup-settings-page {
-	margin: 25px 15px 0 15px;
-	max-width: 100%;
 
-	p {
-		margin: 0;
+	.cx-vui-title-header {
+		margin-bottom: 20px;
+		border-bottom: 1px solid #DCDCDD;
+		padding-bottom: 15px;
 	}
 
-	.cx-vui-title {
+	div.cx-vui-title {
 		font-weight: 500;
-		font-size: 15px;
-		line-height: 23px;
-		padding-bottom: 15px;
-		border-bottom: 1px solid #ECECEC;
-		margin-bottom: 20px;
+		font-size: 14px;
+		line-height: 20px;
+	}
+
+	div.cx-vui-subtitle {
+		font-size: 12px;
+		line-height: 18px;
+		font-weight: 300;
+		color: #7B7E81;
+		justify-content: flex-start;
+
+		a {
+			margin: 0 5px;
+			text-decoration: none;
+		}
 	}
 
 	.mailchimp-apikey-sync {
@@ -466,8 +473,9 @@
 		justify-content: flex-start;
 		align-items: center;
 		flex-wrap: wrap;
-		width: 400px;
-		margin-bottom: 30px;
+		width: 100%;
+		max-width: 400px;
+		margin-bottom: 40px;
 
 		.cx-vui-component-raw {
 			flex: 1 1 auto;
@@ -484,11 +492,7 @@
 	}
 
 	.mailchimp-account-data {
-		margin-bottom: 30px;
-	}
-
-	.mailchimp-lists-data {
-
+		margin-bottom: 40px;
 	}
 
 	&__account {
@@ -510,10 +514,15 @@
 
 		&-info {
 			> div {
-				margin-bottom: 5px;
+				font-size: 12px;
+				margin-bottom: 3px;
 
 				&:last-child {
 					margin-bottom: 0;
+				}
+
+				span {
+					color: #7B7E81;
 				}
 			}
 		}
@@ -527,15 +536,38 @@
 
 	&__list {
 		display: flex;
-		flex-flow: column nowrap;
+		align-items: flex-start;
 		width: calc(50% - 10px);
 		margin-bottom: 20px;
 
-		> p {
-			margin-bottom: 5px;
+		button.cx-vui-button {
+			font-size: 12px;
+			white-space: nowrap;
+		}
+	}
+
+	&__list-details {
+		flex: 1 1 auto;
+		display: flex;
+		flex-flow: column nowrap;
+
+		> div {
+			display: flex;
+			align-items: center;
+			flex-wrap: wrap;
+			font-size: 12px;
+			margin-bottom: 3px;
 
 			&:last-child {
 				margin-bottom: 0;
+			}
+
+			b {
+				margin-right: 3px;
+			}
+
+			span {
+				color: #7B7E81;
 			}
 		}
 
@@ -562,17 +594,6 @@
 		.dashicons-no-alt {
 			color: #ed4014;
 		}
-
-		.cx-vui-button {
-			margin-top: 5px;
-			align-self: flex-start;
-		}
-	}
-
-	&__action {
-		display: flex;
-		justify-content: flex-end;
-		margin-top: 20px;
 	}
 }
 

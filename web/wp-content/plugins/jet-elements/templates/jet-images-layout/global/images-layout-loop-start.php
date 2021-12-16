@@ -17,9 +17,9 @@ if ( 'masonry' === $settings['layout_type'] ) {
 	$attr_array[] = 'data-columns';
 }
 
-$columns        = $this->__get_html( 'columns' );
-$columns_tablet = $this->__get_html( 'columns_tablet' );
-$columns_mobile = $this->__get_html( 'columns_mobile' );
+$columns        = $this->_get_html( 'columns' );
+$columns_tablet = $this->_get_html( 'columns_tablet' );
+$columns_mobile = $this->_get_html( 'columns_mobile' );
 
 $columns        = empty( $columns ) ? 3 : $columns;
 $columns_tablet = empty( $columns_tablet ) ? 2 : $columns_tablet;

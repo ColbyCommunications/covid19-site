@@ -1,39 +1,56 @@
 <?php
 namespace Jet_Dashboard\Modules\License;
 
-use Jet_Dashboard\Base\Module as Module_Base;
+use Jet_Dashboard\Base\Page_Module as Page_Module_Base;
 use Jet_Dashboard\Dashboard as Dashboard;
+use Jet_Dashboard\Utils as Utils;
 
 // If this file is called directly, abort.
 if ( ! defined( 'WPINC' ) ) {
 	die;
 }
 
-class Module extends Module_Base {
-
-	/**
-	 * [init description]
-	 * @return [type] [description]
-	 */
-	public function init() {
-		add_action( 'admin_menu', array( $this, 'register_license_page' ), 22 );
-	}
-
-	/**
-	 * [register_license_page description]
-	 * @return [type] [description]
-	 */
-	public function register_license_page() {
-
-	}
+class Module extends Page_Module_Base {
 
 	/**
 	 * Returns module slug
 	 *
 	 * @return void
 	 */
-	public function get_slug() {
+	public function get_page_slug() {
 		return 'license-page';
+	}
+
+	/**
+	 * [get_subpage_slug description]
+	 * @return [type] [description]
+	 */
+	public function get_parent_slug() {
+		return false;
+	}
+
+	/**
+	 * [get_page_name description]
+	 * @return [type] [description]
+	 */
+	public function get_page_name() {
+		return esc_html__( 'Plugin Manager', 'jet-dashboard' );
+	}
+
+	/**
+	 * [get_category description]
+	 * @return [type] [description]
+	 */
+	public function get_category() {
+		return false;
+	}
+
+	/**
+	 * [get_page_link description]
+	 * @return [type] [description]
+	 */
+	public function get_page_link() {
+		return Dashboard::get_instance()->get_dashboard_page_url( $this->get_page_slug(), $this->get_parent_slug() );
 	}
 
 	/**
@@ -58,11 +75,10 @@ class Module extends Module_Base {
 	 * @param  string $subpage [description]
 	 * @return [type]          [description]
 	 */
-	public function page_config( $config = array(), $subpage = '' ) {
+	public function page_config( $config = array(), $page = false, $subpage = false ) {
 
-		$config['headerTitle']  = 'License Manager';
-		$config['page']         = 'license-page';
-		$config['wrapperCss']   = 'license-page';
+		$config['pageModule']    = $this->get_page_slug();
+		$config['allJetPlugins'] = Dashboard::get_instance()->plugin_manager->get_plugin_data_list();
 
 		return $config;
 	}
@@ -73,7 +89,7 @@ class Module extends Module_Base {
 	 * @param  string $subpage   [description]
 	 * @return [type]            [description]
 	 */
-	public function page_templates( $templates = array(), $subpage = '' ) {
+	public function page_templates( $templates = array(), $page = false, $subpage = false ) {
 
 		$templates['license-page']          = Dashboard::get_instance()->get_view( 'license/main' );
 		$templates['license-item']          = Dashboard::get_instance()->get_view( 'license/license-item' );

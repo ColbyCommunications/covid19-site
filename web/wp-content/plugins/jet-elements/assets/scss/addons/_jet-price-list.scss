@@ -14,7 +14,7 @@
 			
 			&-img-wrap{
 				max-width: 200px;
-				margin-right: 20px;
+				@include margin-end(20px);
 				flex: 1 0 100%;
 				font-size: 0;
 				

@@ -327,7 +327,7 @@ if ( ! class_exists( 'Jet_Elementst_Post_Tools' ) ) {
 				'visible'                => true,
 				'size'                   => apply_filters( 'cherry_normal_image_size', 'post-thumbnail' ),
 				'mobile_size'            => apply_filters( 'cherry_mobile_image_size', 'post-thumbnail' ),
-				'html'                   => '<a href="%1$s" %2$s ><img src="%3$s" alt="%4$s" %5$s ></a>',
+				'html'                   => '<a href="%1$s" %2$s ><img src="%3$s" alt="%4$s" loading="lazy" %5$s ></a>',
 				'class'                  => 'wp-image',
 				'placeholder'            => true,
 				'placeholder_background' => '000',
@@ -562,7 +562,7 @@ if ( ! class_exists( 'Jet_Elementst_Post_Tools' ) ) {
 		 * @since  1.0.0
 		 * @return string
 		 */
-		public function cut_text( $text = '', $length = -1, $trimmed_type = 'word', $after, $content = false ) {
+		public function cut_text( $text = '', $length = -1, $trimmed_type = 'word', $after = '&hellip;', $content = false ) {
 
 			if ( -1 !== $length ) {
 

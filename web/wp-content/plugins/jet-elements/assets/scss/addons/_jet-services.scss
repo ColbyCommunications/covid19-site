@@ -148,10 +148,12 @@
 
 			.jet-services__header {
 				flex: 1 0 auto;
+				order: getValueByDirection( 1, 2 );
 			}
 
 			.jet-services__content {
 				flex: 0 1 auto;
+				order: getValueByDirection( 2, 1 )
 			}
 		}
 	}
@@ -163,12 +165,12 @@
 
 			.jet-services__header {
 				flex: 1 0 auto;
-				order: 2;
+				order: getValueByDirection( 2, 1 );
 			}
 
 			.jet-services__content {
 				flex: 0 1 auto;
-				order: 1;
+				order: getValueByDirection( 1, 2 );
 			}
 		}
 	}

@@ -14,7 +14,7 @@ add_action( 'wp_enqueue_scripts', 'jet_menu_storefront_scripts', 0 );
 function jet_menu_storefront_scripts() {
 	wp_enqueue_script(
 		'jet-menu-storefront',
-		jet_menu()->get_theme_url( 'assets/js/script.js' ),
+		jet_menu()->integration_manager->get_theme_url( 'assets/js/script.js' ),
 		array( 'jquery' ),
 		jet_menu()->get_version(),
 		true

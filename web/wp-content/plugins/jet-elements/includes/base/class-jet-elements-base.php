@@ -5,13 +5,13 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 abstract class Jet_Elements_Base extends Widget_Base {
 
-	public $__context          = 'render';
-	public $__processed_item   = false;
-	public $__processed_index  = 0;
-	public $__load_level       = 100;
-	public $__include_controls = [];
-	public $__exclude_controls = [];
-	public $__new_icon_prefix  = 'selected_';
+	public $_context          = 'render';
+	public $_processed_item   = false;
+	public $_processed_index  = 0;
+	public $_load_level       = 100;
+	public $_include_controls = [];
+	public $_exclude_controls = [];
+	public $_new_icon_prefix  = 'selected_';
 
 	/**
 	 * [__construct description]
@@ -21,13 +21,13 @@ abstract class Jet_Elements_Base extends Widget_Base {
 	public function __construct( $data = [], $args = null ) {
 		parent::__construct( $data, $args );
 
-		$this->__load_level = (int)jet_elements_settings()->get( 'widgets_load_level', 100 );
+		$this->_load_level = (int)jet_elements_settings()->get( 'widgets_load_level', 100 );
 
 		$widget_name = $this->get_name();
 
-		$this->__include_controls = apply_filters( "jet-elements/editor/{$widget_name}/include-controls", [], $widget_name, $this );
+		$this->_include_controls = apply_filters( "jet-elements/editor/{$widget_name}/include-controls", [], $widget_name, $this );
 
-		$this->__exclude_controls = apply_filters( "jet-elements/editor/{$widget_name}/exclude-controls", [], $widget_name, $this );
+		$this->_exclude_controls = apply_filters( "jet-elements/editor/{$widget_name}/exclude-controls", [], $widget_name, $this );
 	}
 
 	/**
@@ -65,14 +65,23 @@ abstract class Jet_Elements_Base extends Widget_Base {
 	}
 
 	/**
+	 * @deprecated 2.2.15
+	 */
+	public function __get_global_template( $name = null ) {
+		_deprecated_function( __METHOD__, '2.2.15', __CLASS__ . '::_get_global_template()' );
+
+		return $this->_get_global_template( $name );
+	}
+
+	/**
 	 * Get globaly affected template
 	 *
 	 * @param  [type] $name [description]
 	 * @return [type]       [description]
 	 */
-	public function __get_global_template( $name = null ) {
+	public function _get_global_template( $name = null ) {
 
-		$template = call_user_func( array( $this, sprintf( '__get_%s_template', $this->__context ) ) );
+		$template = call_user_func( array( $this, sprintf( '_get_%s_template', $this->_context ) ), $name );
 
 		if ( ! $template ) {
 			$template = jet_elements()->get_template( $this->get_name() . '/global/' . $name . '.php' );
@@ -86,7 +95,7 @@ abstract class Jet_Elements_Base extends Widget_Base {
 	 * @param  [type] $name [description]
 	 * @return [type]       [description]
 	 */
-	public function __get_render_template( $name = null ) {
+	public function _get_render_template( $name = null ) {
 		return jet_elements()->get_template( $this->get_name() . '/render/' . $name . '.php' );
 	}
 
@@ -95,8 +104,17 @@ abstract class Jet_Elements_Base extends Widget_Base {
 	 * @param  [type] $name [description]
 	 * @return [type]       [description]
 	 */
-	public function __get_edit_template( $name = null ) {
+	public function _get_edit_template( $name = null ) {
 		return jet_elements()->get_template( $this->get_name() . '/edit/' . $name . '.php' );
+	}
+
+	/**
+	 * @deprecated 2.2.15
+	 */
+	public function __get_global_looped_template( $name = null, $setting = null, $callback = null ) {
+		_deprecated_function( __METHOD__, '2.2.15', __CLASS__ . '::_get_global_looped_template()' );
+
+		$this->_get_global_looped_template( $name, $setting, $callback );
 	}
 
 	/**
@@ -108,16 +126,16 @@ abstract class Jet_Elements_Base extends Widget_Base {
 	 * @param  string $callback Callback for preparing a loop array
 	 * @return void
 	 */
-	public function __get_global_looped_template( $name = null, $setting = null, $callback = null ) {
+	public function _get_global_looped_template( $name = null, $setting = null, $callback = null ) {
 
 		$templates = array(
-			'start' => $this->__get_global_template( $name . '-loop-start' ),
-			'loop'  => $this->__get_global_template( $name . '-loop-item' ),
-			'end'   => $this->__get_global_template( $name . '-loop-end' ),
+			'start' => $this->_get_global_template( $name . '-loop-start' ),
+			'loop'  => $this->_get_global_template( $name . '-loop-item' ),
+			'end'   => $this->_get_global_template( $name . '-loop-end' ),
 		);
 
 		call_user_func(
-			array( $this, sprintf( '__get_%s_looped_template', $this->__context ) ), $templates, $setting, $callback
+			array( $this, sprintf( '_get_%s_looped_template', $this->_context ) ), $templates, $setting, $callback
 		);
 
 	}
@@ -130,7 +148,7 @@ abstract class Jet_Elements_Base extends Widget_Base {
 	 * @param  string $callback  Callback for preparing a loop array
 	 * @return void
 	 */
-	public function __get_render_looped_template( $templates = array(), $setting = null, $callback = null ) {
+	public function _get_render_looped_template( $templates = array(), $setting = null, $callback = null ) {
 
 		$loop = $this->get_settings_for_display( $setting );
 		$loop = apply_filters( 'jet-elements/widget/loop-items', $loop, $setting, $this );
@@ -149,16 +167,16 @@ abstract class Jet_Elements_Base extends Widget_Base {
 
 		foreach ( $loop as $item ) {
 
-			$this->__processed_item = $item;
+			$this->_processed_item = $item;
 
 			if ( ! empty( $templates['loop'] ) ) {
 				include $templates['loop'];
 			}
-			$this->__processed_index++;
+			$this->_processed_index++;
 		}
 
-		$this->__processed_item = false;
-		$this->__processed_index = 0;
+		$this->_processed_item = false;
+		$this->_processed_index = 0;
 
 		if ( ! empty( $templates['end'] ) ) {
 			include $templates['end'];
@@ -173,7 +191,7 @@ abstract class Jet_Elements_Base extends Widget_Base {
 	 * @param  [type] $setting   [description]
 	 * @return [type]            [description]
 	 */
-	public function __get_edit_looped_template( $templates = array(), $setting = null ) {
+	public function _get_edit_looped_template( $templates = array(), $setting = null ) {
 		?>
 		<# if ( settings.<?php echo $setting; ?> ) { #>
 		<?php
@@ -198,14 +216,23 @@ abstract class Jet_Elements_Base extends Widget_Base {
 	}
 
 	/**
+	 * @deprecated 2.2.15
+	 */
+	public function __loop_item( $keys = array(), $format = '%s' ) {
+		_deprecated_function( __METHOD__, '2.2.15', __CLASS__ . '::_loop_item()' );
+
+		return $this->_loop_item( $keys, $format );
+	}
+
+	/**
 	 * Get current looped item dependends from context.
 	 *
 	 * @param  string $key Key to get from processed item
 	 * @return mixed
 	 */
-	public function __loop_item( $keys = array(), $format = '%s' ) {
+	public function _loop_item( $keys = array(), $format = '%s' ) {
 
-		return call_user_func( array( $this, sprintf( '__%s_loop_item', $this->__context ) ), $keys, $format );
+		return call_user_func( array( $this, sprintf( '_%s_loop_item', $this->_context ) ), $keys, $format );
 
 	}
 
@@ -217,7 +244,7 @@ abstract class Jet_Elements_Base extends Widget_Base {
 	 * @param  boolean $nested_key [description]
 	 * @return [type]              [description]
 	 */
-	public function __edit_loop_item( $keys = array(), $format = '%s' ) {
+	public function _edit_loop_item( $keys = array(), $format = '%s' ) {
 
 		$settings = $keys[0];
 
@@ -242,9 +269,9 @@ abstract class Jet_Elements_Base extends Widget_Base {
 	 * @param  boolean $nested_key [description]
 	 * @return [type]              [description]
 	 */
-	public function __render_loop_item( $keys = array(), $format = '%s' ) {
+	public function _render_loop_item( $keys = array(), $format = '%s' ) {
 
-		$item = $this->__processed_item;
+		$item = $this->_processed_item;
 
 		$key        = $keys[0];
 		$nested_key = isset( $keys[1] ) ? $keys[1] : false;
@@ -266,17 +293,26 @@ abstract class Jet_Elements_Base extends Widget_Base {
 	}
 
 	/**
+	 * @deprecated 2.2.15
+	 */
+	public function __glob_inc_if( $name = null, $settings = array() ) {
+		_deprecated_function( __METHOD__, '2.2.15', __CLASS__ . '::_glob_inc_if()' );
+
+		$this->_glob_inc_if( $name, $settings );
+	}
+
+	/**
 	 * Include global template if any of passed settings is defined
 	 *
 	 * @param  [type] $name     [description]
 	 * @param  [type] $settings [description]
 	 * @return [type]           [description]
 	 */
-	public function __glob_inc_if( $name = null, $settings = array() ) {
+	public function _glob_inc_if( $name = null, $settings = array() ) {
 
-		$template = $this->__get_global_template( $name );
+		$template = $this->_get_global_template( $name );
 
-		call_user_func( array( $this, sprintf( '__%s_inc_if', $this->__context ) ), $template, $settings );
+		call_user_func( array( $this, sprintf( '_%s_inc_if', $this->_context ) ), $template, $settings );
 
 	}
 
@@ -287,7 +323,7 @@ abstract class Jet_Elements_Base extends Widget_Base {
 	 * @param  [type] $settings [description]
 	 * @return [type]           [description]
 	 */
-	public function __render_inc_if( $file = null, $settings = array() ) {
+	public function _render_inc_if( $file = null, $settings = array() ) {
 
 		foreach ( $settings as $setting ) {
 			$val = $this->get_settings_for_display( $setting );
@@ -308,7 +344,7 @@ abstract class Jet_Elements_Base extends Widget_Base {
 	 * @param  [type] $settings [description]
 	 * @return [type]           [description]
 	 */
-	public function __edit_inc_if( $file = null, $settings = array() ) {
+	public function _edit_inc_if( $file = null, $settings = array() ) {
 
 		$condition = null;
 		$sep       = null;
@@ -334,7 +370,7 @@ abstract class Jet_Elements_Base extends Widget_Base {
 	 *
 	 * @return void
 	 */
-	public function __open_wrap() {
+	public function _open_wrap() {
 		printf( '<div class="elementor-%s jet-elements">', $this->get_name() );
 	}
 
@@ -343,8 +379,17 @@ abstract class Jet_Elements_Base extends Widget_Base {
 	 *
 	 * @return void
 	 */
-	public function __close_wrap() {
+	public function _close_wrap() {
 		echo '</div>';
+	}
+
+	/**
+	 * @deprecated 2.2.15
+	 */
+	public function __html( $setting = null, $format = '%s' ) {
+		_deprecated_function( __METHOD__, '2.2.15', __CLASS__ . '::_html()' );
+
+		$this->_html( $setting, $format );
 	}
 
 	/**
@@ -356,10 +401,19 @@ abstract class Jet_Elements_Base extends Widget_Base {
 	 * @param  bool   $echo    Echo or return.
 	 * @return string|void
 	 */
-	public function __html( $setting = null, $format = '%s' ) {
+	public function _html( $setting = null, $format = '%s' ) {
 
-		call_user_func( array( $this, sprintf( '__%s_html', $this->__context ) ), $setting, $format );
+		call_user_func( array( $this, sprintf( '_%s_html', $this->_context ) ), $setting, $format );
 
+	}
+
+	/**
+	 * @deprecated 2.2.15
+	 */
+	public function __get_html( $setting = null, $format = '%s' ) {
+		_deprecated_function( __METHOD__, '2.2.15', __CLASS__ . '::_get_html()' );
+
+		return $this->_get_html( $setting, $format );
 	}
 
 	/**
@@ -371,10 +425,10 @@ abstract class Jet_Elements_Base extends Widget_Base {
 	 * @param  bool   $echo    Echo or return.
 	 * @return string|void
 	 */
-	public function __get_html( $setting = null, $format = '%s' ) {
+	public function _get_html( $setting = null, $format = '%s' ) {
 
 		ob_start();
-		$this->__html( $setting, $format );
+		$this->_html( $setting, $format );
 		return ob_get_clean();
 
 	}
@@ -386,7 +440,7 @@ abstract class Jet_Elements_Base extends Widget_Base {
 	 * @param  [type] $format  [description]
 	 * @return [type]          [description]
 	 */
-	public function __render_html( $setting = null, $format = '%s' ) {
+	public function _render_html( $setting = null, $format = '%s' ) {
 
 		if ( is_array( $setting ) ) {
 			$key     = $setting[1];
@@ -422,7 +476,7 @@ abstract class Jet_Elements_Base extends Widget_Base {
 	 * @param  [type] $format  [description]
 	 * @return [type]          [description]
 	 */
-	public function __edit_html( $setting = null, $format = '%s' ) {
+	public function _edit_html( $setting = null, $format = '%s' ) {
 
 		if ( is_array( $setting ) ) {
 			$setting = $setting[0] . '.' . $setting[1];
@@ -440,12 +494,12 @@ abstract class Jet_Elements_Base extends Widget_Base {
 	 * @param array  $args
 	 * @param object $instance
 	 */
-	public function __add_advanced_icon_control( $id, array $args = array(), $instance = null ) {
+	public function _add_advanced_icon_control( $id, array $args = array(), $instance = null ) {
 
 		if ( defined( 'ELEMENTOR_VERSION' ) && version_compare( ELEMENTOR_VERSION, '2.6.0', '>=' ) ) {
 
 			$_id = $id; // old control id
-			$id  = $this->__new_icon_prefix . $id;
+			$id  = $this->_new_icon_prefix . $id;
 
 			$args['type'] = Controls_Manager::ICONS;
 			$args['fa4compatibility'] = $_id;
@@ -476,13 +530,22 @@ abstract class Jet_Elements_Base extends Widget_Base {
 	 * @param  string $id Old icon control ID.
 	 * @return string
 	 */
-	public function __prepare_icon_id_for_condition( $id ) {
+	public function _prepare_icon_id_for_condition( $id ) {
 
 		if ( defined( 'ELEMENTOR_VERSION' ) && version_compare( ELEMENTOR_VERSION, '2.6.0', '>=' ) ) {
-			return $this->__new_icon_prefix . $id . '[value]';
+			return $this->_new_icon_prefix . $id . '[value]';
 		}
 
 		return $id;
+	}
+
+	/**
+	 * @deprecated 2.2.15
+	 */
+	public function __icon( $setting = null, $format = '%s', $icon_class = '' ) {
+		_deprecated_function( __METHOD__, '2.2.15', __CLASS__ . '::_icon()' );
+
+		$this->_icon( $setting, $format, $icon_class );
 	}
 
 	/**
@@ -493,8 +556,17 @@ abstract class Jet_Elements_Base extends Widget_Base {
 	 * @param  string $icon_class
 	 * @return void
 	 */
-	public function __icon( $setting = null, $format = '%s', $icon_class = '' ) {
-		call_user_func( array( $this, sprintf( '__%s_icon', $this->__context ) ), $setting, $format, $icon_class );
+	public function _icon( $setting = null, $format = '%s', $icon_class = '' ) {
+		call_user_func( array( $this, sprintf( '_%s_icon', $this->_context ) ), $setting, $format, $icon_class );
+	}
+
+	/**
+	 * @deprecated 2.2.15
+	 */
+	public function __get_icon( $setting = null, $format = '%s', $icon_class = '' ) {
+		_deprecated_function( __METHOD__, '2.2.15', __CLASS__ . '::_get_icon()' );
+
+		return $this->_get_icon( $setting, $format, $icon_class );
 	}
 
 	/**
@@ -505,8 +577,17 @@ abstract class Jet_Elements_Base extends Widget_Base {
 	 * @param  string $icon_class
 	 * @return string
 	 */
-	public function __get_icon( $setting = null, $format = '%s', $icon_class = '' ) {
-		return $this->__render_icon( $setting, $format, $icon_class, false );
+	public function _get_icon( $setting = null, $format = '%s', $icon_class = '' ) {
+		return $this->_render_icon( $setting, $format, $icon_class, false );
+	}
+
+	/**
+	 * @deprecated 2.2.15
+	 */
+	public function __render_icon( $setting = null, $format = '%s', $icon_class = '', $echo = true ) {
+		_deprecated_function( __METHOD__, '2.2.15', __CLASS__ . '::_render_icon()' );
+
+		return $this->_render_icon( $setting, $format, $icon_class, $echo );
 	}
 
 	/**
@@ -519,15 +600,15 @@ abstract class Jet_Elements_Base extends Widget_Base {
 	 *
 	 * @return void|string
 	 */
-	public function __render_icon( $setting = null, $format = '%s', $icon_class = '', $echo = true ) {
+	public function _render_icon( $setting = null, $format = '%s', $icon_class = '', $echo = true ) {
 
-		if ( false === $this->__processed_item ) {
+		if ( false === $this->_processed_item ) {
 			$settings = $this->get_settings_for_display();
 		} else {
-			$settings = $this->__processed_item;
+			$settings = $this->_processed_item;
 		}
 
-		$new_setting = $this->__new_icon_prefix . $setting;
+		$new_setting = $this->_new_icon_prefix . $setting;
 
 		$migrated = isset( $settings['__fa4_migrated'][ $new_setting ] );
 		$is_new   = empty( $settings[ $setting ] ) && class_exists( 'Elementor\Icons_Manager' ) && Icons_Manager::is_migration_allowed();
@@ -578,13 +659,13 @@ abstract class Jet_Elements_Base extends Widget_Base {
 	 * @param  integer $load_level   [description]
 	 * @return [type]                [description]
 	 */
-	public function __add_control( $control_id = false, $control_args = [], $load_level = 100 ) {
+	public function _add_control( $control_id = false, $control_args = [], $load_level = 100 ) {
 
 		if (
-			( $this->__load_level < $load_level
-			  || 0 === $this->__load_level
-			  || in_array( $control_id, $this->__exclude_controls )
-			) && !in_array( $control_id, $this->__include_controls )
+			( $this->_load_level < $load_level
+			  || 0 === $this->_load_level
+			  || in_array( $control_id, $this->_exclude_controls )
+			) && !in_array( $control_id, $this->_include_controls )
 		) {
 			return false;
 		}
@@ -607,13 +688,13 @@ abstract class Jet_Elements_Base extends Widget_Base {
 	 * @param  integer $load_level   [description]
 	 * @return [type]                [description]
 	 */
-	public function __add_responsive_control( $control_id = false, $control_args = [], $load_level = 100 ) {
+	public function _add_responsive_control( $control_id = false, $control_args = [], $load_level = 100 ) {
 
 		if (
-			( $this->__load_level < $load_level
-			  || 0 === $this->__load_level
-			  || in_array( $control_id, $this->__exclude_controls )
-			) && !in_array( $control_id, $this->__include_controls )
+			( $this->_load_level < $load_level
+			  || 0 === $this->_load_level
+			  || in_array( $control_id, $this->_exclude_controls )
+			) && !in_array( $control_id, $this->_include_controls )
 		) {
 			return false;
 		}
@@ -636,13 +717,13 @@ abstract class Jet_Elements_Base extends Widget_Base {
 	 * @param  integer $load_level         [description]
 	 * @return [type]                      [description]
 	 */
-	public function __add_group_control( $group_control_type = false, $group_control_args = [], $load_level = 100 ) {
+	public function _add_group_control( $group_control_type = false, $group_control_args = [], $load_level = 100 ) {
 
 		if (
-			( $this->__load_level < $load_level
-			  || 0 === $this->__load_level
-			  || in_array( $group_control_args['name'], $this->__exclude_controls )
-			) && !in_array( $group_control_args['name'], $this->__include_controls )
+			( $this->_load_level < $load_level
+			  || 0 === $this->_load_level
+			  || in_array( $group_control_args['name'], $this->_exclude_controls )
+			) && !in_array( $group_control_args['name'], $this->_include_controls )
 		) {
 			return false;
 		}
@@ -665,18 +746,18 @@ abstract class Jet_Elements_Base extends Widget_Base {
 	 * @param  array  $args [description]
 	 * @return [type]       [description]
 	 */
-	public function __add_icon_control( $id, array $args = array(), $load_level = 100 ) {
+	public function _add_icon_control( $id, array $args = array(), $load_level = 100 ) {
 
 		if (
-			( $this->__load_level < $load_level
-			  || 0 === $this->__load_level
-			  || in_array( $id, $this->__exclude_controls )
-			) && !in_array( $id, $this->__include_controls )
+			( $this->_load_level < $load_level
+			  || 0 === $this->_load_level
+			  || in_array( $id, $this->_exclude_controls )
+			) && !in_array( $id, $this->_include_controls )
 		) {
 			return false;
 		}
 
-		$this->__add_advanced_icon_control( $id, $args );
+		$this->_add_advanced_icon_control( $id, $args );
 	}
 
 	/**
@@ -686,9 +767,9 @@ abstract class Jet_Elements_Base extends Widget_Base {
 	 * @param  integer $load_level            [description]
 	 * @return [type]                         [description]
 	 */
-	public function __start_controls_section( $controls_section_id = false, $controls_section_args = [], $load_level = 25 ) {
+	public function _start_controls_section( $controls_section_id = false, $controls_section_args = [], $load_level = 25 ) {
 
-		if ( ! $controls_section_id || $this->__load_level < $load_level || 0 === $this->__load_level ) {
+		if ( ! $controls_section_id || $this->_load_level < $load_level || 0 === $this->_load_level ) {
 			return false;
 		}
 
@@ -700,9 +781,9 @@ abstract class Jet_Elements_Base extends Widget_Base {
 	 * @param  integer $load_level [description]
 	 * @return [type]              [description]
 	 */
-	public function __end_controls_section( $load_level = 25 ) {
+	public function _end_controls_section( $load_level = 25 ) {
 
-		if ( $this->__load_level < $load_level || 0 === $this->__load_level ) {
+		if ( $this->_load_level < $load_level || 0 === $this->_load_level ) {
 			return false;
 		}
 
@@ -715,9 +796,9 @@ abstract class Jet_Elements_Base extends Widget_Base {
 	 * @param  integer $load_level [description]
 	 * @return [type]              [description]
 	 */
-	public function __start_controls_tabs( $tabs_id = false, $load_level = 25 ) {
+	public function _start_controls_tabs( $tabs_id = false, $load_level = 25 ) {
 
-		if ( ! $tabs_id || $this->__load_level < $load_level || 0 === $this->__load_level ) {
+		if ( ! $tabs_id || $this->_load_level < $load_level || 0 === $this->_load_level ) {
 			return false;
 		}
 
@@ -729,9 +810,9 @@ abstract class Jet_Elements_Base extends Widget_Base {
 	 * @param  integer $load_level [description]
 	 * @return [type]              [description]
 	 */
-	public function __end_controls_tabs( $load_level = 25 ) {
+	public function _end_controls_tabs( $load_level = 25 ) {
 
-		if ( $this->__load_level < $load_level || 0 === $this->__load_level ) {
+		if ( $this->_load_level < $load_level || 0 === $this->_load_level ) {
 			return false;
 		}
 
@@ -745,9 +826,9 @@ abstract class Jet_Elements_Base extends Widget_Base {
 	 * @param  integer $load_level [description]
 	 * @return [type]              [description]
 	 */
-	public function __start_controls_tab( $tab_id = false, $tab_args = [], $load_level = 25 ) {
+	public function _start_controls_tab( $tab_id = false, $tab_args = [], $load_level = 25 ) {
 
-		if ( ! $tab_id || $this->__load_level < $load_level || 0 === $this->__load_level ) {
+		if ( ! $tab_id || $this->_load_level < $load_level || 0 === $this->_load_level ) {
 			return false;
 		}
 
@@ -759,9 +840,9 @@ abstract class Jet_Elements_Base extends Widget_Base {
 	 * @param  integer $load_level [description]
 	 * @return [type]              [description]
 	 */
-	public function __end_controls_tab( $load_level = 25 ) {
+	public function _end_controls_tab( $load_level = 25 ) {
 
-		if ( $this->__load_level < $load_level || 0 === $this->__load_level ) {
+		if ( $this->_load_level < $load_level || 0 === $this->_load_level ) {
 			return false;
 		}
 
@@ -774,9 +855,9 @@ abstract class Jet_Elements_Base extends Widget_Base {
 	 * @param int $load_level
 	 * @return void|bool
 	 */
-	public function __start_popover( $load_level = 25 ) {
+	public function _start_popover( $load_level = 25 ) {
 
-		if ( $this->__load_level < $load_level || 0 === $this->__load_level ) {
+		if ( $this->_load_level < $load_level || 0 === $this->_load_level ) {
 			return false;
 		}
 
@@ -789,13 +870,39 @@ abstract class Jet_Elements_Base extends Widget_Base {
 	 * @param int $load_level
 	 * @return void|bool
 	 */
-	public function __end_popover( $load_level = 25 ) {
+	public function _end_popover( $load_level = 25 ) {
 
-		if ( $this->__load_level < $load_level || 0 === $this->__load_level ) {
+		if ( $this->_load_level < $load_level || 0 === $this->_load_level ) {
 			return false;
 		}
 
 		$this->end_popover();
+	}
+
+	public function _add_link_attributes( $element, array $url_control, $overwrite = false ) {
+		if ( method_exists( $this, 'add_link_attributes' ) ) {
+			return $this->add_link_attributes( $element, $url_control, $overwrite );
+		}
+
+		$attributes = array();
+
+		if ( ! empty( $url_control['url'] ) ) {
+			$attributes['href'] = esc_url( $url_control['url'] );
+		}
+
+		if ( ! empty( $url_control['is_external'] ) ) {
+			$attributes['target'] = '_blank';
+		}
+
+		if ( ! empty( $url_control['nofollow'] ) ) {
+			$attributes['rel'] = 'nofollow';
+		}
+
+		if ( $attributes ) {
+			$this->add_render_attribute( $element, $attributes, $overwrite );
+		}
+
+		return $this;
 	}
 
 }

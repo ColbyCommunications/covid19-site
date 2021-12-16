@@ -67,9 +67,6 @@ if ( ! class_exists( 'Jet_Blocks_Settings' ) ) {
 		 * Init page
 		 */
 		public function init() {
-			add_action( 'admin_enqueue_scripts', array( $this, 'admin_enqueue_scripts' ), 0 );
-
-			add_action( 'admin_menu', array( $this, 'register_page' ), 99 );
 
 			foreach ( glob( jet_blocks()->plugin_path( 'includes/widgets/' ) . '*.php' ) as $file ) {
 				$data = get_file_data( $file, array( 'class'=>'Class', 'name' => 'Name', 'slug'=>'Slug' ) );
@@ -82,8 +79,8 @@ if ( ! class_exists( 'Jet_Blocks_Settings' ) ) {
 		}
 
 		/**
-		 * [generate_frontend_config_data description]
-		 * @return [type] [description]
+		 * Generate frontend config data
+		 * @return array
 		 */
 		public function generate_frontend_config_data() {
 
@@ -200,45 +197,8 @@ if ( ! class_exists( 'Jet_Blocks_Settings' ) ) {
 				'settingsApiUrl' => $rest_api_url . 'jet-blocks-api/v1/plugin-settings',
 				'settingsData'   => array_merge( $settingsData, $breadcrumbs_taxonomy_options ),
 			];
-		}
 
-		/**
-		 * Initialize page builder module if required
-		 *
-		 * @return void
-		 */
-		public function admin_enqueue_scripts() {
-
-			if ( isset( $_REQUEST['page'] ) && $this->key === $_REQUEST['page'] ) {
-
-				$this->generate_frontend_config_data();
-
-				$module_data = jet_blocks()->module_loader->get_included_module_data( 'cherry-x-vue-ui.php' );
-				$ui          = new CX_Vue_UI( $module_data );
-
-				$ui->enqueue_assets();
-
-				wp_enqueue_style(
-					'jet-blocks-admin-css',
-					jet_blocks()->plugin_url( 'assets/css/jet-blocks-admin.css' ),
-					false,
-					jet_blocks()->get_version()
-				);
-
-				wp_enqueue_script(
-					'jet-blocks-admin-script',
-					jet_blocks()->plugin_url( 'assets/js/jet-blocks-admin.js' ),
-					array( 'cx-vue-ui' ),
-					jet_blocks()->get_version(),
-					true
-				);
-
-				wp_localize_script(
-					'jet-blocks-admin-script',
-					'JetBlocksSettingsPageConfig',
-					apply_filters( 'jet-blocks/admin/settings-page-config', $this->settings_page_config )
-				);
-			}
+			return $this->settings_page_config;
 		}
 
 		/**
@@ -254,13 +214,16 @@ if ( ! class_exists( 'Jet_Blocks_Settings' ) ) {
 		/**
 		 * Return settings page URL
 		 *
+		 * @param $subpage
+		 *
 		 * @return string
 		 */
-		public function get_settings_page_link() {
+		public function get_settings_page_link( $subpage = 'general' ) {
 
 			return add_query_arg(
 				array(
-					'page' => $this->key,
+					'page'    => 'jet-dashboard-settings-page',
+					'subpage' => 'jet-blocks-' . $subpage . '-settings',
 				),
 				esc_url( admin_url( 'admin.php' ) )
 			);
@@ -280,32 +243,6 @@ if ( ! class_exists( 'Jet_Blocks_Settings' ) ) {
 			}
 
 			return isset( $this->settings[ $setting ] ) ? $this->settings[ $setting ] : $default;
-		}
-
-		/**
-		 * Register add/edit page
-		 *
-		 * @return void
-		 */
-		public function register_page() {
-
-			add_submenu_page(
-				'jet-dashboard',
-				esc_html__( 'JetBlocks Settings', 'jet-blocks' ),
-				esc_html__( 'JetBlocks Settings', 'jet-blocks' ),
-				'manage_options',
-				$this->key,
-				array( $this, 'render_page' )
-			);
-		}
-
-		/**
-		 * Render settings page
-		 *
-		 * @return void
-		 */
-		public function render_page() {
-			include jet_blocks()->get_template( 'admin-templates/settings-page.php' );
 		}
 
 		/**

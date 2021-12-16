@@ -92,7 +92,7 @@ if ( ! class_exists( 'Jet_Popup_Assets' ) ) {
 
 			wp_enqueue_script(
 				'jet-popup-frontend',
-				jet_popup()->plugin_url( 'assets/js/jet-popup-frontend' . $this->suffix() . '.js' ),
+				jet_popup()->plugin_url( 'assets/js/jet-popup-frontend.js' ),
 				array( 'jquery', 'elementor-frontend' ),
 				jet_popup()->get_version(),
 				true

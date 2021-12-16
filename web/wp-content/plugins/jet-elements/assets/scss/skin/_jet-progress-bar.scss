@@ -12,7 +12,7 @@
 }
 
 .jet-progress-bar__title-icon {
-	margin-right: 5px;
+	@include margin-end(5px);
 }
 
 .jet-progress-bar__percent {
@@ -53,7 +53,7 @@
 .jet-progress-bar-type-3 {
 	.jet-progress-bar__percent {
 		width: 40px;
-		margin-right: -20px;
+		@include margin-end(-20px);
 		padding: 5px 0;
 		color: white;
 		background-color: #6ec1e4;
@@ -67,11 +67,11 @@
 
 .jet-progress-bar-type-4 {
 	.jet-progress-bar__title {
-		margin-right: 20px;
+		@include margin-end(20px);
 	}
 
 	.jet-progress-bar__percent {
-		margin-left: 20px;
+		@include margin-start(20px);
 	}
 
 	.jet-progress-bar__wrapper {
@@ -86,7 +86,7 @@
 	}
 
 	.jet-progress-bar__percent {
-		margin-left: 10px;
+		@include margin-start(10px);
 	}
 }
 
@@ -100,7 +100,7 @@
 	}
 
 	.jet-progress-bar__status {
-		margin-left: 10px;
+		@include margin-start(10px);
 	}
 
 	.jet-progress-bar__percent {

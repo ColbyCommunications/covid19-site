@@ -81,8 +81,6 @@ if ( ! class_exists( 'Jet_Popup_Element_Extensions' ) ) {
 		 */
 		public function widget_extensions( $obj, $args ) {
 
-			$avaliable_popups = Jet_Popup_Utils::get_avaliable_popups();
-
 			$obj->start_controls_section(
 				'widget_jet_popup',
 				[
@@ -93,29 +91,25 @@ if ( ! class_exists( 'Jet_Popup_Element_Extensions' ) ) {
 
 			do_action( 'jet-popup/editor/widget-extension/before-base-controls', $obj, $args );
 
-			if ( empty( $avaliable_popups ) ) {
-
-				$obj->add_control(
-					'no_avaliable_popup',
-					[
-						'label' => false,
-						'type'  => Elementor\Controls_Manager::RAW_HTML,
-						'raw'   => $this->empty_templates_message(),
-					]
-				);
-
-				$obj->end_controls_section();
-
-				return;
-			}
-
 			$obj->add_control(
 				'jet_attached_popup',
 				[
-					'label'   => __( 'Attached Popup', 'jet-popup' ),
-					'type'    => Elementor\Controls_Manager::SELECT,
-					'default' => '',
-					'options' => $avaliable_popups,
+					'label'       => __( 'Attached Popup', 'jet-popup' ),
+					'type'        => 'jet-query',
+					'query_type'  => 'post',
+					'query'       => apply_filters( 'jet_popup_default_query_args',
+						[
+							'post_type'      => jet_popup()->post_type->slug(),
+							'order'          => 'DESC',
+							'orderby'        => 'date',
+							'posts_per_page' => - 1,
+							'post_status'    => 'publish',
+						]
+					),
+					'edit_button' => [
+						'active' => true,
+						'label'  => __( 'Edit Popup', 'jet-popup' ),
+					],
 				]
 			);
 
@@ -181,6 +175,12 @@ if ( ! class_exists( 'Jet_Popup_Element_Extensions' ) ) {
 					$widget_settings,
 					$settings
 				);
+
+				if ( wp_doing_ajax() ) {
+					$widget->add_render_attribute( '_wrapper', array(
+						'data-jet-popup' => esc_attr( json_encode( $widget_settings ) ),
+					) );
+				}
 			}
 
 			if ( ! empty( $widget_settings ) ) {

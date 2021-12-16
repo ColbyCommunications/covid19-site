@@ -79,6 +79,7 @@
 			flex-wrap: nowrap;
 
 			border-width: 1px;
+			background-color: #f8f8f8;
 			transition: inherit;
 
 			.jet-hor-timeline-list--top & {
@@ -288,12 +289,22 @@
 		}
 
 		&.jet-prev-arrow {
-			left: 0;
-			transform: translateY(-50%);
+			@include start(0);
+
+			@if ( $direction == rtl ) {
+				transform: translateY(-50%) scale(-1, 1);
+			} @else {
+				transform: translateY(-50%);
+			}
 		}
 		&.jet-next-arrow {
-			right: 0;
-			transform: translateY(-50%) scale(-1, 1);
+			@include end(0);
+
+			@if ( $direction == rtl ) {
+				transform: translateY(-50%);
+			} @else {
+				transform: translateY(-50%) scale(-1, 1);
+			}
 		}
 
 		&.jet-arrow-disabled {
