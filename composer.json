@@ -20,7 +20,7 @@
         "wpackagist-plugin/cache-control": "^2.2.3",
         "colbycommunications/colby-base-theme": "dev-master",
         "wpackagist-plugin/public-post-preview": "^2.9.1",
-        "wp-graphql/wp-graphql": "^1.16.10",
+        "wp-graphql/wp-graphql": "^1.6.10",
         "wp-graphql/wp-graphiql": "^1.0",
         "pristas-peter/wp-graphql-gutenberg": "^0.3.4",
         "wpackagist-plugin/wp-saml-auth": "^1.1.0",
