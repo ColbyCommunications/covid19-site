@@ -36,7 +36,8 @@
 		"wpackagist-plugin/classic-editor": "^1.4",
 		"wpackagist-plugin/elementor": "^3.4.4",
 		"wpackagist-theme/hello-elementor": "^2.2.2",
-		"wpackagist-plugin/custom-post-type-ui": "^1.10.1"
+		"wpackagist-plugin/custom-post-type-ui": "^1.10.1",
+		"colbycommunications/wp-plugin-acf-pro": "5.11.4"
 	},
 	"scripts": {
 		"subdirComposer": [
@@ -61,6 +62,10 @@
 		{
 			"type": "composer",
 			"url": "https://wpackagist.org"
+		},
+		{
+			"type": "composer",
+			"url": "https://satis.colby.edu"
 		}
 	]
 }
