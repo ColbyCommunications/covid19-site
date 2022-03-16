@@ -1,0 +1,13 @@
+{
+    "budget": {
+        "timings": {
+            "firstPaint": 1000,
+            "pageLoadTime": 2000,
+            "fullyLoaded": 2000,
+            "FirstVisualChange": 1000,
+            "SpeedIndex": 1200,
+            "PerceptualSpeedIndex": 1200,
+            "VisualComplete95": 1190
+        }
+    }
+}

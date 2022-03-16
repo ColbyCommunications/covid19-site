@@ -1,0 +1,38 @@
+name: Health Check
+on:
+  schedule:
+    - cron: "*/10 * * * *"
+env:
+  PLATFORMSH_CLI_TOKEN: ${{ secrets.PLATFORMSH_CLI_TOKEN }}
+  WEBMASTER_GITHUB_ACTIONS_TOKEN: ${{ secrets.WEBMASTER_GITHUB_ACTIONS_TOKEN }}
+  PLATFORM_PROJECT_ID: ${{ secrets.PLATFORM_PROJECT_ID }}
+  SLACK_DEVOPS_WEBHOOK_URL: ${{ secrets.SLACK_DEVOPS_WEBHOOK_URL }}
+jobs:
+  healthcheck:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Install Psh CLI
+        run: |
+          curl -sS https://platform.sh/cli/installer | php
+          ~/.platformsh/bin/platform project:set-remote ${{ secrets.PLATFORM_PROJECT_ID }}
+        
+      - name: Setup node
+        uses: actions/setup-node@v2
+        with:
+          node-version: '14.x'
+          registry-url: 'https://npm.pkg.github.com'
+
+      - run: npm install
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.WEBMASTER_GITHUB_ACTIONS_TOKEN }}
+
+      - name: Health Check
+        id: healthcheck
+        run: |
+          node ./scripts/healthcheck.js --url=https://$( ~/.platformsh/bin/platform domains --format=plain --no-header --columns=name ) --notifyUrl=${{ secrets.SLACK_DEVOPS_WEBHOOK_URL }}
+
+      
+
+      

@@ -9,9 +9,6 @@ set -e
 # In build hook, install platform CLI in case we need it. Will require an ENV
 curl -sS https://platform.sh/cli/installer | php
 
-# install redis cache
-./scripts/install-redis.sh 5.1.1
-
 ################################
 ###        WORDPRESS        ###
 ###############################
