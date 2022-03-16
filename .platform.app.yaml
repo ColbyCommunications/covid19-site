@@ -17,7 +17,6 @@ build:
 # side is in the form `<service name>:<endpoint name>`.
 relationships:
   database: "mysqldb:mysql"
-  redis: "rediscache:redis"
 
 # The size of the persistent disk of the application (in MB).
 disk: !include project/platform/disk.yaml
@@ -34,11 +33,6 @@ mounts:
 # The configuration of app when it is exposed to the web.
 web:
   locations: !include project/platform/web.locations.yaml
-
-dependencies:
-  php: !include project/platform/dependencies.php.yaml
-  nodejs:
-    gulp-cli: "*"
 
 runtime:
   extensions: !include project/platform/runtime.extensions.yaml
