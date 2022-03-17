@@ -1,0 +1,51 @@
+const { exec, execSync } = require('child_process');
+
+function getArgs() {
+    const args = {};
+    process.argv.slice(2, process.argv.length).forEach((arg) => {
+        // long arg
+        if (arg.slice(0, 2) === '--') {
+            const longArg = arg.split('=');
+            const longArgFlag = longArg[0].slice(2, longArg[0].length);
+            const longArgValue = longArg.length > 1 ? longArg[1] : true;
+            args[longArgFlag] = longArgValue;
+        }
+        // flags
+        else if (arg[0] === '-') {
+            const flags = arg.slice(1, arg.length).split('');
+            flags.forEach((flag) => {
+                args[flag] = true;
+            });
+        }
+    });
+    return args;
+}
+
+// get args
+const args = getArgs();
+
+exec(
+    '~/.platformsh/bin/platform environment:list --columns=ID --format=plain --no-header',
+    (error, stdout, stderr) => {
+        if (error) {
+            return;
+        }
+        if (stderr) {
+            return;
+        }
+
+        if (!stdout.includes(args.branch)) {
+            execSync(
+                ` ~/.platformsh/bin/platform environment:branch ${args.branch} ${args.branchFrom}`,
+                (error, stdout, stderr) => {
+                    if (error) {
+                        return;
+                    }
+                    if (stderr) {
+                        return;
+                    }
+                }
+            );
+        }
+    }
+);
