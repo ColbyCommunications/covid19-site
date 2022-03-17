@@ -19,7 +19,7 @@ relationships:
   database: "mysqldb:mysql"
 
 # The size of the persistent disk of the application (in MB).
-disk: !include project/platform/disk.yaml
+disk: 2048
 
 # The mounts that will be performed when the package is deployed.
 mounts:
@@ -35,7 +35,8 @@ web:
   locations: !include project/platform/web.locations.yaml
 
 runtime:
-  extensions: !include project/platform/runtime.extensions.yaml
+  extensions: 
+    - readline
 
 # The hooks that will be performed when the package is deployed.
 hooks:
