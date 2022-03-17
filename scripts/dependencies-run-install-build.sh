@@ -7,11 +7,6 @@ shopt -s extglob # Turns on extended globbing
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"  # This loads nvm
 
-# base-install
-cd web/wp-content/themes/baseinstall
-npm install
-gulp
-cd -
 
 printf "Plugins... \n"
 NPM_PLUGIN_DIRS=`ls web/wp-content/plugins/colby-*/src/@(index.js)` # Saves it to a variable
