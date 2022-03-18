@@ -99,6 +99,7 @@ jobs:
         with:
           name: sitemap
           path: .github/sitemap.json
+          retention-days: 1
 
   lighthouse:
     runs-on: ubuntu-latest
@@ -125,6 +126,7 @@ jobs:
         with:
           name: results
           path: report/lighthouse
+          retention-days: 1
 
   gh_pages:
     runs-on: ubuntu-latest
