@@ -37,7 +37,8 @@
 		"wpackagist-plugin/elementor": "^3.4.4",
 		"wpackagist-theme/hello-elementor": "^2.2.2",
 		"wpackagist-plugin/custom-post-type-ui": "^1.10.1",
-		"colbycommunications/wp-plugin-acf-pro": "5.11.4"
+		"colbycommunications/wp-plugin-acf-pro": "5.11.4",
+		"colbycommunications/wp-plugin-elementor-pro": "3.5.2"
 	},
 	"scripts": {
 		"subdirComposer": [

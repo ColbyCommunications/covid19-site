@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "05133f2f7b2eb1a207738a7b6968de0b",
+    "content-hash": "b7ea852549374fe36126b2927af3d886",
     "packages": [
         {
             "name": "colbycommunications/wp-plugin-acf-pro",
@@ -33,6 +33,34 @@
                 "wordpress"
             ],
             "time": "2022-02-14T19:57:46+00:00"
+        },
+        {
+            "name": "colbycommunications/wp-plugin-elementor-pro",
+            "version": "3.5.2",
+            "source": {
+                "type": "git",
+                "url": "git@github.com:ColbyCommunications/wp-plugin-elementor-pro.git",
+                "reference": "d3b2bdf271e3cc168ccc41c1e86bf5b16b5c7497"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://satis.colby.edu/dist/colbycommunications/wp-plugin-elementor-pro/colbycommunications-wp-plugin-elementor-pro-d3b2bdf271e3cc168ccc41c1e86bf5b16b5c7497-zip-e78eb5.zip",
+                "reference": "d3b2bdf271e3cc168ccc41c1e86bf5b16b5c7497",
+                "shasum": "1c0f4c1c2bbeacb433faa4a0b3462678ac948aea"
+            },
+            "type": "wordpress-plugin",
+            "authors": [
+                {
+                    "name": "Brandon Waltz",
+                    "email": "brandon.waltz@colby.edu"
+                }
+            ],
+            "description": "Premium Elementor Pro plugin",
+            "homepage": "https://github.com/colbycommunications/wp-plugin-elementor-pro",
+            "keywords": [
+                "wordpress"
+            ],
+            "time": "2022-02-15T15:10:07+00:00"
         },
         {
             "name": "composer/ca-bundle",
