@@ -30,10 +30,6 @@
 !/web/wp-content/plugins/gravityformssurvey
 !/web/wp-content/plugins/colbyTicket.php
 
-# Jet Elements
-!/web/wp-content/plugins/jet-style-manager
-!/web/wp-content/plugins/jet-theme-core
-
 
 #Ignore mac stuff
 *.DS_Store
