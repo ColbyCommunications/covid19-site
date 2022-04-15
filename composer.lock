@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "556ad2e34ef7e2c5bf0ab5853d4f1724",
+    "content-hash": "3f7712d8808855912175915f21e7b728",
     "packages": [
         {
             "name": "appsero/client",
@@ -205,7 +205,7 @@
                 "type": "zip",
                 "url": "https://satis.colby.edu/dist/colbycommunications/wp-plugin-acf-pro/colbycommunications-wp-plugin-acf-pro-1aa2469b5b62e92327507deb7bda2daea8028795-zip-bd085c.zip",
                 "reference": "1aa2469b5b62e92327507deb7bda2daea8028795",
-                "shasum": "af9451485cb97deba9d0689be8a55eb596696973"
+                "shasum": "22575477b1be24ba61cbddce156d621681a7f9d1"
             },
             "type": "wordpress-plugin",
             "authors": [
@@ -233,7 +233,7 @@
                 "type": "zip",
                 "url": "https://satis.colby.edu/dist/colbycommunications/wp-plugin-elementor-pro/colbycommunications-wp-plugin-elementor-pro-d3b2bdf271e3cc168ccc41c1e86bf5b16b5c7497-zip-e78eb5.zip",
                 "reference": "d3b2bdf271e3cc168ccc41c1e86bf5b16b5c7497",
-                "shasum": "43d5989f3c463dc27610ad635bf4c63458f0fcc3"
+                "shasum": "726b60c04a40bcc64d5a4d3d5f66b8c1426b4ca6"
             },
             "type": "wordpress-plugin",
             "authors": [
@@ -261,7 +261,7 @@
                 "type": "zip",
                 "url": "https://satis.colby.edu/dist/colbycommunications/wp-plugin-jet-blocks-pro/colbycommunications-wp-plugin-jet-blocks-pro-12ca9069572973fc2e3b8ed864c120c418399874-zip-fcce18.zip",
                 "reference": "12ca9069572973fc2e3b8ed864c120c418399874",
-                "shasum": "a7fc1d383a2ac073a65298afc80e28fb1941a034"
+                "shasum": "0dee634966c06b712359e7302d9476b1e43f64ff"
             },
             "type": "wordpress-plugin",
             "authors": [
@@ -289,7 +289,7 @@
                 "type": "zip",
                 "url": "https://satis.colby.edu/dist/colbycommunications/wp-plugin-jet-blog-pro/colbycommunications-wp-plugin-jet-blog-pro-6d90e86f6c0f338a74b942a9d35aa6f6fa863360-zip-6dcb42.zip",
                 "reference": "6d90e86f6c0f338a74b942a9d35aa6f6fa863360",
-                "shasum": "78bc7b021ba7091e7f1a2800de88731f04310d80"
+                "shasum": "c6c76949958a53b0bdbedcf4ddf96372170f9350"
             },
             "type": "wordpress-plugin",
             "authors": [
@@ -317,7 +317,7 @@
                 "type": "zip",
                 "url": "https://satis.colby.edu/dist/colbycommunications/wp-plugin-jet-elements-pro/colbycommunications-wp-plugin-jet-elements-pro-548878b4ddd95390f989d8557bea82fc289a097c-zip-3b0318.zip",
                 "reference": "548878b4ddd95390f989d8557bea82fc289a097c",
-                "shasum": "3c6fba4c366502cd5afdefdbbd680024fa1e80f8"
+                "shasum": "1f1fe216aa83bf01a1d6f20a48f3b89a48fee831"
             },
             "type": "wordpress-plugin",
             "authors": [
@@ -345,7 +345,7 @@
                 "type": "zip",
                 "url": "https://satis.colby.edu/dist/colbycommunications/wp-plugin-jet-menu-pro/colbycommunications-wp-plugin-jet-menu-pro-8a0cf6c3423f4b9ed2b749a25678b18108d27682-zip-f897db.zip",
                 "reference": "8a0cf6c3423f4b9ed2b749a25678b18108d27682",
-                "shasum": "b1a56c0988391072e9e22e764f49c2d3407f04c1"
+                "shasum": "4813e598f2e74573191806790334035a1afdd97a"
             },
             "type": "wordpress-plugin",
             "authors": [
@@ -373,7 +373,7 @@
                 "type": "zip",
                 "url": "https://satis.colby.edu/dist/colbycommunications/wp-plugin-jet-popup-pro/colbycommunications-wp-plugin-jet-popup-pro-6d5f4045504beae215a92e0d4c775f465cebccdf-zip-306a5c.zip",
                 "reference": "6d5f4045504beae215a92e0d4c775f465cebccdf",
-                "shasum": "0a894a6f0114611c1b59ee1fb47b9233104eb8f3"
+                "shasum": "854d5c4c02510512ae15fa498dba77b8e34012b2"
             },
             "type": "wordpress-plugin",
             "authors": [
@@ -401,7 +401,7 @@
                 "type": "zip",
                 "url": "https://satis.colby.edu/dist/colbycommunications/wp-plugin-jet-search-pro/colbycommunications-wp-plugin-jet-search-pro-0ab70d2b101876ea8cd6a941aa0ed7d0ba2ffbaf-zip-50ea5c.zip",
                 "reference": "0ab70d2b101876ea8cd6a941aa0ed7d0ba2ffbaf",
-                "shasum": "ce41c6b12ae83eab546b986fa9fe0cdf4a0dd033"
+                "shasum": "168338fcfbff4662b391e1d4b5e8c6f240f48a6c"
             },
             "type": "wordpress-plugin",
             "authors": [
@@ -418,6 +418,34 @@
             "time": "2022-04-15T19:30:33+00:00"
         },
         {
+            "name": "colbycommunications/wp-plugin-jet-style-manager-pro",
+            "version": "1.3.2",
+            "source": {
+                "type": "git",
+                "url": "git@github.com:ColbyCommunications/wp-plugin-jet-style-manager-pro.git",
+                "reference": "d74bf73f987e44537058222578acca57b8dae121"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://satis.colby.edu/dist/colbycommunications/wp-plugin-jet-style-manager-pro/colbycommunications-wp-plugin-jet-style-manager-pro-d74bf73f987e44537058222578acca57b8dae121-zip-ffa88e.zip",
+                "reference": "d74bf73f987e44537058222578acca57b8dae121",
+                "shasum": "7afde22bb51f0b282c1e50e06717c4d3d744f951"
+            },
+            "type": "wordpress-plugin",
+            "authors": [
+                {
+                    "name": "Brandon Waltz",
+                    "email": "brandon.waltz@colby.edu"
+                }
+            ],
+            "description": "Premium Crocoblock Jet Style Manager Pro plugin",
+            "homepage": "https://github.com/colbycommunications/wp-plugin-jet-style-manager-pro",
+            "keywords": [
+                "wordpress"
+            ],
+            "time": "2022-04-15T20:20:57+00:00"
+        },
+        {
             "name": "colbycommunications/wp-plugin-jet-tabs-pro",
             "version": "2.1.15",
             "source": {
@@ -429,7 +457,7 @@
                 "type": "zip",
                 "url": "https://satis.colby.edu/dist/colbycommunications/wp-plugin-jet-tabs-pro/colbycommunications-wp-plugin-jet-tabs-pro-42bff161a24c4e89c5154ad149a152424b1242ca-zip-c4686d.zip",
                 "reference": "42bff161a24c4e89c5154ad149a152424b1242ca",
-                "shasum": "2cb22c21007ab53b68908b4ae7371a07b65cce04"
+                "shasum": "dde3177cd74abb96240c9fd1f869c8026050eb79"
             },
             "type": "wordpress-plugin",
             "authors": [
@@ -457,7 +485,7 @@
                 "type": "zip",
                 "url": "https://satis.colby.edu/dist/colbycommunications/wp-plugin-jet-tricks-pro/colbycommunications-wp-plugin-jet-tricks-pro-550e252214c7244db875631e8bdb8ba01672bcce-zip-35d3ee.zip",
                 "reference": "550e252214c7244db875631e8bdb8ba01672bcce",
-                "shasum": "fce5cad05507a9ec1b9ad86a6775734051ef28f8"
+                "shasum": "a4cbb7925072354dd6607e0d4aacc7cd3a099db0"
             },
             "type": "wordpress-plugin",
             "authors": [
