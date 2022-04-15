@@ -35,6 +35,7 @@
         "colbycommunications/wp-plugin-jet-popup-pro": "^1.5.6",
         "colbycommunications/wp-plugin-jet-search-pro": "^2.1.17",
         "colbycommunications/wp-plugin-jet-tabs-pro": "^2.1.15",
+        "colbycommunications/wp-plugin-jet-tricks-pro": "^1.4.1",
         "wpackagist-plugin/wp-search-with-algolia": "^2.1.0"
     },
     "authors": [
