@@ -47,7 +47,7 @@ jobs:
       - name: Check Environment Exists
         run: |
           ~/.platformsh/bin/platform project:set-remote ${{ secrets.PLATFORM_PROJECT_ID }}
-          echo "PLATFORM_BRANCH_EXISTS=$(node ./scripts/check_platform_feature_branch.js --branch=${GITHUB_REF#refs/heads/} --branchFrom=dev --id=${{ secrets.PLATFORM_PROJECT_ID }})" >> $GITHUB_ENV
+          node ./scripts/check_platform_feature_branch.js --branch=${GITHUB_REF#refs/heads/} --branchFrom=dev --id=${{ secrets.PLATFORM_PROJECT_ID }}
       
       - name: Spin up environment
         run: |
