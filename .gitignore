@@ -23,7 +23,6 @@
 
 # gravity forms
 !/web/wp-content/plugins/gravity-forms-add-menu-link
-!/web/wp-content/plugins/advanced-custom-fields-pro
 !/web/wp-content/plugins/gravityformsauthorizenet
 !/web/wp-content/plugins/gravityformssurvey
 
