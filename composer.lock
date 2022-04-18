@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "e7cb1f423cc0c1ce7ebff4d731537d25",
+    "content-hash": "43e9d29eed630eb211309508564ed0f3",
     "packages": [
         {
             "name": "appsero/client",
@@ -194,6 +194,118 @@
             "time": "2020-02-12T18:47:50+00:00"
         },
         {
+            "name": "colbycommunications/colby-ticket",
+            "version": "1.0.0",
+            "source": {
+                "type": "git",
+                "url": "git@github.com:ColbyCommunications/colby-ticket.git",
+                "reference": "4de4cbfcfa62f4ffc64273910244b4f53b04bc48"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://satis.colby.edu/dist/colbycommunications/colby-ticket/colbycommunications-colby-ticket-4de4cbfcfa62f4ffc64273910244b4f53b04bc48-zip-e1cd7a.zip",
+                "reference": "4de4cbfcfa62f4ffc64273910244b4f53b04bc48",
+                "shasum": "74a16dbe900b77e8acc35e1144b4609ba98b5376"
+            },
+            "type": "wordpress-plugin",
+            "authors": [
+                {
+                    "name": "Brandon Waltz",
+                    "email": "brandon.waltz@colby.edu"
+                }
+            ],
+            "description": "The ColbyTicket plugin for cloud sites",
+            "homepage": "https://github.com/colbycommunications/colby-ticket",
+            "keywords": [
+                "wordpress"
+            ],
+            "time": "2022-04-18T15:47:45+00:00"
+        },
+        {
+            "name": "colbycommunications/elementor-pro",
+            "version": "3.5.2",
+            "source": {
+                "type": "git",
+                "url": "git@github.com:ColbyCommunications/elementor-pro.git",
+                "reference": "5d5ef9f064cc28c33af58cf9862d7b184a5b0e65"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://satis.colby.edu/dist/colbycommunications/elementor-pro/colbycommunications-elementor-pro-5d5ef9f064cc28c33af58cf9862d7b184a5b0e65-zip-66455b.zip",
+                "reference": "5d5ef9f064cc28c33af58cf9862d7b184a5b0e65",
+                "shasum": "533cb519d786c88ec5cdf20fb6574df906065860"
+            },
+            "type": "wordpress-plugin",
+            "authors": [
+                {
+                    "name": "Brandon Waltz",
+                    "email": "brandon.waltz@colby.edu"
+                }
+            ],
+            "description": "Premium Elementor Pro plugin",
+            "homepage": "https://github.com/colbycommunications/elementor-pro",
+            "keywords": [
+                "wordpress"
+            ],
+            "time": "2022-04-18T14:24:32+00:00"
+        },
+        {
+            "name": "colbycommunications/gravityforms",
+            "version": "2.5.15.13",
+            "source": {
+                "type": "git",
+                "url": "git@github.com:ColbyCommunications/gravityforms.git",
+                "reference": "5ddb13278d981cafcfc887b0e122c52307dd6d15"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://satis.colby.edu/dist/colbycommunications/gravityforms/colbycommunications-gravityforms-5ddb13278d981cafcfc887b0e122c52307dd6d15-zip-34a4a8.zip",
+                "reference": "5ddb13278d981cafcfc887b0e122c52307dd6d15",
+                "shasum": "0760f639c0721c73163ff389e2842a6fa57bef77"
+            },
+            "type": "wordpress-plugin",
+            "authors": [
+                {
+                    "name": "Brandon Waltz",
+                    "email": "brandon.waltz@colby.edu"
+                }
+            ],
+            "description": "Premium Gravity Forms plugin",
+            "homepage": "https://github.com/colbycommunications/gravityforms",
+            "keywords": [
+                "wordpress"
+            ],
+            "time": "2022-04-18T15:02:37+00:00"
+        },
+        {
+            "name": "colbycommunications/jet-menu",
+            "version": "2.1.6",
+            "source": {
+                "type": "git",
+                "url": "git@github.com:ColbyCommunications/jet-menu.git",
+                "reference": "1e794181466e1b421e9183402e978ca942cedc64"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://satis.colby.edu/dist/colbycommunications/jet-menu/colbycommunications-jet-menu-1e794181466e1b421e9183402e978ca942cedc64-zip-646337.zip",
+                "reference": "1e794181466e1b421e9183402e978ca942cedc64",
+                "shasum": "f10ede35907c1bbfbc42fa52db263aa2da1671d1"
+            },
+            "type": "wordpress-plugin",
+            "authors": [
+                {
+                    "name": "Brandon Waltz",
+                    "email": "brandon.waltz@colby.edu"
+                }
+            ],
+            "description": "Premium Crocoblock Jet Menu Pro plugin",
+            "homepage": "https://github.com/colbycommunications/jet-menu",
+            "keywords": [
+                "wordpress"
+            ],
+            "time": "2022-04-18T14:19:22+00:00"
+        },
+        {
             "name": "colbycommunications/wp-plugin-acf-pro",
             "version": "5.11.4",
             "source": {
@@ -205,7 +317,7 @@
                 "type": "zip",
                 "url": "https://satis.colby.edu/dist/colbycommunications/wp-plugin-acf-pro/colbycommunications-wp-plugin-acf-pro-1aa2469b5b62e92327507deb7bda2daea8028795-zip-bd085c.zip",
                 "reference": "1aa2469b5b62e92327507deb7bda2daea8028795",
-                "shasum": "fd83b52cfa5db80a4ee1545c28a47bd2715bdbf5"
+                "shasum": "7622d688a7d6dfb62f4d72c0be75a7860a4ca761"
             },
             "type": "wordpress-plugin",
             "authors": [
@@ -222,34 +334,6 @@
             "time": "2022-02-14T19:57:46+00:00"
         },
         {
-            "name": "colbycommunications/wp-plugin-elementor-pro",
-            "version": "3.5.2",
-            "source": {
-                "type": "git",
-                "url": "git@github.com:ColbyCommunications/wp-plugin-elementor-pro.git",
-                "reference": "d3b2bdf271e3cc168ccc41c1e86bf5b16b5c7497"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://satis.colby.edu/dist/colbycommunications/wp-plugin-elementor-pro/colbycommunications-wp-plugin-elementor-pro-d3b2bdf271e3cc168ccc41c1e86bf5b16b5c7497-zip-e78eb5.zip",
-                "reference": "d3b2bdf271e3cc168ccc41c1e86bf5b16b5c7497",
-                "shasum": "6f88c121b793f15787af96ed323c072d201442dd"
-            },
-            "type": "wordpress-plugin",
-            "authors": [
-                {
-                    "name": "Brandon Waltz",
-                    "email": "brandon.waltz@colby.edu"
-                }
-            ],
-            "description": "Premium Elementor Pro plugin",
-            "homepage": "https://github.com/colbycommunications/wp-plugin-elementor-pro",
-            "keywords": [
-                "wordpress"
-            ],
-            "time": "2022-02-15T15:10:07+00:00"
-        },
-        {
             "name": "colbycommunications/wp-plugin-jet-blocks-pro",
             "version": "1.3.0",
             "source": {
@@ -261,7 +345,7 @@
                 "type": "zip",
                 "url": "https://satis.colby.edu/dist/colbycommunications/wp-plugin-jet-blocks-pro/colbycommunications-wp-plugin-jet-blocks-pro-12ca9069572973fc2e3b8ed864c120c418399874-zip-fcce18.zip",
                 "reference": "12ca9069572973fc2e3b8ed864c120c418399874",
-                "shasum": "0fdf2cabfd068b6a20418a0fbf2afdf76cc84488"
+                "shasum": "06cd67c61a6a311b04d99d2b22e7089aaf3c6090"
             },
             "type": "wordpress-plugin",
             "authors": [
@@ -289,7 +373,7 @@
                 "type": "zip",
                 "url": "https://satis.colby.edu/dist/colbycommunications/wp-plugin-jet-blog-pro/colbycommunications-wp-plugin-jet-blog-pro-6d90e86f6c0f338a74b942a9d35aa6f6fa863360-zip-6dcb42.zip",
                 "reference": "6d90e86f6c0f338a74b942a9d35aa6f6fa863360",
-                "shasum": "15f7ff305d55f6c0b88d133df11c67327811fdc0"
+                "shasum": "0ba145b0d9d55226c7f82532993353197f392c79"
             },
             "type": "wordpress-plugin",
             "authors": [
@@ -317,7 +401,7 @@
                 "type": "zip",
                 "url": "https://satis.colby.edu/dist/colbycommunications/wp-plugin-jet-dynamic-data-pro/colbycommunications-wp-plugin-jet-dynamic-data-pro-e36b43ef40222374c580965b0d70eb069ce5eb78-zip-3d48cc.zip",
                 "reference": "e36b43ef40222374c580965b0d70eb069ce5eb78",
-                "shasum": "71a6cd93c5fa7a62fe4e53fdacac8e12f9c8f771"
+                "shasum": "939f8f83af4c039476464b7fbf63d4df493ecdc6"
             },
             "type": "wordpress-plugin",
             "authors": [
@@ -345,7 +429,7 @@
                 "type": "zip",
                 "url": "https://satis.colby.edu/dist/colbycommunications/wp-plugin-jet-elements-pro/colbycommunications-wp-plugin-jet-elements-pro-548878b4ddd95390f989d8557bea82fc289a097c-zip-3b0318.zip",
                 "reference": "548878b4ddd95390f989d8557bea82fc289a097c",
-                "shasum": "d76d3583dd5d2559a95fc47ae5e7de0c9c422432"
+                "shasum": "44bed052a6992ed93d7616d1c75b8b4331274eba"
             },
             "type": "wordpress-plugin",
             "authors": [
@@ -362,34 +446,6 @@
             "time": "2022-02-15T16:02:38+00:00"
         },
         {
-            "name": "colbycommunications/wp-plugin-jet-menu-pro",
-            "version": "2.1.6",
-            "source": {
-                "type": "git",
-                "url": "git@github.com:ColbyCommunications/wp-plugin-jet-menu-pro.git",
-                "reference": "8a0cf6c3423f4b9ed2b749a25678b18108d27682"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://satis.colby.edu/dist/colbycommunications/wp-plugin-jet-menu-pro/colbycommunications-wp-plugin-jet-menu-pro-8a0cf6c3423f4b9ed2b749a25678b18108d27682-zip-f897db.zip",
-                "reference": "8a0cf6c3423f4b9ed2b749a25678b18108d27682",
-                "shasum": "3d8fada25324985eda2a86d351d25f540f59def3"
-            },
-            "type": "wordpress-plugin",
-            "authors": [
-                {
-                    "name": "Brandon Waltz",
-                    "email": "brandon.waltz@colby.edu"
-                }
-            ],
-            "description": "Premium Crocoblock Jet Menu Pro plugin",
-            "homepage": "https://github.com/colbycommunications/wp-plugin-jet-menu-pro",
-            "keywords": [
-                "wordpress"
-            ],
-            "time": "2022-02-17T14:51:45+00:00"
-        },
-        {
             "name": "colbycommunications/wp-plugin-jet-popup-pro",
             "version": "1.5.6",
             "source": {
@@ -401,7 +457,7 @@
                 "type": "zip",
                 "url": "https://satis.colby.edu/dist/colbycommunications/wp-plugin-jet-popup-pro/colbycommunications-wp-plugin-jet-popup-pro-6d5f4045504beae215a92e0d4c775f465cebccdf-zip-306a5c.zip",
                 "reference": "6d5f4045504beae215a92e0d4c775f465cebccdf",
-                "shasum": "767fa6f60a57e77645a706c408d454ee172165cf"
+                "shasum": "98e28eced412808b31097366b8ee27fee14b0d97"
             },
             "type": "wordpress-plugin",
             "authors": [
@@ -429,7 +485,7 @@
                 "type": "zip",
                 "url": "https://satis.colby.edu/dist/colbycommunications/wp-plugin-jet-reviews-pro/colbycommunications-wp-plugin-jet-reviews-pro-11abb54a91eb8af8d3b8593f251ad927f87b1450-zip-460c15.zip",
                 "reference": "11abb54a91eb8af8d3b8593f251ad927f87b1450",
-                "shasum": "29f76e97bc02d2c40bcc46c7e4bd4e3facff9773"
+                "shasum": "32886ddc136c58779d27bd90d33f696771909951"
             },
             "type": "wordpress-plugin",
             "authors": [
@@ -457,7 +513,7 @@
                 "type": "zip",
                 "url": "https://satis.colby.edu/dist/colbycommunications/wp-plugin-jet-search-pro/colbycommunications-wp-plugin-jet-search-pro-0ab70d2b101876ea8cd6a941aa0ed7d0ba2ffbaf-zip-50ea5c.zip",
                 "reference": "0ab70d2b101876ea8cd6a941aa0ed7d0ba2ffbaf",
-                "shasum": "aa463cb6b756b1a50e3be836a24a2f22632409e6"
+                "shasum": "eac386c442a3fb1ac03989d219da1c7a01df4c98"
             },
             "type": "wordpress-plugin",
             "authors": [
@@ -485,7 +541,7 @@
                 "type": "zip",
                 "url": "https://satis.colby.edu/dist/colbycommunications/wp-plugin-jet-style-manager-pro/colbycommunications-wp-plugin-jet-style-manager-pro-d74bf73f987e44537058222578acca57b8dae121-zip-ffa88e.zip",
                 "reference": "d74bf73f987e44537058222578acca57b8dae121",
-                "shasum": "8848d4cf58cba443833ea4e98c30db6ba7f6279f"
+                "shasum": "95660b3aef788bb8dd9d61c05994ec69cf7afb8d"
             },
             "type": "wordpress-plugin",
             "authors": [
@@ -513,7 +569,7 @@
                 "type": "zip",
                 "url": "https://satis.colby.edu/dist/colbycommunications/wp-plugin-jet-tabs-pro/colbycommunications-wp-plugin-jet-tabs-pro-42bff161a24c4e89c5154ad149a152424b1242ca-zip-c4686d.zip",
                 "reference": "42bff161a24c4e89c5154ad149a152424b1242ca",
-                "shasum": "abb237b035fb9e745620a50619877dea06958f59"
+                "shasum": "8b89c39125420e74964c5c6df9f928bc4c24771a"
             },
             "type": "wordpress-plugin",
             "authors": [
@@ -541,7 +597,7 @@
                 "type": "zip",
                 "url": "https://satis.colby.edu/dist/colbycommunications/wp-plugin-jet-theme-core-pro/colbycommunications-wp-plugin-jet-theme-core-pro-04c13c22d77430db0c40d7368834e178dfb9fef3-zip-248736.zip",
                 "reference": "04c13c22d77430db0c40d7368834e178dfb9fef3",
-                "shasum": "c533a3f3a1f494869aabec9169745598fb9e02cb"
+                "shasum": "0fcd86f34ad549ce789b5537a615f958320e8270"
             },
             "type": "wordpress-plugin",
             "authors": [
@@ -569,7 +625,7 @@
                 "type": "zip",
                 "url": "https://satis.colby.edu/dist/colbycommunications/wp-plugin-jet-tricks-pro/colbycommunications-wp-plugin-jet-tricks-pro-550e252214c7244db875631e8bdb8ba01672bcce-zip-35d3ee.zip",
                 "reference": "550e252214c7244db875631e8bdb8ba01672bcce",
-                "shasum": "768539767a9e9fdfe88d9ec6174bb313db7e2643"
+                "shasum": "49a7a45c06e3076ba37f88e029ab9d92c74c1527"
             },
             "type": "wordpress-plugin",
             "authors": [

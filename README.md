@@ -50,3 +50,26 @@ When setting up the site for the first time inside platform, the root user shoul
 `platform environment:activate` - activates the current environment (mostly used for dev branches)  
 `platform ssh` - ssh tunnels into current Platform.sh cloud container  
 `platform sql < [dump].sql` - replaces current Platform.sh database data with a local dump file
+
+## Change Log
+
+### 2.1.0
+
+-   adds github actions for interacting with Platform repos
+-   adds support for satis.colby.edu
+-   remove redis
+-   upgrade node in Platform.sh CI to v14
+-   move Platform.sh deps, WP CLI mostly, to composer
+-   removes unneccesary .platform.template.yaml file
+-   removes baseinstall
+-   updates lando to PHP 7.4
+-   removes disk.yaml and runtime.extensions.yaml in favor of putting those right in .platform.app.yaml
+-   new format for .npmrc
+
+### 2.0.1
+
+-   patch for wrong wpgraphql version
+
+### 2.0.0
+
+-   update plugins: elementor-pro, jet plugins, ACF, gravityforms, yoast
