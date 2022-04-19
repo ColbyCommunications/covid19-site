@@ -1,5 +1,10 @@
 <?php
 
+$dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
+$dotenv->load();
+
+define('PLATFORM_VARIABLES', json_decode($_ENV['PLATFORM_VARS'], true));
+
 // Set host values
 $site_scheme = 'http';
 $site_host = 'localhost';

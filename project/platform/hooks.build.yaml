@@ -35,6 +35,9 @@ nvm use 14.16.1
 # run npm install in all colby dependencies
 ./scripts/dependencies-run-install-build.sh
 
+# generate .env
+node ./scripts/platform_generate-env.js
+
 ################################
 ###     Project Specific    ###
 ###############################

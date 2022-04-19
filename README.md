@@ -67,6 +67,7 @@ When setting up the site for the first time inside platform, the root user shoul
 -   new format for .npmrc
 -   simplify lando build - get rid of platform sync prompt
 -   adds support for composer allowedPlugins
+-   adds support for .env files + generation scripts
 
 ### 2.0.1
 
