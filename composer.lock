@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "85744c83053b3f708955aa960e5a2400",
+    "content-hash": "b435a4c258ad2201d73bf17d4ea2becc",
     "packages": [
         {
             "name": "appsero/client",
@@ -122,7 +122,7 @@
                 "type": "zip",
                 "url": "https://satis.colby.edu/dist/colbycommunications/advanced-custom-fields-pro/colbycommunications-advanced-custom-fields-pro-48af38e1aae394e6f259c5a163723abf9f3afe5c-zip-156b29.zip",
                 "reference": "48af38e1aae394e6f259c5a163723abf9f3afe5c",
-                "shasum": "75cd2548eb5b9998471255654f36377b5b630e83"
+                "shasum": "dc02623ec412e9a6fc6c95fad794530722951ee8"
             },
             "type": "wordpress-plugin",
             "authors": [
@@ -233,7 +233,7 @@
                 "type": "zip",
                 "url": "https://satis.colby.edu/dist/colbycommunications/colby-ticket/colbycommunications-colby-ticket-4de4cbfcfa62f4ffc64273910244b4f53b04bc48-zip-e1cd7a.zip",
                 "reference": "4de4cbfcfa62f4ffc64273910244b4f53b04bc48",
-                "shasum": "09eb7b7e248efc1b37bfb2d37653d6231d49fe1f"
+                "shasum": "4ba5d8f8fafc64fbad217c3867026f6684a22458"
             },
             "type": "wordpress-plugin",
             "authors": [
@@ -261,7 +261,7 @@
                 "type": "zip",
                 "url": "https://satis.colby.edu/dist/colbycommunications/elementor-pro/colbycommunications-elementor-pro-5d5ef9f064cc28c33af58cf9862d7b184a5b0e65-zip-66455b.zip",
                 "reference": "5d5ef9f064cc28c33af58cf9862d7b184a5b0e65",
-                "shasum": "1c8a728d0e9a1ad9b51d14ff3661cca4fe076eb3"
+                "shasum": "9eea192526a75d603ebcce4f1f0899e3144bb4ff"
             },
             "type": "wordpress-plugin",
             "authors": [
@@ -289,7 +289,7 @@
                 "type": "zip",
                 "url": "https://satis.colby.edu/dist/colbycommunications/gravityforms/colbycommunications-gravityforms-5ddb13278d981cafcfc887b0e122c52307dd6d15-zip-34a4a8.zip",
                 "reference": "5ddb13278d981cafcfc887b0e122c52307dd6d15",
-                "shasum": "5f5cc4c5e9af5eddc43d155127aa14eed3e74773"
+                "shasum": "40a31f42f85b7378f34ff272d013edc1af541e87"
             },
             "type": "wordpress-plugin",
             "authors": [
@@ -317,7 +317,7 @@
                 "type": "zip",
                 "url": "https://satis.colby.edu/dist/colbycommunications/jet-blocks/colbycommunications-jet-blocks-ab4449ac82ef713d18930be25abc012bde9f1a9a-zip-c97ae1.zip",
                 "reference": "ab4449ac82ef713d18930be25abc012bde9f1a9a",
-                "shasum": "1e54b8ea71c75b789d233c7d4174199727be6dc9"
+                "shasum": "90cf24c190684e0c9268c07e9c263e64ef5ec6ba"
             },
             "type": "wordpress-plugin",
             "authors": [
@@ -334,6 +334,34 @@
             "time": "2022-04-18T20:44:13+00:00"
         },
         {
+            "name": "colbycommunications/jet-blog",
+            "version": "2.2.15",
+            "source": {
+                "type": "git",
+                "url": "git@github.com:ColbyCommunications/jet-blog.git",
+                "reference": "b490b6f26e9a9cb999cce1017e47aa5d5562b40c"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://satis.colby.edu/dist/colbycommunications/jet-blog/colbycommunications-jet-blog-b490b6f26e9a9cb999cce1017e47aa5d5562b40c-zip-276579.zip",
+                "reference": "b490b6f26e9a9cb999cce1017e47aa5d5562b40c",
+                "shasum": "23a835b823dcf0fa4ecccf377f011543de226406"
+            },
+            "type": "wordpress-plugin",
+            "authors": [
+                {
+                    "name": "Brandon Waltz",
+                    "email": "brandon.waltz@colby.edu"
+                }
+            ],
+            "description": "Premium Crocoblock Jet Blog Pro plugin",
+            "homepage": "https://github.com/colbycommunications/jet-blog",
+            "keywords": [
+                "wordpress"
+            ],
+            "time": "2022-04-19T13:59:35+00:00"
+        },
+        {
             "name": "colbycommunications/jet-elements",
             "version": "2.6.2",
             "source": {
@@ -345,7 +373,7 @@
                 "type": "zip",
                 "url": "https://satis.colby.edu/dist/colbycommunications/jet-elements/colbycommunications-jet-elements-aa2425d9eeda1b47acb6cf626358da2666adb18a-zip-8c06be.zip",
                 "reference": "aa2425d9eeda1b47acb6cf626358da2666adb18a",
-                "shasum": "efa35be2546544fb6ccb8d44006388b8e02e7e9f"
+                "shasum": "db49353ff2ee6b0dd0f7f88522e644856bcb5b37"
             },
             "type": "wordpress-plugin",
             "authors": [
@@ -373,7 +401,7 @@
                 "type": "zip",
                 "url": "https://satis.colby.edu/dist/colbycommunications/jet-elements-dynamic-data/colbycommunications-jet-elements-dynamic-data-7f4ff5287b73e8373eebfc7a394fb319926d86ed-zip-cb557b.zip",
                 "reference": "7f4ff5287b73e8373eebfc7a394fb319926d86ed",
-                "shasum": "73a3a5f308bb8956f0f60cb5bf895552a53159f9"
+                "shasum": "914b640f4e94c9d4eab4928305a8914d5d4e476a"
             },
             "type": "wordpress-plugin",
             "authors": [
@@ -401,7 +429,7 @@
                 "type": "zip",
                 "url": "https://satis.colby.edu/dist/colbycommunications/jet-menu/colbycommunications-jet-menu-1e794181466e1b421e9183402e978ca942cedc64-zip-646337.zip",
                 "reference": "1e794181466e1b421e9183402e978ca942cedc64",
-                "shasum": "0c09bef8c051308d818f54beade2676506ce63c6"
+                "shasum": "95bfbeb6f0827e2379e8c020c2b873cb6c45c2a4"
             },
             "type": "wordpress-plugin",
             "authors": [
@@ -418,6 +446,34 @@
             "time": "2022-04-18T14:19:22+00:00"
         },
         {
+            "name": "colbycommunications/jet-popup",
+            "version": "1.5.6",
+            "source": {
+                "type": "git",
+                "url": "git@github.com:ColbyCommunications/jet-popup.git",
+                "reference": "c0b82037f6bf17926461ee5d1735f6654c2552b0"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://satis.colby.edu/dist/colbycommunications/jet-popup/colbycommunications-jet-popup-c0b82037f6bf17926461ee5d1735f6654c2552b0-zip-914dcb.zip",
+                "reference": "c0b82037f6bf17926461ee5d1735f6654c2552b0",
+                "shasum": "5f10e6b3c92ee09c7cd76ae51b416c8b6393c6b9"
+            },
+            "type": "wordpress-plugin",
+            "authors": [
+                {
+                    "name": "Brandon Waltz",
+                    "email": "brandon.waltz@colby.edu"
+                }
+            ],
+            "description": "Premium Crocoblock Jet Popup Pro plugin",
+            "homepage": "https://github.com/colbycommunications/jet-popup",
+            "keywords": [
+                "wordpress"
+            ],
+            "time": "2022-04-19T17:46:59+00:00"
+        },
+        {
             "name": "colbycommunications/jet-reviews",
             "version": "2.2.6",
             "source": {
@@ -429,7 +485,7 @@
                 "type": "zip",
                 "url": "https://satis.colby.edu/dist/colbycommunications/jet-reviews/colbycommunications-jet-reviews-71745284f46fae9ef24ef14a97a8aa5f14a72036-zip-f2d15c.zip",
                 "reference": "71745284f46fae9ef24ef14a97a8aa5f14a72036",
-                "shasum": "bb57baace049d60e08eb07fbbe5971f511cac08e"
+                "shasum": "27098d61c2c3897eeec806f3c1f5c5d6cae526b5"
             },
             "type": "wordpress-plugin",
             "authors": [
@@ -446,6 +502,34 @@
             "time": "2022-04-18T18:59:29+00:00"
         },
         {
+            "name": "colbycommunications/jet-search",
+            "version": "2.1.17",
+            "source": {
+                "type": "git",
+                "url": "git@github.com:ColbyCommunications/jet-search.git",
+                "reference": "ca0178039b1a81a21e90ddd6d7c1464be41e04bc"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://satis.colby.edu/dist/colbycommunications/jet-search/colbycommunications-jet-search-ca0178039b1a81a21e90ddd6d7c1464be41e04bc-zip-73d3cf.zip",
+                "reference": "ca0178039b1a81a21e90ddd6d7c1464be41e04bc",
+                "shasum": "180d2e3b3afacf170c3cf13cb91fbf145713ec86"
+            },
+            "type": "wordpress-plugin",
+            "authors": [
+                {
+                    "name": "Brandon Waltz",
+                    "email": "brandon.waltz@colby.edu"
+                }
+            ],
+            "description": "Premium Crocoblock Jet Search Pro plugin",
+            "homepage": "https://github.com/colbycommunications/jet-search",
+            "keywords": [
+                "wordpress"
+            ],
+            "time": "2022-04-19T18:02:00+00:00"
+        },
+        {
             "name": "colbycommunications/jet-style-manager",
             "version": "1.3.2",
             "source": {
@@ -457,7 +541,7 @@
                 "type": "zip",
                 "url": "https://satis.colby.edu/dist/colbycommunications/jet-style-manager/colbycommunications-jet-style-manager-5e583a191d4d992413367bfe01457ffa6c15802d-zip-c194ce.zip",
                 "reference": "5e583a191d4d992413367bfe01457ffa6c15802d",
-                "shasum": "caa4ce31100da80326c68687c05989a586cd97fe"
+                "shasum": "8967ba58906c0ed5bf43e81dcee2bb68ccdf887a"
             },
             "type": "wordpress-plugin",
             "authors": [
@@ -485,7 +569,7 @@
                 "type": "zip",
                 "url": "https://satis.colby.edu/dist/colbycommunications/jet-tabs/colbycommunications-jet-tabs-83326fc7d8b4fb53b735c57635e8b045f8a661f9-zip-dd3308.zip",
                 "reference": "83326fc7d8b4fb53b735c57635e8b045f8a661f9",
-                "shasum": "bfa77030ae498caa52e9867497d3e6c03b7a304e"
+                "shasum": "af08f72bab6149521f0ffa963e9582fc26c1fb56"
             },
             "type": "wordpress-plugin",
             "authors": [
@@ -513,7 +597,7 @@
                 "type": "zip",
                 "url": "https://satis.colby.edu/dist/colbycommunications/jet-theme-core/colbycommunications-jet-theme-core-df1f8533643e1409817bbba3379842bbfded8103-zip-512779.zip",
                 "reference": "df1f8533643e1409817bbba3379842bbfded8103",
-                "shasum": "c2f7e4478dea03dd4cb2bd3449d1bd8790b951ab"
+                "shasum": "3a4d4d4abc555db0ef59fc5adfd9dcb7f0266d7b"
             },
             "type": "wordpress-plugin",
             "authors": [
@@ -530,102 +614,18 @@
             "time": "2022-04-18T19:05:18+00:00"
         },
         {
-            "name": "colbycommunications/wp-plugin-jet-blog-pro",
-            "version": "2.2.15",
-            "source": {
-                "type": "git",
-                "url": "git@github.com:ColbyCommunications/wp-plugin-jet-blog-pro.git",
-                "reference": "6d90e86f6c0f338a74b942a9d35aa6f6fa863360"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://satis.colby.edu/dist/colbycommunications/wp-plugin-jet-blog-pro/colbycommunications-wp-plugin-jet-blog-pro-6d90e86f6c0f338a74b942a9d35aa6f6fa863360-zip-6dcb42.zip",
-                "reference": "6d90e86f6c0f338a74b942a9d35aa6f6fa863360",
-                "shasum": "eb39968561a7d102f90c75d346bef7571d1db805"
-            },
-            "type": "wordpress-plugin",
-            "authors": [
-                {
-                    "name": "Brandon Waltz",
-                    "email": "brandon.waltz@colby.edu"
-                }
-            ],
-            "description": "Premium Crocoblock Jet Blog Pro plugin",
-            "homepage": "https://github.com/colbycommunications/wp-plugin-jet-blog-pro",
-            "keywords": [
-                "wordpress"
-            ],
-            "time": "2022-02-17T14:57:46+00:00"
-        },
-        {
-            "name": "colbycommunications/wp-plugin-jet-popup-pro",
-            "version": "1.5.6",
-            "source": {
-                "type": "git",
-                "url": "git@github.com:ColbyCommunications/wp-plugin-jet-popup-pro.git",
-                "reference": "6d5f4045504beae215a92e0d4c775f465cebccdf"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://satis.colby.edu/dist/colbycommunications/wp-plugin-jet-popup-pro/colbycommunications-wp-plugin-jet-popup-pro-6d5f4045504beae215a92e0d4c775f465cebccdf-zip-306a5c.zip",
-                "reference": "6d5f4045504beae215a92e0d4c775f465cebccdf",
-                "shasum": "3e5868a366275de643ab1fd93c7269e2cf1e17d2"
-            },
-            "type": "wordpress-plugin",
-            "authors": [
-                {
-                    "name": "Brandon Waltz",
-                    "email": "brandon.waltz@colby.edu"
-                }
-            ],
-            "description": "Premium Crocoblock Jet Popup Pro plugin",
-            "homepage": "https://github.com/colbycommunications/wp-plugin-jet-popup-pro",
-            "keywords": [
-                "wordpress"
-            ],
-            "time": "2022-03-31T20:37:33+00:00"
-        },
-        {
-            "name": "colbycommunications/wp-plugin-jet-search-pro",
-            "version": "2.1.17",
-            "source": {
-                "type": "git",
-                "url": "git@github.com:ColbyCommunications/wp-plugin-jet-search-pro.git",
-                "reference": "0ab70d2b101876ea8cd6a941aa0ed7d0ba2ffbaf"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://satis.colby.edu/dist/colbycommunications/wp-plugin-jet-search-pro/colbycommunications-wp-plugin-jet-search-pro-0ab70d2b101876ea8cd6a941aa0ed7d0ba2ffbaf-zip-50ea5c.zip",
-                "reference": "0ab70d2b101876ea8cd6a941aa0ed7d0ba2ffbaf",
-                "shasum": "601c1fa34b823b9ae425ad1a7cc837f82d9b3ccf"
-            },
-            "type": "wordpress-plugin",
-            "authors": [
-                {
-                    "name": "Brandon Waltz",
-                    "email": "brandon.waltz@colby.edu"
-                }
-            ],
-            "description": "Premium Crocoblock Jet Search Pro plugin",
-            "homepage": "https://github.com/colbycommunications/wp-plugin-jet-search-pro",
-            "keywords": [
-                "wordpress"
-            ],
-            "time": "2022-04-15T19:30:33+00:00"
-        },
-        {
-            "name": "colbycommunications/wp-plugin-jet-tricks-pro",
+            "name": "colbycommunications/jet-tricks",
             "version": "1.4.1",
             "source": {
                 "type": "git",
-                "url": "git@github.com:ColbyCommunications/wp-plugin-jet-tricks-pro.git",
-                "reference": "550e252214c7244db875631e8bdb8ba01672bcce"
+                "url": "git@github.com:ColbyCommunications/jet-tricks.git",
+                "reference": "32939742e9978251eee477d03daa506f42424f60"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://satis.colby.edu/dist/colbycommunications/wp-plugin-jet-tricks-pro/colbycommunications-wp-plugin-jet-tricks-pro-550e252214c7244db875631e8bdb8ba01672bcce-zip-35d3ee.zip",
-                "reference": "550e252214c7244db875631e8bdb8ba01672bcce",
-                "shasum": "88f90079e777334297c2239ffdefb565bf95e8d0"
+                "url": "https://satis.colby.edu/dist/colbycommunications/jet-tricks/colbycommunications-jet-tricks-32939742e9978251eee477d03daa506f42424f60-zip-fdff8b.zip",
+                "reference": "32939742e9978251eee477d03daa506f42424f60",
+                "shasum": "9a59a997741fa4963dc7920183a0f54a41d9afa7"
             },
             "type": "wordpress-plugin",
             "authors": [
@@ -635,11 +635,11 @@
                 }
             ],
             "description": "Premium Crocoblock Jet Tricks Pro plugin",
-            "homepage": "https://github.com/colbycommunications/wp-plugin-jet-tricks-pro",
+            "homepage": "https://github.com/colbycommunications/jet-tricks",
             "keywords": [
                 "wordpress"
             ],
-            "time": "2022-04-15T19:53:49+00:00"
+            "time": "2022-04-19T17:57:09+00:00"
         },
         {
             "name": "composer/ca-bundle",
