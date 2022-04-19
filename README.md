@@ -65,6 +65,8 @@ When setting up the site for the first time inside platform, the root user shoul
 -   updates lando to PHP 7.4
 -   removes disk.yaml and runtime.extensions.yaml in favor of putting those right in .platform.app.yaml
 -   new format for .npmrc
+-   simplify lando build - get rid of platform sync prompt
+-   adds support for composer allowedPlugins
 
 ### 2.0.1
 
