@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "e8487dc35267b51e71671ceee7d3ce1e",
+    "content-hash": "16ea3b20e535f61e596b1392dc288d4c",
     "packages": [
         {
             "name": "appsero/client",
@@ -186,6 +186,55 @@
                 "wordpress"
             ],
             "time": "2021-04-15T19:24:09+00:00"
+        },
+        {
+            "name": "colbycommunications/colby-cah-theme",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/ColbyCommunications/colby-cah-theme",
+                "reference": "27d1e526dbd8f25fcdc01057636fbdc7e67a0789"
+            },
+            "require": {
+                "composer/installers": "~1.0",
+                "illuminate/support": "5.6.*",
+                "php": ">=7.1",
+                "roots/sage-lib": "~9.0.9",
+                "soberwp/controller": "~2.1.0"
+            },
+            "require-dev": {
+                "roots/sage-installer": "~1.6",
+                "squizlabs/php_codesniffer": "^2.8.0"
+            },
+            "default-branch": true,
+            "type": "wordpress-theme",
+            "autoload": {
+                "psr-4": {
+                    "App\\": "app/"
+                }
+            },
+            "scripts": {
+                "test": [
+                    "phpcs"
+                ],
+                "post-create-project-cmd": [
+                    "Roots\\Sage\\Installer\\ComposerScript::postCreateProject"
+                ]
+            },
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Brandon Waltz",
+                    "email": "brandon.waltz@colby.edu"
+                }
+            ],
+            "description": "Colby WordPress starter theme with a modern development workflow",
+            "keywords": [
+                "wordpress"
+            ],
+            "time": "2021-09-24T15:01:52+00:00"
         },
         {
             "name": "colbycommunications/colby-groups",
@@ -7489,7 +7538,8 @@
     "minimum-stability": "stable",
     "stability-flags": {
         "colbycommunications/colby-groups": 20,
-        "colbycommunications/colby-base-theme": 20
+        "colbycommunications/colby-base-theme": 20,
+        "colbycommunications/colby-cah-theme": 20
     },
     "prefer-stable": false,
     "prefer-lowest": false,
