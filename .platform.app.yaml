@@ -41,6 +41,7 @@ runtime:
 dependencies:
   php:
     composer/composer: "^2"
+    wp-cli/wp-cli-bundle: "^2"
 
 # The hooks that will be performed when the package is deployed.
 hooks:
