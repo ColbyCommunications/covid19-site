@@ -85,10 +85,6 @@
         }
     },
     "config": {
-        "allow-plugins": {
-            "wpackagist-plugin/*": true,
-            "wpackagist-theme/*": true,
-            "colbycommunications/*": true
-        }
+        "allow-plugins": true
     }
 }
