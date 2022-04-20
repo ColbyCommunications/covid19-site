@@ -59,7 +59,7 @@ When setting up the site for the first time inside platform, the root user shoul
 -   adds support for satis.colby.edu
 -   remove redis
 -   upgrade node in Platform.sh CI to v14
--   move Platform.sh deps, WP CLI mostly, to composer
+-   move Platform.sh dependencies, WP CLI mostly, to composer
 -   removes unneccesary .platform.template.yaml file
 -   removes baseinstall
 -   updates lando to PHP 7.4
