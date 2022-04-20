@@ -38,6 +38,10 @@ runtime:
   extensions: 
     - readline
 
+dependencies:
+  php:
+    composer/composer: "^2"
+
 # The hooks that will be performed when the package is deployed.
 hooks:
     build: !include
