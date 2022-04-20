@@ -24,8 +24,6 @@
         "wpackagist-plugin/wp-saml-auth": "^1.1.0",
         "wpackagist-plugin/siteimprove": "1.2.1",
         "wpackagist-plugin/query-monitor": "^3.7.1",
-        "wp-cli/wp-cli-bundle": "^2.4",
-        "psy/psysh": "^0.10.4",
         "colbycommunications/advanced-custom-fields-pro": "^5.11.4",
         "colbycommunications/elementor-pro": "^3.5.2",
         "colbycommunications/jet-blocks": "^1.3.0",
