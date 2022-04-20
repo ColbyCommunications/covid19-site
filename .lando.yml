@@ -17,7 +17,7 @@ services:
         # Intall the platform.sh CLI and make sure it is up to date.
         - "./scripts/lando-platform-install.sh"
     run:
-        - "platform self-update -y"
+      - "platform self-update -y"
       - "./scripts/setup-mu-plugins.sh"
       - ./scripts/symlink.sh /app/web/wp-content/mu-plugins/wordpress-seo/wp-seo.php /app/web/wp-content/mu-plugins/wp-seo.php
 events:
