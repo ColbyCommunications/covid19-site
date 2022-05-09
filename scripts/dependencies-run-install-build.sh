@@ -23,7 +23,7 @@ done
 
 
 printf "Sage Themes... \n"
-NPM_THEME_DIRS=`ls web/wp-content/themes/colby-*/resources/assets/scripts/@(main.js)` # Saves it to a variable
+NPM_THEME_DIRS=`ls web/wp-content/themes/colby-*/resources/scripts/@(app.js)` # Saves it to a variable
 
 
 for NPMTHEMEDIR in $NPM_THEME_DIRS; do
@@ -36,7 +36,7 @@ for NPMTHEMEDIR in $NPM_THEME_DIRS; do
   printf "Installing NPM dependencies for ${THEME_PATH[0]}/${THEME_PATH[1]}/${THEME_PATH[2]}/${THEME_PATH[3]}... \n"
   npm install
   printf "Running build for ${THEME_PATH[0]}/${THEME_PATH[1]}/${THEME_PATH[2]}/${THEME_PATH[3]}... \n"
-  npm run build:production
+  npm run build
   cd -
 done
 
