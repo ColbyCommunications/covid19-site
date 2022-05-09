@@ -39,3 +39,6 @@
 # Ignore sql files
 *.sql
 *.sql.gz
+
+# Sage
+web/wp-content/cache
