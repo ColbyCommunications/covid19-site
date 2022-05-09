@@ -146,7 +146,7 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/ColbyCommunications/colby-base-theme",
-                "reference": "2ca9a2172a5b87072cae951dc9dc7bceb121829e"
+                "reference": "ada60ab80acd2bd805cb61901fb21a47799eaef4"
             },
             "require": {
                 "php": "^7.4|^8.0",
@@ -211,7 +211,7 @@
                 "issues": "https://github.com/roots/sage/issues",
                 "forum": "https://discourse.roots.io/"
             },
-            "time": "2022-05-09T13:19:31+00:00"
+            "time": "2022-05-09T15:07:20+00:00"
         },
         {
             "name": "colbycommunications/colby-groups",
