@@ -58,7 +58,7 @@ When setting up the site for the first time inside platform, the root user shoul
 -   adds github actions for interacting with Platform repos
 -   adds support for satis.colby.edu
 -   remove redis
--   upgrade node in Platform.sh CI to v14
+-   upgrade node in Platform.sh CI to v16
 -   move Platform.sh dependencies, WP CLI mostly, to composer
 -   removes unneccesary .platform.template.yaml file
 -   removes baseinstall
