@@ -21,11 +21,6 @@
 /web/wp-content/upgrade/*
 !/web/wp-content/upgrade/index.php
 
-# gravity forms
-!/web/wp-content/plugins/gravity-forms-add-menu-link
-!/web/wp-content/plugins/gravityformsauthorizenet
-!/web/wp-content/plugins/gravityformssurvey
-
 #Ignore mac stuff
 *.DS_Store
 
