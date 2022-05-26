@@ -69,6 +69,7 @@ When setting up the site for the first time inside platform, the root user shoul
 -   adds support for composer allowedPlugins
 -   adds support for .env files + generation scripts
 -   moves Platform CI to composer 2
+-   adds WP Search with Algolia Plugin
 
 ### 2.0.1
 
