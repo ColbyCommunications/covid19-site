@@ -16,6 +16,8 @@ if [ "$PLATFORM_BRANCH" != master ] && [ ! -z ${MULTISITE+x} ]; then
   php scripts/update-multisite-db.php
 fi
 
+./scripts/cleanup-dev-db.sh
+
 
 ################################
 ###     Project Specific    ###
