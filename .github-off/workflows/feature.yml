@@ -109,7 +109,7 @@ jobs:
         with:
           name: sitemap
       - name: Audit URLs using Lighthouse
-        run: npx lighthouse-batch -s $( jq -r '.urls | join(",")' sitemap.json ) --html --print
+        run: npx lighthouse-batch -s $( jq -r '.urls | join(",")' sitemap.json ) --params "--extra-headers=.github/lighthouse_headers.json --throttling.cpuSlowdownMultiplier=0 --preset=desktop" --html --print
       - name: Archive Lighthouse Results
         uses: actions/upload-artifact@v2
         with:
@@ -244,6 +244,7 @@ jobs:
                     <thead>
                       <tr>
                         <th scope="col">Page</th>
+                        <th scope="col">Performance</th>
                         <th scope="col">Accessibility</th>
                         <th scope="col">SEO</th>
                         <th scope="col">Best Practices</th>
@@ -253,7 +254,7 @@ jobs:
                       <template x-for="page in data" :key="page.name">
                         <tr>
                           <th scope="row"><a x-bind:href="page.html" target="_blank" x-text="page.url"></a></th>
-                          <!--<td x-text="page.score" x-bind:class="page.score < 0.9 ? 'text-danger' : ''"></td>-->
+                          <td x-text="page.detail.performance" x-bind:class="page.detail.performance < 0.9 ? 'text-danger' : ''"></td>
                           <td x-text="page.detail.accessibility" x-bind:class="page.detail.accessibility < 0.9 ? 'text-danger' : ''"></td>
                           <td x-text="page.detail.seo" x-bind:class="page.detail.seo < 0.9 ? 'text-danger' : ''"></td>
                           <td x-text="page.detail['best-practices']" x-bind:class="page.detail['best-practices'] < 0.9 ? 'text-danger' : ''"></td>
