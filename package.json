@@ -1,0 +1,10 @@
+{
+    "name": "@colbycommunications/some-site",
+    "version": "1.0.0",
+    "description": "",
+    "author": "",
+    "license": "None",
+    "dependencies": {
+        "superagent": "7.0.2"
+    }
+}
