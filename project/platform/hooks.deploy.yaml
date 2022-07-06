@@ -16,8 +16,7 @@ if [ "$PLATFORM_BRANCH" != master ] && [ ! -z ${MULTISITE+x} ]; then
   php scripts/update-multisite-db.php
 fi
 
-#Import the base settings for the cache-control plugin
-php scripts/wp-import-config.php
+./scripts/cleanup-dev-db.sh
 
 
 ################################

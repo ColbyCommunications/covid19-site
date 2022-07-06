@@ -6,5 +6,3 @@
 mysqldb:
     type: mysql:10.2
     disk: 2048
-rediscache:
-    type: redis:5.0

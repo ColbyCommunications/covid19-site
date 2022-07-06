@@ -1,6 +1,6 @@
 # Change the name property to the name of your project. Suggestions is to use the name of your project in Platform,
 # which is also the name/slug of your repository on gitlab
-name: some-site
+name: sandbox
 recipe: wordpress
 config:
     webroot: web
@@ -12,15 +12,14 @@ env_file:
 
 services:
   appserver:
-    type: php:7.2
+    type: php:7.4
     build:
         # Intall the platform.sh CLI and make sure it is up to date.
         - "./scripts/lando-platform-install.sh"
     run:
-        - "platform self-update -y"
-        # 'w' to let it know we're dealing with WordPress
-        - "./scripts/lando-run.sh n w"
-        - "./scripts/setup-mu-plugins.sh"
+      - "platform self-update -y"
+      - "./scripts/setup-mu-plugins.sh"
+      - ./scripts/symlink.sh /app/web/wp-content/mu-plugins/wordpress-seo/wp-seo.php /app/web/wp-content/mu-plugins/wp-seo.php
 events:
   post-start:
     # Install composer dependencies

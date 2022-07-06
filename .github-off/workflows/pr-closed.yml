@@ -1,0 +1,58 @@
+name: Run PR Closed
+on:
+  pull_request:
+    types: [closed]
+env:
+  PLATFORMSH_CLI_TOKEN: ${{ secrets.PLATFORMSH_CLI_TOKEN }}
+  WEBMASTER_GITHUB_ACTIONS_TOKEN: ${{ secrets.WEBMASTER_GITHUB_ACTIONS_TOKEN }}
+  PLATFORM_PROJECT_ID: ${{ secrets.PLATFORM_PROJECT_ID }}
+  PROJECT_NAME: ${{ secrets.PROJECT_NAME }}
+  WEBMASTER_SSH_PRIVATE_KEY: ${{ secrets.WEBMASTER_SSH_PRIVATE_KEY }}
+jobs:
+  delete_platform_feature_branch:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v2
+      - uses: webfactory/ssh-agent@v0.5.4
+        with:
+          ssh-private-key: ${{ secrets.WEBMASTER_SSH_PRIVATE_KEY }}
+
+      - name: Install Psh CLI
+        run: |
+          curl -sS https://platform.sh/cli/installer | php
+
+      - name: Load certificate
+        run: ~/.platformsh/bin/platform ssh-cert:load -y -vv
+
+      - name: Add Psh to trusted keys
+        continue-on-error: true
+        run: |
+          for ip in $(dig @8.8.8.8 git.us-2.platform.sh git.us.platform.sh git.us-4.platform.sh +short); do \
+            ssh-keyscan git.us.platform.sh, git.us-2.platform.sh, git.us-4.platform.sh,$ip; \
+            ssh-keyscan $ip; \
+          done 2>/dev/null >> ~/.ssh/known_hosts
+          cat ~/.ssh/known_hosts
+
+      - name: Delete PR Platform Branch
+        run: |
+          ~/.platformsh/bin/platform project:set-remote ${{ secrets.PLATFORM_PROJECT_ID }}
+          ~/.platformsh/bin/platform environment:delete ${GITHUB_HEAD_REF} --project=${{ secrets.PLATFORM_PROJECT_ID }} --delete-branch
+      
+      - name: Clone Pages
+        run: |
+          git config --global user.email "webmaster@colby.edu"
+          git config --global user.name "Colby Webmaster"
+          git clone --branch ghpages git@github.com:ColbyCommunications/${{ github.event.repository.name }}.git public
+          rm -rf public/.git
+          rm -rf public/lighthouse/${GITHUB_HEAD_REF}
+          node ./scripts/delete_gh_pages.js --branch=${GITHUB_HEAD_REF}
+          
+      - name: Deploy to GitHub Pages
+        if: success()
+        uses: crazy-max/ghaction-github-pages@v2
+        with:
+          target_branch: ghpages
+          build_dir: public
+        env:
+          GITHUB_TOKEN: ${{ secrets.WEBMASTER_GITHUB_ACTIONS_TOKEN }}

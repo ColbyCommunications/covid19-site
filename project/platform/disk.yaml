@@ -1,4 +1,0 @@
-# The space in MB of persistent disk. Changing this value will *NOT* change the amount of available space for your app
-# unless that space has been increased in billing first.  Changing it before changing it in billing could cause your
-# site to not build correctly. Contact webmaster@colby.edu to increase the disk amount in billing
-2048

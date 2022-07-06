@@ -10,7 +10,7 @@
         enabled: true
 
         # Base the cache on the session cookie and custom Drupal cookies. Ignore all other cookies.
-        cookies: ['/^SS?ESS/', '/^SimpleSAML/', '/^wordpress_/', '/^wp-settings/']
+        cookies: ['/^SS?ESS/', '/^wordpress_/', '/^wp-settings/']
     redirects:
       expires: 1d
       paths:

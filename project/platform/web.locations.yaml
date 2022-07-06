@@ -21,13 +21,6 @@
   allow: true
   rules: !include web.locations.root.rules.yaml
 
-"/simplesaml":
-  root: 'vendor/simplesamlphp/simplesamlphp/www'
-  allow: true
-  scripts: true
-  index:
-    - index.php
-
 ################################
 ###        WORDPRESS        ###
 ###############################

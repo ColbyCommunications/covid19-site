@@ -1,0 +1,284 @@
+name: Run Tests - Dev
+on:
+  push:
+    branches:
+      - 'dev'
+env:
+  PLATFORMSH_CLI_TOKEN: ${{ secrets.PLATFORMSH_CLI_TOKEN }}
+  WEBMASTER_GITHUB_ACTIONS_TOKEN: ${{ secrets.WEBMASTER_GITHUB_ACTIONS_TOKEN }}
+  PLATFORM_PROJECT_ID: ${{ secrets.PLATFORM_PROJECT_ID }}
+  PROJECT_NAME: ${{ secrets.PROJECT_NAME }}
+  WEBMASTER_SSH_PRIVATE_KEY: ${{ secrets.WEBMASTER_SSH_PRIVATE_KEY }}
+jobs:
+  deploy_platform:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v2
+
+      - uses: webfactory/ssh-agent@v0.5.4
+        with:
+          ssh-private-key: ${{ secrets.WEBMASTER_SSH_PRIVATE_KEY }}
+
+      - name: Install Psh CLI
+        run: |
+          curl -sS https://platform.sh/cli/installer | php
+
+      - name: Load certificate
+        run: ~/.platformsh/bin/platform ssh-cert:load -y -vv
+
+      - name: Add Psh to trusted keys
+        continue-on-error: true
+        run: |
+          for ip in $(dig @8.8.8.8 git.us-2.platform.sh git.us.platform.sh git.us-4.platform.sh +short); do \
+            ssh-keyscan git.us.platform.sh, git.us-2.platform.sh, git.us-4.platform.sh,$ip; \
+            ssh-keyscan $ip; \
+          done 2>/dev/null >> ~/.ssh/known_hosts
+          cat ~/.ssh/known_hosts
+  
+      - name: Check Environment Exists
+        run: |
+          ~/.platformsh/bin/platform project:set-remote ${{ secrets.PLATFORM_PROJECT_ID }}
+          node ./scripts/check_platform_feature_branch.js --branch=${GITHUB_REF#refs/heads/} --branchFrom=master --id=${{ secrets.PLATFORM_PROJECT_ID }}
+        
+      - name: Spin up environment
+        if: "!contains(github.event.head_commit.message, '[skip platform]')"
+        run: |
+          ~/.platformsh/bin/platform project:get ${{ secrets.PLATFORM_PROJECT_ID }} platform-remote --environment=${GITHUB_REF#refs/heads/}
+          cd platform-remote
+          ~/.platformsh/bin/platform project:set-remote ${{ secrets.PLATFORM_PROJECT_ID }}
+          git config --global user.email "webmaster@colby.edu"
+          git config --global user.name "Colby Webmaster"
+          git pull -X theirs git@github.com:ColbyCommunications/${{ github.event.repository.name }}.git ${GITHUB_REF#refs/heads/}
+          ~/.platformsh/bin/platform environment:push -vv --target=${GITHUB_REF#refs/heads/} --project=${{ secrets.PLATFORM_PROJECT_ID }} --environment=${GITHUB_HEAD_REF} --force
+
+  test_prep:
+    runs-on: ubuntu-latest
+    needs: deploy_platform
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install Psh CLI
+        run: |
+          curl -sS https://platform.sh/cli/installer | php
+          ~/.platformsh/bin/platform project:set-remote ${{ secrets.PLATFORM_PROJECT_ID }}
+
+      - name: Setup node
+        uses: actions/setup-node@v2
+        with:
+          node-version: '14.x'
+          registry-url: 'https://npm.pkg.github.com'
+      - run: npm install
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.WEBMASTER_GITHUB_ACTIONS_TOKEN }}
+      - run: npm install -g sitemap_utils jsonlint sitemap commander
+      
+      - name: Generate Sitemap
+        run: |
+          ./scripts/sitemap.sh
+
+      - name: Archive sitemap
+        uses: actions/upload-artifact@v2
+        with:
+          name: sitemap
+          path: .github/sitemap.json
+          retention-days: 1
+
+  lighthouse:
+    runs-on: ubuntu-latest
+    needs: test_prep
+    steps:
+      - uses: actions/checkout@v2
+      - name: Setup node
+        uses: actions/setup-node@v2
+        with:
+          node-version: '14.x'
+          registry-url: 'https://npm.pkg.github.com'
+      - run: npm install
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.WEBMASTER_GITHUB_ACTIONS_TOKEN }}
+      - run: npm install -g lighthouse-batch
+      - name: Download a single artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: sitemap
+      - name: Audit URLs using Lighthouse
+        run: npx lighthouse-batch -s $( jq -r '.urls | join(",")' sitemap.json ) --params "--extra-headers=.github/lighthouse_headers.json --throttling.cpuSlowdownMultiplier=0 --preset=desktop" --html --print
+      - name: Archive Lighthouse Results
+        uses: actions/upload-artifact@v2
+        with:
+          name: results
+          path: report/lighthouse
+          retention-days: 1
+
+  gh_pages:
+    runs-on: ubuntu-latest
+    needs: lighthouse
+    steps:
+      - uses: actions/checkout@v2
+      - uses: webfactory/ssh-agent@v0.5.4
+        with:
+          ssh-private-key: ${{ secrets.WEBMASTER_SSH_PRIVATE_KEY }}
+      - name: Setup node
+        uses: actions/setup-node@v2
+        with:
+          node-version: '14.x'
+          registry-url: 'https://npm.pkg.github.com'
+      - name: Clone Pages
+        run: |
+          git config --global user.email "webmaster@colby.edu"
+          git config --global user.name "Colby Webmaster"
+          git clone --branch ghpages git@github.com:ColbyCommunications/${{ github.event.repository.name }}.git public
+          rm -rf public/.git
+      - name: Download lighthouse results
+        uses: actions/download-artifact@v2
+        with:
+          name: results
+          path: report/lighthouse
+      - name: Build Pages
+        run: |
+          node ./scripts/build_gh_pages.js --branch=${GITHUB_REF#refs/heads/} --commit=${{ github.sha }}
+          mv report/lighthouse/* public/lighthouse/${GITHUB_REF#refs/heads/}/${{ github.sha }}
+          rm public/lighthouse/index.html
+          cat > public/lighthouse/index.html <<EOL
+          <!doctype html>
+          <html>
+            <head>
+              <title>${{ secrets.PROJECT_NAME }} Site Lighthouse Results</title>
+              <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+              <script src="//unpkg.com/alpinejs" defer></script>
+              
+            </head>
+            <body>
+              <div class="container">
+                <div>
+                  <h1>Branches</h1>
+                </div>
+                <div id="branches" x-data="loadBranchData()" x-init="init()">
+                  <ul>
+                    <template x-for="branch in data" :key="branch.name">
+                      <li><a x-bind:href="branch.name" target="_blank" x-text="branch.name"></a></li>                                   
+                    </template>
+                  </ul>
+                </div>
+              </div>
+              <script>
+                function loadBranchData() {
+                  return {
+                    data: [],
+                    init() {
+                      fetch('./branches.json')
+                        .then(res => res.json())
+                        .then(data => {
+                          console.log(data);
+                          this.data = data.branches;
+                      });
+                    }
+                  } 
+                }
+              </script>
+            </body>
+          </html>
+          EOL
+          cat > public/lighthouse/${GITHUB_REF#refs/heads/}/index.html <<EOL
+          <!doctype html>
+          <html>
+            <head>
+              <title>${{ secrets.PROJECT_NAME }} Site Lighthouse Results</title>
+              <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+              <script src="//unpkg.com/alpinejs" defer></script>
+            </head>
+            <body>
+              <div class="container">
+                <div>
+                  <h1>Commits</h1>
+                </div>
+                <div id="branches" x-data="loadCommitsData()" x-init="init()">
+                  <ul>
+                    <template x-for="commit in data" :key="commit.hash">
+                      <li><a x-bind:href="commit.hash" target="_blank" x-text="commit.hash + ' - ' + commit.date"></a></li>                                   
+                    </template>
+                  </ul>
+                </div>
+              </div>
+              <script>
+                function loadCommitsData() {
+                  return {
+                    data: [],
+                    init() {
+                      fetch('./commits.json')
+                        .then(res => res.json())
+                        .then(data => {
+                          console.log(data);
+                          this.data = data.commits;
+                      });
+                    }
+                  } 
+                }
+              </script>
+            </body>
+          </html>
+          EOL
+          cat > public/lighthouse/${GITHUB_REF#refs/heads/}/${{ github.sha }}/index.html <<EOL
+          <!doctype html>
+          <html>
+            <head>
+              <title>${{ secrets.PROJECT_NAME }} Site Lighthouse Results: ${{ github.sha }}</title>
+              <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+              <script src="//unpkg.com/alpinejs" defer></script>
+              
+            </head>
+            <body>
+              <div class="container">
+                <div>
+                  <h1>Lighthouse Results: ${{ github.sha }}</h1>
+                </div>
+                <div id="lh-results" x-data="loadSummaryData()" x-init="init()">
+                  <table class="table">
+                    <thead>
+                      <tr>
+                        <th scope="col">Page</th>
+                        <th scope="col">Performance</th>
+                        <th scope="col">Accessibility</th>
+                        <th scope="col">SEO</th>
+                        <th scope="col">Best Practices</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <template x-for="page in data" :key="page.name">
+                        <tr>
+                          <th scope="row"><a x-bind:href="page.html" target="_blank" x-text="page.url"></a></th>
+                          <td x-text="page.detail.performance" x-bind:class="page.detail.performance < 0.9 ? 'text-danger' : ''"></td>
+                          <td x-text="page.detail.accessibility" x-bind:class="page.detail.accessibility < 0.9 ? 'text-danger' : ''"></td>
+                          <td x-text="page.detail.seo" x-bind:class="page.detail.seo < 0.9 ? 'text-danger' : ''"></td>
+                          <td x-text="page.detail['best-practices']" x-bind:class="page.detail['best-practices'] < 0.9 ? 'text-danger' : ''"></td>
+                        </tr>                                     
+                      </template>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+              <script>
+                function loadSummaryData() {
+                  return {
+                    data: [],
+                    init() {
+                      fetch('./summary.json')
+                        .then(res => res.json())
+                        .then(data => {
+                          this.data = data;
+                      });
+                    }
+                  } 
+                }
+              </script>
+            </body>
+          </html>
+          EOL
+      - name: Deploy to GitHub Pages
+        if: success()
+        uses: crazy-max/ghaction-github-pages@v2
+        with:
+          target_branch: ghpages
+          build_dir: public
+        env:
+          GITHUB_TOKEN: ${{ secrets.WEBMASTER_GITHUB_ACTIONS_TOKEN }}

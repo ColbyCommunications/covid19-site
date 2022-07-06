@@ -16,16 +16,34 @@
         "wpackagist-plugin/duplicate-post": "^4.3",
         "wpackagist-plugin/wordpress-seo": "^17.8",
         "wpackagist-plugin/cloudflare": "^4.5.1",
-        "devgeniem/wp-redis-object-cache-dropin": "^1.6",
-        "wpackagist-plugin/cache-control": "^2.2.3",
-        "colbycommunications/colby-base-theme": "dev-master",
+        "colbycommunications/colby-base-theme": "dev-sage-10",
         "wpackagist-plugin/public-post-preview": "^2.9.1",
         "wp-graphql/wp-graphql": "^1.6.10",
         "wp-graphql/wp-graphiql": "^1.0",
         "pristas-peter/wp-graphql-gutenberg": "^0.3.4",
         "wpackagist-plugin/wp-saml-auth": "^1.1.0",
         "wpackagist-plugin/siteimprove": "1.2.1",
-        "wpackagist-plugin/query-monitor": "^3.7.1"
+        "wpackagist-plugin/query-monitor": "^3.7.1",
+        "wp-cli/wp-cli-bundle": "^2.4",
+        "psy/psysh": "^0.10.4",
+        "colbycommunications/advanced-custom-fields-pro": "^5.11.4",
+        "colbycommunications/elementor-pro": "^3.5.2",
+        "colbycommunications/jet-blocks": "^1.3.0",
+        "colbycommunications/jet-blog": "^2.2.15",
+        "colbycommunications/jet-elements": "^2.6.2",
+        "colbycommunications/jet-menu": "^2.1.6",
+        "colbycommunications/jet-popup": "^1.5.6",
+        "colbycommunications/jet-search": "^2.1.17",
+        "colbycommunications/jet-tabs": "^2.1.15",
+        "colbycommunications/jet-tricks": "^1.4.1",
+        "colbycommunications/jet-style-manager": "^1.3.2",
+        "colbycommunications/jet-theme-core": "^2.0.0",
+        "colbycommunications/jet-reviews": "^2.2.6",
+        "colbycommunications/jet-elements-dynamic-data": "^1.3.1",
+        "colbycommunications/gravityforms": "^2.5.15.13",
+        "colbycommunications/colby-ticket": "^1.0.0",
+        "wpackagist-plugin/wp-search-with-algolia": "^2.1.0",
+        "vlucas/phpdotenv": "^5.4"
     },
     "authors": [
         {
@@ -45,6 +63,10 @@
         {
             "type": "composer",
             "url": "https://wpackagist.org/"
+        },
+        {
+            "type": "composer",
+            "url": "https://satis.colby.edu"
         }
     ],
     "extra": {
@@ -61,5 +83,8 @@
                 "type:wordpress-theme"
             ]
         }
+    },
+    "config": {
+        "allow-plugins": true
     }
 }

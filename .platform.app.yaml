@@ -9,7 +9,7 @@ type: "php:7.4"
 
 # Configuration of the build of the application.
 build:
-    flavor: composer
+  flavor: composer
 
 # The relationships of the application with services or other applications.
 # The left-hand side is the name of the relationship as it will be exposed
@@ -17,10 +17,9 @@ build:
 # side is in the form `<service name>:<endpoint name>`.
 relationships:
   database: "mysqldb:mysql"
-  redis: "rediscache:redis"
 
 # The size of the persistent disk of the application (in MB).
-disk: !include project/platform/disk.yaml
+disk: 2048
 
 # The mounts that will be performed when the package is deployed.
 mounts:
@@ -35,13 +34,13 @@ mounts:
 web:
   locations: !include project/platform/web.locations.yaml
 
-dependencies:
-  php: !include project/platform/dependencies.php.yaml
-  nodejs:
-    gulp-cli: "*"
-
 runtime:
-  extensions: !include project/platform/runtime.extensions.yaml
+  extensions: 
+    - readline
+
+dependencies:
+  php:
+    composer/composer: "^2"
 
 # The hooks that will be performed when the package is deployed.
 hooks:
