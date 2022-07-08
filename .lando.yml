@@ -12,7 +12,7 @@ env_file:
 
 services:
   appserver:
-    type: php:8.1
+    type: php:8.0
     build:
         # Intall the platform.sh CLI and make sure it is up to date.
         - "./scripts/lando-platform-install.sh"
