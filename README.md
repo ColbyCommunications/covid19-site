@@ -9,17 +9,17 @@ This project provides a starter kit for Colby College WordPress projects (forked
 3. Clone on local machine
 4. Add [sitename] to the following files, replacing placeholder text:
 
--   composer.json
--   .platform.app.yaml
--   .lando.yaml
--   README.md
+- composer.json
+- .platform.app.yaml
+- .lando.yaml
+- README.md
 
 5. Create an upstream to the starter repo via `git remote add upstream https://github.com/ColbyCommunications/platformsh-wp-starter`
 
 6. Link with Platform.sh:
 
--   Create blank project in Platform.sh console
--   Add Platform.sh repo as remote: `platform project:set-remote [project_id]`
+- Create blank project in Platform.sh console
+- Add Platform.sh repo as remote: `platform project:set-remote [project_id]`
 
 ## How to Navigate the Project
 
@@ -53,28 +53,35 @@ When setting up the site for the first time inside platform, the root user shoul
 
 ## Change Log
 
+### 3.0.0
+
+- adds support for PHP 8.0
+- upgrades Wordpress to 6.0
+- upgrades WP SAML Auth Plugin to 2.\*
+- upgrades Yoast plugin to 19.3
+
 ### 2.1.0
 
--   adds github actions for interacting with Platform repos
--   adds support for satis.colby.edu
--   remove redis
--   upgrade node in Platform.sh CI to v16
--   move Platform.sh dependencies, WP CLI mostly, to composer
--   removes unneccesary .platform.template.yaml file
--   removes baseinstall
--   updates lando to PHP 7.4
--   removes disk.yaml and runtime.extensions.yaml in favor of putting those right in .platform.app.yaml
--   new format for .npmrc
--   simplify lando build - get rid of platform sync prompt
--   adds support for composer allowedPlugins
--   adds support for .env files + generation scripts
--   moves Platform CI to composer 2
--   adds WP Search with Algolia Plugin
+- adds github actions for interacting with Platform repos
+- adds support for satis.colby.edu
+- remove redis
+- upgrade node in Platform.sh CI to v16
+- move Platform.sh dependencies, WP CLI mostly, to composer
+- removes unneccesary .platform.template.yaml file
+- removes baseinstall
+- updates lando to PHP 7.4
+- removes disk.yaml and runtime.extensions.yaml in favor of putting those right in .platform.app.yaml
+- new format for .npmrc
+- simplify lando build - get rid of platform sync prompt
+- adds support for composer allowedPlugins
+- adds support for .env files + generation scripts
+- moves Platform CI to composer 2
+- adds WP Search with Algolia Plugin
 
 ### 2.0.1
 
--   patch for wrong wpgraphql version
+- patch for wrong wpgraphql version
 
 ### 2.0.0
 
--   update plugins: elementor-pro, jet plugins, ACF, gravityforms, yoast
+- update plugins: elementor-pro, jet plugins, ACF, gravityforms, yoast
