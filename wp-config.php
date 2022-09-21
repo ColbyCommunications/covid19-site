@@ -1,6 +1,6 @@
 <?php
 
-require_once('vendor/autoload.php');
+require_once 'vendor/autoload.php';
 
 $dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
 $dotenv->load();
@@ -198,6 +198,9 @@ ini_set('pcre.recursion_limit', 200000);
 if (!defined('ABSPATH') ) {
     define('ABSPATH', dirname(__FILE__) . '/');
 }
+
+// Elementor icon support
+define('FS_METHOD', 'direct');
 
 /**
  * Sets up WordPress vars and included files.
