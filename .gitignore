@@ -64,11 +64,6 @@
 # Ignore custom NPM package dir.
 /npm-packages
 
-# Ignore sql files
-*.sql
-*.sql.gz
 
 # Ignore simplesaml dir locally
 /simplesaml
-
-	KuwdWutOlbJpW4@I6bg(6GW2
