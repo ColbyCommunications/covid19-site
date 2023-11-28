@@ -1,0 +1,24 @@
+.elementor-kit-5{--e-global-color-primary:#002878;--e-global-color-secondary:#54595F;--e-global-color-text:#444444;--e-global-color-accent:#61CE70;--e-global-color-ccc6357:#6EC1E4;--e-global-color-2f30eb17:#7A7A7A;--e-global-color-5667c3eb:#4054B2;--e-global-color-5fe6e41e:#23A455;--e-global-color-5f2f3b6e:#000;--e-global-color-6c0770b3:#FFF;--e-global-color-3e9c4dc7:RGBA(122, 122, 122, 0.24);--e-global-typography-primary-font-family:"franklin-gothic-urw-cond";--e-global-typography-primary-font-weight:400;--e-global-typography-secondary-font-family:"franklin-gothic-urw-cond";--e-global-typography-secondary-font-weight:600;--e-global-typography-text-font-family:"Roboto";--e-global-typography-text-font-weight:400;--e-global-typography-accent-font-family:"Roboto";--e-global-typography-accent-font-weight:500;color:#444444;font-family:"Roboto", Sans-serif;font-size:1.1rem;}.elementor-kit-5 a{color:#002878;}.elementor-kit-5 a:hover{text-decoration:underline;}.elementor-kit-5 h1{color:#002878;font-family:"franklin-gothic-urw-cond", Sans-serif;font-size:2rem;font-weight:600;}.elementor-kit-5 h2{color:#002878;font-family:"franklin-gothic-urw-cond", Sans-serif;font-size:1.75rem;font-weight:400;}.elementor-kit-5 h3{color:#002878;font-family:"franklin-gothic-urw-cond", Sans-serif;font-size:1.35rem;font-weight:400;}.elementor-kit-5 h4{color:#002878;font-family:"franklin-gothic-urw-cond", Sans-serif;font-weight:600;}.elementor-kit-5 h5{color:#002878;font-family:"franklin-gothic-urw-cond", Sans-serif;font-weight:600;}.elementor-kit-5 h6{color:#002878;font-family:"franklin-gothic-urw-cond", Sans-serif;font-weight:600;}.elementor-kit-5 button,.elementor-kit-5 input[type="button"],.elementor-kit-5 input[type="submit"],.elementor-kit-5 .elementor-button{line-height:1.2em;letter-spacing:0.3px;}.elementor-section.elementor-section-boxed > .elementor-container{max-width:1200px;}{}h1.entry-title{display:var(--page-title-display);}@media(max-width:1024px){.elementor-section.elementor-section-boxed > .elementor-container{max-width:1024px;}}@media(max-width:767px){.elementor-section.elementor-section-boxed > .elementor-container{max-width:767px;}}/* Start custom CSS */.Green  {
+    background-color: #a1cd63 !important;
+    border: 1px solid #3c3c3c;
+}
+
+.Yellow  {
+    background-color: #fffd54 !important;
+    border: 1px solid #3c3c3c;
+}
+
+.Orange  {
+    background-color: #f5c143 !important;
+    border: 1px solid #3c3c3c;
+}
+
+.Red {
+    background-color: #eb3123 !important;
+    border: 1px solid #3c3c3c;
+}
+
+#vaccination-faq{ 
+    padding-top: 68px;
+    margin-top: -68px;
+}/* End custom CSS */
